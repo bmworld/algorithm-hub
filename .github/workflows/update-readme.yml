@@ -34,8 +34,8 @@ jobs:
           }
           
           # 플랫폼별 개수 (현재: Baekjoon, Programmers 두 가지만 집계)
-          baekjoon=$(count_platform "Baekjoon")
-          programmers=$(count_platform "Programmers")
+          baekjoon=$(count_platform "백준")
+          programmers=$(count_platform "Programmers" "프로그래머스")
           total=$((baekjoon + programmers))
           
           # 타임존 KST로 표시
