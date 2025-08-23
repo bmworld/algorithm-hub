@@ -22,9 +22,8 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
+          
           # 디렉토리 내 Java/Kotlin 풀이 파일 개수 합산
-          # (#######필요시확장: 다른 언어 추가 시 -o -name "*.py" 등으로 확장)
           count_platform () {
             local platform="$1"
             if [ -d "$platform" ]; then
@@ -33,55 +32,62 @@ jobs:
               echo 0
             fi
           }
-
+          
           # 플랫폼별 개수 (현재: Baekjoon, Programmers 두 가지만 집계)
           baekjoon=$(count_platform "Baekjoon")
           programmers=$(count_platform "Programmers")
           total=$((baekjoon + programmers))
-
+          
           # 타임존 KST로 표시
           export TZ=Asia/Seoul
           now="$(date '+%Y-%m-%d %H:%M %Z')"
-
-          # README에 삽입할 콘텐츠
-          CONTENT=$(
-cat <<EOF
-############ README 삽입 콘텐츠 (시작) ############
-
-### 🚀 문제 풀이 현황 (자동)
-- Baekjoon: ${baekjoon} 문제
-- Programmers: ${programmers} 문제
-
-- Total: ${total} 문제
-
-Updated: ${now}
-
-############ README 삽입 콘텐츠 (끝) ############
-EOF
-          )
-
-          # 마커 이름: TOTAL_PROBLEM_STATS_START / TOTAL_PROBLEM_STATS_END
-          # 마커가 이미 있으면 사이 구간 전체 치환, 없으면 맨 아래에 추가
-          if grep -q "<!-- TOTAL_PROBLEM_STATS_START -->" README.md && grep -q "<!-- TOTAL_PROBLEM_STATS_END -->" README.md; then
-            sed -i -e "/<!-- TOTAL_PROBLEM_STATS_START -->/,/<!-- TOTAL_PROBLEM_STATS_END -->/c\\<!-- TOTAL_PROBLEM_STATS_START -->\\
-${CONTENT}\\
-<!-- TOTAL_PROBLEM_STATS_END -->" README.md
-          else
-            {
-              echo ""
-              echo "<!-- TOTAL_PROBLEM_STATS_START -->"
-              echo "${CONTENT}"
-              echo "<!-- TOTAL_PROBLEM_STATS_END -->"
-            } >> README.md
-          fi
-
-          # 변경사항 있을 때만 커밋/푸시
-          if ! git diff --quiet; then
+          
+          # README에 삽입할 콘텐츠 → 임시 파일로 생성
+          CONTENT_FILE="$(mktemp)"
+          printf "%s\n" \
+          "############ README 삽입 콘텐츠 (시작) ############" \
+          "" \
+          "### 🚀 문제 풀이 현황 (자동)" \
+          "- Baekjoon: ${baekjoon} 문제" \
+          "- Programmers: ${programmers} 문제" \
+          "" \
+          "- Total: ${total} 문제" \
+          "" \
+          "Updated: ${now}" \
+          "" \
+          "############ README 삽입 콘텐츠 (끝) ############" > "$CONTENT_FILE"
+          
+          START="<!-- TOTAL_PROBLEM_STATS_START -->"
+          END="<!-- TOTAL_PROBLEM_STATS_END -->"
+          
+          if grep -q "$START" README.md && grep -q "$END" README.md; then
+          # 마커 사이를 임시파일 내용으로 교체 (GNU sed)
+          sed -i -e "/$START/,/$END/{
+          /$START/{
+          p
+          r $CONTENT_FILE
+          }
+            /$END/p
+            d
+          }" README.md
+                        else
+                          {
+                            echo ""
+                            echo "$START"
+            cat "$CONTENT_FILE"
+            echo "$END"
+          } >> README.md
+            fi
+            
+            rm -f "$CONTENT_FILE"
+            
+            # 변경사항 있을 때만 커밋/푸시
+            if ! git diff --quiet; then
             git config user.name "github-actions[bot]"
             git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git add README.md
             git commit -m "chore(readme): auto-update problem stats"
             git push
-          else
+            else
             echo "No changes."
-          fi
+            fi
