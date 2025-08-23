@@ -1,0 +1,87 @@
+name: Update README stats
+
+on:
+  schedule:
+    # 매일 KST 오전 6시에 실행 (UTC 21:00 전날)
+    - cron: "0 21 * * *"
+  workflow_dispatch:  # 수동 실행 버튼
+  push:
+    branches: [ main ]  # main 브랜치만
+
+permissions:
+  contents: write  # README 갱신 커밋 권한
+
+jobs:
+  update-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Generate total problem stats
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          # 디렉토리 내 Java/Kotlin 풀이 파일 개수 합산
+          # (#######필요시확장: 다른 언어 추가 시 -o -name "*.py" 등으로 확장)
+          count_platform () {
+            local platform="$1"
+            if [ -d "$platform" ]; then
+              find "$platform" -type f \( -name "*.java" -o -name "*.kt" \) | wc -l
+            else
+              echo 0
+            fi
+          }
+
+          # 플랫폼별 개수 (현재: Baekjoon, Programmers 두 가지만 집계)
+          baekjoon=$(count_platform "Baekjoon")
+          programmers=$(count_platform "Programmers")
+          total=$((baekjoon + programmers))
+
+          # 타임존 KST로 표시
+          export TZ=Asia/Seoul
+          now="$(date '+%Y-%m-%d %H:%M %Z')"
+
+          # README에 삽입할 콘텐츠
+          CONTENT=$(
+cat <<EOF
+############ README 삽입 콘텐츠 (시작) ############
+
+### 🚀 문제 풀이 현황 (자동)
+- Baekjoon: ${baekjoon} 문제
+- Programmers: ${programmers} 문제
+
+- Total: ${total} 문제
+
+Updated: ${now}
+
+############ README 삽입 콘텐츠 (끝) ############
+EOF
+          )
+
+          # 마커 이름: TOTAL_PROBLEM_STATS_START / TOTAL_PROBLEM_STATS_END
+          # 마커가 이미 있으면 사이 구간 전체 치환, 없으면 맨 아래에 추가
+          if grep -q "<!-- TOTAL_PROBLEM_STATS_START -->" README.md && grep -q "<!-- TOTAL_PROBLEM_STATS_END -->" README.md; then
+            sed -i -e "/<!-- TOTAL_PROBLEM_STATS_START -->/,/<!-- TOTAL_PROBLEM_STATS_END -->/c\\<!-- TOTAL_PROBLEM_STATS_START -->\\
+${CONTENT}\\
+<!-- TOTAL_PROBLEM_STATS_END -->" README.md
+          else
+            {
+              echo ""
+              echo "<!-- TOTAL_PROBLEM_STATS_START -->"
+              echo "${CONTENT}"
+              echo "<!-- TOTAL_PROBLEM_STATS_END -->"
+            } >> README.md
+          fi
+
+          # 변경사항 있을 때만 커밋/푸시
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add README.md
+            git commit -m "chore(readme): auto-update problem stats"
+            git push
+          else
+            echo "No changes."
+          fi

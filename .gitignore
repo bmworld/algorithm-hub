@@ -1,0 +1,54 @@
+# ---- OS 공통 ----
+.DS_Store
+Thumbs.db
+
+# ---- IDE ----
+.idea/
+*.iml
+*.ipr
+*.iws
+.vscode/
+
+# ---- Java/Kotlin 빌드 산출물 ----
+**/build/
+**/out/
+**/target/
+*.class
+*.jar
+*.war
+*.ear
+
+# ---- Gradle ----
+.gradle/
+# 👉 Gradle Wrapper는 커밋 유지 (스크립트 + 설정)
+# gradlew, gradlew.bat, gradle/wrapper/* 는 제외 규칙 추가 필요 없음
+
+# ---- Maven ----
+.mvn/timing.properties
+
+# ---- 로그/덤프 ----
+*.log
+hs_err_pid*
+replay_pid*
+
+# ---- 로컬 테스트/스크래치 ----
+**/tmp/
+**/temp/
+**/sandbox/
+**/scratch/
+**/local/
+**/*.in
+**/*.out
+
+# ---- (선택) 다른 언어 병행 대비 ----
+# Python
+__pycache__/
+*.pyc
+.venv/
+.env
+
+# Node/JS
+node_modules/
+dist/
+.next/
+.turbo/
