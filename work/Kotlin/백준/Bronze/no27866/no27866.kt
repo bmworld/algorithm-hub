@@ -1,5 +1,6 @@
-package 백준
+package 백준.Bronze.no27866
 
+import 백준.Bronze.no2743.solution
 import java.util.Scanner
 import kotlin.text.toInt
 
