@@ -1,7 +1,7 @@
 name: Update README stats
 
 on:
-  schedule:
+#  schedule:
     # 매일 KST 오전 6시에 실행 (UTC 21:00 전날)
 #    - cron: "0 21 * * *"
   workflow_dispatch:  # 수동 실행 버튼
