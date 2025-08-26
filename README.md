@@ -26,5 +26,5 @@ Java와 Kotlin을 주 언어로 사용하며, 필요에 따라 다른 언어 풀
 
 - Total: 5 문제
 
-Updated: 2025-08-26 23:14 KST
+Updated: 2025-08-26 23:21 KST
 <!-- TOTAL_PROBLEM_STATS_END -->
