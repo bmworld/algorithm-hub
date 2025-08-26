@@ -21,10 +21,10 @@ Java와 Kotlin을 주 언어로 사용하며, 필요에 따라 다른 언어 풀
 
 <!-- TOTAL_PROBLEM_STATS_START -->
 ## 🚀 문제 풀이 현황 (자동 커밋)
-- Baekjoon: 4 문제
+- Baekjoon: 5 문제
 - Programmers: 0 문제
 
-- Total: 4 문제
+- Total: 5 문제
 
-Updated: 2025-08-26 22:33 KST
+Updated: 2025-08-26 23:14 KST
 <!-- TOTAL_PROBLEM_STATS_END -->
