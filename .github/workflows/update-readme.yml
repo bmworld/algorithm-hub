@@ -45,13 +45,10 @@ jobs:
           # README에 삽입할 콘텐츠 → 임시 파일로 생성
           CONTENT_FILE="$(mktemp)"
           printf "%s\n" \
-          "## 🚀 문제 풀이 현황 (자동 커밋)" \
+          "## 🚀 문제 풀이 현황 (${now})" \
           "- Baekjoon: ${baekjoon} 문제" \
           "- Programmers: ${programmers} 문제" \
-          "" \
           "- Total: ${total} 문제" \
-          "" \
-          "Updated: ${now}" \
           > "$CONTENT_FILE"
           
           START="<!-- TOTAL_PROBLEM_STATS_START -->"
