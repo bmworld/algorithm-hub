@@ -7,10 +7,11 @@ fun main() {
 
   val sc = Scanner(System.`in`)
   val first = sc.nextLine()
-  val rowSize = first.trim().split(" ")[1].toInt()
+  val row = first[0].code   // 행 개수
+  val col = first[1].code   // 열 개수 (검증용)
 
   val arr =
-      Array(rowSize) {
+      Array(row) {
         sc.nextLine()
             .trim()
             .map { if (it.toString() == "W") 1 else 0 }
