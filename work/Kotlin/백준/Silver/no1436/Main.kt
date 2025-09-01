@@ -16,30 +16,13 @@ fun main() {
  * @N 순서
  */
 fun solution(order: Int): Int {
-
-  val endNum = 666
-
-  val ch = Array(order + 1) { 0 }
-
-  fun nextNum(n: Int): Int {
-    if (ch[n] != 0) return ch[n]
-    var result: Int
-    if (n == 1) {
-      result = endNum
-    } else {
-
-      var next = nextNum(n - 1) + 1
-      while (!next.toString().contains(endNum.toString())) {
-        next++
-      }
-
-      result = next
+  var cnt = 0
+  var x = 666
+  while (true) {
+    if (x.toString().contains("666")) {
+      cnt++
+      if (cnt == order) return x
     }
-
-    ch[n] = result
-
-    return result
+    x++
   }
-
-  return nextNum(order)
 }

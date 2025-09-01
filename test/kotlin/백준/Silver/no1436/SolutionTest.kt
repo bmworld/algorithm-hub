@@ -12,6 +12,6 @@ class SolutionTest {
     assertEquals(2666, solution(3))
     assertEquals(66666, solution(187))
     assertEquals(166699, solution(500))
-    //    assertEquals(166699, solution(10000))
+    assertEquals(2666799, solution(10000))
   }
 }
