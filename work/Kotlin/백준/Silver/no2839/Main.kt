@@ -8,7 +8,7 @@ fun main() {
   val br = BufferedReader(InputStreamReader(System.`in`))
   val w = br.readLine().toInt()
 
-  println(solution(w))
+  println(solution2(w))
 }
 
 /**
@@ -36,4 +36,29 @@ fun solution(w: Int): Int {
   }
 
   return -1
+}
+
+/**
+ * @param w 설탕 무게
+ * @return 봉지 최소개수 (규격: 3kg, 5kg) -> 정확하게 맞출 수 없는 경우, -1
+ */
+fun solution2(w: Int): Int {
+  var n = w
+  var cnt = 0
+
+  while (true) {
+
+    if (n % 5 == 0) {
+      cnt += n / 5
+      break
+    } else if (n <= 0) {
+      cnt = -1
+      break
+    }
+
+    cnt++
+    n -= 3
+  }
+
+  return cnt
 }
