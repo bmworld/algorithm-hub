@@ -17,22 +17,22 @@ fun main() {
  */
 fun solution(w: Int): Int {
 
-  var cntOf5 = w / 5
-  var cntOf3 = 0
+  var cnt5 = w / 5
+  var cnt3 = 0
   var balance = w % 5
-  println("w = ${w}")
+  if (balance == 0) return cnt5
 
+  while (cnt5 >= 0 && balance > 0) {
 
-  while (balance >= 0) {
-    cntOf3++
-    balance -= 3
-
-    if (balance == 0) return cntOf5 + cntOf3
-
-    if (cntOf5 > 0) {
-      cntOf5--
-      balance += 5
+    while (balance >= 3) {
+      cnt3++
+      balance -= 3
     }
+
+    if (balance == 0) return cnt5 + cnt3
+
+    cnt5--
+    balance += 5
   }
 
   return -1
