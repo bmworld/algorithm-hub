@@ -1,0 +1,31 @@
+package 백준.Silver.no2839
+
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+
+class SolutionTest {
+
+  @Test
+  fun solution() {
+    assertEquals(4, solution(18))
+    assertEquals(-1, solution(4))
+    assertEquals(2, solution(6))
+    assertEquals(3, solution(9))
+    assertEquals(3, solution(11))
+    assertEquals(5, solution(21))
+    assertEquals(14, solution(62))
+    assertEquals(1000, solution(4996))
+  }
+
+  @Test
+  fun solution2() {
+    assertEquals(4, solution2(18))
+    assertEquals(-1, solution2(4))
+    assertEquals(2, solution2(6))
+    assertEquals(3, solution2(9))
+    assertEquals(3, solution2(11))
+    assertEquals(5, solution2(21))
+    assertEquals(14, solution2(62))
+    assertEquals(1000, solution2(4996))
+  }
+}
