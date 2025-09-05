@@ -22,22 +22,11 @@ fun main() {
 fun solution(arr: IntArray): String {
 
   // 중복제거 후, 좌표압축값(=index) 체크
-  val copy =
-      arr.copyOf()
-          .toSet() //  중복제거
-          .toIntArray()
-  copy.sort()
-
+  val copy = arr.toSet().sorted()
   val map = mutableMapOf<Int, Int>()
-
   for ((index, value) in copy.withIndex()) {
     map[value] = index
   }
 
-  val result = StringBuilder()
-  for (value in arr) {
-    result.append(map[value]).append(" ")
-  }
-
-  return result.trim().toString()
+  return arr.joinToString(" ") { map[it].toString() }
 }
