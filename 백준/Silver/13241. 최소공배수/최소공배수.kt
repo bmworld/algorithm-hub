@@ -10,27 +10,11 @@ fun main() {
   val br = BufferedReader(InputStreamReader(System.`in`))
   val st = StringTokenizer(br.readLine(), " ")
 
-  println(solution(st.nextToken().toLong(), st.nextToken().toLong()))
+  println(lcm(st.nextToken().toLong(), st.nextToken().toLong()))
 }
 
-/**
- * @param a 정수
- * @param b 정수
- * @return 최소공배수
- */
-fun solution(a: Long, b: Long): Long {
+/** @return 최소공배수 */
+fun lcm(a: Long, b: Long) = (a * b) / gcd(a, b)
 
-  val n = min(a, b)
-  val m = max(a, b)
-
-  var answer = n * m
-
-  for (i in n until n * m step n) {
-    if (i % m == 0L) {
-      answer = min(answer, i)
-      break
-    }
-  }
-
-  return answer
-}
+/** @return 최대 공약수 */
+tailrec fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
