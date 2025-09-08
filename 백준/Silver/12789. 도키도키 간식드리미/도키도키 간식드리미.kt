@@ -30,7 +30,7 @@ fun solution(arr: IntArray): String {
       isUsed = true
     }
     // STEP 1. 임시대기줄 - 입장
-    while (!stack.isEmpty()) {
+    while (stack.isNotEmpty()) {
       val peek = stack.peek()
       if (peek == ch) {
         stack.pop()
