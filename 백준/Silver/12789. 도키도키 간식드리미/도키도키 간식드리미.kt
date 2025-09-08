@@ -1,3 +1,4 @@
+
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.util.*
@@ -32,7 +33,7 @@ fun solution(arr: IntArray): String {
     while (!stack.isEmpty()) {
       val peek = stack.peek()
       if (peek == ch) {
-        stack.pop() // 꺼냄
+        stack.pop()
         ch++
       } else {
         break
@@ -45,5 +46,5 @@ fun solution(arr: IntArray): String {
     }
   }
 
-  return if (ch - 1 == arr.size) "Nice" else "Sad"
+  return if (stack.isEmpty()) "Nice" else "Sad"
 }
