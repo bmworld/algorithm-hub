@@ -1,7 +1,5 @@
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.*
+import java.io.StreamTokenizer
 
 val C = Array(30) { IntArray(30) { 0 } }
 
@@ -15,19 +13,21 @@ fun buildPascal() {
   }
 }
 
-fun main() {
+fun main() =
+    with(StreamTokenizer(System.`in`.bufferedReader())) {
+      fun nextInt(): Int {
+        nextToken()
+        return nval.toInt()
+      }
 
-  val br = BufferedReader(InputStreamReader(System.`in`))
-  val t = br.readLine().trim().toInt()
-  buildPascal()
+      buildPascal()
 
-  val sb = StringBuilder()
-  repeat(t) {
-    val st = StringTokenizer(br.readLine(), " ")
-    val m = st.nextToken().toInt() // 서
-    val n = st.nextToken().toInt() // 동
-    sb.append(C[n][m]).append('\n') // nCm
-  }
+      val sb = StringBuilder()
+      repeat(nextInt()) {
+        val m = nextInt() // 서
+        val n = nextInt() // 동
+        sb.append(C[n][m]).append('\n') // nCm
+      }
 
-  print(sb)
-}
+      print(sb)
+    }
