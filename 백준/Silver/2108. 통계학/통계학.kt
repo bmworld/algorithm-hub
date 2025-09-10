@@ -16,61 +16,73 @@ fun main() =
         return nval.toInt()
       }
 
-      print(solution(IntArray(nextInt()) { nextInt() }))
+      val size = nextInt()
+      val nums = IntArray(size) { nextInt() }
+
+      print(solution(nums))
     }
 
 fun solution(a: IntArray): String {
-  val arr = a.sorted()
-
-  // 2
-  val median = arr[round((arr.size / 2).toDouble()).toInt()]
-
-  // 3
-  var mode = Int.MIN_VALUE
-
+  val offset = 4000
+  val cnt = IntArray(offset * 2 + 1)
   var sum = 0
-  val map = mutableMapOf<Int, Int>()
-  var maxFq = 0
+  var minIdx = offset * 2 + 1
+  var maxIdx = -1
 
-  for (v in arr) {
+  // 중복 개수 카운팅
+  for (v in a) {
+    val idx = v + offset
+    cnt[idx]++
     sum += v
-    val fq = map.getOrDefault(v, 0) + 1
-    map[v] = fq
-    maxFq = max(maxFq, fq)
+    if (idx < minIdx) minIdx = idx
+    if (idx > maxIdx) maxIdx = idx
   }
 
-  val modeArr = IntArray(2) { Int.MIN_VALUE } // 최빈값 (중복 시, 두 번째로 작은 값)
-  for (entry in map) {
-    if (maxFq == entry.value) {
-      mode =
-          if (modeArr[0] == Int.MIN_VALUE) {
-            modeArr[0] = entry.key
-            entry.key
-          } else if (modeArr[1] == Int.MIN_VALUE) {
-            modeArr[1] = entry.key
-            entry.key
-          } else continue
+  // 1) 산술평균
+  // e.g) avg = 1.6 → 1.6 + 0.5 = 2.1 → floor(2.1) = 2
+  // e.g) avg = 1.4 → 1.4 + 0.5 = 1.9 → floor(1.9) = 1
+  val avg = sum.toDouble() / a.size
+  val mean = if (avg >= 0) floor(avg + 0.5).toInt() else ceil(avg - 0.5).toInt()
+
+  // 2) 중앙값
+  val targetIdx = (a.size + 1) / 2
+  var median = 0
+  var acc = 0
+
+  run {
+    for (idx in minIdx..maxIdx) {
+      acc += cnt[idx]
+      if (acc >= targetIdx) {
+        median = idx - offset
+        break
+      }
     }
   }
 
-  // 4
-  val min = arr[0]
-  val max = arr[arr.size - 1]
-  val range = max - min
+  // 3) 최빈값 (동률 시, 두 번째 작은 값)
+  var maxFreq = 0
+  for (i in minIdx..maxIdx) if (cnt[i] > maxFreq) maxFreq = cnt[i]
+  var seen = 0
+  var first = 0
+  var second = 0
+  for (idx in minIdx..maxIdx) {
+    if (cnt[idx] == maxFreq) {
+      seen++
+      if (seen == 1) first = idx - offset
+      else if (seen == 2) {
+        second = idx - offset
+        break
+      }
+    }
+  }
+  val mode = if (seen >= 2) second else first
+  // 4) 범위
+  val range = maxIdx - minIdx
 
-  // 1
-  val mean = (sum.toDouble() / arr.size.toDouble()).roundToInt()
-
-  // ---------------------------------------------------------------------
-  val sb = StringBuilder()
-  // 산술평균
-  sb.append(mean).append("\n")
-  // 중앙값
-  sb.append(median).append("\n")
-  // 최빈값
-  sb.append(mode).append("\n")
-  // 범위
-  sb.append(range)
-
-  return sb.toString()
+  return buildString {
+    append(mean).append('\n')
+    append(median).append('\n')
+    append(mode).append('\n')
+    append(range)
+  }
 }
