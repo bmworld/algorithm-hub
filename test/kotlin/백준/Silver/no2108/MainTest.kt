@@ -27,6 +27,16 @@ class MainTest {
         "-2\n" + "-2\n" + "-1\n" + "2",
         solution(getArr("-1\n" + "-2\n" + "-3\n" + "-1\n" + "-2")),
     )
+
+    assertEquals(
+        "2\n" + "2\n" + "1\n" + "10",
+        solution(getArr("1\n" + "3\n" + "8\n" + "-2\n" + "2")),
+    )
+
+    assertEquals(
+        "1\n" + "0\n" + "0\n" + "6",
+        solution(getArr("-1\n" + "0\n" + "1\n" + "-1\n" + "0\n" + "1\n" + "5")),
+    )
   }
 
   private fun getArr(s: String): IntArray {

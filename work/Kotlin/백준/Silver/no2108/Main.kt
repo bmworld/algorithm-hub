@@ -32,21 +32,21 @@ fun solution(a: IntArray): String {
   val map = mutableMapOf<Int, Int>()
   var maxFq = 0
 
-  for ((idx, v) in arr.withIndex()) {
+  for (v in arr) {
     sum += v
     val fq = map.getOrDefault(v, 0) + 1
     map[v] = fq
     maxFq = max(maxFq, fq)
   }
 
-  val modeArr = IntArray(2) { 0 } // 최빈값 (중복 시, 두 번째로 작은 값)
+  val modeArr = IntArray(2) { Int.MIN_VALUE } // 최빈값 (중복 시, 두 번째로 작은 값)
   for (entry in map) {
     if (maxFq == entry.value) {
       mode =
-          if (modeArr[0] == 0) {
+          if (modeArr[0] == Int.MIN_VALUE) {
             modeArr[0] = entry.key
             entry.key
-          } else if (modeArr[1] == 0) {
+          } else if (modeArr[1] == Int.MIN_VALUE) {
             modeArr[1] = entry.key
             entry.key
           } else continue
@@ -61,7 +61,7 @@ fun solution(a: IntArray): String {
   // 1
   val mean = (sum.toDouble() / arr.size.toDouble()).roundToInt()
 
-  // ANSWER
+  // ---------------------------------------------------------------------
   val sb = StringBuilder()
   // 산술평균
   sb.append(mean).append("\n")
