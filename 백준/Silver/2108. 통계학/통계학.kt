@@ -39,8 +39,6 @@ fun solution(a: IntArray): String {
   }
 
   // 1) 산술평균
-  // e.g) avg = 1.6 → 1.6 + 0.5 = 2.1 → floor(2.1) = 2
-  // e.g) avg = 1.4 → 1.4 + 0.5 = 1.9 → floor(1.9) = 1
   val avg = sum.toDouble() / a.size
   val mean = if (avg >= 0) floor(avg + 0.5).toInt() else ceil(avg - 0.5).toInt()
 
@@ -60,22 +58,22 @@ fun solution(a: IntArray): String {
   }
 
   // 3) 최빈값 (동률 시, 두 번째 작은 값)
-  var maxFreq = 0
-  for (i in minIdx..maxIdx) if (cnt[i] > maxFreq) maxFreq = cnt[i]
+  var maxFq = 0
   var seen = 0
-  var first = 0
-  var second = 0
+  var maxFqIdx = 0
+
   for (idx in minIdx..maxIdx) {
-    if (cnt[idx] == maxFreq) {
+    if (cnt[idx] > maxFq) {
+      maxFq = cnt[idx]
+      maxFqIdx = idx
+      seen = 1
+    } else if (cnt[idx] == maxFq && seen == 1) {
       seen++
-      if (seen == 1) first = idx - offset
-      else if (seen == 2) {
-        second = idx - offset
-        break
-      }
+      maxFqIdx = idx
     }
   }
-  val mode = if (seen >= 2) second else first
+  val mode = maxFqIdx - offset
+
   // 4) 범위
   val range = maxIdx - minIdx
 
