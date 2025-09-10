@@ -1,6 +1,5 @@
 import java.io.StreamTokenizer
-import kotlin.math.max
-import kotlin.math.roundToInt
+import kotlin.math.*
 
 fun main() =
     with(StreamTokenizer(System.`in`.bufferedReader())) {
@@ -24,41 +23,64 @@ fun main() =
     }
 
 fun solution(a: IntArray): String {
-  val arr = a.sorted()
-
-  // 2
-  val median = arr[arr.size / 2]
-
-  // 3
+  val offset = 4000
+  val cnt = IntArray(offset * 2 + 1)
   var sum = 0
-  val map = mutableMapOf<Int, Int>()
-  var maxFq = 0
-  for (v in arr) {
+  var minIdx = offset * 2 + 1
+  var maxIdx = -1
+
+  // 중복 개수 카운팅
+  for (v in a) {
+    val idx = v + offset
+    cnt[idx]++
     sum += v
-    val fq = map.getOrDefault(v, 0) + 1
-    map[v] = fq
-    maxFq = max(maxFq, fq)
+    if (idx < minIdx) minIdx = idx
+    if (idx > maxIdx) maxIdx = idx
   }
 
-  val modeCandidates = map.filter { it.value == maxFq }.keys.sorted()
-  val mode = if (modeCandidates.size >= 2) modeCandidates[1] else modeCandidates[0]
+  // 1) 산술평균
+  val avg = sum.toDouble() / a.size
+  val mean = if (avg >= 0) floor(avg + 0.5).toInt() else ceil(avg - 0.5).toInt()
 
-  // 4
-  val range = arr.last() - arr.first()
+  // 2) 중앙값
+  val targetIdx = (a.size + 1) / 2
+  var median = 0
+  var acc = 0
 
-  // 1
-  val mean = (sum.toDouble() / arr.size).roundToInt()
+  run {
+    for (idx in minIdx..maxIdx) {
+      acc += cnt[idx]
+      if (acc >= targetIdx) {
+        median = idx - offset
+        break
+      }
+    }
+  }
 
-  // ---------------------------------------------------------------------
-  val sb = StringBuilder()
-  // 산술평균
-  sb.append(mean).append("\n")
-  // 중앙값
-  sb.append(median).append("\n")
-  // 최빈값
-  sb.append(mode).append("\n")
-  // 범위
-  sb.append(range)
+  // 3) 최빈값 (동률 시, 두 번째 작은 값)
+  var maxFq = 0
+  var seen = 0
+  var maxFqIdx = 0
 
-  return sb.toString()
+  for (idx in minIdx..maxIdx) {
+    if (cnt[idx] > maxFq) {
+      maxFq = cnt[idx]
+      maxFqIdx = idx
+      seen = 1
+    } else if (cnt[idx] == maxFq && seen == 1) {
+      seen++
+      maxFqIdx = idx
+    }
+  }
+  val mode = maxFqIdx - offset
+
+  // 4) 범위
+  val range = maxIdx - minIdx
+
+  return buildString {
+    append(mean).append('\n')
+    append(median).append('\n')
+    append(mode).append('\n')
+    append(range)
+  }
 }
