@@ -1,5 +1,6 @@
 import java.io.StreamTokenizer
-import kotlin.math.*
+import kotlin.math.max
+import kotlin.math.roundToInt
 
 fun main() =
     with(StreamTokenizer(System.`in`.bufferedReader())) {
@@ -16,22 +17,22 @@ fun main() =
         return nval.toInt()
       }
 
-      print(solution(IntArray(nextInt()) { nextInt() }))
+      val size = nextInt()
+      val nums = IntArray(size) { nextInt() }
+
+      print(solution(nums))
     }
 
 fun solution(a: IntArray): String {
   val arr = a.sorted()
 
   // 2
-  val median = arr[round((arr.size / 2).toDouble()).toInt()]
+  val median = arr[arr.size / 2]
 
   // 3
-  var mode = Int.MIN_VALUE
-
   var sum = 0
   val map = mutableMapOf<Int, Int>()
   var maxFq = 0
-
   for (v in arr) {
     sum += v
     val fq = map.getOrDefault(v, 0) + 1
@@ -39,27 +40,14 @@ fun solution(a: IntArray): String {
     maxFq = max(maxFq, fq)
   }
 
-  val modeArr = IntArray(2) { Int.MIN_VALUE } // 최빈값 (중복 시, 두 번째로 작은 값)
-  for (entry in map) {
-    if (maxFq == entry.value) {
-      mode =
-          if (modeArr[0] == Int.MIN_VALUE) {
-            modeArr[0] = entry.key
-            entry.key
-          } else if (modeArr[1] == Int.MIN_VALUE) {
-            modeArr[1] = entry.key
-            entry.key
-          } else continue
-    }
-  }
+  val modeCandidates = map.filter { it.value == maxFq }.keys.sorted()
+  val mode = if (modeCandidates.size >= 2) modeCandidates[1] else modeCandidates[0]
 
   // 4
-  val min = arr[0]
-  val max = arr[arr.size - 1]
-  val range = max - min
+  val range = arr.last() - arr.first()
 
   // 1
-  val mean = (sum.toDouble() / arr.size.toDouble()).roundToInt()
+  val mean = (sum.toDouble() / arr.size).roundToInt()
 
   // ---------------------------------------------------------------------
   val sb = StringBuilder()
