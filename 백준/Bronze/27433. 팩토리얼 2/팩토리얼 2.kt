@@ -1,25 +1,12 @@
-
-import java.util.*
-
 fun main() {
 
-  val sc = Scanner(System.`in`)
-
-  val m = sc.nextInt()
-  println(solution(m))
+  val br = System.`in`.bufferedReader()
+  val n = br.readLine().trim().toInt()
+  print(FACT[n])
 }
 
-fun solution(v: Int): Long {
-
-  val cache = LongArray(21) { 0 }
-
-  fun factorial(n: Int): Long {
-    return if (cache[n] != 0L) cache[n] else if (n <= 1) 1 else n * factorial(n - 1)
-  }
-
-  for (i in 0..20) {
-    cache[i] = factorial(i)
-  }
-
-  return cache[v]
-}
+val FACT =
+    LongArray(21).apply {
+      this[0] = 1
+      for (i in 1..20) this[i] = this[i - 1] * i
+    }
