@@ -1,4 +1,3 @@
-
 import java.io.StreamTokenizer
 
 fun main() =
@@ -12,28 +11,31 @@ fun main() =
     }
 
 fun solution(n: Int, m: Int): String {
-  val builder = StringBuilder()
+  val out = StringBuilder()
+  val used = BooleanArray(n)
+  val arr = IntArray(m)
 
-  val ch = IntArray(n + 1) { 0 }
-  val combi = IntArray(m) { 0 }
+  fun dfs(order: Int) {
+    if (order == m) {
 
-  dfs(0, m, n, ch, builder, combi)
-
-  return builder.trim().toString()
-}
-
-fun dfs(depth: Int, m: Int, n: Int, ch: IntArray, builder: StringBuilder, combi: IntArray) {
-  if (depth > combi.size) return
-
-  if (depth == combi.size) {
-    builder.append(combi.joinToString(" ")).append("\n")
-  } else {
-    for (i in 1..n) {
-      if (ch[i] == 1) continue
-      ch[i] = 1
-      combi[depth] = i
-      dfs(depth + 1, m, n, ch, builder, combi)
-      ch[i] = 0
+      for (i in 0 until m) {
+        out.append(arr[i])
+        if (i + 1 < m) out.append(" ")
+      }
+      out.append("\n")
+      return
+    }
+    //
+    for (i in 0 until n) {
+      if (used[i]) continue
+      used[i] = true
+      arr[order] = i + 1
+      dfs(order + 1)
+      used[i] = false
     }
   }
+
+  dfs(0)
+
+  return out.trim().toString()
 }
