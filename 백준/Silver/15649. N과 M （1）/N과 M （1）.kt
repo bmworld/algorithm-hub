@@ -20,11 +20,14 @@ fun solveTo(n: Int, m: Int, out: Appendable) {
   val used = BooleanArray(n)
   val arr = IntArray(m)
 
+  val line = StringBuilder(m * 2) // 줄 단위, 재사용 버퍼
   fun writeLine() {
+    line.setLength(0) // 초기화
     for (i in 0 until m) {
-      out.append(arr[i].toString())
-      if (i + 1 < m) out.append(' ')
+      line.append(arr[i])
+      if (i + 1 < m) line.append(' ')
     }
+    out.append(line)
     out.append('\n')
   }
 
