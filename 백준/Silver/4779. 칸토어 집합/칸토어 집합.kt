@@ -1,0 +1,60 @@
+import java.io.*
+import kotlin.math.pow
+
+fun main() =
+    with(StreamTokenizer(System.`in`.bufferedReader())) {
+      fun nextInt(): Int {
+        nextToken()
+        return nval.toInt()
+      }
+
+      BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
+        while (true) {
+          nextToken()
+          if (ttype == StreamTokenizer.TT_EOF) break
+          val n =
+              when (ttype) {
+                StreamTokenizer.TT_NUMBER -> nval.toInt()
+                else -> continue // 공백/개행 등 스킵
+              }
+          solveTo(n, bw)
+        }
+
+        bw.flush()
+      }
+    }
+
+/** 제출용 */
+fun solveTo(n: Int, out: Appendable) {
+  val cnt = 3.0.pow(n).toInt()
+
+  val ogStr = "-".repeat(cnt)
+  val line = StringBuilder(ogStr)
+
+  fun writeLine() {
+    out.append(line)
+    out.append('\n')
+    line.setLength(0) // 초기화
+  }
+
+  fun cantor(sttIdx: Int, endIdx: Int) {
+
+    val secRange = (endIdx - sttIdx + 1) / 3
+    if (secRange < 1) return
+    // 3등분
+    for (i in sttIdx..endIdx step secRange) {
+      val isMiddle = i in sttIdx + secRange until sttIdx + secRange * 2
+      // 섹션 처리 (가운데 섹션: 공란)
+      for (j in i until i + secRange) {
+        line[j] = if (isMiddle) ' ' else line[j]
+      }
+
+      if (secRange >= 3) {
+        cantor(i, i + secRange - 1)
+      }
+    }
+  }
+
+  cantor(0, line.length - 1)
+  writeLine()
+}
