@@ -3,20 +3,21 @@ package 백준.Silver.no4779
 import java.io.*
 import kotlin.math.pow
 
-fun main() =
-    with(StreamTokenizer(System.`in`.bufferedReader())) {
-      fun nextInt(): Int {
-        nextToken()
-        return nval.toInt()
-      }
+fun main() {
+  val st = StreamTokenizer(System.`in`.bufferedReader())
+  val bw = BufferedWriter(OutputStreamWriter(System.out))
 
-      val n = nextInt()
+  while (true) {
+    val t = st.nextToken()
+    if (t == StreamTokenizer.TT_EOF) break
+    if (t != StreamTokenizer.TT_NUMBER) continue
 
-      BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
-        solveTo(n, bw)
-        bw.flush()
-      }
-    }
+    val n = st.nval.toInt()
+    solveTo(n, bw) // BufferedWriter를 그대로 넘김
+  }
+
+  bw.flush()
+}
 
 /** 제출용 */
 fun solveTo(n: Int, out: Appendable) {
