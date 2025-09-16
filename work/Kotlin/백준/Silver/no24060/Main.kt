@@ -22,73 +22,68 @@ fun main() =
 
 /** 제출용 */
 fun solveTo(k: Int, A: IntArray, out: Appendable) {
-  val answer = IntArray(2) //  [업데이트 회수, 결과값]
-  answer[1] = -1
-
-  fun writeLine() {
-    when (out) {
-      is BufferedWriter -> {
-        val bw = out as BufferedWriter
-        bw.write(answer[1].toString())
-      }
-      is Writer -> {
-        val w = out as Writer
-        w.write(answer[1].toString())
-      }
-      else -> {
-        out.append(answer[1].toString())
-      }
-    }
-  }
-
+  var answer = -1
+  var found = false
+  var writes = 0
   val tmp = IntArray(A.size)
-  mergeSort(A, 0, A.size - 1, tmp, k, answer)
 
-  writeLine()
-}
+  fun merge(A: IntArray, p: Int, q: Int, r: Int) {
+    if (found) return
+    var i = p
+    var j = q + 1
+    var t = 0 // tmp index
 
-fun mergeSort(A: IntArray, p: Int, r: Int, tmp: IntArray, k: Int, aw: IntArray) {
-  if (p >= r) return
-  val q = (p + r) / 2 // 중
-  mergeSort(A, p, q, tmp, k, aw) // 전
-  mergeSort(A, q + 1, r, tmp, k, aw) // 후
-  merge(A, p, q, r, tmp, k, aw) // 합
-}
-
-fun merge(A: IntArray, p: Int, q: Int, r: Int, tmp: IntArray, k: Int, aw: IntArray) {
-  var i = p
-  var j = q + 1
-  var t = 0 // tmp index
-
-  while (i <= q && j <= r) {
-
-    if (A[i] <= A[j]) {
-
-      tmp[t++] = A[i++]
-      updateAnswer(k, aw, tmp[t - 1])
-    } else {
-      tmp[t++] = A[j++]
-      updateAnswer(k, aw, tmp[t - 1])
+    // 정렬
+    while (i <= q && j <= r) {
+      val v = if (A[i] <= A[j]) A[i++] else A[j++]
+      tmp[t++] = v
+      writes++
+      if (writes == k) {
+        answer = v
+        found = true
+      }
     }
-  }
-  while (i <= q) {
-    tmp[t++] = A[i++] // 전 나머지
-    updateAnswer(k, aw, tmp[t - 1])
-  }
-  while (j <= r) {
-    tmp[t++] = A[j++] // 후 나머지
-    updateAnswer(k, aw, tmp[t - 1])
+
+    // 전 나머지
+    while (!found && i <= q) {
+      val v = A[i++]
+      tmp[t++] = v
+      writes++
+      if (writes == k) {
+        answer = v
+        found = true
+      }
+    }
+
+    // 후 나머지
+    while (!found && j <= r) {
+      val v = A[j++]
+      tmp[t++] = v
+      writes++
+      if (writes == k) {
+        answer = v
+        found = true
+      }
+    }
+
+    // copy: tmp[0 until t] -> A[p..r]
+    System.arraycopy(tmp, 0, A, p, t)
   }
 
-  // copy: tmp[0 until t] -> A[p..r]
-  System.arraycopy(tmp, 0, A, p, t)
-}
-
-fun updateAnswer(k: Int, aw: IntArray, v: Int) {
-  aw[0]++
-  if (aw[0] == k) {
-    aw[1] = v
+  fun mergeSort(A: IntArray, p: Int, r: Int) {
+    if (found) return
+    if (p >= r) return
+    val q = (p + r) / 2 // 중
+    mergeSort(A, p, q) // 전
+    if (found) return
+    mergeSort(A, q + 1, r) // 후
+    if (found) return
+    merge(A, p, q, r) // 합
   }
+
+  mergeSort(A, 0, A.size - 1)
+
+  out.append(answer.toString())
 }
 
 /** 테스트용 */
