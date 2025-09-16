@@ -39,6 +39,7 @@ fun solveTo(k: Int, A: IntArray, out: Appendable) {
       if (writes == k) {
         answer = v
         found = true
+        return
       }
     }
 
@@ -50,6 +51,7 @@ fun solveTo(k: Int, A: IntArray, out: Appendable) {
       if (writes == k) {
         answer = v
         found = true
+        return
       }
     }
 
@@ -61,6 +63,7 @@ fun solveTo(k: Int, A: IntArray, out: Appendable) {
       if (writes == k) {
         answer = v
         found = true
+        return
       }
     }
 
@@ -81,5 +84,11 @@ fun solveTo(k: Int, A: IntArray, out: Appendable) {
 
   mergeSort(A, 0, A.size - 1)
 
-  out.append(answer.toString())
+  when (out) {
+    is BufferedWriter -> {
+      out.write(answer.toString())
+      out.newLine()
+    }
+    else -> out.append(answer.toString())
+  }
 }
