@@ -1,13 +1,23 @@
 package 백준.Bronze.no10870
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import java.io.BufferedInputStream
 
-fun main() =
-    with(BufferedReader(InputStreamReader(System.`in`))) {
-      val n = readLine().toInt()
-      print(fib[n])
-    }
+fun main() {
+  val br = BufferedInputStream(System.`in`)
+  val n = readInt(br)
+  print(fib[n])
+}
+
+private fun readInt(input: BufferedInputStream): Int {
+  var c = input.read()
+  while (c <= 32) c = input.read()
+  var n = 0
+  while (c >= '0'.code) {
+    n = n * 10 + (c - '0'.code)
+    c = input.read()
+  }
+  return n
+}
 
 val fib =
     IntArray(21).apply {
