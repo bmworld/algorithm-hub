@@ -1,14 +1,12 @@
-import java.io.BufferedWriter
-import java.io.OutputStreamWriter
+import java.io.*
 
-fun main() {
-  val br = System.`in`.bufferedReader()
-  val n = br.readLine().toInt()
-  val bw = BufferedWriter(OutputStreamWriter(System.out))
-
-  solveTo(n, bw)
-  bw.flush()
-}
+fun main() =
+    with(BufferedReader(InputStreamReader(System.`in`))) {
+      val n = readLine().toInt()
+      val bw = BufferedWriter(OutputStreamWriter(System.out))
+      solveTo(n, bw)
+      bw.flush()
+    }
 
 /** 제출용 */
 fun solveTo(n: Int, out: Appendable) {
@@ -19,11 +17,10 @@ fun solveTo(n: Int, out: Appendable) {
         this[1] = 1
         for (i in 2..20) this[i] = this[i - 1] + this[i - 2]
       }
-  val fibStr = Array(21) { fib[it].toString() }
 
-  val answer = fibStr[n]
+  val answer = fib[n]
   when (out) {
-    is BufferedWriter -> out.write(answer)
-    else -> out.append(answer)
+    is BufferedWriter -> println(answer)
+    else -> out.append(answer.toString())
   }
 }
