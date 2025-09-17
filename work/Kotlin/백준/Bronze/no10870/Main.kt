@@ -6,30 +6,17 @@ import java.io.InputStreamReader
 fun main() =
     with(BufferedReader(InputStreamReader(System.`in`))) {
       val n = readLine().toInt()
-      solveTo(n, null)
+      print(fib[n])
     }
 
-/** 제출용 */
-fun solveTo(n: Int, out: Appendable?) {
-
-  var a = 0
-  var b = 1
-  for (i in 2..n) {
-    val tmp = a + b
-    a = b
-    b = tmp
-  }
-  val answer = if (n == 0) 0 else if (n == 1) 1 else b
-
-  when (out) {
-    is StringBuilder -> out.append(answer.toString())
-    else -> println(answer)
-  }
-}
+val fib =
+    IntArray(21).apply {
+      this[0] = 0
+      this[1] = 1
+      for (i in 2..20) this[i] = this[i - 1] + this[i - 2]
+    }
 
 /** 테스트용 */
 fun solution(n: Int): Int {
-  val sb = StringBuilder()
-  solveTo(n, sb)
-  return sb.toString().toInt()
+  return fib[n]
 }
