@@ -1,36 +1,29 @@
-import java.io.*
+import java.io.BufferedWriter
+import java.io.OutputStreamWriter
 
-fun main() =
-    with(StreamTokenizer(System.`in`.bufferedReader())) {
-      fun nextInt(): Int {
-        nextToken()
-        return nval.toInt()
-      }
+fun main() {
+  val br = System.`in`.bufferedReader()
+  val n = br.readLine().toInt()
+  val bw = BufferedWriter(OutputStreamWriter(System.out))
 
-      BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
-        solveTo(nextInt(), bw) // BufferedWriter를 그대로 넘김
-        bw.flush()
-      }
-    }
+  solveTo(n, bw)
+  bw.flush()
+}
 
 /** 제출용 */
 fun solveTo(n: Int, out: Appendable) {
 
-  val answer: Int = FIBO[n]
+  val fib =
+      IntArray(21).apply {
+        this[0] = 0
+        this[1] = 1
+        for (i in 2..20) this[i] = this[i - 1] + this[i - 2]
+      }
+  val fibStr = Array(21) { fib[it].toString() }
 
+  val answer = fibStr[n]
   when (out) {
-    is BufferedWriter -> {
-      out.write(answer.toString())
-      out.newLine()
-    }
-
-    else -> out.append(answer.toString())
+    is BufferedWriter -> out.write(answer)
+    else -> out.append(answer)
   }
 }
-
-private val FIBO =
-    IntArray(21).apply {
-      this[0] = 0
-      this[1] = 1
-      for (i in 2..20) this[i] = this[i - 1] + this[i - 2]
-    }
