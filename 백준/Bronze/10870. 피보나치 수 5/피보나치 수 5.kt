@@ -1,26 +1,26 @@
-import java.io.*
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
 fun main() =
     with(BufferedReader(InputStreamReader(System.`in`))) {
       val n = readLine().toInt()
-      val bw = BufferedWriter(OutputStreamWriter(System.out))
-      solveTo(n, bw)
-      bw.flush()
+      solveTo(n, null)
     }
 
 /** 제출용 */
-fun solveTo(n: Int, out: Appendable) {
+fun solveTo(n: Int, out: Appendable?) {
 
-  val fib =
-      IntArray(21).apply {
-        this[0] = 0
-        this[1] = 1
-        for (i in 2..20) this[i] = this[i - 1] + this[i - 2]
-      }
+  var a = 0
+  var b = 1
+  for (i in 2..n) {
+    val tmp = a + b
+    a = b
+    b = tmp
+  }
+  val answer = if (n == 0) 0 else if (n == 1) 1 else b
 
-  val answer = fib[n]
   when (out) {
-    is BufferedWriter -> println(answer)
-    else -> out.append(answer.toString())
+    is StringBuilder -> out.append(answer.toString())
+    else -> println(answer)
   }
 }
