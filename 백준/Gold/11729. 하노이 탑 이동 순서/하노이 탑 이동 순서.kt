@@ -18,16 +18,16 @@ private fun readInt(input: BufferedInputStream): Int {
 
 fun solveTo(n: Int, out: Appendable) {
   var cnt = 0
-  val str = StringBuilder()
+  val sb = StringBuilder()
 
   fun move(l: Int, from: Int, to: Int, via: Int) {
     if (l == 1) {
       cnt++
-      str.append("$from $to").append("\n")
+      sb.append(from).append(' ').append(to).append('\n')
     } else {
       move(l - 1, from, via, to)
       cnt++
-      str.append("$from $to").append("\n")
+      sb.append(from).append(' ').append(to).append('\n')
       move(l - 1, via, to, from)
     }
   }
@@ -35,5 +35,5 @@ fun solveTo(n: Int, out: Appendable) {
   move(n, 1, 3, 2)
 
   out.append(cnt.toString()).append('\n')
-  out.append(str)
+  out.append(sb)
 }
