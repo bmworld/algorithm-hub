@@ -4,31 +4,7 @@ import java.io.*
 
 fun main() {
   val n = readInt(BufferedInputStream(System.`in`))
-  val bw = BufferedWriter(OutputStreamWriter(System.out))
-  println(solveTo(n, bw))
-}
-
-fun solveTo(n: Int, out: Appendable) {
-
-  var answer = ""
-
-  when (out) {
-    is BufferedWriter -> {
-      val bw = out as BufferedWriter
-      bw.write(answer)
-      bw.newLine()
-    }
-    is Writer -> {
-      val w = out as Writer
-      w.write(answer)
-      out.append('\n')
-    }
-    else -> {
-      out.append(answer)
-    }
-  }
-
-  // 하노이탑.
+  BufferedWriter(OutputStreamWriter(System.out)).use { bw -> solveTo(n, bw) }
 }
 
 private fun readInt(input: BufferedInputStream): Int {
@@ -40,6 +16,28 @@ private fun readInt(input: BufferedInputStream): Int {
     c = input.read()
   }
   return n
+}
+
+fun solveTo(n: Int, out: Appendable) {
+  var cnt = 0
+  val sb = StringBuilder()
+
+  fun move(l: Int, from: Int, to: Int, via: Int) {
+    if (l == 1) {
+      cnt++
+      sb.append(from).append(' ').append(to).append('\n')
+    } else {
+      move(l - 1, from, via, to)
+      cnt++
+      sb.append(from).append(' ').append(to).append('\n')
+      move(l - 1, via, to, from)
+    }
+  }
+
+  move(n, 1, 3, 2)
+
+  out.append(cnt.toString()).append('\n')
+  out.append(sb)
 }
 
 /** 테스트용 */
