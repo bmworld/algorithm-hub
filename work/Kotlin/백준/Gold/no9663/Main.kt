@@ -26,9 +26,6 @@ fun solveTo(n: Int, out: Appendable) {
   fun checkRow(y: Int, x: Int) {
     if (y >= n) return
 
-    // 열검증하고, 넘김
-    for (nx in 0 until n) {}
-
     // 충돌판정
     var trouble = false
     // 열
@@ -72,13 +69,19 @@ fun solveTo(n: Int, out: Appendable) {
     // ---------------------------------------------------------------------
     // 다음
     for (nx in 0 until n) {
-      board[y][nx] = true
+      board[y + 1][nx] = true
       checkRow(y + 1, nx)
-      board[y][nx] = false
+      board[y + 1][nx] = false
     }
   }
 
-  checkRow(0, 0)
+  var x = 0
+  while (x < n) {
+    board[0][x] = true
+    checkRow(0, x)
+    board[0][x] = false
+    x++
+  }
 
   out.append(answer.toString())
 }
