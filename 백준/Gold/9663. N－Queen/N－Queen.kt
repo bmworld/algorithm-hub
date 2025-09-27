@@ -16,15 +16,15 @@ private fun readInt(input: BufferedInputStream): Int {
   return n
 }
 
-/** @param n 체크판 한변 크기 & 퀸 개수 (1<=n<15) */
+/** @param n 체크판 한 변 크기 & 퀸 개수 (1<=n<15) */
 fun solveTo(n: Int, out: Appendable) {
   var answer = 0
   // 열
-  val colCh = BooleanArray(n * 2) { false }
+  val colCh = BooleanArray(n * 2)
   // 주대각
-  val diaLCh = BooleanArray(n * 3) { false }
+  val diaLCh = BooleanArray(n * 2)
   // 부대각
-  val diaRCh = BooleanArray(n * 2) { false }
+  val diaRCh = BooleanArray(n * 2)
 
   fun check(y: Int, x: Int) {
     // 점검
@@ -56,9 +56,8 @@ fun solveTo(n: Int, out: Appendable) {
   for (x in 0 until n / 2) check(0, x)
   answer *= 2
 
-  // 홀수 -> 중앙값처리
-  val isOdd = n % 2 == 1
-  if (isOdd) {
+  // 홀수 -> 중앙값
+  if (n % 2 == 1) {
     check(0, n / 2)
   }
 
