@@ -19,64 +19,47 @@ private fun readInt(input: BufferedInputStream): Int {
 /** @param n 체크판 한변 크기 & 퀸 개수 (1<=n<15) */
 fun solveTo(n: Int, out: Appendable) {
   var answer = 0
-  val board = Array(n) { BooleanArray(n) { false } }
+  // 열
+  val colCh = BooleanArray(n * 2) { false }
+  // 주대각
+  val diaLCh = BooleanArray(n * 3) { false }
+  // 부대각
+  val diaRCh = BooleanArray(n * 2) { false }
 
-  fun checkRow(y: Int, x: Int) {
-    if (y >= n) return
-
-    // 충돌판정
-    var trouble = false
-    // 열
-    var uy = y - 1
-    while (uy >= 0) {
-      if (board[uy--][x]) {
-        trouble = true
-        break
-      }
-    }
-
-    // 좌상
-    var ulx = x - 1
-    var uly = y - 1
-    while (uly >= 0 && ulx >= 0) {
-      if (board[uly--][ulx--]) {
-        trouble = true
-        break
-      }
-    }
-
-    // 우상
-    var urx = x + 1
-    var ury = y - 1
-    while (urx < n && ury >= 0) {
-      if (board[ury--][urx++]) {
-        trouble = true
-        break
-      }
-    }
-
-    if (trouble) return
+  fun check(y: Int, x: Int) {
+    // 점검
+    if (colCh[x]) return
+    if (diaLCh[n + x - y]) return
+    if (diaRCh[x + y]) return
 
     // 선택
-    if (y + 1 == n) {
-      answer++
-      return
-    }
+    colCh[x] = true
+    diaLCh[n + x - y] = true
+    diaRCh[x + y] = true
 
     // 다음
-    for (nx in 0 until n) {
-      board[y + 1][nx] = true
-      checkRow(y + 1, nx)
-      board[y + 1][nx] = false
+    if (y == n - 1) {
+      answer++
+    } else {
+      for (nx in 0 until n) {
+        check(y + 1, nx)
+      }
     }
+
+    // 해제
+    colCh[x] = false
+    diaLCh[n + x - y] = false
+    diaRCh[x + y] = false
   }
 
-  var x = 0
-  while (x < n) {
-    board[0][x] = true
-    checkRow(0, x)
-    board[0][x] = false
-    x++
+  // 거울
+  for (x in 0 until n / 2) check(0, x)
+  answer *= 2
+
+  // 홀수 -> 중앙값처리
+  val isOdd = n % 2 == 1
+  if (isOdd) {
+    check(0, n / 2)
   }
 
   out.append(answer.toString())
