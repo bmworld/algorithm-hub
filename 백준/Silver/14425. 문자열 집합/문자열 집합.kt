@@ -8,26 +8,23 @@ fun main() {
   val n = str.nextToken().toInt()
   val m = str.nextToken().toInt()
 
-  val s = Array(n) { br.readLine() }
+  val set = LinkedHashSet<String>()
+  repeat(n) { set.add(br.readLine()) }
+
   val strs = Array(m) { br.readLine() }
 
-  BufferedWriter(OutputStreamWriter(System.out)).use { bw -> solveTo(s, strs, bw) }
+  BufferedWriter(OutputStreamWriter(System.out)).use { bw -> solveTo(set, strs, bw) }
 }
 
 fun solveTo(
-    group: Array<String>,
+    set: LinkedHashSet<String>,
     strings: Array<String>,
     out: Appendable,
 ) {
   var answer = 0
 
   for (t in strings) {
-    for (g in group) {
-      if (g == t) {
-        answer++
-        break
-      }
-    }
+    if (set.contains(t)) answer++
   }
 
   out.append(answer.toString())
