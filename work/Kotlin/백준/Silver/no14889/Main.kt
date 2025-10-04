@@ -34,20 +34,40 @@ fun solveTo(
 
   fun dfs(l: Int, stt: Int) {
     if (l == teamSize) {
-
-      // 선택된 항목
+      // 초기화
       t1.clear()
       t2.clear()
+      // 선택항목 점수계산
       for ((idx, bool) in ch.withIndex()) {
         if (bool) t1.add(idx) else t2.add(idx)
       }
 
-      val t1s = 0
-      val t2s = 0
+      var t1Sum = 0
+      var t1L = 0
+      while (t1L < teamSize) {
+        val t1m1 = t1[t1L]
+        for (t1R in t1L + 1 until teamSize) {
+          val t1m2 = t1[t1R]
+          t1Sum += board[t1m1][t1m2] + board[t1m2][t1m1]
+        }
 
-      // 점수 계산
+        t1L++
+      }
 
-      var diff = if (t1s < t2s) t2s - t1s else t1s - t2s
+      var t2Sum = 0
+      var t2L = 0
+      while (t2L < teamSize) {
+        val t2m1 = t2[t2L]
+        for (t2R in t2L + 1 until teamSize) {
+          val t2m2 = t2[t2R]
+          t2Sum += board[t2m1][t2m2] + board[t2m2][t2m1]
+        }
+
+        t2L++
+      }
+
+      // 차이값
+      val diff = if (t1Sum < t2Sum) t2Sum - t1Sum else t1Sum - t2Sum
       if (diff < answer) answer = diff
       return
     }
@@ -62,14 +82,11 @@ fun solveTo(
   dfs(0, 0)
 
   out.append(answer.toString())
-
-  // TODO 2차원 배열에 (i,j) 점수 캐싱??
-  // TODO args -> 팀1,2 '누적 점수'사용?
 }
 
 /** 테스트 */
-fun solution(board: Array<IntArray>): String {
+fun solution(board: Array<IntArray>): Int {
   val sb = StringBuilder()
   solveTo(board, sb)
-  return sb.trimEnd().toString()
+  return sb.toString().toInt()
 }
