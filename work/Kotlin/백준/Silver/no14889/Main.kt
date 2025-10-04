@@ -26,7 +26,45 @@ fun solveTo(
     out: Appendable,
 ) {
 
-  out.append()
+  var answer = Int.MAX_VALUE
+  val teamSize = board.size / 2
+  val t1 = mutableListOf<Int>()
+  val t2 = mutableListOf<Int>()
+  val ch = BooleanArray(board.size)
+
+  fun dfs(l: Int, stt: Int) {
+    if (l == teamSize) {
+
+      // 선택된 항목
+      t1.clear()
+      t2.clear()
+      for ((idx, bool) in ch.withIndex()) {
+        if (bool) t1.add(idx) else t2.add(idx)
+      }
+
+      val t1s = 0
+      val t2s = 0
+
+      // 점수 계산
+
+      var diff = if (t1s < t2s) t2s - t1s else t1s - t2s
+      if (diff < answer) answer = diff
+      return
+    }
+
+    for (i in stt until board.size) {
+      ch[i] = true
+      dfs(l + 1, i + 1)
+      ch[i] = false
+    }
+  }
+
+  dfs(0, 0)
+
+  out.append(answer.toString())
+
+  // TODO 2차원 배열에 (i,j) 점수 캐싱??
+  // TODO args -> 팀1,2 '누적 점수'사용?
 }
 
 /** 테스트 */
