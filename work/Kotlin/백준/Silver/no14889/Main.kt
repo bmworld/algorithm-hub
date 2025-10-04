@@ -1,6 +1,8 @@
 package 백준.Silver.no14889
 
 import java.io.*
+import kotlin.math.abs
+import kotlin.math.min
 
 fun main() =
     with(StreamTokenizer(System.`in`.bufferedReader())) {
@@ -16,8 +18,6 @@ fun main() =
     }
 
 /**
- * - i, j 능력치 = Sij, Sji 2가지 더해야함
- *
  * @param board 능력치판
  * @return 두 팀의 능력치 차이 최소값
  */
@@ -27,59 +27,69 @@ fun solveTo(
 ) {
 
   var answer = Int.MAX_VALUE
-  val teamSize = board.size / 2
-  val t1 = mutableListOf<Int>()
-  val t2 = mutableListOf<Int>()
-  val ch = BooleanArray(board.size)
+  val n = board.size
+  val half = n / 2
 
-  fun dfs(l: Int, stt: Int) {
-    if (l == teamSize) {
-      // 초기화
-      t1.clear()
-      t2.clear()
-      // 선택항목 점수계산
-      for ((idx, bool) in ch.withIndex()) {
-        if (bool) t1.add(idx) else t2.add(idx)
+  // 전처리: 능력치
+  val pair = Array(n) { IntArray(n) }
+  for (i in 0 until n) {
+    for (j in i + 1 until n) {
+      pair[i][j] = board[i][j] + board[j][i]
+    }
+  }
+
+  // 팀 할당
+  val t1 = IntArray(half)
+  t1[0] = 0 // 0번은 팀1에 고정
+  val t2 = IntArray(half)
+
+  // 합
+  fun sumPairs(team: IntArray): Int {
+    var sum = 0
+    for (i1 in 0 until half) {
+      val ti1 = team[i1]
+      for (i2 in i1 + 1 until half) {
+        val ti2 = team[i2]
+        val i = min(ti1, ti2)
+        val j = if (i == ti1) ti2 else ti1
+        sum += pair[i][j]
       }
+    }
 
-      var t1Sum = 0
-      var t1L = 0
-      while (t1L < teamSize) {
-        val t1m1 = t1[t1L]
-        for (t1R in t1L + 1 until teamSize) {
-          val t1m2 = t1[t1R]
-          t1Sum += board[t1m1][t1m2] + board[t1m2][t1m1]
+    return sum
+  }
+
+  fun dfs(idx: Int, start: Int) {
+    if (idx == half) {
+      // 상대팀 할당
+      var t1i = 0
+      var t2i = 0
+      var num = 0
+      while (num < n) {
+        if (t1i < half && t1[t1i] == num) {
+          t1i++
+        } else {
+          t2[t2i++] = num
         }
-
-        t1L++
+        num++
       }
 
-      var t2Sum = 0
-      var t2L = 0
-      while (t2L < teamSize) {
-        val t2m1 = t2[t2L]
-        for (t2R in t2L + 1 until teamSize) {
-          val t2m2 = t2[t2R]
-          t2Sum += board[t2m1][t2m2] + board[t2m2][t2m1]
-        }
+      // 능력치 비교
+      val s1 = sumPairs(t1)
+      val s2 = sumPairs(t2)
 
-        t2L++
-      }
-
-      // 차이값
-      val diff = if (t1Sum < t2Sum) t2Sum - t1Sum else t1Sum - t2Sum
+      val diff = abs(s1 - s2)
       if (diff < answer) answer = diff
       return
     }
 
-    for (i in stt until board.size) {
-      ch[i] = true
-      dfs(l + 1, i + 1)
-      ch[i] = false
+    for (num in start until n) {
+      t1[idx] = num
+      dfs(idx + 1, num + 1)
     }
   }
 
-  dfs(0, 0)
+  dfs(1, 1)
 
   out.append(answer.toString())
 }
