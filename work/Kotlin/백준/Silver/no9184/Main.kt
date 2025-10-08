@@ -21,36 +21,27 @@ fun main() {
   bw.flush()
 }
 
-val cache = Array(101) { Array(101) { IntArray(101) } }
+val cache = Array(21) { Array(21) { IntArray(21) } }
 
 /** 제출용 */
 fun solveTo(a: Int, b: Int, c: Int, out: Appendable) {
 
+  cache[0][0][0] = 1
+
   fun w(a: Int, b: Int, c: Int): Int {
     return if (a <= 0 || b <= 0 || c <= 0) 1
-    else if (cache[a][b][c] != 0) cache[a][b][c]
     else if (a > 20 || b > 20 || c > 20) {
-      val v = w(20, 20, 20)
-      cache[20][20][20] = v
-      v
-    } else if (a < b && b < c) {
-      val v1 = w(a, b, c - 1)
-      cache[a][b][c - 1] = v1
-      val v2 = w(a, b - 1, c - 1)
-      cache[a][b - 1][c - 1] = v2
-      val v3 = w(a, b - 1, c)
-      cache[a][b - 1][c] = v3
-      v1 + v2 - v3
-    } else {
-      val v1 = w(a - 1, b, c)
-      cache[a - 1][b][c] = v1
-      val v2 = w(a - 1, b - 1, c)
-      cache[a - 1][b - 1][c] = v2
-      val v3 = w(a - 1, b, c - 1)
-      cache[a - 1][b][c - 1] = v3
-      val v4 = w(a - 1, b - 1, c - 1)
-      cache[a - 1][b - 1][c - 1] = v4
-      v1 + v2 + v3 - v4
+      w(20, 20, 20)
+    } else if (cache[a][b][c] != 0) cache[a][b][c]
+    else {
+      cache[a][b][c] =
+          if (a < b && b < c) {
+            w(a, b, c - 1) + w(a, b - 1, c - 1) - w(a, b - 1, c)
+          } else {
+            w(a - 1, b, c) + w(a - 1, b - 1, c) + w(a - 1, b, c - 1) - w(a - 1, b - 1, c - 1)
+          }
+
+      cache[a][b][c]
     }
   }
 
