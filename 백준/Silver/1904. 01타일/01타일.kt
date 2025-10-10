@@ -1,19 +1,8 @@
-import java.io.*
+import java.io.BufferedInputStream
 
 fun main() {
   val n = readInt(BufferedInputStream(System.`in`))
-  BufferedWriter(OutputStreamWriter(System.out)).use { bw -> solveTo(n, bw) }
-}
-
-private fun readInt(input: BufferedInputStream): Int {
-  var c = input.read()
-  while (c <= 32) c = input.read()
-  var n = 0
-  while (c in 48..57) { // '0' ~ '9'
-    n = n * 10 + (c - 48)
-    c = input.read()
-  }
-  return n
+  println(c[n])
 }
 
 val c =
@@ -25,10 +14,13 @@ val c =
       }
     }
 
-/**
- * @param n 이진수의 자리수(1 <= n <= 1,000,000)
- * @return 타일(00, 1)로 만들 수 있는 모든 경우의 수
- */
-fun solveTo(n: Int, out: Appendable) {
-  out.append(c[n].toString())
+private fun readInt(input: BufferedInputStream): Int {
+  var c = input.read()
+  while (c <= 32) c = input.read()
+  var n = 0
+  while (c in 48..57) { // '0' ~ '9'
+    n = n * 10 + (c - 48)
+    c = input.read()
+  }
+  return n
 }
