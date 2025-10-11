@@ -1,4 +1,4 @@
-import java.io.*
+import java.io.StreamTokenizer
 
 fun main() =
     with(StreamTokenizer(System.`in`.bufferedReader())) {
@@ -6,28 +6,21 @@ fun main() =
         nextToken()
         return nval.toInt()
       }
-
       val t = nextInt()
-      BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
-        repeat(t) {
-          val n = nextInt()
-          solveTo(n, bw)
-        }
+      val sb = StringBuilder(t * 14)
+      repeat(t) {
+        val n = nextInt()
+        sb.append(c[n]).append("\n")
       }
+      print(sb)
     }
 
 val c =
-    LongArray(101).apply {
-      this[1] = 1
-      this[2] = 1
-      this[3] = 1
-      this[4] = 2
-      this[5] = 2
-      for (i in 6..100) {
-        this[i] = this[i - 1] + this[i - 5]
+    LongArray(101).also { a ->
+      a[1] = 1
+      a[2] = 1
+      a[3] = 1
+      for (i in 4..100) {
+        a[i] = a[i - 2] + a[i - 3]
       }
     }
-
-fun solveTo(n: Int, out: Appendable) {
-  out.append(c[n].toString()).append("\n")
-}
