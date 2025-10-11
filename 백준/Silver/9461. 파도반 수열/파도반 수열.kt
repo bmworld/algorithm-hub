@@ -1,19 +1,16 @@
-import java.io.StreamTokenizer
+import java.io.BufferedReader
+import java.io.InputStreamReader
 
-fun main() =
-    with(StreamTokenizer(System.`in`.bufferedReader())) {
-      fun nextInt(): Int {
-        nextToken()
-        return nval.toInt()
-      }
-      val t = nextInt()
-      val sb = StringBuilder(t * 14)
-      repeat(t) {
-        val n = nextInt()
-        sb.append(c[n]).append("\n")
-      }
-      print(sb)
-    }
+fun main() {
+  val br = BufferedReader(InputStreamReader(System.`in`))
+  val t = br.readLine().toInt()
+  val sb = StringBuilder(t * 14)
+  repeat(t) {
+    val n = br.readLine().toInt()
+    sb.append(c[n]).append("\n")
+  }
+  print(sb)
+}
 
 val c =
     LongArray(101).also { a ->
