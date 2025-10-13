@@ -29,7 +29,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
 
   fun fill() {
 
-    var totalZeoCnt = 0
+    var filledCount = 0
     // Check by Row
     for (row in 0 until n) {
       if (rowCh[row]) continue
@@ -41,7 +41,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       for (col in 0 until n) {
         if (board[row][col] == 0) {
           zeroCnt++
-          totalZeoCnt++
+
           r = row
           c = col
         } else numCh[board[row][col]] = true
@@ -50,6 +50,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       if (zeroCnt == 0) {
         rowCh[row] = true
       } else if (zeroCnt == 1) {
+        filledCount++
         var t = Int.MIN_VALUE
         for (i in 1..9) {
           if (!numCh[i]) {
@@ -72,7 +73,6 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       for (row in 0 until n) {
         if (board[row][col] == 0) {
           zeroCnt++
-          totalZeoCnt++
           tr = row
           tc = col
         } else numCh[board[row][col]] = true
@@ -81,6 +81,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       if (zeroCnt == 0) {
         colCh[col] = true
       } else if (zeroCnt == 1) {
+        filledCount++
         var t = Int.MIN_VALUE
         for (i in 1..9) {
           if (!numCh[i]) {
@@ -95,7 +96,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
     var secIdx = 0
     for (secRow in 1 until n step 3) {
       for (secCol in 1 until n step 3) {
-        if (secCh[secCol]) continue
+        if (secCh[secIdx]) continue
         numCh.apply { for (i in 0..9) this[i] = false }
 
         var zeroCnt = 0
@@ -105,7 +106,6 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
           for (col in dx) {
             if (board[secRow + row][secCol + col] == 0) {
               zeroCnt++
-              totalZeoCnt++
               r = secRow + row
               c = secCol + col
             } else numCh[board[secRow + row][secCol + col]] = true
@@ -115,6 +115,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
         if (zeroCnt == 0) {
           secCh[secIdx] = true
         } else if (zeroCnt == 1) {
+          filledCount++
           var t = Int.MIN_VALUE
           for (i in 1..9) {
             if (!numCh[i]) {
@@ -128,7 +129,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       }
     }
 
-    if (totalZeoCnt > 0) fill()
+    if (filledCount == 0) return else fill()
   }
 
   fill()
