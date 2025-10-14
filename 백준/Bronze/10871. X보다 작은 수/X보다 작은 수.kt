@@ -4,13 +4,19 @@ fun main() {
   val br = BufferedInputStream(System.`in`)
   val n = readInt(br)
   val x = readInt(br)
-  val sb = StringBuilder(n * 2 - 1)
+  val sb = StringBuilder(n * 6)
+  var first = true
   repeat(n) {
     val v = readInt(br)
-    if (v < x) sb.append(v).append(' ')
+
+    if (v < x) {
+      if (!first) sb.append(' ')
+      sb.append(v)
+      first = false
+    }
   }
 
-  print(sb.trimEnd())
+  print(sb)
 }
 
 private fun readInt(input: BufferedInputStream): Int {
