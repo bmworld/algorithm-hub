@@ -1,16 +1,15 @@
-import java.io.*
+import java.io.BufferedInputStream
 
 fun main() {
   val br = BufferedInputStream(System.`in`)
   val n = readInt(br)
-  BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
-    var i = 1
-    while (i <= n) {
-      bw.write(i.toString())
-      bw.write('\n'.code)
-      i++
-    }
+  val sb = StringBuilder(600_000)
+  var i = 1
+  while (i <= n) {
+    sb.append(i).append('\n')
+    i++
   }
+  print(sb)
 }
 
 private fun readInt(input: BufferedInputStream): Int {
