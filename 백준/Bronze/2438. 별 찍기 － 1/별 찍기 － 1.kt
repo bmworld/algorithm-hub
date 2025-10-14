@@ -9,19 +9,19 @@ private fun readInt(input: BufferedInputStream): Int {
   var c = input.read()
   while (c <= 32) c = input.read()
   var n = 0
-  while (c in 48..57) { // '0' ~ '9'
+  while (c in 48..57) {
     n = n * 10 + (c - 48)
     c = input.read()
   }
   return n
 }
 
-fun solveTo(n: Int, out: Appendable) {
-
-  val c = CharArray(100) { '*' }
+fun solveTo(n: Int, out: BufferedWriter) {
+  val c = CharArray(n) { '*' }
   var i = 1
   while (i <= n) {
-    out.append(c.sliceArray(0 until i).concatToString()).append("\n")
+    out.write(c, 0, i)
+    out.write('\n'.code)
     i++
   }
 }
