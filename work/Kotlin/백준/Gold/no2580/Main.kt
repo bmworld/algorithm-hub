@@ -28,6 +28,10 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
         }
       } // r: 10의 자리, c: 1의 자리
 
+  val rowUsed = Array(9) { BooleanArray(10) }
+  val colUsed = Array(9) { BooleanArray(10) }
+  val boxUsed = Array(9) { BooleanArray(10) }
+
   fun dfs(k: Int) {
     if (done) return
     if (k == todos.size) {
@@ -45,30 +49,36 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
     val c = todo % 10
 
     // Check used Number
-    val used = BooleanArray(10)
     // Check: Row
     for (col in 0 until n) {
-      used[board[r][col]] = board[r][col] > 0
+      rowUsed[r][board[r][col]] = board[r][col] > 0
     }
     // Check: Col
     for (row in 0 until n) {
-      used[board[row][c]] = board[row][c] > 0
+      colUsed[c][board[row][c]] = board[row][c] > 0
     }
     // Check: Box
+    val box = (r / 3) * 3 + (c / 3)
     val startRow = (r / 3) * 3
     val startCol = (c / 3) * 3
     for (r in startRow until startRow + 3) {
       for (c in startCol until startCol + 3) {
-        used[board[r][c]] = board[r][c] > 0
+        boxUsed[box][board[r][c]] = board[r][c] > 0
       }
     }
 
     // DFS
     for (num in 1..9) {
-      if (used[num]) continue
+      if (rowUsed[r][num] || colUsed[c][num] || boxUsed[box][num]) continue
+      rowUsed[r][num] = true
+      colUsed[c][num] = true
+      boxUsed[box][num] = true
       board[r][c] = num
       dfs(k + 1)
       board[r][c] = 0
+      rowUsed[r][num] = false
+      colUsed[c][num] = false
+      boxUsed[box][num] = false
     }
   }
 
