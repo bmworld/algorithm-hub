@@ -28,19 +28,6 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
         }
       } // r: 10의 자리, c: 1의 자리
 
-  val dCol =
-      IntArray(3).also {
-        it[0] = -1
-        it[1] = 0
-        it[2] = 1
-      }
-  val dRow =
-      IntArray(3).also {
-        it[0] = -1
-        it[1] = 0
-        it[2] = 1
-      }
-
   fun dfs(k: Int) {
     if (done) return
     if (k == todos.size) {
@@ -60,30 +47,22 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
     // Check used Number
     val used = BooleanArray(10)
     // Check: Row
-    for (col in 0 until n) if (board[r][col] > 0) used[board[r][col]] = true
+    for (col in 0 until n) {
+      used[board[r][col]] = board[r][col] > 0
+    }
     // Check: Col
-    for (row in 0 until n) if (board[row][c] > 0) used[board[row][c]] = true
+    for (row in 0 until n) {
+      used[board[row][c]] = board[row][c] > 0
+    }
     // Check: Box
-    var searchBox = true
-    for (row in 2 until n step 3) {
-      if (!searchBox) break
-      for (col in 2 until n step 3) {
-        if (!searchBox) break
-        if (r <= row && c <= col) {
-          // 중앙값
-          val centerRow = row - 1
-          val centerCol = col - 1
-          // 순회
-          for (row in dRow) {
-            for (col in dCol) {
-              if (board[centerRow + row][centerCol + col] > 0)
-                  used[board[centerRow + row][centerCol + col]] = true
-            }
-          }
-          searchBox = false
-        }
+    val startRow = (r / 3) * 3
+    val startCol = (c / 3) * 3
+    for (r in startRow until startRow + 3) {
+      for (c in startCol until startCol + 3) {
+        used[board[r][c]] = board[r][c] > 0
       }
     }
+
     // DFS
     for (num in 1..9) {
       if (used[num]) continue
