@@ -22,13 +22,20 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
 
   val todos = IntArray(81)
   var todoCnt = 0
+  val rowPos = IntArray(81)
+  val colPos = IntArray(81)
+  val boxPos = IntArray(81)
 
   for (r in 0 until n) {
     for (c in 0 until n) {
       val num = board[r][c]
       if (num == 0) {
         // 조회대상 지정
-        todos[todoCnt++] = r * 10 + c
+        val pos = r * 9 + c
+        todos[todoCnt++] = pos
+        rowPos[pos] = pos / 9
+        colPos[pos] = pos % 9
+        boxPos[pos] = (rowPos[pos] / 3) * 3 + colPos[pos] / 3
       } else {
         // Check: 사용 중인 숫자
         val b = (r / 3) * 3 + (c / 3)
@@ -53,22 +60,17 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       return true
     }
 
-    val rc = todos[k]
-    val r = rc / 10
-    val c = rc % 10
-    val box = (r / 3) * 3 + (c / 3)
-
     // 최적화 - 숫자 후보적은 것 선택
     var best = -1
     var bestRemaining = 10
     for (i in k until todoCnt) {
       val rc = todos[i]
-      val r = rc / 10
-      val c = rc % 10
-      val box = (r / 3) * 3 + (c / 3)
+      val r = rowPos[rc]
+      val c = colPos[rc]
+      val b = boxPos[rc]
       var remaining = 0
       for (num in 1..9) {
-        if (rowUsed[r][num] || colUsed[c][num] || boxUsed[box][num]) continue
+        if (rowUsed[r][num] || colUsed[c][num] || boxUsed[b][num]) continue
         remaining++
       }
       if (remaining < bestRemaining) {
@@ -86,18 +88,25 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       return result
     }
 
+    val rc = todos[k]
+    val r = rowPos[rc]
+    val c = colPos[rc]
+    val b = boxPos[rc]
     for (num in 1..9) {
-      if (rowUsed[r][num] || colUsed[c][num] || boxUsed[box][num]) continue
+      val row = rowUsed[r]
+      val col = colUsed[c]
+      val box = boxUsed[b]
+      if (row[num] || col[num] || box[num]) continue
 
-      rowUsed[r][num] = true
-      colUsed[c][num] = true
-      boxUsed[box][num] = true
+      row[num] = true
+      col[num] = true
+      box[num] = true
       board[r][c] = num
       if (dfs(k + 1)) return true
       board[r][c] = 0
-      rowUsed[r][num] = false
-      colUsed[c][num] = false
-      boxUsed[box][num] = false
+      row[num] = false
+      col[num] = false
+      box[num] = false
     }
 
     return false
