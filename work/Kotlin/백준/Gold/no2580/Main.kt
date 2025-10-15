@@ -41,10 +41,15 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
 
   fun dfs(k: Int): Boolean {
     if (k == todoCnt) { // DONE
-      for (i in 0 until n) {
-        out.append(board[i].joinToString(" "))
-        if (i != n - 1) out.append("\n")
+      val sb = StringBuilder()
+      for (r in 0 until n) {
+        for (c in 0 until n) {
+          sb.append(board[r][c])
+          if (c != n - 1) sb.append(' ')
+        }
+        if (r != n - 1) sb.append("\n")
       }
+      out.append(sb)
       return true
     }
 
