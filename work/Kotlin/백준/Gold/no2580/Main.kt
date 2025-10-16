@@ -16,21 +16,20 @@ fun main() =
 
 fun solveTo(board: Array<IntArray>, out: Appendable) {
   val n = board.size
-  val rowUsed = Array(9) { BooleanArray(10) }
-  val colUsed = Array(9) { BooleanArray(10) }
-  val boxUsed = Array(9) { BooleanArray(10) }
 
   val todos = IntArray(81)
   var todoCnt = 0
   val rowPos = IntArray(81)
   val colPos = IntArray(81)
   val boxPos = IntArray(81)
+  val rowUsed = Array(9) { BooleanArray(10) }
+  val colUsed = Array(9) { BooleanArray(10) }
+  val boxUsed = Array(9) { BooleanArray(10) }
 
   for (r in 0 until n) {
     for (c in 0 until n) {
       val num = board[r][c]
-      if (num == 0) {
-        // 조회대상 지정
+      if (num == 0) { // 빈칸
         val pos = r * 9 + c
         todos[todoCnt++] = pos
         rowPos[pos] = pos / 9
@@ -44,7 +43,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
         colUsed[c][num] = true
       }
     }
-  } // r: 10의 자리, c: 1의 자리
+  }
 
   fun dfs(k: Int): Boolean {
     if (k == todoCnt) { // DONE
@@ -59,8 +58,7 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       out.append(sb)
       return true
     }
-
-    // 최적화 - 숫자 후보적은 것 선택
+    // 최적화: 가정적은 후보가진 todos[best] 선택
     var best = -1
     var bestRemaining = 10
     for (i in k until todoCnt) {
@@ -69,18 +67,22 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       val c = colPos[rc]
       val b = boxPos[rc]
       var remaining = 0
-      for (num in 1..9) {
-        if (rowUsed[r][num] || colUsed[c][num] || boxUsed[b][num]) continue
-        remaining++
-      }
+      val rUsed = rowUsed[r]
+      val cUsed = colUsed[c]
+      val bUsed = boxUsed[b]
+
+      for (num in 1..9) if (!rUsed[num] && !cUsed[num] && !bUsed[num]) remaining++
       if (remaining < bestRemaining) {
         bestRemaining = remaining
         best = i
         if (remaining == 1) break
       }
     }
+
+    // Validation
     if (bestRemaining == 0) return false
 
+    // SWAP
     if (best != k) {
       swap(todos, k, best)
       val result = dfs(k)
@@ -88,16 +90,17 @@ fun solveTo(board: Array<IntArray>, out: Appendable) {
       return result
     }
 
+    // DFS
     val rc = todos[k]
     val r = rowPos[rc]
     val c = colPos[rc]
     val b = boxPos[rc]
-    for (num in 1..9) {
-      val row = rowUsed[r]
-      val col = colUsed[c]
-      val box = boxUsed[b]
-      if (row[num] || col[num] || box[num]) continue
+    val row = rowUsed[r]
+    val col = colUsed[c]
+    val box = boxUsed[b]
 
+    for (num in 1..9) {
+      if (row[num] || col[num] || box[num]) continue
       row[num] = true
       col[num] = true
       box[num] = true
