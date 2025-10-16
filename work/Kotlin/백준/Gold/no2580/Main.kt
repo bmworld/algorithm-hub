@@ -10,134 +10,118 @@ fun main() =
       }
 
       val board = Array(9) { IntArray(9) { nextInt() } }
+
       BufferedWriter(OutputStreamWriter(System.out)).use { bw -> solveTo(board, bw) }
     }
 
-/**
- * @param board Sudoku 판 (0: 빈칸)
- * @return 최종모습
- */
 fun solveTo(board: Array<IntArray>, out: Appendable) {
-
   val n = board.size
-  val numCh = BooleanArray(10)
-  val rowCh = BooleanArray(n)
-  val colCh = BooleanArray(n)
-  val secCh = BooleanArray(n)
-  val dx = listOf(-1, 0, 1)
-  val dy = listOf(-1, 0, 1)
 
-  fun fill() {
+  val todos = IntArray(81)
+  var todoCnt = 0
+  val rowPos = IntArray(81)
+  val colPos = IntArray(81)
+  val boxPos = IntArray(81)
+  val rowUsed = Array(9) { BooleanArray(10) }
+  val colUsed = Array(9) { BooleanArray(10) }
+  val boxUsed = Array(9) { BooleanArray(10) }
 
-    var filledCount = 0
-    // Check by Row
-    for (row in 0 until n) {
-      if (rowCh[row]) continue
-      // 초기화
-      numCh.apply { for (i in 0..9) this[i] = false }
-      var zeroCnt = 0
-      var r = 0
-      var c = 0
-      for (col in 0 until n) {
-        if (board[row][col] == 0) {
-          zeroCnt++
-
-          r = row
-          c = col
-        } else numCh[board[row][col]] = true
-      }
-
-      if (zeroCnt == 0) {
-        rowCh[row] = true
-      } else if (zeroCnt == 1) {
-        filledCount++
-        var t = Int.MIN_VALUE
-        for (i in 1..9) {
-          if (!numCh[i]) {
-            t = i
-          }
-        }
-
-        board[r][c] = t
+  for (r in 0 until n) {
+    for (c in 0 until n) {
+      val num = board[r][c]
+      if (num == 0) { // 빈칸
+        val pos = r * 9 + c
+        todos[todoCnt++] = pos
+        rowPos[pos] = pos / 9
+        colPos[pos] = pos % 9
+        boxPos[pos] = (rowPos[pos] / 3) * 3 + colPos[pos] / 3
+      } else {
+        // Check: 사용 중인 숫자
+        val b = (r / 3) * 3 + (c / 3)
+        boxUsed[b][num] = true
+        rowUsed[r][num] = true
+        colUsed[c][num] = true
       }
     }
-
-    // Check by Row
-    for (col in 0 until n) {
-      if (colCh[col]) continue
-      // 초기화
-      numCh.apply { for (i in 0..9) this[i] = false }
-      var zeroCnt = 0
-      var tr = 0
-      var tc = 0
-      for (row in 0 until n) {
-        if (board[row][col] == 0) {
-          zeroCnt++
-          tr = row
-          tc = col
-        } else numCh[board[row][col]] = true
-      }
-
-      if (zeroCnt == 0) {
-        colCh[col] = true
-      } else if (zeroCnt == 1) {
-        filledCount++
-        var t = Int.MIN_VALUE
-        for (i in 1..9) {
-          if (!numCh[i]) {
-            t = i
-          }
-        }
-        board[tr][tc] = t
-      }
-    }
-
-    // Check by Sector
-    var secIdx = 0
-    for (secRow in 1 until n step 3) {
-      for (secCol in 1 until n step 3) {
-        if (secCh[secIdx]) continue
-        numCh.apply { for (i in 0..9) this[i] = false }
-
-        var zeroCnt = 0
-        var r = 0
-        var c = 0
-        for (row in dy) {
-          for (col in dx) {
-            if (board[secRow + row][secCol + col] == 0) {
-              zeroCnt++
-              r = secRow + row
-              c = secCol + col
-            } else numCh[board[secRow + row][secCol + col]] = true
-          }
-        }
-
-        if (zeroCnt == 0) {
-          secCh[secIdx] = true
-        } else if (zeroCnt == 1) {
-          filledCount++
-          var t = Int.MIN_VALUE
-          for (i in 1..9) {
-            if (!numCh[i]) {
-              t = i
-            }
-          }
-          board[r][c] = t
-        }
-
-        secIdx++
-      }
-    }
-
-    if (filledCount == 0) return else fill()
   }
 
-  fill()
+  fun dfs(k: Int): Boolean {
+    if (k == todoCnt) { // DONE
+      val sb = StringBuilder()
+      for (r in 0 until n) {
+        for (c in 0 until n) {
+          sb.append(board[r][c])
+          if (c != n - 1) sb.append(' ')
+        }
+        if (r != n - 1) sb.append("\n")
+      }
+      out.append(sb)
+      return true
+    }
+    // 최적화: 가정적은 후보가진 todos[best] 선택
+    var best = -1
+    var bestRemaining = 10
+    for (i in k until todoCnt) {
+      val rc = todos[i]
+      val r = rowPos[rc]
+      val c = colPos[rc]
+      val b = boxPos[rc]
+      var remaining = 0
+      val rUsed = rowUsed[r]
+      val cUsed = colUsed[c]
+      val bUsed = boxUsed[b]
 
-  for (i in 0 until n) {
-    out.append(board[i].joinToString(" "))
-    if (i != n - 1) out.append("\n")
+      for (num in 1..9) if (!rUsed[num] && !cUsed[num] && !bUsed[num]) remaining++
+      if (remaining < bestRemaining) {
+        bestRemaining = remaining
+        best = i
+        if (remaining == 1) break
+      }
+    }
+
+    // Validation
+    if (bestRemaining == 0) return false
+
+    // SWAP
+    if (best != k) {
+      swap(todos, k, best)
+      val result = dfs(k)
+      swap(todos, k, best)
+      return result
+    }
+
+    // DFS
+    val rc = todos[k]
+    val r = rowPos[rc]
+    val c = colPos[rc]
+    val b = boxPos[rc]
+    val row = rowUsed[r]
+    val col = colUsed[c]
+    val box = boxUsed[b]
+
+    for (num in 1..9) {
+      if (row[num] || col[num] || box[num]) continue
+      row[num] = true
+      col[num] = true
+      box[num] = true
+      board[r][c] = num
+      if (dfs(k + 1)) return true
+      board[r][c] = 0
+      row[num] = false
+      col[num] = false
+      box[num] = false
+    }
+
+    return false
   }
+
+  dfs(0)
+}
+
+fun swap(arr: IntArray, i: Int, j: Int) {
+  val t = arr[i]
+  arr[i] = arr[j]
+  arr[j] = t
 }
 
 /* 테스트용 */
