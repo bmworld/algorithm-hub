@@ -27,26 +27,12 @@ private fun readInt(input: BufferedInputStream): Int {
 
 fun solveTo(arr: IntArray): Int {
   var max = arr[0]
-  val n = arr.size
-  
-
-  var lt = 0
-  while (lt < n) {
-    var sum = arr[lt]
-    for (i in lt + 1 until n) {
-      val v = arr[i]
-      val next = sum + v
-      if (next > 0) {
-        sum += v
-        if (max < sum) max = sum
-      } else break
-    }
-    var nextLt = lt + 1
-    while (nextLt < n && arr[nextLt] < 0) {
-      nextLt++
-    }
-
-    lt = nextLt
+  var acc = arr[0]
+  for (i in 1 until arr.size) {
+    val v = arr[i]
+    val next = acc + v
+    acc = if (next > v) next else v
+    max = if (max > acc) max else acc
   }
   return max
 }
