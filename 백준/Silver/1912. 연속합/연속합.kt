@@ -25,13 +25,12 @@ private fun readInt(input: BufferedInputStream): Int {
 
 fun solveTo(arr: IntArray): Int {
   var max = arr[0]
-
   var cur = arr[0]
   for (i in 1 until arr.size) {
     val v = arr[i]
-    cur = maxOf(cur + v, v)
-    max = maxOf(max, cur)
+    val next = cur + v
+    cur = if (next > v) next else v
+    max = if (max > cur) max else cur
   }
-
   return max
 }
