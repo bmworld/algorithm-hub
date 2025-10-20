@@ -1,1 +1,1 @@
-fun main() = print(readln()[0].code)
+fun main() = print(System.`in`.read())
