@@ -3,13 +3,12 @@ import java.io.BufferedInputStream
 fun main() {
   val n = readInt(BufferedInputStream(System.`in`))
   val sb = StringBuilder()
-  val line = Array(n) { " " }
-  var i = 1
-  while (i <= n) {
-    line[n - i] = "*"
-    sb.append(line.joinToString("")).append('\n')
-    i++
+  for (i in 1..n) {
+    repeat(n - i) { sb.append(' ') }
+    repeat(i) { sb.append('*') }
+    sb.append('\n')
   }
+
   print(sb)
 }
 
