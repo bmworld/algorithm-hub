@@ -1,24 +1,18 @@
 fun main() {
-  val max = 1_000_000
-  val bArr = ByteArray(max)
-  val len = System.`in`.read(bArr)
-  //
+  val bArr = ByteArray(1_000_000)
+  val n = System.`in`.read(bArr)
+  if (n <= 0) return print(0)
+
   var cnt = 0
   var inWord = false
-  var i = 0
-  while (i < len) {
-    val b = bArr[i].toInt() and 0xFF
-    // > byte 128..255 -> Int 변환 시 음수
-    // > 0xFF (00000000 00000000 00000000 11111111) and 연산
-    // > 하위 8개 비트만 살림
-
-    if (b > 32) {
-      if (!inWord) { // 최초 단어만 카운트
-        cnt++
-        inWord = true
-      }
-    } else inWord = false
-    i++
+  for (i in 0 until n) {
+    val b = bArr[i].toInt()
+    // 대문자: 65..90
+    // 소문자: 97..122
+    val toUppercase = 0xDF
+    val isWord = (b and toUppercase) in 65..90
+    if (isWord && !inWord) cnt++
+    inWord = isWord
   }
 
   print(cnt)
