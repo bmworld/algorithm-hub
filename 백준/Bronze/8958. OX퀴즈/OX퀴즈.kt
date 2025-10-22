@@ -1,13 +1,9 @@
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 
 val IN = BufferedInputStream(System.`in`)
-val OUT = BufferedOutputStream(System.out)
-const val NL = '\n'.code
 
 fun main() {
   val n = readInt()
-
   val sb = StringBuilder()
   repeat(n) {
     var score = 0
