@@ -10,10 +10,7 @@ fun main() {
     val room = (n - 1) / h + 1
     var floor = n % h
     if (floor == 0) floor = h
-
-    print(floor)
-    if (room < 10) print(0)
-    println(room)
+    println(floor * 100 + room)
   }
 }
 
