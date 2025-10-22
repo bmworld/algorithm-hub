@@ -1,23 +1,20 @@
 import java.io.BufferedInputStream
-
 val IN = BufferedInputStream(System.`in`)
 const val a = 97
 const val z = 122
+const val N = 26
 const val EMPTY = -1
-const val ALPHABET_SIZE = 26
-
 fun main() {
-  val arr = IntArray(ALPHABET_SIZE) { EMPTY }
-  var char = IN.read()
+  val arr = IntArray(N) { EMPTY }
+  var ch = IN.read()
   var pos = 0
-  while (char in a..z) {
-    if (arr[char - a] == EMPTY) arr[char - a] = pos
-
-    char = IN.read()
+  while (ch in a..z) {
+    val i = ch - a
+    if (arr[i] == EMPTY) arr[i] = pos
+    ch = IN.read()
     pos++
   }
-
-  val s = StringBuilder(ALPHABET_SIZE * 2)
-  for (v in arr) s.append(v).append(' ')
-  print(s)
+  val sb = StringBuilder(78)
+  for (i in 0 until N) sb.append(arr[i]).append(' ')
+  print(sb)
 }
