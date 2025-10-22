@@ -1,3 +1,5 @@
+const val SPACE = 32.toByte()
+
 fun main() {
   val bArr = ByteArray(1_000_000)
   val n = System.`in`.read(bArr)
@@ -7,8 +9,7 @@ fun main() {
   var inWord = false
   var i = 0
   while (i < n) {
-    val b = bArr[i].toInt()
-    val isWord = b >= 65 // 대문자: 65..90 / 소문자: 97..122
+    val isWord = bArr[i] > SPACE // 공백: 32 / 대문자: 65..90 / 소문자: 97..122
     if (!inWord && isWord) cnt++
     inWord = isWord
     i++
