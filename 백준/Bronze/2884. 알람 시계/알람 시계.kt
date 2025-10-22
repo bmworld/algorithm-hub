@@ -2,19 +2,17 @@ import java.io.BufferedInputStream
 
 fun main() {
   val br = BufferedInputStream(System.`in`)
-  val h = readInt(br)
-  val m = readInt(br)
+  var h = readInt(br)
+  var m = readInt(br) - 45
 
-  var nh = h
-  var nm = m - 45
-  if (nm < 0) {
-    if (nh == 0) nh = 23 else nh--
-    nm += 60
+  if (m < 0) {
+    if (h == 0) h = 23 else h--
+    m += 60
   }
 
-  print(nh)
+  print(h)
   print(' ')
-  print(nm)
+  print(m)
 }
 
 fun readInt(input: BufferedInputStream): Int {
