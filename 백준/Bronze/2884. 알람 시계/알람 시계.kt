@@ -1,32 +1,27 @@
 import java.io.BufferedInputStream
 
+val IN = BufferedInputStream(System.`in`)
+
 fun main() {
-  val br = BufferedInputStream(System.`in`)
-  var h = readInt(br)
-  var m = readInt(br) - 45
 
-  if (m < 0) {
-    if (h == 0) h = 23 else h--
-    m += 60
-  }
+  var h = readInt()
+  var m = readInt()
 
-  print(h)
-  print(' ')
-  print(m)
+  var t = h * 60 + m - 45
+  if (t < 0) t += 1440
+  h = t / 60
+  m = t % 60
+
+  print("$h $m")
 }
 
-fun readInt(input: BufferedInputStream): Int {
-  var c = input.read()
-  while (c <= 32) c = input.read()
-  var sign = 1
-  if (c == '-'.code) { // 부호 처리
-    sign = -1
-    c = input.read()
-  }
+fun readInt(): Int {
+  var c = IN.read()
+  while (c <= 32) c = IN.read()
   var n = 0
   while (c in '0'.code..'9'.code) {
     n = n * 10 + (c - '0'.code)
-    c = input.read()
+    c = IN.read()
   }
-  return n * sign
+  return n
 }
