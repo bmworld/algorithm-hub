@@ -1,9 +1,14 @@
 import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 
 val IN = BufferedInputStream(System.`in`)
+val OUT = BufferedOutputStream(System.out)
+const val NL = '\n'.code
 
 fun main() {
   val n = readInt()
+
+  val sb = StringBuilder()
   repeat(n) {
     var score = 0
     var seq = 0
@@ -16,8 +21,10 @@ fun main() {
         score = score + seq
       } else seq = 0
     }
-    println(score)
+    sb.append(score).append('\n')
   }
+
+  println(sb)
 }
 
 fun readOX(): Int {
