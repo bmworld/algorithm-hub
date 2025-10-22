@@ -1,19 +1,19 @@
 import java.io.BufferedInputStream
 
-val IN = BufferedInputStream(System.`in`)
-
 fun main() {
 
   var h = readInt()
-  var m = readInt()
+  var m = readInt() - 45
 
-  var t = h * 60 + m - 45
-  if (t < 0) t += 1440
-  h = t / 60
-  m = t % 60
+  if (m < 0) {
+    if (--h < 0) h = 23
+    m += 60
+  }
 
   print("$h $m")
 }
+
+val IN = BufferedInputStream(System.`in`)
 
 fun readInt(): Int {
   var c = IN.read()
