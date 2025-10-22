@@ -1,0 +1,30 @@
+name: Guard non-root READMEs
+
+on:
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  guard:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for non-root README files
+        shell: bash
+        run: |
+          set -euo pipefail
+          echo "🔍 Checking for non-root README.md files..."
+
+          if find . -type f -iname 'readme.md' \
+               ! -path './README.md' \
+               ! -path './.git/*' \
+               ! -path './.github/*' | grep . ; then
+            echo "::error ::Non-root README.md detected. Keep README only at repo root."
+            exit 1
+          fi
+
+          echo "✅ Passed — only root README.md exists."

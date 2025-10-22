@@ -1,24 +1,50 @@
-name: Guard non-root READMEs
+name: Cleanup non-root READMEs
 
 on:
-  pull_request:
   push:
     branches: [ main ]
   workflow_dispatch:
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
-  guard:
+  cleanup:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Fail if non-root README exists
+
+      - name: Delete all README except root
         shell: bash
         run: |
           set -euo pipefail
-          if find . -type f -iname 'readme.md' ! -path './README.md' | grep . ; then
-            echo "::error ::Non-root README.md detected. Keep README only at repo root."
-            exit 1
+          echo "🧹 Searching for non-root README.md files..."
+
+          # 루트 제외, .git / .github 내부 제외
+          mapfile -t files < <(find . -type f -iname 'readme.md' \
+                                 ! -path './README.md' \
+                                 ! -path './.git/*' \
+                                 ! -path './.github/*' \
+                                 -print)
+
+          if (( ${#files[@]} )); then
+            echo "⚠️ Found non-root README files:"
+            printf ' - %s\n' "${files[@]}"
+            printf '%s\0' "${files[@]}" | xargs -0 rm -f
+          else
+            echo "✅ No non-root README.md files found."
+          fi
+
+      - name: Commit & push if changes exist
+        shell: bash
+        run: |
+          if ! git diff --quiet; then
+            git config user.name "github-actions[bot]"
+            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git add -A
+            git commit -m "chore(ci): remove non-root README files (auto)"
+            git push
+            echo "✅ Cleanup committed and pushed."
+          else
+            echo "ℹ️ No changes detected — nothing to commit."
           fi
