@@ -4,20 +4,19 @@ val IN = BufferedInputStream(System.`in`)
 
 fun main() {
   val n = readInt()
-  val sb = StringBuilder()
+  val maxLenPerLine = 5 // 점수 최대 4자리 + 개행1
+  val sb = StringBuilder(maxLenPerLine * n)
   repeat(n) {
-    var score = 0
+    var s = 0
     var seq = 0
     while (true) {
       val ox = readOX() // O: 1, X = 0
       if (ox == -1) break
-
       if (ox == 1) {
-        seq++
-        score = score + seq
+        s += ++seq
       } else seq = 0
     }
-    sb.append(score).append('\n')
+    sb.append(s).append('\n')
   }
 
   println(sb)
