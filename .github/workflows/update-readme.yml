@@ -1,15 +1,15 @@
 name: Update README stats
 
 on:
-  # 매일 KST 오전 6시에 자동 실행 (UTC 21:00 전날)
-  # schedule:
-  #   - cron: "0 21 * * *"
-  workflow_dispatch:    # 수동 실행 버튼
+  #  schedule:
+  # 매일 KST 오전 6시에 실행 (UTC 21:00 전날)
+  #    - cron: "0 21 * * *"
+  workflow_dispatch:  # 수동 실행 버튼
   push:
-    branches: [ main ]  # main 브랜치에서만 실행
+    branches: [ main ]  # main 브랜치만
 
 permissions:
-  contents: write       # README 갱신 커밋 권한
+  contents: write  # README 갱신 커밋 권한
 
 jobs:
   update-readme:
@@ -18,16 +18,14 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0   # 전체 히스토리 가져와 rebase 충돌 방지
+          fetch-depth: 0  # 전체 히스토리 가져와 rebase 충돌 방지
 
       - name: Generate total problem stats
         shell: bash
         run: |
           set -euo pipefail
           
-          # ----------------------------------------------------
-          # 경로: root/work/Java/백준, root/work/Kotlin/백준 등
-          # ----------------------------------------------------
+          # 경로: root/work/Java/백준, root/work/Kotlin/백준
           count_dir () {
             local dir="$1" ext="$2"
             if [ -d "$dir" ]; then
@@ -37,70 +35,67 @@ jobs:
             fi
           }
 
-          # -------------------
-          # 온라인 저지별 집계
-          # -------------------
-
-          # 백준
+          # 온라인 저지: 백준
           baekjoon_java=$(count_dir "work/Java/백준" "*.java")
           baekjoon_kotlin=$(count_dir "work/Kotlin/백준" "*.kt")
           baekjoon_total=$((baekjoon_java + baekjoon_kotlin))
 
-          # 프로그래머스
+          # 온라인 저지: 프로그래머스
           programmers_java=$(count_dir "work/Java/프로그래머스" "*.java")
           programmers_kotlin=$(count_dir "work/Kotlin/프로그래머스" "*.kt")
           programmers_total=$((programmers_java + programmers_kotlin))
 
-          # 총합
-          total=$((baekjoon_total + programmers_total))
 
-          # -------------------
-          # README 콘텐츠 작성
-          # -------------------
+
+          # 필요 시 다른 저지(프로그래머스 등) 추가 예정이면 여기서 누적
+          total=$((baekjoon_total + programmers_total))
+          
+          # 타임존 KST로 표시
           export TZ=Asia/Seoul
           now="$(date '+%Y-%m-%d %H:%M %Z')"
-
+          
+          # README에 삽입할 콘텐츠 → 임시 파일로 생성
           CONTENT_FILE="$(mktemp)"
           printf "%s\n" \
           "## 🚀 문제 집계 (${now})" \
-          "- Baekjoon: ${baekjoon_total} 문제 (Java ${baekjoon_java}, Kotlin ${baekjoon_kotlin})" \
-          "- Programmers: ${programmers_total} 문제 (Java ${programmers_java}, Kotlin ${programmers_kotlin})" \
+          "- Baekjoon: ${baekjoon_total} 문제" \
+          "- Programmers: ${programmers_total} 문제" \
           "- Total: ${total} 문제" \
           > "$CONTENT_FILE"
-
+          
           START="<!-- TOTAL_PROBLEM_STATS_START -->"
           END="<!-- TOTAL_PROBLEM_STATS_END -->"
-
+          
           if grep -q "$START" README.md && grep -q "$END" README.md; then
-            # 마커 사이 내용을 임시파일로 교체 (GNU sed)
+            # 마커 사이를 임시파일 내용으로 교체 (GNU sed)
             sed -i -e "/$START/,/$END/{
-              /$START/{p;r $CONTENT_FILE}
+            /$START/{
+            p
+            r $CONTENT_FILE
+            }
               /$END/p
               d
             }" README.md
           else
-            {
-              echo ""
-              echo "$START"
-              cat "$CONTENT_FILE"
-              echo "$END"
-            } >> README.md
+          {
+            echo ""
+            echo "$START"
+            cat "$CONTENT_FILE"
+            echo "$END"
+          } >> README.md
           fi
-
-          rm -f "$CONTENT_FILE"
-
-      - name: Commit & push if changed
-        shell: bash
-        run: |
-          if ! git diff --quiet; then
-            git config user.name "github-actions[bot]"
-            git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git add README.md
-            git commit -m "chore(readme): auto-update problem stats"
           
-            # 원격 rebase 후 push (충돌 방지)
-            git pull --rebase origin main || true
-            git push
+          rm -f "$CONTENT_FILE"
+          
+          # 변경사항 있을 때만 커밋/푸시
+          if ! git diff --quiet; then
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add README.md
+          git commit -m "chore(readme): auto-update problem stats"
+          # 원격레포 rebase > 푸시 (*충돌방지용)
+          git pull --rebase origin main || true
+          git push
           else
-            echo "✅ No changes detected. Nothing to commit."
+          echo "No changes."
           fi
