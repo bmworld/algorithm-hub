@@ -10,28 +10,21 @@ fun main() {
     var s = 0
     var seq = 0
     while (true) {
-      val ox = readOX() // O: 1, X = 0
-      if (ox == -1) break
-      if (ox == 1) {
-        s += ++seq
-      } else seq = 0
+      when (readOX()) {
+        1 -> s += ++seq
+        0 -> seq = 0
+        else -> break
+      }
     }
     sb.append(s).append('\n')
   }
 
-  println(sb)
+  print(sb)
 }
 
 fun readOX(): Int {
-  val c = IN.read()
-  var n = -1
-  if (c == 79) {
-    n = 1
-  } else if (c == 88) {
-    n = 0
-  }
-
-  return n
+  val c = IN.read() // 'O' = 79, 'X' = 88
+  return if (c == 79) 1 else if (c == 88) 0 else -1
 }
 
 fun readInt(): Int {
