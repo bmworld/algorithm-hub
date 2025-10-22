@@ -38,8 +38,15 @@ jobs:
           baekjoon_kotlin=$(count_dir "work/Kotlin/백준" "*.kt")
           baekjoon_total=$((baekjoon_java + baekjoon_kotlin))
 
+          # 온라인 저지: 프로그래머스
+          programmers_java=$(count_dir "work/Java/프로그래머스" "*.java")
+          programmers_kotlin=$(count_dir "work/Kotlin/프로그래머스" "*.kt")
+          programmers_total=$((programmers_java + programmers_kotlin))
+
+
+
           # 필요 시 다른 저지(프로그래머스 등) 추가 예정이면 여기서 누적
-          total=$((baekjoon_total))
+          total=$((baekjoon_total + programmers_total))
           
           # 타임존 KST로 표시
           export TZ=Asia/Seoul
@@ -50,7 +57,7 @@ jobs:
           printf "%s\n" \
           "## 🚀 문제 집계 (${now})" \
           "- Baekjoon: ${baekjoon_total} 문제" \
-          "- Programmers: ${programmers} 문제" \
+          "- Programmers: ${programmers_total} 문제" \
           "- Total: ${total} 문제" \
           > "$CONTENT_FILE"
           
