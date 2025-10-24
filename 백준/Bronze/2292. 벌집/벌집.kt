@@ -10,6 +10,7 @@ fun main() {
   }
   print(layer)
 }
+
 val IN = BufferedInputStream(System.`in`)
 private fun readInt(): Int {
   var c = IN.read()
