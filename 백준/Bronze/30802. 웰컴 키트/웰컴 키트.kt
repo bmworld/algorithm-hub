@@ -1,11 +1,9 @@
 import java.io.BufferedInputStream
-
 fun main() {
   val n = readInt()
   val tReqs = IntArray(6) { readInt() }
   val T = readInt()
   val P = readInt()
-
   var tsum = 0
   for (req in tReqs) tsum += req / T + if (req % T > 0) 1 else 0
   println(tsum)
@@ -15,7 +13,6 @@ fun main() {
 }
 
 val IN = BufferedInputStream(System.`in`)
-
 private fun readInt(): Int {
   var c = IN.read()
   while (c <= 32) c = IN.read()
