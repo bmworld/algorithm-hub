@@ -3,13 +3,12 @@ package 백준.Bronze.no30802
 import java.io.BufferedInputStream
 
 fun main() {
-  val n = readInt() // 1 <= N <= 10^9
+  val n = readInt()
   val tReqs = IntArray(6) { readInt() }
   val T = readInt()
   val P = readInt()
-
   var tsum = 0
-  for (req in tReqs) tsum += req / T + if (req % T > 0) 1 else 0
+  for (req in tReqs) tsum += (req + T - 1) / T
   println(tsum)
   print(n / P)
   print(' ')
