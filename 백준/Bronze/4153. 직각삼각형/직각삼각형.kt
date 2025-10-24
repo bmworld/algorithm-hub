@@ -6,18 +6,19 @@ fun main() {
     var b = readInt()
     var max = readInt()
     if (a == 0 && b == 0 && max == 0) break
-
-    if (a > b && a > max) {
+    if (a > max) {
       val tmp = max
       max = a
       a = tmp
-    } else if (b > a && b > max) {
+    }
+    if (b > max) {
       val tmp = max
       max = b
       b = tmp
     }
     sb.append(if (a * a + b * b == max * max) "right" else "wrong").append('\n')
   }
+    
   print(sb)
 }
 val IN = BufferedInputStream(System.`in`)
