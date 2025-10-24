@@ -5,13 +5,12 @@ fun main() {
   val T = readInt()
   val P = readInt()
   var tsum = 0
-  for (req in tReqs) tsum += req / T + if (req % T > 0) 1 else 0
+  for (req in tReqs) tsum += (req + T - 1) / T
   println(tsum)
   print(n / P)
   print(' ')
   print(n % P)
 }
-
 val IN = BufferedInputStream(System.`in`)
 private fun readInt(): Int {
   var c = IN.read()
