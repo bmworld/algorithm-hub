@@ -9,6 +9,7 @@ fun main() {
   }
   print(sb)
 }
+
 private const val max = 14
 val APT =
     Array(max + 1) { IntArray(max + 1) }
