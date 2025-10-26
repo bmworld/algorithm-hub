@@ -1,5 +1,4 @@
 import java.io.BufferedInputStream
-
 fun main() {
   val t = readInt()
   val sb = StringBuilder(t)
@@ -10,26 +9,21 @@ fun main() {
   }
   print(sb)
 }
-
 private const val max = 14
-val APT = // 1 ≤ k, n ≤ 14
+val APT =
     Array(max + 1) { IntArray(max + 1) }
         .also {
           for (k in 0..max) {
-            var dsSum = 0 // 아래층 누적
+            var sum = 0
             for (n in 1..max) {
               if (k > 0) {
-                dsSum += it[k - 1][n]
+                sum += it[k - 1][n]
               }
-              it[k][n] = if (k == 0) n else dsSum
+              it[k][n] = if (k == 0) n else sum
             }
           }
         }
-
-fun gcd(a: Int, b: Int): Int = if (b != 0) gcd(b, a % b) else a
-
 val IN = BufferedInputStream(System.`in`)
-
 private fun readInt(): Int {
   var c = IN.read()
   while (c <= 32) c = IN.read() // filter
