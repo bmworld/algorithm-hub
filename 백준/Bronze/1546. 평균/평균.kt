@@ -1,5 +1,4 @@
 import java.io.BufferedInputStream
-
 fun main() {
   val n = readInt()
   var max = 0
@@ -9,13 +8,10 @@ fun main() {
     if (max < v) max = v
     sum += v
   }
-
   val fake: Double = sum / max * 100 / n
   print(fake)
 }
-
 val IN = BufferedInputStream(System.`in`)
-
 private fun readInt(): Int {
   var c = IN.read()
   while (c <= 32) c = IN.read() // filter
