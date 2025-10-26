@@ -3,27 +3,12 @@ package 백준.Bronze.no2609
 import java.io.BufferedInputStream
 
 fun main() {
-  var a = readInt()
-  var b = readInt()
-  if (a > b) {
-    val tmp = a
-    a = b
-    b = tmp
-  }
-
-  val M = gcd(b, a)
-  println(M)
-
-  var j = 1
-  var m = a
-  if (b % a == 0) {
-    m = b
-  } else {
-    while (m % b != 0) {
-      m = a * ++j
-    }
-  }
-  print(m)
+  val a = readInt()
+  val b = readInt()
+  val G = gcd(b, a)
+  println(G)
+  val L = a * b / G
+  print(L)
 }
 
 fun gcd(a: Int, b: Int): Int = if (b != 0) gcd(b, a % b) else a
