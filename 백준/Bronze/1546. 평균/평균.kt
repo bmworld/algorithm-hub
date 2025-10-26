@@ -8,8 +8,8 @@ fun main() {
     if (max < v) max = v
     sum += v
   }
-  val fake: Double = sum / max * 100 / n
-  print(fake)
+  val avg: Double = if (max == 0) 0.0 else (sum / max * 100.0) / n
+  print(avg)
 }
 val IN = BufferedInputStream(System.`in`)
 private fun readInt(): Int {
