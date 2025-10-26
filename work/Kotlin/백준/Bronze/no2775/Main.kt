@@ -14,16 +14,16 @@ fun main() {
 }
 
 private const val max = 14
-val APT = // 1 ≤ k, n ≤ 14
+val APT =
     Array(max + 1) { IntArray(max + 1) }
-        .also {
-          for (k in 0..max) {
+        .also { a ->
+          for (n in 1..max) a[0][n] = n
+
+          for (k in 1..max) {
             var sum = 0
             for (n in 1..max) {
-              if (k > 0) {
-                sum += it[k - 1][n]
-              }
-              it[k][n] = if (k == 0) n else sum
+              sum += a[k - 1][n]
+              a[k][n] = sum
             }
           }
         }
