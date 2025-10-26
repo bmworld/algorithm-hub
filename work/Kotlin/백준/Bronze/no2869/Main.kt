@@ -7,11 +7,11 @@ fun main() {
   val dn = readInt()
   val v = readInt()
   if (up >= v) return print(1)
-
-  var d = (v - up) / (up - dn)
-  if (d == 0) d = 1 // 최소 1일
-  val day = d + 1
-  print(day)
+  val size = v - up
+  val move = up - dn
+  var eve = size / move
+  if (size % move != 0) eve++ // 올림
+  print(eve + 1)
 }
 
 val IN = BufferedInputStream(System.`in`)
