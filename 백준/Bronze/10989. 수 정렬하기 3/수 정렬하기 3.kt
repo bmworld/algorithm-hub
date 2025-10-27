@@ -1,3 +1,4 @@
+
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
@@ -20,7 +21,6 @@ fun main() {
   for (v in 1..max) {
     var k = arr[v]
     if (k == 0) continue
-
     var x = v
     var end = 5
     buf[end--] = '\n'.code.toByte()
@@ -28,12 +28,10 @@ fun main() {
       buf[end--] = ((x % 10) + 48).toByte()
       x /= 10
     } while (x > 0)
-
     val stt = end + 1
     val len = 6 - stt
     while (k-- > 0) OUT.write(buf, stt, len)
   }
-
   OUT.flush()
 }
 
@@ -42,7 +40,7 @@ private fun readInt(): Int {
   while (c <= 32) c = IN.read() // filter
   var n = 0
   while (c in 48..57) {
-    n = n * 10 + (c - '0'.code)
+    n = n * 10 + (c - 48)
     c = IN.read()
   }
   return n
