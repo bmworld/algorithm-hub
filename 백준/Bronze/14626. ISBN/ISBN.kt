@@ -1,7 +1,5 @@
 import java.io.BufferedInputStream
-
 private val IN = BufferedInputStream(System.`in`)
-
 fun main() {
   var sum = 0
   var m = 0
@@ -16,11 +14,5 @@ fun main() {
       xw = w
     } else if (v in 48..57) sum += num * w
   }
-
-  var x = 0
-  while (x < 10) {
-    if ((sum + x * xw + m) % 10 == 0) break
-    x++
-  }
-  print(x)
+  for (x in 0..9) if ((sum + x * xw + m) % 10 == 0) return print(x)
 }
