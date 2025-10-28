@@ -1,7 +1,5 @@
 import java.io.BufferedInputStream
-
 val IN = BufferedInputStream(System.`in`)
-
 fun main() {
   var xi = 0
   var xv = 0
@@ -12,9 +10,15 @@ fun main() {
     xv = v
     xi = i
   }
-
   val x = xv + (4 - xi)
-  print(if (x % 15 == 0) "FizzBuzz" else if (x % 3 == 0) "Fizz" else if (x % 5 == 0) "Buzz" else x)
+  print(
+      when {
+        x % 15 == 0 -> "FizzBuzz"
+        x % 3 == 0 -> "Fizz"
+        x % 5 == 0 -> "Buzz"
+        else -> x
+      }
+  )
 }
 
 private fun readInt(): Int {
