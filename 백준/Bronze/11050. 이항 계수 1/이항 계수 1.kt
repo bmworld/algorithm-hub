@@ -1,6 +1,6 @@
 import java.io.BufferedInputStream
 private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-val F = IntArray(11).also { // 1 <= N <= 10, 0 <= K < N
+val F = IntArray(11).also {
       it[0] = 1
       for (i in 1..10) {
         it[i] = it[i - 1] * i
