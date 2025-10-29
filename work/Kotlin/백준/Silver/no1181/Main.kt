@@ -67,7 +67,7 @@ fun main() {
   }
 
   val r = StringBuilder(totalLen)
-  for (s in arr) r.appendLine(s)
+  for (i in 0..<uniqCnt) r.appendLine(arr[i])
   print(r)
 }
 
