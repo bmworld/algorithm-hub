@@ -1,20 +1,26 @@
 import java.io.*
 
-fun main() =
-    with(StreamTokenizer(System.`in`.bufferedReader())) {
-      fun nextInt(): Int {
-        nextToken()
-        return nval.toInt()
-      }
+fun main() {
+  val n = readInt()
+  val m = readInt()
+  BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
+    solveTo(n, m, bw)
+    bw.flush()
+  }
+}
 
-      val n = nextInt()
-      val m = nextInt()
+val IN = BufferedInputStream(System.`in`)
 
-      BufferedWriter(OutputStreamWriter(System.out)).use { bw ->
-        solveTo(n, m, bw)
-        bw.flush()
-      }
-    }
+private fun readInt(): Int {
+  var c = IN.read()
+  while (c <= 32) c = IN.read()
+  var n = 0
+  while (c in 48..57) {
+    n = n * 10 + (c - 48)
+    c = IN.read()
+  }
+  return n
+}
 
 fun solveTo(n: Int, m: Int, out: Appendable) {
   val arr = IntArray(m)
