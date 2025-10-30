@@ -9,11 +9,6 @@ val F =
           cnt5++
           v /= 5
         }
-        var cnt2 = 0
-        while (v % 2 == 0) {
-          cnt2++
-          v /= 2
-        }
         cnt0 += cnt5
         it[i] = cnt0
       }
@@ -23,7 +18,9 @@ fun main() {
   val n = readInt()
   print(F[n])
 }
+
 val IN = BufferedInputStream(System.`in`)
+
 private fun readInt(): Int {
   var c = IN.read()
   while (c <= 32) c = IN.read()
