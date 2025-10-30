@@ -1,12 +1,7 @@
 import java.io.BufferedInputStream
-
-fun main() {
-  val n = readInt()
-  print((n / 5) + (n / 25) + (n / 125))
-}
-
+private val F = IntArray(501).also { f -> for (n in 1..500) f[n] = (n / 5) + (n / 25) + (n / 125) }
+fun main() = print(F[readInt()])
 val IN = BufferedInputStream(System.`in`)
-
 private fun readInt(): Int {
   var c = IN.read()
   while (c <= 32) c = IN.read()
