@@ -1,22 +1,8 @@
 import java.io.BufferedInputStream
-val F =
-    IntArray(501).also {
-      var cnt0 = 0
-      for (i in 1..500) {
-        var v = i
-        var cnt5 = 0
-        while (v % 5 == 0) {
-          cnt5++
-          v /= 5
-        }
-        cnt0 += cnt5
-        it[i] = cnt0
-      }
-    }
 
 fun main() {
   val n = readInt()
-  print(F[n])
+  print((n / 5) + (n / 25) + (n / 125))
 }
 
 val IN = BufferedInputStream(System.`in`)
