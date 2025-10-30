@@ -2,9 +2,10 @@ package 백준.Silver.no1676
 
 import java.io.BufferedInputStream
 
-private val F = IntArray(501).also { f -> for (n in 1..500) f[n] = (n / 5) + (n / 25) + (n / 125) }
-
-fun main() = print(F[readInt()])
+fun main() {
+  val n = readInt()
+  print((n / 5) + (n / 25) + (n / 125))
+}
 
 val IN = BufferedInputStream(System.`in`)
 
