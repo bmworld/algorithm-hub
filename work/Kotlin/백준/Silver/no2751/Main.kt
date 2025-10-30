@@ -43,7 +43,7 @@ fun main() {
 }
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
-val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+val OUT = BufferedOutputStream(System.`out`, 1 shl 22)
 
 private fun readInt(): Int {
   var c = IN.read()
