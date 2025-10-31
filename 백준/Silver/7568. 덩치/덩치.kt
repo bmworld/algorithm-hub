@@ -39,7 +39,7 @@ private fun writeln(num: Int) {
 }
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
-val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
+val OUT = BufferedOutputStream(System.`out`)
 
 private fun readInt(): Int {
   var c = IN.read()
