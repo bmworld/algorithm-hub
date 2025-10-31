@@ -5,6 +5,7 @@ private const val CODE_0 = 48
 private const val CODE_9 = 57
 private const val maxNumSize = 2
 private val buf = ByteArray(maxNumSize + 1).also { it[maxNumSize] = ' '.code.toByte() }
+
 fun main() {
   val n = readInt()
   val arr =
@@ -17,15 +18,20 @@ fun main() {
       }
   repeat(n - 1) { i ->
     val a = arr[i]
-    for (j in i + 1..<n) {
+    val a1 = a[0]
+    val a2 = a[1]
+    for (j in i + 1 until n) {
       val b = arr[j]
-      if (a[0] > b[0] && a[1] > b[1]) b[2]++
-      if (a[0] < b[0] && a[1] < b[1]) a[2]++
+      val b1 = b[0]
+      val b2 = b[1]
+      if (a1 > b1 && a2 > b2) b[2]++
+      if (a1 < b1 && a2 < b2) a[2]++
     }
   }
   for (p in arr) writeln(p[2])
   OUT.flush()
 }
+
 private fun writeln(num: Int) {
   var x = num
   var endIdx = 1
@@ -39,7 +45,7 @@ private fun writeln(num: Int) {
 }
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
-val OUT = BufferedOutputStream(System.`out`)
+val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
 
 private fun readInt(): Int {
   var c = IN.read()
