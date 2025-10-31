@@ -11,37 +11,24 @@ private val buf = ByteArray(maxNumSize + 1).also { it[maxNumSize] = ' '.code.toB
 fun main() {
 
   val n = readInt()
-  val arr = Array(n) { Person(it, readInt(), readInt()) }
-  val ch = arr.copyOf()
-  ch.sort()
+  val arr = Array(n) { Person(readInt(), readInt(), 1) }
 
-  var rank = 1
-  ch[0].rank = rank
-  for (i in 1..<n) {
-    val order = i + 1
-    val cur = ch[i]
-    val pre = ch[i - 1]
-    if (cur.w < pre.w && cur.h < pre.h) rank = order
-    arr[cur.idx].rank = rank
+  for (i in 0..<n - 1) {
+    val a = arr[i]
+    for (j in i + 1..<n) {
+      val b = arr[j]
+      if (a.w > b.w && a.h > b.h) b.rank++
+      if (a.w < b.w && a.h < b.h) a.rank++
+    }
   }
 
-  for ((idx, p) in arr.withIndex()) writeln(p.rank, idx == n - 1)
+  for (p in arr) writeln(p.rank)
   OUT.flush()
 }
 
-private class Person(val idx: Int, val w: Int, val h: Int, var rank: Int = 0) : Comparable<Person> {
+private class Person(val w: Int, val h: Int, var rank: Int)
 
-  override fun compareTo(o: Person): Int {
-    val tw = this.w
-    val ow = o.w
-    return when { // 1. 몸무게 2. 키
-      tw == ow -> o.h.compareTo(this.h)
-      else -> ow - tw
-    }
-  }
-}
-
-private fun writeln(num: Int, isLast: Boolean) {
+private fun writeln(num: Int) {
   var x = num
   var endIdx = 1
   do {
@@ -49,7 +36,7 @@ private fun writeln(num: Int, isLast: Boolean) {
     x /= 10
   } while (x > 0)
   val stt = endIdx + 1
-  val len = maxNumSize - stt + if (isLast) 0 else 1 // 띄어쓰기 포함여부
+  val len = maxNumSize - stt + 1 // 띄어쓰기 포함
   OUT.write(buf, stt, len)
 }
 
