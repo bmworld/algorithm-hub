@@ -9,22 +9,27 @@ private val buf = ByteArray(maxNumSize + 1).also { it[maxNumSize] = ' '.code.toB
 fun main() {
 
   val n = readInt()
-  val arr = Array(n) { Person(readInt(), readInt(), 1) }
+  val arr =
+      Array(n) {
+        IntArray(3).also {
+          it[0] = readInt()
+          it[1] = readInt()
+          it[2] = 1
+        }
+      }
 
-  for (i in 0..<n - 1) {
+  repeat(n - 1) { i ->
     val a = arr[i]
     for (j in i + 1..<n) {
       val b = arr[j]
-      if (a.w > b.w && a.h > b.h) b.rank++
-      if (a.w < b.w && a.h < b.h) a.rank++
+      if (a[0] > b[0] && a[1] > b[1]) b[2]++
+      if (a[0] < b[0] && a[1] < b[1]) a[2]++
     }
   }
 
-  for (p in arr) writeln(p.rank)
+  for (p in arr) writeln(p[2])
   OUT.flush()
 }
-
-private class Person(val w: Int, val h: Int, var rank: Int)
 
 private fun writeln(num: Int) {
   var x = num
