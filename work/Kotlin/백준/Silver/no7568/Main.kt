@@ -20,10 +20,14 @@ fun main() {
       }
   repeat(n - 1) { i ->
     val a = arr[i]
-    for (j in i + 1..<n) {
+    val a1 = a[0]
+    val a2 = a[1]
+    for (j in i + 1 until n) {
       val b = arr[j]
-      if (a[0] > b[0] && a[1] > b[1]) b[2]++
-      if (a[0] < b[0] && a[1] < b[1]) a[2]++
+      val b1 = b[0]
+      val b2 = b[1]
+      if (a1 > b1 && a2 > b2) b[2]++
+      if (a1 < b1 && a2 < b2) a[2]++
     }
   }
   for (p in arr) writeln(p[2])
