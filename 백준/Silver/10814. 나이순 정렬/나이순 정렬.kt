@@ -5,7 +5,7 @@ private const val MAX_AGE = 200
 fun main() {
   val n = readInt()
   val arr = Array(MAX_AGE + 1) { mutableListOf<String>() }
-  var minAge = MAX_AGE + 1
+  var minAge = MAX_AGE
   var maxAge = 0
   repeat(n) {
     val age = readInt()
@@ -14,8 +14,13 @@ fun main() {
     if (age < minAge) minAge = age
   }
 
-  val sb = StringBuilder()
-  for (age in minAge..maxAge) for (s in arr[age]) sb.append(age).append(" ").append(s).append('\n')
+  val sb = StringBuilder(n * 20)
+  val agePrefix = Array(MAX_AGE + 1) { i -> "$i " }
+
+  for (age in minAge..maxAge) {
+    val prefix = agePrefix[age]
+    for (name in arr[age]) sb.append(prefix).append(name).append('\n')
+  }
 
   print(sb)
 }
