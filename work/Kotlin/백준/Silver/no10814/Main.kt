@@ -6,23 +6,23 @@ private const val MAX_AGE = 200
 
 fun main() {
   val n = readInt()
-  val arr = Array(MAX_AGE + 1) { StringBuilder() }
-  val sb = StringBuilder()
+  val arr = Array(MAX_AGE + 1) { mutableListOf<String>() }
   var minAge = MAX_AGE + 1
   var maxAge = 0
-
   repeat(n) {
     val age = readInt()
-    val name = readString()
-    arr[age].append(age).append(" ").append(name).append('\n')
+    arr[age].add(readString())
     if (age > maxAge) maxAge = age
     if (age < minAge) minAge = age
   }
-  for (age in minAge..maxAge) for (s in arr[age]) sb.append(s)
+
+  val sb = StringBuilder()
+  for (age in minAge..maxAge) for (s in arr[age]) sb.append(age).append(" ").append(s).append('\n')
+
   print(sb)
 }
 
-val IN = BufferedInputStream(System.`in`, 1 shl 20)
+val IN = BufferedInputStream(System.`in`, 1 shl 21)
 
 private fun readInt(): Int {
   var c = IN.read()
