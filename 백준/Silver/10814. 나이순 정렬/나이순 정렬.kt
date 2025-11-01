@@ -1,31 +1,37 @@
 import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 
 private const val MAX_AGE = 200
+private const val MAX_NAME = 100
 
 fun main() {
   val n = readInt()
-  val arr = Array(MAX_AGE + 1) { mutableListOf<String>() }
+  val arr = Array(MAX_AGE + 1) { ArrayList<ByteArray>() }
   var minAge = MAX_AGE
   var maxAge = 0
   repeat(n) {
     val age = readInt()
-    arr[age].add(readString())
+
+    arr[age].add(readWordAsByte())
     if (age > maxAge) maxAge = age
     if (age < minAge) minAge = age
   }
 
-  val sb = StringBuilder(n * 20)
-  val agePrefix = Array(MAX_AGE + 1) { i -> "$i " }
-
+  val agePrefix = Array(MAX_AGE + 1) { age -> ("$age ").toByteArray() }
   for (age in minAge..maxAge) {
     val prefix = agePrefix[age]
-    for (name in arr[age]) sb.append(prefix).append(name).append('\n')
+    for (name in arr[age]) {
+      OUT.write(prefix)
+      OUT.write(name)
+      OUT.write('\n'.code)
+    }
   }
 
-  print(sb)
+  OUT.flush()
 }
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
+val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 
 private fun readInt(): Int {
   var c = IN.read()
@@ -38,16 +44,14 @@ private fun readInt(): Int {
   return n
 }
 
-val nb = StringBuilder(100)
-
-fun readString(): String {
-  nb.clear()
+private val byteBuf = ByteArray(MAX_NAME)
+fun readWordAsByte(): ByteArray {
   var c = IN.read()
   while (c <= 32) c = IN.read()
+  var len = 0
   while (c > 32) {
-    nb.append(c.toChar())
+    byteBuf[len++] = c.toByte()
     c = IN.read()
   }
-
-  return nb.toString()
+  return byteBuf.copyOf(len)
 }
