@@ -1,6 +1,7 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
+private const val CODE_MINUS = '-'.code
 private const val HALF = 100_000
 private const val SPACE = ' '.code
 private const val LN = '\n'.code
@@ -40,8 +41,8 @@ private val buf = ByteArray(MAX_NUM_LEN)
 
 private fun writeln(num: Int) {
   var x = num
-  if (x < 0) { // 부호처리
-    OUT.write('-'.code)
+  if (x < 0) { // 부호 처리
+    OUT.write(CODE_MINUS)
     x = -x
   }
   var endIdx = MAX_NUM_LEN - 1
@@ -61,7 +62,7 @@ private fun readInt(): Int {
   var c = IN.read()
   while (c <= 32) c = IN.read()
   var sign = 1
-  if (c == '-'.code) { // 부호 처리
+  if (c == CODE_MINUS) { // 부호 처리
     sign = -1
     c = IN.read()
   }
