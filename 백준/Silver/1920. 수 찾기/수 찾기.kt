@@ -7,28 +7,45 @@ private const val CODE_0 = '0'.code
 private const val CODE_1 = '1'.code
 private const val CODE_9 = '9'.code
 
-private fun main() {
+fun main() {
   val n = readInt()
-  val ch = HashSet<Int>(n)
+  val arr = IntArray(n)
 
   var min = Int.MAX_VALUE
   var max = Int.MIN_VALUE
   repeat(n) {
     val v = readInt()
-    ch.add(v)
+    arr[it] = v
     if (v < min) min = v
     if (v > max) max = v
   }
+  arr.sort()
 
   val m = readInt()
   repeat(m) {
     val v = readInt()
-    val isIn = if (v !in min..max) false else v in ch
+    val isIn = if (v !in min..max) false else binarySearch(arr, v)
     OUT.write(if (isIn) CODE_1 else CODE_0)
     OUT.write(CODE_NL)
   }
 
   OUT.flush()
+}
+
+fun binarySearch(arr: IntArray, t: Int): Boolean {
+  var l = 0
+  var r = arr.size - 1
+  while (l <= r) {
+    val mid = (l + r).ushr(1) // = (l+r) / 2 -> overflow 방지
+    val midV = arr[mid]
+    when {
+      midV < t -> l = mid + 1
+      midV > t -> r = mid - 1
+      else -> return true
+    }
+  }
+
+  return false
 }
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
