@@ -11,13 +11,13 @@ private const val CODE_9 = '9'.code
 
 private fun main() {
   val n = readInt()
-  val arr = IntArray(n)
+  val ch = HashMap<Int, Boolean>(n)
 
   var min = Int.MAX_VALUE
   var max = Int.MIN_VALUE
   repeat(n) {
     val v = readInt()
-    arr[it] = v
+    ch[v] = true
     if (v < min) min = v
     if (v > max) max = v
   }
@@ -25,8 +25,8 @@ private fun main() {
   val m = readInt()
   repeat(m) {
     val v = readInt()
-    val contains = arr.contains(v)
-    OUT.write(if (contains) CODE_1 else CODE_0)
+    val isIn = ch[v] == true
+    OUT.write(if (isIn) CODE_1 else CODE_0)
     OUT.write(CODE_NL)
   }
 
