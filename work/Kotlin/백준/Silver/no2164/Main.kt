@@ -13,22 +13,19 @@ fun main() {
   var n = readInt()
   var top = 1
   var diff = 1
-  var cycle = 1
-  var delTarget = ODD
+  var t = ODD // 삭제 대상
 
   while (n > 1) {
-    if (delTarget == ODD) top += diff
-
-    val isLenOdd = n % 2 == 1
-    delTarget =
-        if (delTarget == ODD) {
-          if (isLenOdd) EVEN else ODD
+    if (t == ODD) top += diff
+    val nt =
+        if (t == ODD) {
+          if (n % 2 == ODD) EVEN else ODD
         } else {
-          if (isLenOdd) ODD else EVEN
+          if (n % 2 == ODD) ODD else EVEN
         }
 
-    n /= 2
-    cycle++
+    n = if (t == ODD) n / 2 else (n + 1) / 2
+    t = nt
     diff *= 2
   }
 
