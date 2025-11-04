@@ -2,24 +2,37 @@ package 백준.Silver.no2164
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
 val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private val buf = ByteArray(6)
+private const val ODD = 1
+private const val EVEN = 2
 
 fun main() {
-  val n = readInt()
-  val Q = LinkedList<Int>().also { for (i in 1..n) it.add(i) }
+  var n = readInt()
+  var top = 1
+  var diff = 1
+  var cycle = 1
+  var delTarget = ODD
 
-  var i = 1
-  while (Q.size > 1) {
-    val v = Q.poll()
-    if (i == -1) Q.add(v)
-    i = -i
+  while (n > 1) {
+    if (delTarget == ODD) top += diff
+
+    val isLenOdd = n % 2 == 1
+    delTarget =
+        if (delTarget == ODD) {
+          if (isLenOdd) EVEN else ODD
+        } else {
+          if (isLenOdd) ODD else EVEN
+        }
+
+    n /= 2
+    cycle++
+    diff *= 2
   }
 
-  writeln(Q.pop())
+  writeln(top)
   OUT.flush()
 }
 
