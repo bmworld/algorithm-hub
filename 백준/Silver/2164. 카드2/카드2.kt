@@ -1,23 +1,34 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 val IN = BufferedInputStream(System.`in`, 1 shl 20)
 val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private val buf = ByteArray(6)
+private const val ODD = 1
+private const val EVEN = 2
 
 fun main() {
-  val n = readInt()
-  val Q = LinkedList<Int>().also { for (i in 1..n) it.add(i) }
+  var n = readInt()
+  var top = 1
+  var diff = 1
+  var target = ODD
 
-  var i = 1
-  while (Q.size > 1) {
-    val v = Q.poll()
-    if (i == -1) Q.add(v)
-    i = -i
+  while (n > 1) {
+    if (target == ODD) top += diff
+    val nextN = if (target == ODD) n / 2 else (n + 1) / 2
+
+    target =
+        if (target == ODD) {
+          if (n % 2 == ODD) EVEN else ODD
+        } else {
+          if (n % 2 == ODD) ODD else EVEN
+        }
+
+    n = nextN
+    diff *= 2
   }
 
-  writeln(Q.pop())
+  writeln(top)
   OUT.flush()
 }
 
