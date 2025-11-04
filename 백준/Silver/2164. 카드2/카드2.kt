@@ -16,18 +16,15 @@ fun main() {
   while (n > 1) {
     if (target == ODD) top += diff
     val nextN = if (target == ODD) n / 2 else (n + 1) / 2
-
     target =
         if (target == ODD) {
           if (n % 2 == ODD) EVEN else ODD
         } else {
           if (n % 2 == ODD) ODD else EVEN
         }
-
     n = nextN
     diff *= 2
   }
-
   writeln(top)
   OUT.flush()
 }
