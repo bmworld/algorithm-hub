@@ -25,13 +25,13 @@ fun main() {
 private val ch = ByteArray(100)
 
 private fun readLine(): Int {
-  var checkDone = false
+  var foundErr = false
   var result = -1
   var i = 0
   var c = IN.read()
   var len = 0
   while (true) {
-    if (checkDone) {
+    if (foundErr) {
       when (c) {
         46 -> return result
         else -> c = IN.read()
@@ -60,25 +60,20 @@ private fun readLine(): Int {
           len++
           result =
               if (i == 0) {
-                checkDone = true
+                foundErr = true
                 0
               } else {
                 val v = ch[--i]
                 if ((c == 41 && v == 40.toByte()) || (c == 93 && v == 91.toByte())) {
                   1
                 } else {
-                  checkDone = true
+                  foundErr = true
                   0
                 }
               }
           c = IN.read()
         }
-        46 -> {
-          return if (len <= 1) -1
-          else {
-            if (i == 0) 1 else 0
-          }
-        }
+        46 -> return if (len <= 0) -1 else if (i == 0) 1 else 0
         else -> c = IN.read()
       }
     }
