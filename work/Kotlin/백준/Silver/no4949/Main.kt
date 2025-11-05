@@ -3,8 +3,8 @@ package 백준.Silver.no4949
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+private val IN = BufferedInputStream(System.`in`, 1 shl 18)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 18)
 private val YES = "yes\n".toByteArray()
 private val NO = "no\n".toByteArray()
 
