@@ -1,21 +1,15 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+private val IN = BufferedInputStream(System.`in`, 1 shl 18)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 18)
 
 private val Y = "YES\n".toByteArray()
 private val N = "NO\n".toByteArray()
 
 fun main() {
   val n = readInt()
-  repeat(n) {
-    val r = readLine()
-    when (r) {
-      1 -> OUT.write(Y)
-      0 -> OUT.write(N)
-    }
-  }
+  repeat(n) { OUT.write(if (readLine()) Y else N) }
 
   OUT.flush()
 }
@@ -45,9 +39,9 @@ private fun readInt(): Int {
 
 private fun readByte(): Int = IN.read()
 
-private fun readLine(): Int {
+private fun readLine(): Boolean {
   var foundErr = false
-  var r = -1
+  var r = true
   var i = 0
   var c = readByte()
   while (true) {
@@ -61,7 +55,7 @@ private fun readLine(): Int {
       when (c) {
         40, // (
         -> {
-          r = 0
+          r = false
           val cb = c.toByte()
           ch[i++] = cb
           c = readByte()
@@ -71,20 +65,20 @@ private fun readLine(): Int {
           r =
               if (i == 0) {
                 foundErr = true
-                0
+                false
               } else {
                 val v = ch[--i]
                 if (v == 40.toByte()) {
-                  1
+                  true
                 } else {
                   foundErr = true
-                  0
+                  false
                 }
               }
           c = readByte()
         }
         10,
-        13 -> return if (i == 0) 1 else 0
+        13 -> return i == 0
         else -> c = readByte()
       }
     }
