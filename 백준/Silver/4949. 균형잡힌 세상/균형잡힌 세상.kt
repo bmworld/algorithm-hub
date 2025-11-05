@@ -12,27 +12,28 @@ fun main() {
     when (r) {
       1 -> OUT.write(YES)
       0 -> OUT.write(NO)
-      else -> {
-        OUT.flush()
-        return
-      }
+      else -> break
     }
   }
+
+  OUT.flush()
 }
 
 private val ch = ByteArray(100)
 
+private fun readByte(): Int = IN.read()
+
 private fun readLine(): Int {
   var foundErr = false
-  var result = -1
+  var r = -1
   var i = 0
-  var c = IN.read()
+  var c = readByte()
   var len = 0
   while (true) {
     if (foundErr) {
       when (c) {
-        46 -> return result
-        else -> c = IN.read()
+        46 -> return r
+        else -> c = readByte()
       }
     } else {
       when (c) {
@@ -41,22 +42,23 @@ private fun readLine(): Int {
         in 97..122, // 소
         -> {
           len++
-          result = 1
-          c = IN.read()
+          r = 1
+          c = readByte()
         }
         40, // (
         91, // [
         -> {
           len++
-          result = 0
-          ch[i++] = c.toByte()
-          c = IN.read()
+          r = 0
+          val cb = c.toByte()
+          ch[i++] = cb
+          c = readByte()
         }
         41, // )
         93, // ]
         -> {
           len++
-          result =
+          r =
               if (i == 0) {
                 foundErr = true
                 0
@@ -69,10 +71,10 @@ private fun readLine(): Int {
                   0
                 }
               }
-          c = IN.read()
+          c = readByte()
         }
         46 -> return if (len <= 0) -1 else if (i == 0) 1 else 0
-        else -> c = IN.read()
+        else -> c = readByte()
       }
     }
   }
