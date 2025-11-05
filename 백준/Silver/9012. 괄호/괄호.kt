@@ -1,8 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private val IN = BufferedInputStream(System.`in`, 1 shl 18)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 18)
+private val IN = BufferedInputStream(System.`in`, 1 shl 17)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 17)
 
 private val Y = "YES\n".toByteArray()
 private val N = "NO\n".toByteArray()
