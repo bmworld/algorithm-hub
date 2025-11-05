@@ -29,6 +29,7 @@ private fun readLine(): Int {
   var result = -1
   var i = 0
   var c = IN.read()
+  var len = 0
   while (true) {
     if (checkDone) {
       when (c) {
@@ -41,12 +42,14 @@ private fun readLine(): Int {
         in 65..90, // 대
         in 97..122, // 소
         -> {
+          len++
           result = 1
           c = IN.read()
         }
         40, // (
         91, // [
         -> {
+          len++
           result = 0
           ch[i++] = c.toByte()
           c = IN.read()
@@ -54,6 +57,7 @@ private fun readLine(): Int {
         41, // )
         93, // ]
         -> {
+          len++
           result =
               if (i == 0) {
                 checkDone = true
@@ -67,10 +71,14 @@ private fun readLine(): Int {
                   0
                 }
               }
-
           c = IN.read()
         }
-        46 -> return result
+        46 -> {
+          return if (len <= 1) -1
+          else {
+            if (i == 0) 1 else 0
+          }
+        }
         else -> c = IN.read()
       }
     }
