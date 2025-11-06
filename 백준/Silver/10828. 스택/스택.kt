@@ -2,43 +2,40 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
 
 private fun readByte(): Int = IN.read()
 
-private const val PUSH = 1 // push
-private const val POP = 2 // pop
-private const val TOP = 3 // top
-private const val SIZE = 4 // size
-private const val EMPTY = 5 // empty
+private const val PUSH = 1
+private const val POP = 2
+private const val TOP = 3
+private const val SIZE = 4
+private const val EMPTY = 5
 private const val EMPTY_V = -1
+private const val SKIP_OUT = 1357
 
 fun main() {
   val n = readInt()
-
-  val arr = IntArray(n) { EMPTY_V }
-  var cnt = 0
+  val arr = IntArray(n)
+  var i = 0
   repeat(n) {
-    val c = readWordAsCode()
-    when (c) {
-      PUSH -> {
-        val v = readInt()
-        arr[cnt++] = v
-      }
+    val r =
+        when (readWordAsCode()) {
+          PUSH -> {
+            arr[i++] = readInt()
+            SKIP_OUT
+          }
+          POP -> if (i == 0) EMPTY_V else arr[--i]
+          TOP -> if (i == 0) EMPTY_V else arr[i - 1]
+          SIZE -> i
+          EMPTY -> if (i == 0) 1 else 0
+          else -> SKIP_OUT
+        }
 
-      POP -> {
-        writeln(if (cnt == 0) EMPTY_V else arr[--cnt])
-        arr[cnt] = EMPTY_V
-      }
-
-      TOP -> writeln(if (cnt == 0) EMPTY_V else arr[cnt - 1])
-      SIZE -> writeln(cnt)
-      EMPTY -> writeln(if (cnt == 0) 1 else 0)
-    }
+    if (r != SKIP_OUT) writeln(r)
   }
-
   OUT.flush()
 }
 
