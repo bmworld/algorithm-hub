@@ -1,12 +1,13 @@
-import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+private val B: ByteArray = System.`in`.readBytes()
+private var Bi = 0
+
+private fun read(): Int = if (Bi < B.size) (B[Bi++].toInt() and 0xFF) else 10 // EOF -> '\n'
+
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
-
-private fun read(): Int = IN.read()
 
 private const val PUSH = 1
 private const val POP = 2
@@ -71,7 +72,7 @@ private fun readInt(): Int {
 }
 
 fun readWordAsCode(): Int {
-  var c = skipSEP()
+  var c = read()
   val code = CODES[c]
   if (code == 153) {
     val c2 = read()
@@ -82,10 +83,4 @@ fun readWordAsCode(): Int {
   c = read()
   while (!SEP[c]) c = read()
   return code
-}
-
-private inline fun skipSEP(): Int {
-  var c = read()
-  while (SEP[c]) c = read()
-  return c
 }
