@@ -2,12 +2,13 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
 
 private fun read(): Int = IN.read()
 
+private const val CODE_0 = 48
 private const val PUSH = 1
 private const val POP = 2
 private const val TOP = 3
@@ -39,7 +40,8 @@ private fun writeln(num: Int) {
   }
   var endIdx = MAX_NUM_LEN - 1
   do {
-    buf[endIdx--] = ((x % 10) + 48).toByte()
+
+    buf[endIdx--] = ((x % 10) + CODE_0).toByte()
     x /= 10
   } while (x > 0)
   val stt = endIdx + 1
@@ -56,8 +58,8 @@ private fun readInt(): Int {
     c = read()
   }
   var n = 0
-  while (c - 48 in 0..9) {
-    n = n * 10 + (c - 48)
+  while (c - CODE_0 in 0..9) {
+    n = n * 10 + (c - CODE_0)
     c = read()
   }
   return if (ne) -n else n
