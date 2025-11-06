@@ -10,35 +10,34 @@ private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.
 
 private fun readByte(): Int = IN.read()
 
-private const val PUSH = "push"
-private const val POP = "pop"
-private const val SIZE = "size"
-private const val EMPTY = "empty"
-private const val EMPTY_VALUE = -1
-private const val TOP = "top"
+private const val PUSH = 1
+private const val POP = 2
+private const val TOP = 3
+private const val SIZE = 4
+private const val EMPTY = 5
+private const val EMPTY_V = -1
 
 fun main() {
   val n = readInt()
 
-  val arr = IntArray(n + 1) { EMPTY_VALUE }
+  val arr = IntArray(n) { EMPTY_V }
   var cnt = 0
   repeat(n) {
-    val s = readString()
-    when (s) {
+    val c = readWordAsCode()
+    when (c) {
       PUSH -> {
         val v = readInt()
         arr[cnt++] = v
       }
       POP -> {
-        writeln(if (cnt == 0) EMPTY_VALUE else arr[--cnt])
-        arr[cnt] = EMPTY_VALUE
+        writeln(if (cnt == 0) EMPTY_V else arr[--cnt])
+        arr[cnt] = EMPTY_V
       }
+      TOP -> writeln(if (cnt == 0) EMPTY_V else arr[cnt - 1])
       SIZE -> writeln(cnt)
       EMPTY -> writeln(if (cnt == 0) 1 else 0)
-      TOP -> writeln(if (cnt == 0) EMPTY_VALUE else arr[cnt - 1])
     }
   }
-
   OUT.flush()
 }
 
@@ -60,7 +59,6 @@ private fun writeln(num: Int) {
 
 private fun readInt(): Int {
   var n = 0
-  var sign = 1
   var c = readByte()
   while (true) {
     when (c) {
@@ -70,30 +68,40 @@ private fun readInt(): Int {
       }
       10,
       13,
-      32 -> return n * sign
-      45 -> {
-        sign = -1
-        c = readByte()
-      }
+      32 -> return n
       else -> c = readByte()
     }
   }
 }
 
-val sb = StringBuilder(5)
-
-fun readString(): String {
-  sb.clear()
+fun readWordAsCode(): Int {
   var c = readByte()
+  var cnt = 0
+  var code = 0
+  var firstC = 0
   while (true) {
     when (c) {
       in 97..122 -> {
-        sb.append(c.toChar())
+        if (cnt == 0) {
+          when (c) {
+            116 -> code = TOP
+            115 -> code = SIZE
+            101 -> code = EMPTY
+          }
+          firstC = c
+          cnt++
+        } else if (firstC == 112 && cnt == 1) {
+          when (c) {
+            117 -> code = PUSH
+            111 -> code = POP
+          }
+          cnt++
+        }
         c = readByte()
       }
       10,
       13,
-      32 -> return sb.toString()
+      32 -> return code
       else -> c = readByte()
     }
   }
