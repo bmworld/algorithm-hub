@@ -5,7 +5,7 @@ private var Bi = 0
 
 private fun read(): Int = if (Bi < B.size) (B[Bi++].toInt() and 0xFF) else 10 // EOF -> '\n'
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 15)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
 
