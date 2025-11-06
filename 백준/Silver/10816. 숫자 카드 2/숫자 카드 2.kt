@@ -1,7 +1,7 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private val IN = BufferedInputStream(System.`in`, 1 shl 21)
+private val IN = BufferedInputStream(System.`in`, 1 shl 20)
 private val OUT = BufferedOutputStream(System.`out`, 1 shl 21)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = ' '.code.toByte() }
