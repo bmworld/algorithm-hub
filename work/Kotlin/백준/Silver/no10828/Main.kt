@@ -15,7 +15,19 @@ private const val POP = 2
 private const val TOP = 3
 private const val SIZE = 4
 private const val EMPTY = 5
-private const val EMPTY_V = -1
+
+private val CODES =
+    IntArray(256).also {
+      it[116] = TOP
+      it[115] = SIZE
+      it[101] = EMPTY
+      it[112] = 153 // push vs pop
+    }
+private val SEP =
+    BooleanArray(256).also {
+      it[10] = true
+      it[32] = true
+    }
 
 fun main() {
   val n = readInt()
@@ -24,8 +36,8 @@ fun main() {
   repeat(n) {
     when (readWordAsCode()) {
       PUSH -> arr[i++] = readInt()
-      POP -> writeln(if (i == 0) EMPTY_V else arr[--i])
-      TOP -> writeln(if (i == 0) EMPTY_V else arr[i - 1])
+      POP -> writeln(if (i == 0) -1 else arr[--i])
+      TOP -> writeln(if (i == 0) -1 else arr[i - 1])
       SIZE -> writeln(i)
       EMPTY -> writeln(if (i == 0) 1 else 0)
     }
@@ -39,59 +51,43 @@ private fun writeln(num: Int) {
     x = -x
     OUT.write(45)
   }
-  var endIdx = MAX_NUM_LEN - 1
+  var end = MAX_NUM_LEN - 1
   do {
-    buf[endIdx--] = ((x % 10) + 48).toByte()
+    buf[end--] = ((x % 10) + 48).toByte()
     x /= 10
   } while (x > 0)
-  val stt = endIdx + 1
+  val stt = end + 1
   val len = MAX_NUM_LEN - stt + 1 // 개행 포함
   OUT.write(buf, stt, len)
 }
 
 private fun readInt(): Int {
   var c = read()
-  while (c == 10 || c == 32) c = read()
-  var ne = false
-  if (c == 45) {
-    ne = true
-    c = read()
-  }
+  while (SEP[c]) c = read()
   var n = 0
   while (c in 48..57) {
     n = n * 10 + (c - 48)
     c = read()
   }
-  return if (ne) -n else n
+  return n
 }
 
 fun readWordAsCode(): Int {
-  var c = read()
-  while (c == 10 || c == 32) c = read()
-  return when (c) {
-    116 -> {
-      skipToSep()
-      TOP
-    }
-    115 -> {
-      skipToSep()
-      SIZE
-    }
-    101 -> {
-      skipToSep()
-      EMPTY
-    }
-    112 -> {
-      val c2 = read()
-      skipToSep()
-      if (c2 == 117) PUSH else POP
-    }
-    else -> readWordAsCode()
+  var c = skipSEP()
+  val code = CODES[c]
+  if (code == 153) {
+    val c2 = read()
+    c = read()
+    while (!SEP[c]) c = read()
+    return if (c2 == 117) PUSH else POP
   }
+  c = read()
+  while (!SEP[c]) c = read()
+  return code
 }
 
-private fun skipToSep(): Int {
+private fun skipSEP(): Int {
   var c = read()
-  while (!(c == 10 || c == 32)) c = read()
+  while (SEP[c]) c = read()
   return c
 }
