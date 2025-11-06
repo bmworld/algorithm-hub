@@ -16,27 +16,27 @@ private const val TOP = 3
 private const val SIZE = 4
 private const val EMPTY = 5
 private const val EMPTY_V = -1
+private const val SKIP = 1357
 
 fun main() {
   val n = readInt()
-
-  val arr = IntArray(n) { EMPTY_V }
-  var cnt = 0
+  val arr = IntArray(n)
+  var i = 0
   repeat(n) {
-    val c = readWordAsCode()
-    when (c) {
-      PUSH -> {
-        val v = readInt()
-        arr[cnt++] = v
-      }
-      POP -> {
-        writeln(if (cnt == 0) EMPTY_V else arr[--cnt])
-        arr[cnt] = EMPTY_V
-      }
-      TOP -> writeln(if (cnt == 0) EMPTY_V else arr[cnt - 1])
-      SIZE -> writeln(cnt)
-      EMPTY -> writeln(if (cnt == 0) 1 else 0)
-    }
+    val r =
+        when (readWordAsCode()) {
+          PUSH -> {
+            arr[i++] = readInt()
+            SKIP
+          }
+          POP -> if (i == 0) EMPTY_V else arr[--i]
+          TOP -> if (i == 0) EMPTY_V else arr[i - 1]
+          SIZE -> i
+          EMPTY -> if (i == 0) 1 else 0
+          else -> SKIP
+        }
+
+    if (r != SKIP) writeln(r)
   }
   OUT.flush()
 }
