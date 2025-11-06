@@ -4,11 +4,11 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
 
-private fun readByte(): Int = IN.read()
+private fun read(): Int = IN.read()
 
 private const val PUSH = 1
 private const val POP = 2
@@ -16,27 +16,19 @@ private const val TOP = 3
 private const val SIZE = 4
 private const val EMPTY = 5
 private const val EMPTY_V = -1
-private const val SKIP = 1357
 
 fun main() {
   val n = readInt()
   val arr = IntArray(n)
   var i = 0
   repeat(n) {
-    val r =
-        when (readWordAsCode()) {
-          PUSH -> {
-            arr[i++] = readInt()
-            SKIP
-          }
-          POP -> if (i == 0) EMPTY_V else arr[--i]
-          TOP -> if (i == 0) EMPTY_V else arr[i - 1]
-          SIZE -> i
-          EMPTY -> if (i == 0) 1 else 0
-          else -> SKIP
-        }
-
-    if (r != SKIP) writeln(r)
+    when (readWordAsCode()) {
+      PUSH -> arr[i++] = readInt()
+      POP -> writeln(if (i == 0) EMPTY_V else arr[--i])
+      TOP -> writeln(if (i == 0) EMPTY_V else arr[i - 1])
+      SIZE -> writeln(i)
+      EMPTY -> writeln(if (i == 0) 1 else 0)
+    }
   }
   OUT.flush()
 }
@@ -58,51 +50,48 @@ private fun writeln(num: Int) {
 }
 
 private fun readInt(): Int {
-  var n = 0
-  var c = readByte()
-  while (true) {
-    when (c) {
-      in 48..57 -> {
-        n = n * 10 + (c - 48)
-        c = IN.read()
-      }
-      10,
-      13,
-      32 -> return n
-      else -> c = readByte()
-    }
+  var c = read()
+  while (c == 10 || c == 32) c = read()
+  var ne = false
+  if (c == 45) {
+    ne = true
+    c = read()
   }
+  var n = 0
+  while (c in 48..57) {
+    n = n * 10 + (c - 48)
+    c = read()
+  }
+  return if (ne) -n else n
 }
 
 fun readWordAsCode(): Int {
-  var c = readByte()
-  var cnt = 0
-  var code = 0
-  var firstC = 0
-  while (true) {
-    when (c) {
-      in 97..122 -> {
-        if (cnt == 0) {
-          when (c) {
-            116 -> code = TOP
-            115 -> code = SIZE
-            101 -> code = EMPTY
-          }
-          firstC = c
-          cnt++
-        } else if (firstC == 112 && cnt == 1) {
-          when (c) {
-            117 -> code = PUSH
-            111 -> code = POP
-          }
-          cnt++
-        }
-        c = readByte()
-      }
-      10,
-      13,
-      32 -> return code
-      else -> c = readByte()
+  var c = read()
+  while (c == 10 || c == 32) c = read()
+  return when (c) {
+    116 -> {
+      skipToSep()
+      TOP
     }
+    115 -> {
+      skipToSep()
+      SIZE
+    }
+    101 -> {
+      skipToSep()
+      EMPTY
+    }
+    112 -> {
+      val c2 = read()
+      skipToSep()
+      if (c2 == 117) PUSH else POP
+    }
+    else -> readWordAsCode()
   }
+}
+
+private fun skipToSep(): Int {
+  var c = read()
+  while (!(c == 10 || c == 32)) c = read()
+  return c
 }
