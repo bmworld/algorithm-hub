@@ -4,21 +4,25 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private val IN = BufferedInputStream(System.`in`, 1 shl 20)
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 21)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private const val MAX_NUM_LEN = 6
 private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = ' '.code.toByte() }
+private const val HALF = 10_000_000
 
 private fun readByte(): Int = IN.read()
 
 fun main() {
   val n = readInt()
-  val map = HashMap<Int, Int>()
+  val arr = IntArray(HALF * 2 + 1)
   repeat(n) {
     val v = readInt()
-    map[v] = map.getOrDefault(v, 0) + 1
+    arr[v + HALF]++
   }
   val m = readInt()
-  repeat(m) { writeln(map.getOrDefault(readInt(), 0)) }
+  repeat(m) {
+    val v = readInt()
+    writeln(arr[v + HALF])
+  }
   OUT.flush()
 }
 
