@@ -58,15 +58,24 @@ private fun writeln(num: Int, isLast: Boolean) {
 fun main() {
   val n = readInt()
   val k = readInt()
-  val a = MutableList(n) { it + 1 }
+  val a = IntArray(n) { it + 1 }
+  var len = n
+  var i = (k - 1) % len
+
   OUT.write('<'.code)
-  var i = k - 1
-  while (!a.isEmpty()) {
+  while (len > 0) {
     val v = a[i]
-    a.removeAt(i)
-    val isLast = a.isEmpty()
+    val tail = n - i - 1
+    if (tail > 0) System.arraycopy(a, i + 1, a, i, tail)
+    len--
+
+    val isLast = len == 0
     writeln(v, isLast)
-    if (!isLast) i = (i + k - 1) % a.size
+
+    if (!isLast) {
+      i = i + k - 1
+      if (len in 1..i) i %= len
+    }
   }
   OUT.write('>'.code)
   OUT.flush()
