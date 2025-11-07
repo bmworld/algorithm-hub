@@ -34,18 +34,30 @@ private val SEP =
 
 fun main() {
   val n = readInt()
-  val arr = mutableListOf<Int>()
+  val arr = IntArray(10_000)
+  var stt = 0
+  var end = 0
+  var cnt = 0
   repeat(n) {
     val c = readWordAsCode()
     when (c) {
-      PUSH -> arr.add(readInt())
-      POP -> {
-        writeln(if (arr.isEmpty()) -1 else arr.removeAt(0))
+      PUSH -> {
+        arr[end++] = readInt()
+        cnt++
       }
-      FRONT -> writeln(if (arr.isEmpty()) -1 else arr[0])
-      BACK -> writeln(if (arr.isEmpty()) -1 else arr[arr.size - 1])
-      SIZE -> writeln(arr.size)
-      EMPTY -> writeln(if (arr.isEmpty()) 1 else 0)
+      POP -> {
+        writeln(
+            if (cnt == 0) -1
+            else {
+              cnt--
+              arr[stt++]
+            }
+        )
+      }
+      FRONT -> writeln(if (cnt == 0) -1 else arr[stt])
+      BACK -> writeln(if (cnt == 0) -1 else arr[end - 1])
+      SIZE -> writeln(cnt)
+      EMPTY -> writeln(if (cnt == 0) 1 else 0)
     }
   }
   OUT.flush()
