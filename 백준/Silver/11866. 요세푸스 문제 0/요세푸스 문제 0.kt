@@ -1,5 +1,6 @@
 import java.io.BufferedOutputStream
 
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -24,7 +25,6 @@ private fun readInt(): Int {
   return if (neg) -n else n
 }
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
 private const val MAX_NUM_LEN = 4
 private val buf =
     ByteArray(MAX_NUM_LEN + 2).also {
@@ -32,7 +32,7 @@ private val buf =
       it[MAX_NUM_LEN + 1] = ' '.code.toByte()
     }
 
-private fun writeln(num: Int, last: Boolean) {
+private fun writeln(num: Int, isLast: Boolean) {
   var x = num
   var neg = false
   if (x < 0) {
@@ -49,26 +49,22 @@ private fun writeln(num: Int, last: Boolean) {
   OUT.write(
       buf,
       stt,
-      MAX_NUM_LEN - stt + if (last) 0 else 2, // 구분자(`, `) 포함여부
+      MAX_NUM_LEN - stt + if (isLast) 0 else 2, // 구분자(`, `) 포함여부
   )
 }
 
 fun main() {
   val n = readInt()
   val k = readInt()
-  val ch = BooleanArray(n)
+  val a = MutableList(n) { it + 1 }
   OUT.write('<'.code)
-  var i = -1
-  var cnt = 0
-  while (cnt < n) {
-    var turn = 0
-    while (turn < k) {
-      i = if (i + 1 == n) 0 else i + 1
-      if (!ch[i]) turn++
-    }
-    cnt++
-    ch[i] = true
-    writeln(i + 1, cnt == n)
+  var i = k - 1
+  while (!a.isEmpty()) {
+    val v = a[i]
+    a.removeAt(i)
+    val isLast = a.isEmpty()
+    writeln(v, isLast)
+    if (!isLast) i = (i + k - 1) % a.size
   }
   OUT.write('>'.code)
   OUT.flush()
