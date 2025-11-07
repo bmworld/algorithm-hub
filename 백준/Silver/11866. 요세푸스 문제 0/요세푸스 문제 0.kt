@@ -24,7 +24,7 @@ private fun readInt(): Int {
   return if (neg) -n else n
 }
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private const val MAX_NUM_LEN = 4
 private val buf =
     ByteArray(MAX_NUM_LEN + 2).also {
