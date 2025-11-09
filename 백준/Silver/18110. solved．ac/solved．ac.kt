@@ -46,15 +46,32 @@ private fun writeln(num: Int) {
 
 fun main() {
   val n = readInt()
-  val a = IntArray(n)
-  val ext_half = Math.round(n.toDouble() * 0.15).toInt()
+  val a = IntArray(30)
+  repeat(n) { a[readInt() - 1]++ }
 
-  repeat(n) { a[it] = readInt() }
-  a.sort()
+  val ext = (n * 15 + 50) / 100 // round
+  val rem = n - (2 * ext)
 
   var sum = 0.0
-  for (i in ext_half until n - ext_half) sum += a[i]
-  val avg = Math.round(sum / (n - (2 * ext_half))).toInt()
+  var excluded = ext
+  var added = rem
+  for (score in 1..30) {
+    var cnt = a[score - 1]
+    if (cnt == 0) continue
+    if (excluded > 0) {
+      val nc = if (cnt > excluded) cnt - excluded else 0
+      excluded -= cnt
+      cnt = nc
+    }
+
+    if (cnt == 0) continue
+    if (added > 0) {
+      sum += score * (if (cnt < added) cnt else added)
+      added -= cnt
+      if (added <= 0) break
+    }
+  }
+  val avg = ((sum + rem / 2) / rem).toInt()
   writeln(avg)
   OUT.flush()
 }
