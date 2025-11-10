@@ -29,17 +29,11 @@ private val buf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.
 
 private fun writeln(num: Int) {
   var x = num
-  //  var neg = false
-  //  if (x < 0) {
-  //    neg = true
-  //    x = -x
-  //  }
   var end = MAX_NUM_LEN - 1
   do {
     buf[end--] = ((x % 10) + 48).toByte()
     x /= 10
   } while (x > 0)
-  //  if (neg) buf[end--] = 45
   val stt = end + 1
   OUT.write(
       buf,
@@ -49,21 +43,31 @@ private fun writeln(num: Int) {
 }
 
 fun main() {
-  val from = readInt()
-  val to = readInt()
-  for (n in from..to) {
-    if (isPrime(n)) writeln(n)
+  val m = readInt()
+  val n = readInt()
+  val isP = BooleanArray(n + 1) { true }
+  isP[0] = false
+  isP[1] = false
+  val toSqrt = Math.sqrt(n.toDouble()).toInt()
+  for (i in 2..toSqrt) {
+    if (!isP[i]) continue
+    var j = i * i // 4 ~
+    while (j <= n) {
+      isP[j] = false
+      j += i
+    }
   }
 
+  val pCnt = isP.count { it }
+  val a = IntArray(pCnt)
+  var i = 0
+  for (j in 2..n) if (isP[j]) a[i++] = j
+
+  for (v in a) {
+    if (v < m) continue
+    if (v > n) break
+    writeln(v)
+  }
+    
   OUT.flush()
-}
-
-private fun isPrime(v: Int): Boolean {
-  if (v < 2) return false
-  var i = 2
-  while (i * i <= v) { // 4 ~
-    if (v % i == 0) return false
-    i++
-  }
-  return true
 }
