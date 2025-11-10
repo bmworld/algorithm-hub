@@ -2,7 +2,7 @@ package 백준.Silver.no1929
 
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -51,12 +51,22 @@ private fun writeln(num: Int) {
 }
 
 fun main() {
+
   val from = readInt()
   val to = readInt()
-  for (n in from..to) {
-    if (isPrime(n)) writeln(n)
-  }
+  val a =
+      IntArray(78498).also {
+        var i = 0
+        for (n in 2..to) {
+          if (isPrime(n)) it[i++] = n
+        }
+      }
 
+  for (v in a) {
+    if (v < from) continue
+    if (v > to) break
+    writeln(v)
+  }
   OUT.flush()
 }
 
