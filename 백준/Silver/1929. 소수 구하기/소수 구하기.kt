@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 18)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -46,8 +46,6 @@ fun main() {
   val m = readInt()
   val n = readInt()
   val isP = BooleanArray(n + 1) { true }
-  isP[0] = false
-  isP[1] = false
   val toSqrt = Math.sqrt(n.toDouble()).toInt()
   for (i in 2..toSqrt) {
     if (!isP[i]) continue
@@ -57,17 +55,6 @@ fun main() {
       j += i
     }
   }
-
-  val pCnt = isP.count { it }
-  val a = IntArray(pCnt)
-  var i = 0
-  for (j in 2..n) if (isP[j]) a[i++] = j
-
-  for (v in a) {
-    if (v < m) continue
-    if (v > n) break
-    writeln(v)
-  }
-    
+  for (i in 2..n) if (i >= m && isP[i]) writeln(i)
   OUT.flush()
 }
