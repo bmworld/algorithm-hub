@@ -50,12 +50,7 @@ fun main() {
   val isP = BooleanArray(n + 1) { true }
   val toSqrt = Math.sqrt(n.toDouble()).toInt()
   for (i in 2..toSqrt) {
-    if (!isP[i]) continue
-    var j = i * i // 4 ~
-    while (j <= n) {
-      isP[j] = false
-      j += i
-    }
+    if (isP[i]) for (j in i * i..n step i) isP[j] = false
   }
   for (i in 2..n) if (i >= m && isP[i]) writeln(i)
   OUT.flush()
