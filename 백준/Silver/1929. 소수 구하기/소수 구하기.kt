@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -48,17 +48,13 @@ private fun writeln(num: Int) {
   )
 }
 
-val a = IntArray(78498)
-
 fun main() {
-  var from = readInt()
+  val from = readInt()
   val to = readInt()
-  var len = 0
-  while (from in 1..to) {
-    if (isPrime(from)) a[len++] = from
-    from++
+  for (n in from..to) {
+    if (isPrime(n)) writeln(n)
   }
-  for (i in 0 until len) writeln(a[i])
+
   OUT.flush()
 }
 
