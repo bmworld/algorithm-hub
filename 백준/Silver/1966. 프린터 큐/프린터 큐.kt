@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 6)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -42,59 +42,54 @@ private fun writeln(num: Int) {
   )
 }
 
+private const val USED: Byte = 1
+
 fun main() {
   val a = IntArray(100)
   val maxNum = 9
-  val CNT = IntArray(maxNum)
-  repeat(readInt()) {
-    repeat(maxNum) { CNT[it] = 0 }
-    val len = readInt()
-    val tIdx = readInt()
-    var t = 0
 
-    var min = 9
-    var max = 1
+  repeat(readInt()) {
+    val len = readInt()
+    val ti = readInt()
+    val cnt = IntArray(maxNum)
+    val ch = ByteArray(len)
+    var maxHv = 1
     repeat(len) {
       val v = readInt()
       a[it] = v
-      CNT[v - 1]++
-      if (it == tIdx) t = v
-      if (v < min) min = v
-      if (v > max) max = v
+      cnt[v - 1]++
+      if (v > maxHv) maxHv = v
     }
 
-    var p = 0
-    var lastPIdx = -1
-
+    var i = 0
     var order = 0
-    for (num in max downTo min) {
-      var cnt = CNT[num - 1]
-      if (num < t) break
-      var setCount = false
-      while (cnt > 0) {
-        val v = a[p]
-        if (lastPIdx == -1 || p == lastPIdx) setCount = true
-        if (v == num) {
-          if (setCount) {
-            order++
-            cnt--
-          }
-
-          if (setCount && p == tIdx) {
-            writeln(order)
-            OUT.flush()
-            break
-          }
-
-          if (cnt == 0) {
-            lastPIdx = p
-            p = if (p + 1 < len) p + 1 else 0
-            break
+    while (true) {
+      if (order == len) break
+      // 커서 이동
+      while (ch[i] == USED) i = if (i + 1 < len) i + 1 else 0
+      val v = a[i]
+      if (v == maxHv) {
+        order++
+        ch[i] = USED
+        cnt[v - 1]--
+        // 최우선순위 조정
+        if (cnt[v - 1] == 0) {
+          var next = v - 1
+          while (next >= 1) {
+            if (cnt[next - 1] > 0) {
+              maxHv = next
+              break
+            }
+            next--
           }
         }
-
-        p = if (p + 1 < len) p + 1 else 0
+        if (i == ti) {
+          writeln(order)
+          break
+        }
       }
+      i = if (i + 1 < len) i + 1 else 0
     }
   }
+  OUT.flush()
 }
