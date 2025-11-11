@@ -66,15 +66,15 @@ fun main() {
     }
 
     var largeCnt = 0
-    var p = 9 // 한 단계 상위
+    var p = 10 // 한 단계 상위
     for (v in min..max) {
       val cnt = CNT[v - 1]
       if (cnt == 0) continue
       if (v > t) largeCnt += cnt
-      if (v in (t + 1) until p) p = v
+      if (v > t && v < p) p = v
     }
 
-    var pIdx = -1
+    var pIdx = len
     var ntIdx = 0
     for (i in 0 until len) {
       val v = a[i]
