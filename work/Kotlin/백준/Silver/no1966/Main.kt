@@ -46,10 +46,10 @@ private fun writeln(num: Int) {
 
 fun main() {
   val a = IntArray(100)
-  val numSize = 9
-  val CNT = IntArray(numSize)
+  val maxNum = 9
+  val CNT = IntArray(maxNum)
   repeat(readInt()) {
-    repeat(numSize) { CNT[it] = 0 }
+    repeat(maxNum) { CNT[it] = 0 }
     val len = readInt()
     val tIdx = readInt()
     var t = 0
@@ -65,39 +65,38 @@ fun main() {
       if (v > max) max = v
     }
 
-    var largeCnt = 0
-    var p = 10 // 한 단계 상위
-    for (v in min..max) {
-      val cnt = CNT[v - 1]
-      if (cnt == 0) continue
-      if (v > t) largeCnt += cnt
-      if (v > t && v < p) p = v
-    }
+    var p = 0
+    var lastPIdx = -1
 
-    var pIdx = len
-    var ntIdx = 0
-    for (i in 0 until len) {
-      val v = a[i]
-      if (v == p) pIdx = i
-      if (v == t) a[ntIdx++] = i
-    }
+    var order = 0
+    for (num in max downTo min) {
+      var cnt = CNT[num - 1]
+      if (num < t) break
+      var setCount = false
+      while (cnt > 0) {
+        val v = a[p]
+        if (lastPIdx == -1 || p == lastPIdx) setCount = true
+        if (v == num) {
+          if (setCount) {
+            order++
+            cnt--
+          }
 
-    var passedT = false
-    var tOrder = 0
-    val tCnt = CNT[t - 1]
-    for (i in 0 until tCnt) {
-      val ntIdx = a[i]
-      if (tIdx == ntIdx) {
-        passedT = true
-        tOrder++
-      } else if (tIdx < pIdx) {
-        if (!passedT || ntIdx > pIdx) tOrder++
-      } else {
-        if (ntIdx > pIdx) tOrder++
-        if (passedT) break
+          if (setCount && p == tIdx) {
+            writeln(order)
+            OUT.flush()
+            break
+          }
+
+          if (cnt == 0) {
+            lastPIdx = p
+            p = if (p + 1 < len) p + 1 else 0
+            break
+          }
+        }
+
+        p = if (p + 1 < len) p + 1 else 0
       }
     }
-    writeln(largeCnt + tOrder)
   }
-  OUT.flush()
 }
