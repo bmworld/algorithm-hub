@@ -49,14 +49,12 @@ fun main() {
         stack[i++] = ++lastN
         buf.write(PUSH)
       }
-
-      stack[--i] = 0
+      i--
       buf.write(POP)
     } else {
-
       val pop = if (i > 0) stack[i - 1] else 0
       if (v == pop) {
-        stack[i-- - 1] = 0
+        i--
         buf.write(POP)
       } else {
         OUT.write('N'.code)
@@ -66,6 +64,6 @@ fun main() {
       }
     }
   }
-  OUT.write(buf.toByteArray())
+  buf.writeTo(OUT)
   OUT.flush()
 }
