@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 20)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
