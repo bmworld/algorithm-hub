@@ -3,7 +3,7 @@ package 백준.Silver.no1874
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -27,8 +27,6 @@ private fun readInt(): Int {
   return if (neg) -n else n
 }
 
-private const val OFF: Byte = 0
-private const val ON: Byte = 1
 private val PUSH =
     ByteArray(2).also {
       it[0] = '+'.code.toByte()
@@ -41,37 +39,35 @@ private val POP =
     }
 
 fun main() {
-  val n = readInt()
-  val ch = ByteArray(n)
   val buf = ByteArrayOutputStream()
+  val n = readInt()
+  val stack = IntArray(n)
+  var i = 0
   var lastN = 0
-  var top = 0
   repeat(n) {
     val v = readInt()
-    if (lastN < v) {
-      while (lastN < v) {
-        ch[lastN++] = ON
+    if (v > lastN) {
+      while (v > lastN) {
+        stack[i++] = ++lastN
         buf.write(PUSH)
       }
 
-      top = lastN - 1
-      ch[top] = OFF
+      stack[--i] = 0
       buf.write(POP)
-      while (top > 0) if (ch[top - 1] == ON) break else top--
     } else {
-      if (v != top || ch[top - 1] == OFF) {
+
+      val pop = if (i > 0) stack[i - 1] else 0
+      if (v == pop) {
+        stack[i-- - 1] = 0
+        buf.write(POP)
+      } else {
         OUT.write('N'.code)
         OUT.write('O'.code)
         OUT.flush()
         return
       }
-
-      ch[v - 1] = OFF
-      buf.write(POP)
-      while (top > 0) if (ch[top - 1] == ON) break else top--
     }
   }
-
   OUT.write(buf.toByteArray())
   OUT.flush()
 }
