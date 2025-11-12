@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.ByteArrayOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 private val B: ByteArray = System.`in`.readBytes()
 private var Bi = 0
 private const val EOF = -1
@@ -25,8 +25,6 @@ private fun readInt(): Int {
   return if (neg) -n else n
 }
 
-private const val OFF: Byte = 0
-private const val ON: Byte = 1
 private val PUSH =
     ByteArray(2).also {
       it[0] = '+'.code.toByte()
@@ -43,7 +41,6 @@ fun main() {
   val n = readInt()
   val stack = IntArray(n)
   var i = 0
-  var top = 0
   var lastN = 0
   repeat(n) {
     val v = readInt()
@@ -55,7 +52,6 @@ fun main() {
 
       stack[--i] = 0
       buf.write(POP)
-      top = if (i > 0) stack[i - 1] else 0
     } else {
 
       val pop = if (i > 0) stack[i - 1] else 0
