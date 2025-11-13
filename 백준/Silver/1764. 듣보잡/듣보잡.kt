@@ -45,8 +45,8 @@ fun s(): String {
   return sb.toString()
 }
 
-private const val MAX_NUM_LEN = 6
-private val outBuf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
+private const val NUM_MAX_LEN = 6
+private val numBuf = ByteArray(NUM_MAX_LEN + 1).also { it[NUM_MAX_LEN] = '\n'.code.toByte() }
 
 private fun write(num: Int) {
   var x = num
@@ -55,52 +55,39 @@ private fun write(num: Int) {
     neg = true
     x = -x
   }
-  var end = MAX_NUM_LEN - 1
+  var end = NUM_MAX_LEN - 1
   do {
-    outBuf[end--] = ((x % 10) + 48).toByte()
+    numBuf[end--] = ((x % 10) + 48).toByte()
     x /= 10
   } while (x > 0)
-  if (neg) outBuf[end--] = 45
+  if (neg) numBuf[end--] = 45
   val stt = end + 1
   OUT.write(
-      outBuf,
+      numBuf,
       stt,
-      MAX_NUM_LEN - stt + 1, // 개행포함
+      NUM_MAX_LEN - stt + 1, // 개행포함
   )
 }
 
 fun main() {
   val n = i()
   val m = i()
-  val set = HashSet<String>(n)
-  val dbj = ArrayList<ByteArray>(n)
-  repeat(n) { set.add(s()) }
+  val map = HashMap<String, Boolean>(n)
+  val a = ArrayList<String>()
+  var cnt = 0
+  repeat(n) { map[s()] = false }
   repeat(m) {
     val s = s()
-    if (set.contains(s)) dbj.add(s.toByteArray())
+    if (map[s] == false) {
+      a.add(s)
+      cnt++
+    }
   }
-  dbj.sortWith(Comparator { a, b -> comp(a, b) })
-  write(dbj.size)
-  for (b in dbj) {
-    OUT.write(b)
+  a.sort()
+  write(cnt)
+  for (b in a) {
+    OUT.write(b.toByteArray())
     OUT.write('\n'.code)
   }
   OUT.flush()
-}
-
-fun comp(
-    a: ByteArray,
-    b: ByteArray,
-): Int {
-  val aSize = a.size
-  val bSize = b.size
-  val minLen = if (aSize > bSize) bSize else aSize
-  var i = 0
-  while (i < minLen) {
-    val av = a[i].toInt() and 0xFF
-    val bv = b[i].toInt() and 0xFF
-    if (av != bv) return av - bv
-    i++
-  }
-  return aSize - bSize
 }
