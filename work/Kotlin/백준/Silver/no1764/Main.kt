@@ -48,15 +48,18 @@ fun main() {
   val n = i()
   val m = i()
   val map = HashSet<String>(n)
-  val arr = ArrayList<String>()
+  val arr = sortedSetOf<String>()
   val OUT = StringBuilder((WORD_MAX_LEN + 1) * m)
+  var cnt = 0
   repeat(n) { map.add(s()) }
   repeat(m) {
     val s = s()
-    if (map.contains(s)) arr.add(s)
+    if (s in map) {
+      arr.add(s)
+      cnt++
+    }
   }
-  arr.sort()
-  OUT.append(arr.size).append('\n')
+  OUT.append(cnt).append('\n')
   for (a in arr) OUT.append(a).append('\n')
   print(OUT.toString())
 }
