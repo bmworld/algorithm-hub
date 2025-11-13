@@ -44,22 +44,34 @@ fun s(): String {
   return sb.toString()
 }
 
+private const val NL = '\n'
+
 fun main() {
   val n = i()
   val m = i()
-  val map = HashSet<String>(n)
-  val arr = sortedSetOf<String>()
-  val OUT = StringBuilder((WORD_MAX_LEN + 1) * m)
-  var cnt = 0
-  repeat(n) { map.add(s()) }
-  repeat(m) {
-    val s = s()
-    if (s in map) {
-      arr.add(s)
-      cnt++
-    }
+  val minSize = if (n > m) m else n
+  val a = Array(n) { s() }
+  val b = Array(m) { s() }
+  a.sort()
+  b.sort()
+  val arr = ArrayList<String>(minSize)
+
+  var ai = 0
+  var bi = 0
+  while (ai < n && bi < m) {
+    val av = a[ai]
+    val bv = b[bi]
+    val cmp = av.compareTo(bv)
+    if (cmp == 0) {
+      arr.add(bv)
+      ai++
+      bi++
+    } else if (cmp < 0) ai++ else bi++
   }
-  OUT.append(cnt).append('\n')
-  for (a in arr) OUT.append(a).append('\n')
-  print(OUT.toString())
+
+  val size = arr.size
+  val OUT = StringBuilder(7 + (WORD_MAX_LEN + 1) * size)
+  OUT.append(size).append(NL)
+  for (s in arr) OUT.append(s).append(NL)
+  print(OUT)
 }
