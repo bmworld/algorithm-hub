@@ -43,18 +43,6 @@ private fun writeCnt(zero: Int, one: Int) {
   writeBy(one, true)
 }
 
-fun main() {
-  val n = i()
-  repeat(n) {
-    when (val i = i()) {
-      0 -> writeCnt(1, 0)
-      1 -> writeCnt(0, 1)
-      else -> writeCnt(CNT[i - 2], CNT[i - 1])
-    }
-  }
-  out.flush()
-}
-
 private val CNT =
     IntArray(41).also {
       it[0] = 1
@@ -63,3 +51,16 @@ private val CNT =
         it[i] = it[i - 1] + it[i - 2]
       }
     }
+
+fun main() {
+  repeat(i()) {
+    val v = i()
+    if (v > 1) writeCnt(CNT[v - 2], CNT[v - 1])
+    else
+        when (v) {
+          0 -> writeCnt(1, 0)
+          1 -> writeCnt(0, 1)
+        }
+  }
+  out.flush()
+}
