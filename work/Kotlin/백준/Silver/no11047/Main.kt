@@ -11,20 +11,13 @@ private const val EOF = -1
 private fun r(): Int = if (Bi < B.size) (B[Bi++].toInt() and 0xFF) else EOF
 
 private fun i(): Int {
-  var c = r()
-  while (c != EOF && c <= 32) c = r()
-
-  var neg = false
-  if (c == '-'.code) {
-    neg = true
-    c = r()
-  }
   var n = 0
+  var c = r()
   while (c in 48..57) {
     n = n * 10 + (c - 48)
     c = r()
   }
-  return if (neg) -n else n
+  return n
 }
 
 private const val MAX_NUM_LEN = 9
@@ -43,31 +36,15 @@ private fun writeBy(num: Int) {
 
 fun main() {
   val n = i()
-  val m = i()
-  var i = n - 1
-  var apprM = 1
-  val a =
-      IntArray(n) {
-        val v = i()
-        if (v in (apprM + 1)..m) {
-          apprM = v
-          i = it
-        }
-        v
-      }
-
-  var acc = 0
+  var m = i()
+  val a = IntArray(n) { i() }
   var cnt = 0
-  while (i >= 0) {
+  for (i in n - 1 downTo 0) {
     val v = a[i]
-    val nv = acc + v
-    if (nv > m) {
-      i--
-      continue
-    }
-    cnt++
-    acc = nv
-    if (nv == m) break
+    if (v > m) continue
+    cnt += m / v
+    m %= v
+    if (m == 0) break
   }
   writeBy(cnt)
   OUT.flush()
