@@ -4,11 +4,11 @@ import java.io.BufferedOutputStream
 
 private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 
-private val B: ByteArray = System.`in`.readBytes()
-private var Bi = 0
+private val inBuf: ByteArray = System.`in`.readBytes()
+private var inPos = 0
 private const val EOF = -1
 
-private fun r(): Int = if (Bi < B.size) (B[Bi++].toInt() and 0xFF) else EOF
+private fun r(): Int = if (inPos < inBuf.size) (inBuf[inPos++].toInt() and 0xFF) else EOF
 
 private fun i(): Int {
   var n = 0
