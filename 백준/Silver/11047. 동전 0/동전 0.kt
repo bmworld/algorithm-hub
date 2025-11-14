@@ -41,31 +41,15 @@ private fun writeBy(num: Int) {
 
 fun main() {
   val n = i()
-  val m = i()
-  var i = n - 1
-  var apprM = 1
-  val a =
-      IntArray(n) {
-        val v = i()
-        if (v in (apprM + 1)..m) {
-          apprM = v
-          i = it
-        }
-        v
-      }
-
-  var acc = 0
+  var m = i()
+  val a = IntArray(n) { i() }
   var cnt = 0
-  while (i >= 0) {
+  for (i in n - 1 downTo 0) {
     val v = a[i]
-    val nv = acc + v
-    if (nv > m) {
-      i--
-      continue
-    }
-    cnt++
-    acc = nv
-    if (nv == m) break
+    if (v > m) continue
+    cnt += m / v
+    m %= v
+    if (m == 0) break
   }
   writeBy(cnt)
   OUT.flush()
