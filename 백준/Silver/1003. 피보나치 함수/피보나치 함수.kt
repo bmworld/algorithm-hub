@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val out = BufferedOutputStream(System.`out`, 1 shl 16)
+private val out = BufferedOutputStream(System.`out`, 1 shl 11)
 
 private val iBytes: ByteArray = System.`in`.readBytes()
 private var iPos = 0
