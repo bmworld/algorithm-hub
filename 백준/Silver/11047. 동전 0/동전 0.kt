@@ -9,20 +9,13 @@ private const val EOF = -1
 private fun r(): Int = if (Bi < B.size) (B[Bi++].toInt() and 0xFF) else EOF
 
 private fun i(): Int {
-  var c = r()
-  while (c != EOF && c <= 32) c = r()
-
-  var neg = false
-  if (c == '-'.code) {
-    neg = true
-    c = r()
-  }
   var n = 0
+  var c = r()
   while (c in 48..57) {
     n = n * 10 + (c - 48)
     c = r()
   }
-  return if (neg) -n else n
+  return n
 }
 
 private const val MAX_NUM_LEN = 9
