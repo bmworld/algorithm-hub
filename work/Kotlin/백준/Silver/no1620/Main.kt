@@ -3,16 +3,17 @@ package 백준.Silver.no1620
 import java.io.BufferedOutputStream
 
 private val out = BufferedOutputStream(System.`out`, 1 shl 12)
-private val inBuf: ByteArray = System.`in`.readBytes()
+private val `in`: ByteArray = System.`in`.readBytes()
 private var inPos = 0
 private const val EOF = -1
+private val isNum = 48..57
 
-private fun r(): Int = if (inPos < inBuf.size) (inBuf[inPos++].toInt() and 0xFF) else EOF
+private fun r(): Int = if (inPos < `in`.size) (`in`[inPos++].toInt() and 0xFF) else EOF
 
 private fun i(v: Int?): Int {
   var n = 0
   var c = v ?: r()
-  while (c in 48..57) {
+  while (c in isNum) {
     n = n * 10 + (c - 48)
     c = r()
   }
@@ -32,6 +33,7 @@ private fun s(v: Int?): String {
   return s
 }
 
+private const val NL_CODE = '\n'.code
 private const val MAX_NUM_LEN = 6
 private val outIBuf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = NL_CODE.toByte() }
 
@@ -50,27 +52,21 @@ private fun writeBy(num: Int) {
   )
 }
 
-private const val NL_CODE = '\n'.code
-
 fun main() {
   val n = i(null)
   val m = i(null)
   val byName = HashMap<String, Int>(n)
-  val byNum = ArrayList<String>(n)
-  repeat(n) {
-    val v = s(null)
-    byName[v] = it + 1
-    byNum.add(v)
-  }
-
+  val byNum =
+      Array(n) {
+        val v = s(null)
+        byName[v] = it + 1
+        v + "\n"
+      }
   repeat(m) {
     val c = r()
-    if (c in 48..57) {
+    if (c in isNum) {
       out.write(byNum[i(c) - 1].toByteArray())
-      out.write(NL_CODE)
-    } else {
-      writeBy(byName[s(c)]!!)
-    }
+    } else writeBy(byName[s(c)]!!)
   }
   out.flush()
 }
