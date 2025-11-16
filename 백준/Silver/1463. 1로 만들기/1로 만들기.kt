@@ -32,14 +32,15 @@ private fun writeBy(num: Int) {
 
 fun main() {
   val v = i()
-  var best = 1000
+  var best = 200
 
   fun op(
       v: Int,
       cnt: Int,
   ) {
+    if (cnt >= best) return
     if (v <= 1) {
-      if (best > cnt) best = cnt
+      best = cnt
       return
     }
     val vBy3 = v / 3
@@ -49,7 +50,6 @@ fun main() {
     op(vBy3, cnt + rBy3 + 1)
     op(vBy2, cnt + rBy2 + 1)
   }
-
   writeBy(
       if (v <= 1) 0
       else {
