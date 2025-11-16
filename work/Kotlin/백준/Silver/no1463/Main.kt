@@ -34,13 +34,30 @@ private fun writeBy(num: Int) {
 
 fun main() {
   val v = i()
-  val dp = IntArray(v + 1)
-  for (i in 2..v) {
-    var min = dp[i - 1]
-    if (i % 3 == 0 && min > dp[i / 3]) min = dp[i / 3]
-    if (i % 2 == 0 && min > dp[i / 2]) min = dp[i / 2]
-    dp[i] = min + 1
+  var best = 200
+
+  fun op(
+      v: Int,
+      cnt: Int,
+  ) {
+    if (cnt >= best) return
+    if (v <= 1) {
+      best = cnt
+      return
+    }
+    val vBy3 = v / 3
+    val rBy3 = v % 3
+    val vBy2 = v / 2
+    val rBy2 = v % 2
+    op(vBy3, cnt + rBy3 + 1)
+    op(vBy2, cnt + rBy2 + 1)
   }
-  writeBy(dp[v])
+  writeBy(
+      if (v <= 1) 0
+      else {
+        op(v, 0)
+        best
+      }
+  )
   OUT.flush()
 }
