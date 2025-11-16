@@ -31,14 +31,12 @@ private fun writeBy(num: Int) {
     x /= 10
   } while (x > 0)
   val stt = end + 1
-
   out.write(outBuf, stt, MAX_NUM_LEN - stt)
 }
 
 fun main() {
   var v = i()
   var min = 100_000
-
   var cnt = 0
   while (v > 1) {
     when (predictOp(v)) {
@@ -58,6 +56,7 @@ fun main() {
 
 fun predictOp(v: Int): Int {
   return when {
+    v <= 3 -> 3
     (v - 1) % 3 == 0 -> 3
     v % 3 == 0 -> 1
     (v - 1) % 2 == 0 -> 3
