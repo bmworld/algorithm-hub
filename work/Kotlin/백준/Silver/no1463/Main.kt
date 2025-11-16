@@ -1,14 +1,12 @@
 package 백준.Silver.no1463
 
+import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private val out = BufferedOutputStream(System.`out`, 1 shl 11)
+private val `in` = BufferedInputStream(System.`in`, 1 shl 5)
+private val out = BufferedOutputStream(System.`out`, 1 shl 12)
 
-private val iBytes: ByteArray = System.`in`.readBytes()
-private var iPos = 0
-private const val EOF = -1
-
-private fun r(): Int = if (iPos < iBytes.size) (iBytes[iPos++].toInt() and 0xFF) else EOF
+private fun r(): Int = `in`.read()
 
 private fun i(): Int {
   var n = 0
@@ -20,7 +18,7 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 4
+private const val MAX_NUM_LEN = 3
 private val outBuf = ByteArray(MAX_NUM_LEN)
 
 private fun writeBy(num: Int) {
@@ -35,32 +33,18 @@ private fun writeBy(num: Int) {
 }
 
 fun main() {
-  var v = i()
-  var min = 100_000
-  var cnt = 0
-  while (v > 1) {
-    when (predictOp(v)) {
-      1 -> v /= 3
-      2 -> v /= 2
-      else -> v--
+  var minCnt = 100
+  fun bfs(v: Int, cnt: Int) {
+    if (minCnt < cnt) return
+    if (v <= 1) {
+      minCnt = cnt
+      return
     }
-    cnt++
-    if (v == 1) {
-      min = cnt
-      break
-    }
+    if (v % 3 == 0) bfs(v / 3, cnt + 1)
+    if (v % 2 == 0) bfs(v / 2, cnt + 1)
+    bfs(v - 1, cnt + 1)
   }
-  writeBy(min)
+  bfs(i(), 0)
+  writeBy(minCnt)
   out.flush()
-}
-
-fun predictOp(v: Int): Int {
-  return when {
-    v <= 3 -> 3
-    (v - 1) % 3 == 0 -> 3
-    v % 3 == 0 -> 1
-    (v - 1) % 2 == 0 -> 3
-    v % 2 == 0 -> 2
-    else -> 3
-  }
 }
