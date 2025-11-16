@@ -34,8 +34,7 @@ private fun writeBy(num: Int) {
 
 fun main() {
   val v = i()
-  var best = 200
-
+  var best = greedyCnt(v)
   fun op(
       v: Int,
       cnt: Int,
@@ -60,4 +59,18 @@ fun main() {
       }
   )
   OUT.flush()
+}
+
+fun greedyCnt(v: Int): Int {
+  var t = v
+  var cnt = 0
+  while (t > 1) {
+    if (t % 3 == 0) {
+      t /= 3
+    } else if (t % 2 == 0) {
+      t /= 2
+    } else t--
+    cnt++
+  }
+  return cnt
 }
