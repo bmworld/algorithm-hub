@@ -2,7 +2,7 @@ package 백준.Silver.no2579
 
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -35,25 +35,19 @@ private fun w(num: Int) {
 }
 
 fun main() {
-  val end = i()
-  val a = IntArray(end)
-  repeat(end) { a[it] = i() }
-  val dp = IntArray(end)
+  val cnt = i()
+  val a = IntArray(cnt)
+  repeat(cnt) { a[it] = i() }
+  val dp = IntArray(cnt)
+  dp[0] = a[0]
+  if (cnt >= 2) dp[1] = a[0] + a[1]
+  if (cnt >= 3) dp[2] = if (a[0] + a[2] > a[1] + a[2]) a[0] + a[2] else a[1] + a[2]
 
-  fun op(
-      acc: Int,
-      i: Int,
-      step: Int,
-  ) {
-    if (i >= end) return
-    val next = acc + a[i]
-    if (dp[i] < next) dp[i] = next else return
-
-    op(next, i + 2, 2)
-    if (step % 2 == 0) op(next, i + 1, 1)
+  for (i in 3 until cnt) {
+    val case1 = dp[i - 3] + a[i - 1]
+    val case2 = dp[i - 2]
+    dp[i] = (if (case1 > case2) case1 else case2) + a[i]
   }
-  op(0, 0, 0)
-
-  w(dp[end - 1])
+  w(dp[cnt - 1])
   OUT.flush()
 }
