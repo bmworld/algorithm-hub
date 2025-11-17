@@ -44,19 +44,13 @@ fun main() {
     arr[l - 1].add(r)
     arr[r - 1].add(l)
   }
-
+  var cnt = 0
   fun bfs(i: Int) {
     ch[i] = CHECK
-    for (n in arr[i]) {
-      if (ch[n - 1] == CHECK) continue
-      ch[n - 1] = CHECK
-      bfs(n - 1)
-    }
+    if (i != 0) cnt++
+    for (n in arr[i]) if (ch[n - 1] != CHECK) bfs(n - 1)
   }
   bfs(0)
-
-  var cnt = 0
-  for (i in 1 until len) if (ch[i] == CHECK) cnt++
   w(cnt)
   OUT.flush()
 }
