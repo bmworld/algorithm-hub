@@ -47,12 +47,25 @@ fun main() {
     arr[r - 1].add(l)
   }
   var cnt = 0
-  fun dfs(i: Int) {
-    ch[i] = CHECK
-    if (i != 0) cnt++
-    for (n in arr[i]) if (ch[n - 1] != CHECK) dfs(n - 1)
+  fun bfs(stt: Int) {
+    val q = IntArray(len)
+    var head = 0
+    var tail = 0
+    ch[stt] = CHECK
+    q[tail++] = stt
+
+    while (head < tail) {
+      val i = q[head++]
+      if (i != 0) cnt++
+      for (n in arr[i]) {
+        val j = n - 1
+        if (ch[j] == CHECK) continue
+        ch[j] = CHECK
+        q[tail++] = j
+      }
+    }
   }
-  dfs(0)
+  bfs(0)
   w(cnt)
   OUT.flush()
 }
