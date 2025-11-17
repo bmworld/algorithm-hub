@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -45,10 +45,23 @@ fun main() {
     arr[r - 1].add(l)
   }
   var cnt = 0
-  fun bfs(i: Int) {
-    ch[i] = CHECK
-    if (i != 0) cnt++
-    for (n in arr[i]) if (ch[n - 1] != CHECK) bfs(n - 1)
+  fun bfs(stt: Int) {
+    val q = IntArray(len)
+    var head = 0
+    var tail = 0
+    ch[stt] = CHECK
+    q[tail++] = stt
+
+    while (head < tail) {
+      val i = q[head++]
+      if (i != 0) cnt++
+      for (n in arr[i]) {
+        val j = n - 1
+        if (ch[j] == CHECK) continue
+        ch[j] = CHECK
+        q[tail++] = j
+      }
+    }
   }
   bfs(0)
   w(cnt)
