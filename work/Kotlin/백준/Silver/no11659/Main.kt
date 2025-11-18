@@ -48,28 +48,35 @@ fun main() { //
     total += v
   }
 
+  var l = 0
+  var r = N - 1
+  var sum = total
   repeat(M) {
-    val ni = i()
-    val nj = i()
-    val range = nj - ni
-    val sum = when {
-      range == 0 -> a[ni - 1]
-      range == N - 1 -> total
-
-      range >= N / 2 -> {
-        var s = total
-        for (v in 1 until ni) s -= a[v - 1]
-        for (v in nj + 1..N) s -= a[v - 1]
-        s
+    val i = i() - 1
+    val j = i() - 1
+    val range = j - i
+    when (range) {
+      in 1..N - 2 -> {
+        while (l != i) {
+          if (l < i) {
+            sum -= a[l++]
+          } else {
+            sum += a[--l]
+          }
+        }
+        while (r != j) {
+          if (r < j) {
+            sum += a[++r]
+          } else {
+            sum -= a[r--]
+          }
+        }
+        w(sum)
       }
 
-      else -> {
-        var s = 0
-        for (v in ni..nj) s += a[v - 1]
-        s
-      }
+      0 -> w(a[i])
+      else -> w(total)
     }
-    w(sum)
   }
   OUT.flush()
 }
