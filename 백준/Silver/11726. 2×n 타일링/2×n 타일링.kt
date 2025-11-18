@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -18,7 +18,7 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 10
+private const val MAX_NUM_LEN = 4
 private val outBuf = ByteArray(MAX_NUM_LEN)
 
 private fun w(num: Int) {
@@ -35,12 +35,21 @@ private fun w(num: Int) {
 }
 
 fun main() {
-  w(DP[i() - 1])
-  OUT.flush()
-}
+  val n = i()
+  w(
+    when (n) {
+    1 -> 1
+    2 -> 2
 
-private val DP = IntArray(1000).also {
-  it[0] = 1
-  it[1] = 2
-  for (i in 2 until 1000) it[i] = (it[i - 2] + it[i - 1]) % 10_007
+    else -> {
+
+      val a = IntArray(1000).also {
+        it[0] = 1
+        it[1] = 2
+        for (i in 2 until 1000) it[i] = (it[i - 2] + it[i - 1]) % 10_007
+      }
+      a[n - 1]
+    }
+  })
+  OUT.flush()
 }
