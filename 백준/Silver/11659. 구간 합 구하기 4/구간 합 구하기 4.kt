@@ -18,7 +18,7 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 20
+private const val MAX_NUM_LEN = 10
 private val outBuf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
 
 private fun w(num: Int) {
@@ -34,40 +34,18 @@ private fun w(num: Int) {
   )
 }
 
-fun main() { //
+fun main() {
   val N = i()
   val M = i()
-
-  val a = IntArray(N)
-  var total = 0
+  val acc = IntArray(N + 1)
   repeat(N) {
     val v = i()
-    a[it] = v
-    total += v
+    acc[it + 1] = acc[it] + v
   }
-
   repeat(M) {
-    val ni = i()
-    val nj = i()
-    val range = nj - ni
-    val sum = when {
-      range == 0 -> a[ni - 1]
-      range == N - 1 -> total
-
-      range >= N / 2 -> {
-        var s = total
-        for (v in 1 until ni) s -= a[v - 1]
-        for (v in nj + 1..N) s -= a[v - 1]
-        s
-      }
-
-      else -> {
-        var s = 0
-        for (v in ni..nj) s += a[v - 1]
-        s
-      }
-    }
-    w(sum)
+    val i = i()
+    val j = i()
+    w(acc[j] - acc[i - 1])
   }
   OUT.flush()
 }
