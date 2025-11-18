@@ -1,3 +1,7 @@
+import java.io.BufferedOutputStream
+
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
 private const val EOF = -1
@@ -14,10 +18,29 @@ private fun i(): Int {
   return n
 }
 
+private const val MAX_NUM_LEN = 3
+private val outBuf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
+
+private fun w(num: Int) {
+  var n = num
+  var end = MAX_NUM_LEN - 1
+  do {
+    outBuf[end--] = ((n % 10) + 48).toByte()
+    n /= 10
+  } while (n > 0)
+  val stt = end + 1
+  OUT.write(
+    outBuf, stt, MAX_NUM_LEN - stt + 1 // 개행 포함
+  )
+}
+
+
+
 fun main() {
   repeat(i()) {
-    println(CNT[i() - 1])
+    w(CNT[i() - 1])
   }
+  OUT.flush()
 }
 
 private val CNT = IntArray(11).also {
