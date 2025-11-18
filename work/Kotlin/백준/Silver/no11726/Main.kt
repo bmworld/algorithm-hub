@@ -2,7 +2,7 @@ package 백준.Silver.no11726
 
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -37,20 +37,13 @@ private fun w(num: Int) {
 }
 
 fun main() {
-  val n = i()
-  w(
-    when (n) {
-    in 3..1000 -> {
-      val a = IntArray(n).also {
-        it[0] = 1
-        it[1] = 3
-        for (i in 2 until n) it[i] = (2 * it[i - 2] + it[i - 1]) % 10_007
-      }
-      a[n - 1]
-    }
-
-    2 -> 3
-    else -> n
-  })
+  w(dp[i() - 1])
   OUT.flush()
+}
+
+
+private val dp = IntArray(1000).also {
+  it[0] = 1
+  it[1] = 3
+  for (i in 2 until 1000) it[i] = (2 * it[i - 2] + it[i - 1]) % 10_007
 }
