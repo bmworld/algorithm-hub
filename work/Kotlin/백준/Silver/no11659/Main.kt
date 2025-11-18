@@ -20,10 +20,10 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 15
+private const val MAX_NUM_LEN = 10
 private val outBuf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
 
-private fun w(num: Long) {
+private fun w(num: Int) {
   var n = num
   var end = MAX_NUM_LEN - 1
   do {
@@ -36,43 +36,18 @@ private fun w(num: Long) {
   )
 }
 
-private const val SEP = 1_000_000
 fun main() {
   val N = i()
   val M = i()
-  val map = LinkedHashMap<Int, Long>(M)
-  val a = IntArray(N)
-  var total = 0
+  val acc = IntArray(N + 1)
   repeat(N) {
     val v = i()
-    a[it] = v
-    total += v
+    acc[it + 1] = acc[it] + v
   }
-
   repeat(M) {
-    val i = i() - 1
-    val j = i() - 1
-    map[it] = (i * SEP + j).toLong()
+    val i = i()
+    val j = i()
+    w(acc[j] - acc[i - 1])
   }
-
-  var l = 0
-  var r = 0
-  var sum = a[0]
-  for (k in map.entries.sortedWith(Comparator.comparing { it.value })) {
-    val i = (k.value / SEP).toInt()
-    val j = (k.value % SEP).toInt()
-
-    map[k.key] = when (j - i) {
-      in 1..N - 2 -> {
-        while (l != i) if (l < i) sum -= a[l++] else sum += a[--l]
-        while (r != j) if (r < j) sum += a[++r] else sum -= a[r--]
-        sum
-      }
-
-      0 -> a[i]
-      else -> total
-    }.toLong()
-  }
-  for (k in map) w(k.value)
   OUT.flush()
 }
