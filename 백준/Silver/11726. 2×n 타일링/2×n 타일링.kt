@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -38,11 +38,7 @@ fun main() {
   val n = i()
   w(
     when (n) {
-    1 -> 1
-    2 -> 2
-
-    else -> {
-
+    in 3..1000 -> {
       val a = IntArray(1000).also {
         it[0] = 1
         it[1] = 2
@@ -50,6 +46,7 @@ fun main() {
       }
       a[n - 1]
     }
+    else -> n
   })
   OUT.flush()
 }
