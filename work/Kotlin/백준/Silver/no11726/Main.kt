@@ -20,8 +20,8 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 10
-private val outBuf = ByteArray(MAX_NUM_LEN + 1).also { it[MAX_NUM_LEN] = '\n'.code.toByte() }
+private const val MAX_NUM_LEN = 4
+private val outBuf = ByteArray(MAX_NUM_LEN)
 
 private fun w(num: Int) {
   var n = num
@@ -32,19 +32,24 @@ private fun w(num: Int) {
   } while (n > 0)
   val stt = end + 1
   OUT.write(
-    outBuf, stt, MAX_NUM_LEN - stt + 1 // 개행 포함
+    outBuf, stt, MAX_NUM_LEN - stt
   )
 }
 
 fun main() {
-  w(DP[i() - 1])
+  val n = i()
+  w(
+    when (n) {
+    in 3..1000 -> {
+      val a = IntArray(1000).also {
+        it[0] = 1
+        it[1] = 2
+        for (i in 2 until 1000) it[i] = (it[i - 2] + it[i - 1]) % 10_007
+      }
+      a[n - 1]
+    }
+
+    else -> n
+  })
   OUT.flush()
-}
-
-
-private val DP = IntArray(1000).also {
-  it[0] = 1
-  it[1] = 2
-  for (i in 2 until 1000) it[i] = (it[i - 2] + it[i - 1]) % 10_007
-
 }
