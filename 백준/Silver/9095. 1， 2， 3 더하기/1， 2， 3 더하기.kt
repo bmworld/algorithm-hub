@@ -37,29 +37,23 @@ private fun w(num: Int) {
 
 fun main() {
   repeat(i()) {
-    w(CNT[i()])
+    w(CNT[i() - 1])
   }
   OUT.flush()
 }
 
 
-private val CNT = IntArray(12).also {
-  val a = IntArray(3)
-  fun dfs(
-    acc: Int,
-    t: Int,
-  ) {
-    if (acc > t) return
-    else if (acc == t) {
-      it[t]++
-      return
-    }
 
-    for (n in 1..3) {
-      a[n - 1]++
-      dfs(acc + n, t)
-      a[n - 1]--
-    }
-  }
-  for (n in 1..11) dfs(0, n)
+private val CNT = IntArray(11).also {
+  it[0] = 1
+  it[1] = 2
+  it[2] = 4
+  it[3] = 7
+  it[4] = 13
+  it[5] = 24
+  it[6] = 44
+  it[7] = 81
+  it[8] = 149
+  it[9] = 274
+  it[10] = 504
 }
