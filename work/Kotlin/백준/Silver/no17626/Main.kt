@@ -1,3 +1,5 @@
+package 백준.Silver.no17626
+
 import java.io.BufferedOutputStream
 import kotlin.math.sqrt
 
@@ -39,20 +41,16 @@ fun main() {
         val maxSqrt = sqrt(n.toDouble()).toInt()
         for (i in maxSqrt downTo 2) {
           val iSq = i * i
-          if (found) break
           if (n == iSq) {
             minCnt = 1
             found = true
             break
           }
           val iRem = n - iSq
-          for (j in sqrt(iRem.toDouble()).toInt() downTo 1) {
-            val jSq = j * j
-            if (iRem == jSq) {
-              minCnt = 2
-              found = true
-              break
-            }
+          if (iRem in SQUARE) {
+            minCnt = 2
+            found = true
+            break
           }
         }
 
@@ -69,4 +67,8 @@ fun main() {
     }
   )
   OUT.flush()
+}
+
+private val SQUARE = IntArray(223).also {
+  for (i in 1..223) it[i - 1] = (224 - i) * (224 - i)
 }
