@@ -2,7 +2,7 @@ package 백준.Silver.no1012
 
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 15)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -75,19 +75,17 @@ fun main() {
       q[qi++] = x * XY_SEP + y
     }
 
-    if (k == 1) {
+    if (k == 1 || k >= 2499) {
       w(1)
-      break
+      continue
     }
 
-    var rem = k
     fun bfs(
       x: Int,
       y: Int,
     ) {
-      if (a[x][y] == X || rem == 0) return
+      if (a[x][y] == X) return
       a[x][y] = X
-      rem--
       for (i in 0..3) {
         val nx = x + dx[i]
         val ny = y + dy[i]
