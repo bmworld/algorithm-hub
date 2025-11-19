@@ -32,7 +32,7 @@ private fun w(num: Int) {
 
 
 fun main() {
-  var minCnt = 5
+  var minCnt = 4
   val n = i()
   var found = false
   val ch = IntArray(4)
@@ -42,10 +42,11 @@ fun main() {
     cnt: Int,
   ) {
     if (acc == n) {
-      found = true
+      if (cnt == 1) found = true
       minCnt = cnt
       return
-    } else if (found || acc > n || cnt >= 4 || cnt > 1 && ch[cnt - 2] < ch[cnt - 1]) return
+    }
+    if (found || acc > n || cnt >= minCnt || cnt > 1 && ch[cnt - 2] < ch[cnt - 1]) return
 
     for (sqrt in maxSqrt downTo 1) {
       val x = sqrt * sqrt
