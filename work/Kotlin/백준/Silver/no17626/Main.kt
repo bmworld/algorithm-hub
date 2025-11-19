@@ -30,38 +30,42 @@ private fun w(num: Int) {
   )
 }
 
-private const val MAX_CNT = 4
+
 fun main() {
-  var minCnt = 4
+  var minCnt = 5
   val n = i()
   var found = false
-  val ch = IntArray(MAX_CNT)
-  fun findSqrt(
-    v: Int,
-    sqrt: Int,
+  val ch = IntArray(4)
+  fun dfs(
+    acc: Int,
+    maxSqrt: Int,
     cnt: Int,
   ) {
-    val rem = v - sqrt * sqrt
-    ch[cnt - 1] = sqrt
-    if (found || v <= 0 || cnt >= MAX_CNT || (cnt > 1 && ch[cnt - 2] < ch[cnt - 1])) return
-    val sum = cnt + rem
-    if (rem <= 3) {
-      if (minCnt > sum) minCnt = sum
-      if (sum == 1) found = true
+    if (acc == n) {
+      found = true
+      minCnt = cnt
       return
+    } else if (found || acc > n || cnt >= 4 || cnt > 1 && ch[cnt - 2] < ch[cnt - 1]) return
+
+    for (sqrt in maxSqrt downTo 1) {
+      val x = sqrt * sqrt
+      val nextAcc = acc + x
+      if (nextAcc > n) continue
+      ch[cnt] = x
+      dfs(nextAcc, sqrt, cnt + 1)
     }
-    for (s in sqrt(rem.toDouble()).toInt() downTo 2) findSqrt(rem, s, cnt + 1)
   }
 
   w(
     when {
       n > 3 -> {
-        for (s in sqrt(n.toDouble()).toInt() downTo 2) findSqrt(n, s, 1)
+        dfs(0, sqrt(n.toDouble()).toInt(), 0)
         minCnt
       }
 
       else -> n
     }
   )
+
   OUT.flush()
 }
