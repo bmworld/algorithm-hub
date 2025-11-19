@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import kotlin.math.sqrt
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -28,7 +28,6 @@ private fun w(num: Int) {
   )
 }
 
-
 fun main() {
   var minCnt = 4
   val n = i()
@@ -38,11 +37,12 @@ fun main() {
     when {
       n > 3 -> {
         val maxSqrt = sqrt(n.toDouble()).toInt()
-        for (i in maxSqrt downTo 1) {
+        for (i in maxSqrt downTo 2) {
           val iSq = i * i
           if (found) break
           if (n == iSq) {
             minCnt = 1
+            found = true
             break
           }
           val iRem = n - iSq
@@ -53,22 +53,20 @@ fun main() {
               found = true
               break
             }
-            val jRem = iRem - jSq
-            for (k in j downTo 1) {
-              val kSq = k * k
-              if (jRem == kSq) {
-                if (minCnt > 3) minCnt = 3
-                break
-              }
-            }
           }
         }
+
+        if (!found) {
+          var v = n
+          while (v % 4 == 0) v /= 4
+          if (v % 8 != 7) minCnt = 3
+        }
+
         minCnt
       }
 
       else -> n
     }
   )
-
   OUT.flush()
 }
