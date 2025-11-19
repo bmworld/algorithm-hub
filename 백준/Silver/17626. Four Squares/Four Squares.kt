@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import kotlin.math.sqrt
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
