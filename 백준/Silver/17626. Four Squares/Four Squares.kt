@@ -33,32 +33,36 @@ fun main() {
   var minCnt = 4
   val n = i()
   var found = false
-  val ch = IntArray(4)
-  fun dfs(
-    acc: Int,
-    maxSqrt: Int,
-    cnt: Int,
-  ) {
-    if (acc == n) {
-      if (cnt == 1) found = true
-      minCnt = cnt
-      return
-    }
-    if (found || acc > n || cnt >= minCnt || cnt > 1 && ch[cnt - 2] < ch[cnt - 1]) return
-
-    for (sqrt in maxSqrt downTo 1) {
-      val x = sqrt * sqrt
-      val nextAcc = acc + x
-      if (nextAcc > n) continue
-      ch[cnt] = x
-      dfs(nextAcc, sqrt, cnt + 1)
-    }
-  }
 
   w(
     when {
       n > 3 -> {
-        dfs(0, sqrt(n.toDouble()).toInt(), 0)
+        val maxSqrt = sqrt(n.toDouble()).toInt()
+        for (i in maxSqrt downTo 1) {
+          val iSq = i * i
+          if (found) break
+          if (n == iSq) {
+            minCnt = 1
+            break
+          }
+          val iRem = n - iSq
+          for (j in i downTo 1) {
+            val jSq = j * j
+            if (iRem == jSq) {
+              minCnt = 2
+              found = true
+              break
+            }
+            val jRem = iRem - jSq
+            for (k in j downTo 1) {
+              val kSq = k * k
+              if (jRem == kSq) {
+                if (minCnt > 3) minCnt = 3
+                break
+              }
+            }
+          }
+        }
         minCnt
       }
 
