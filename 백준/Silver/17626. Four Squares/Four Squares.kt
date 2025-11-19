@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import kotlin.math.sqrt
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -29,40 +29,32 @@ private fun w(num: Int) {
 }
 
 fun main() {
-  var minCnt = 4
+
   val n = i()
-  var found = false
 
   w(
     when {
       n > 3 -> {
         val maxSqrt = sqrt(n.toDouble()).toInt()
-        for (i in maxSqrt downTo 2) {
-          val iSq = i * i
-          if (found) break
-          if (n == iSq) {
-            minCnt = 1
-            found = true
-            break
-          }
-          val iRem = n - iSq
-          for (j in sqrt(iRem.toDouble()).toInt() downTo 1) {
-            val jSq = j * j
-            if (iRem == jSq) {
-              minCnt = 2
-              found = true
-              break
+        if (n == maxSqrt * maxSqrt) 1  // STEP 1
+        else {
+          var tmp = n
+          while (tmp % 4 == 0) tmp /= 4
+          var minCnt = if (tmp % 8 == 7) 4 else 3 // STEP 2
+          if (minCnt == 3) {
+            for (i in maxSqrt downTo 2) {
+              val iRem = n - i * i
+              for (j in sqrt(iRem.toDouble()).toInt() downTo 1) {
+                if (iRem == j * j) {
+                  minCnt = 2 // STEP 3
+                  break
+                }
+              }
             }
           }
-        }
 
-        if (!found) {
-          var v = n
-          while (v % 4 == 0) v /= 4
-          if (v % 8 != 7) minCnt = 3
+          minCnt
         }
-
-        minCnt
       }
 
       else -> n
