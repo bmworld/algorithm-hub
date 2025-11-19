@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 15)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 14)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -78,14 +78,12 @@ fun main() {
       continue
     }
 
-    var rem = k
     fun bfs(
       x: Int,
       y: Int,
     ) {
-      if (a[x][y] == X || rem == 0) return
+      if (a[x][y] == X) return
       a[x][y] = X
-      rem--
       for (i in 0..3) {
         val nx = x + dx[i]
         val ny = y + dy[i]
