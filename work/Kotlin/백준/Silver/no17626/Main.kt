@@ -40,7 +40,7 @@ fun main() {
     when {
       n > 3 -> {
         val maxSqrt = sqrt(n.toDouble()).toInt()
-        for (i in maxSqrt downTo 1) {
+        for (i in maxSqrt downTo 2) {
           val iSq = i * i
           if (found) break
           if (n == iSq) {
