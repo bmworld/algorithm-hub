@@ -7,6 +7,7 @@ private var inPos = 0
 private const val EOF = -1
 
 private fun r(): Int = if (inPos < IN.size) (IN[inPos++].toInt() and 0xFF) else EOF
+
 private const val MAX_NUM_LEN = 6
 private val outBuf = ByteArray(MAX_NUM_LEN)
 
@@ -52,8 +53,16 @@ fun useWonKiOk() {
 fun main() {
   while (true) {
     var c = r()
-    while (c >= -1) {
+    while (true) {
       when (c) {
+        in 48..57 -> {
+          n = n * 10 + (c - 48)
+        }
+
+        PLUS -> submitN()
+
+        MINUS -> useWonKiOk()
+
         EOF -> {
           submitN()
           w(total - tmp)
@@ -61,12 +70,6 @@ fun main() {
           return
         }
 
-        MINUS -> useWonKiOk()
-        PLUS -> submitN()
-
-        in 48..57 -> {
-          n = n * 10 + (c - 48)
-        }
       }
       c = r()
     }
