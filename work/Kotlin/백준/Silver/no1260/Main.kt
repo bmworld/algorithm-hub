@@ -58,30 +58,30 @@ fun main() {
 
   for (list in arr) list.sort()
 
-  val dCh = ByteArray(1001)
+  val ch = ByteArray(n + 1)
   fun dfs(v: Int) {
-    dCh[v] = O
+    ch[v] = O
     w(v)
-    for (nv in arr[v]) if (dCh[nv] == X) dfs(nv)
+    for (nv in arr[v]) if (ch[nv] == X) dfs(nv)
   }
   dfs(v)
 
+  for (i in 1..n) ch[i] = X
   OUT.write('\n'.code)
 
   fun bfs(v: Int) {
-    val bCh = ByteArray(1001)
-    val q = IntArray(1000)
+    val q = IntArray(n)
     var head = 0
     var tail = 0
-    bCh[v] = O
+    ch[v] = O
     q[tail++] = v
 
     while (head < tail) {
       val n = q[head++]
       w(n)
       for (nv in arr[n]) {
-        if (bCh[nv] == X) {
-          bCh[nv] = O
+        if (ch[nv] == X) {
+          ch[nv] = O
           q[tail++] = nv
         }
       }
