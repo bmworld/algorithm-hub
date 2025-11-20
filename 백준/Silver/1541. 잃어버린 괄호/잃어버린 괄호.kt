@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 7)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 9)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -38,40 +38,34 @@ private var total = 0
 private var tmp = 0
 private var n = 0
 
-fun submitN() {
-  if (wonKiOk) tmp += n else total += n
-  n = 0
-}
-
-fun useWonKiOk() {
-  submitN()
-  total -= tmp
-  tmp = 0
-  wonKiOk = true
-}
-
 fun main() {
   while (true) {
-    var c = r()
-    while (true) {
-      when (c) {
-        in 48..57 -> {
-          n = n * 10 + (c - 48)
-        }
-
-        PLUS -> submitN()
-
-        MINUS -> useWonKiOk()
-
-        EOF -> {
-          submitN()
-          w(total - tmp)
-          OUT.flush()
-          return
-        }
-
+    val c = r()
+    when {
+      c >= 48 -> {
+        n = n * 10 + (c - 48)
       }
-      c = r()
+
+      c == PLUS -> {
+        if (wonKiOk) tmp += n else total += n
+        n = 0
+      }
+
+      c == MINUS -> {
+        if (wonKiOk) tmp += n else total += n
+        n = 0
+        total -= tmp
+        tmp = 0
+        wonKiOk = true
+      }
+
+      c == EOF -> {
+        if (wonKiOk) tmp += n else total += n
+        n = 0
+        w(total - tmp)
+        OUT.flush()
+        return
+      }
     }
   }
 }
