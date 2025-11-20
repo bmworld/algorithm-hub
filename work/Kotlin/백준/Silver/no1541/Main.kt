@@ -2,7 +2,7 @@ package 백준.Silver.no1541
 
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -40,40 +40,29 @@ private var total = 0
 private var tmp = 0
 private var n = 0
 
-fun submitN() {
-  if (wonKiOk) tmp += n else total += n
-  n = 0
-}
-
-fun useWonKiOk() {
-  submitN()
-  total -= tmp
-  tmp = 0
-  wonKiOk = true
-}
-
 fun main() {
-  while (true) {
-    var c = r()
-    while (true) {
-      when (c) {
-        in 48..57 -> {
-          n = n * 10 + (c - 48)
-        }
+  var c = r()
+  while (c != EOF) {
+    when (c) {
+      in 48..57 -> n = n * 10 + (c - 48)
 
-        PLUS -> submitN()
-
-        MINUS -> useWonKiOk()
-
-        EOF -> {
-          submitN()
-          w(total - tmp)
-          OUT.flush()
-          return
-        }
-
+      PLUS -> {
+        if (wonKiOk) tmp += n else total += n
+        n = 0
       }
-      c = r()
+
+      MINUS -> {
+        if (wonKiOk) tmp += n else total += n
+        n = 0
+        total -= tmp
+        tmp = 0
+        wonKiOk = true
+      }
     }
+    c = r()
   }
+
+  if (wonKiOk) tmp += n else total += n
+  w(total - tmp)
+  OUT.flush()
 }
