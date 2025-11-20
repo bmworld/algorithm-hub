@@ -1,15 +1,12 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 16)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
 private const val EOF = -1
 
 private fun r(): Int = if (inPos < IN.size) (IN[inPos++].toInt() and 0xFF) else EOF
-
-
-
 private const val MAX_NUM_LEN = 6
 private val outBuf = ByteArray(MAX_NUM_LEN)
 
