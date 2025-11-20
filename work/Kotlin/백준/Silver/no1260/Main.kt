@@ -2,7 +2,7 @@ package 백준.Silver.no1260
 
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 15)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 19)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -47,24 +47,22 @@ fun main() {
   val n = i()
   val m = i()
   val v = i()
-  val map = LinkedHashMap<Int, MutableList<Int>>()
+  val map = Array<MutableList<Int>>(n + 1) { mutableListOf() }
   repeat(m) {
     val a = i()
     val b = i()
-    if (map[a] == null) map[a] = mutableListOf()
-    map[a]!!.add(b)
-    if (map[b] == null) map[b] = mutableListOf()
-    map[b]!!.add(a)
+    map[a].add(b)
+    map[b].add(a)
   }
 
-  for (list in map) list.value.sort()
+  for (list in map) list.sort()
 
   val dCh = ByteArray(1000)
   fun dfs(v: Int) {
     if (dCh[v - 1] == O) return
     dCh[v - 1] = O
     w(v)
-    for (nv in map[v]!!) dfs(nv)
+    for (nv in map[v]) dfs(nv)
   }
   dfs(v)
 
@@ -81,7 +79,7 @@ fun main() {
     while (head < tail) {
       val n = q[head++]
       w(n)
-      for (nv in map[n]!!) {
+      for (nv in map[n]) {
         if (bCh[nv - 1] == O) continue
         bCh[nv - 1] = O
         q[tail++] = nv
