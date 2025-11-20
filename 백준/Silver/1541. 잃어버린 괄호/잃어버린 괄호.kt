@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 9)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
 
 private val IN: ByteArray = System.`in`.readBytes()
 private var inPos = 0
@@ -39,33 +39,28 @@ private var tmp = 0
 private var n = 0
 
 fun main() {
-  while (true) {
-    val c = r()
-    when {
-      c >= 48 -> {
-        n = n * 10 + (c - 48)
-      }
+  var c = r()
+  while (c != EOF) {
+    when (c) {
+      in 48..57 -> n = n * 10 + (c - 48)
 
-      c == PLUS -> {
+      PLUS -> {
         if (wonKiOk) tmp += n else total += n
         n = 0
       }
 
-      c == MINUS -> {
+      MINUS -> {
         if (wonKiOk) tmp += n else total += n
         n = 0
         total -= tmp
         tmp = 0
         wonKiOk = true
       }
-
-      c == EOF -> {
-        if (wonKiOk) tmp += n else total += n
-        n = 0
-        w(total - tmp)
-        OUT.flush()
-        return
-      }
     }
+    c = r()
   }
+
+  if (wonKiOk) tmp += n else total += n
+  w(total - tmp)
+  OUT.flush()
 }
