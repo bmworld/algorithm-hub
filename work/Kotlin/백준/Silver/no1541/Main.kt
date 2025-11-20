@@ -35,34 +35,32 @@ private fun w(
 
 private const val PLUS = 43
 private const val MINUS = 45
-private var wonKiOk = false
+private val DIGIT = 48..57
+private var subMode = false
 private var total = 0
-private var tmp = 0
 private var n = 0
 
 fun main() {
   var c = r()
   while (c != EOF) {
     when (c) {
-      in 48..57 -> n = n * 10 + (c - 48)
+      in DIGIT -> n = n * 10 + (c - 48)
 
       PLUS -> {
-        if (wonKiOk) tmp += n else total += n
+        if (subMode) total -= n else total += n
         n = 0
       }
 
       MINUS -> {
-        if (wonKiOk) tmp += n else total += n
+        if (subMode) total -= n else total += n
         n = 0
-        total -= tmp
-        tmp = 0
-        wonKiOk = true
+        subMode = true
       }
     }
     c = r()
   }
 
-  if (wonKiOk) tmp += n else total += n
-  w(total - tmp)
+  if (subMode) total -= n else total += n
+  w(total)
   OUT.flush()
 }
