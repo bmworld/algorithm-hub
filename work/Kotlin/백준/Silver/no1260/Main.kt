@@ -42,47 +42,48 @@ private fun w(
 }
 
 private const val O = 1.toByte()
+private const val X = 0.toByte()
 
 fun main() {
   val n = i()
   val m = i()
   val v = i()
-  val map = Array<MutableList<Int>>(n + 1) { mutableListOf() }
+  val arr = Array<MutableList<Int>>(n + 1) { mutableListOf() }
   repeat(m) {
     val a = i()
     val b = i()
-    map[a].add(b)
-    map[b].add(a)
+    arr[a].add(b)
+    arr[b].add(a)
   }
 
-  for (list in map) list.sort()
+  for (list in arr) list.sort()
 
-  val dCh = ByteArray(1000)
+  val dCh = ByteArray(1001)
   fun dfs(v: Int) {
-    if (dCh[v - 1] == O) return
-    dCh[v - 1] = O
+    dCh[v] = O
     w(v)
-    for (nv in map[v]) dfs(nv)
+    for (nv in arr[v]) if (dCh[nv] == X) dfs(nv)
   }
   dfs(v)
 
   OUT.write('\n'.code)
 
   fun bfs(v: Int) {
-    val bCh = ByteArray(1000)
+    val bCh = ByteArray(1001)
     val q = IntArray(1000)
     var head = 0
     var tail = 0
-    bCh[v - 1] = O
+    bCh[v] = O
     q[tail++] = v
 
     while (head < tail) {
       val n = q[head++]
       w(n)
-      for (nv in map[n]) {
-        if (bCh[nv - 1] == O) continue
-        bCh[nv - 1] = O
-        q[tail++] = nv
+      for (nv in arr[n]) {
+        if (bCh[nv] == X) {
+          bCh[nv] = O
+          q[tail++] = nv
+        }
       }
     }
   }
