@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private val O = BufferedOutputStream(System.`out`, 1 shl 12)
-private const val IBS = 1 shl 14
+private val O = BufferedOutputStream(System.`out`, 1 shl 11)
+private const val IBS = 1 shl 15
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private const val EOF = -1
