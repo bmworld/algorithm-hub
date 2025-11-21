@@ -56,13 +56,13 @@ fun main() {
     min: Int,
     max: Int,
   ): Int {
-    var result = min
+    var result = 0
     var l = min.toLong()
     var r = max.toLong()
     while (l <= r) {
       val m = (l + r) / 2
       var cnt = 0L
-      for (v in a) cnt += v / m
+      for (v in a) cnt += v.toLong() / m
       when {
         cnt >= n -> {
           if (m > result) result = m.toInt()
@@ -72,7 +72,6 @@ fun main() {
         else -> r = m - 1
       }
     }
-
     return result
   }
 
