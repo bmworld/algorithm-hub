@@ -1,27 +1,18 @@
 import java.io.BufferedOutputStream
-import java.io.DataInputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
-private const val INBufSize = 1 shl 14
-private val IN = DataInputStream(System.`in`)
-private val INBuf = ByteArray(INBufSize)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
+
+private val IN: ByteArray = System.`in`.readBytes()
+private var inPos = 0
 private const val EOF = -1
-private var INPos = 0
-private var INLen = 0
-
-private fun r(): Byte {
-  if (INPos == INLen) {
-    INLen = IN.read(INBuf, 0, INBufSize)
-    if (INLen == EOF) INBuf[0] = EOF.toByte()
-    INPos = 0
-  }
-  return INBuf[INPos++]
-}
-
+private fun r(): Int = if (inPos < IN.size) (IN[inPos++].toInt() and 0xFF) else EOF
 private fun i(): Int {
   var n = 0
-  var c: Byte
-  while (r().also { c = it } in 48..57) n = n * 10 + (c - 48)
+  var c = r()
+  while (c in 48..57) {
+    n = n * 10 + (c - 48)
+    c = r()
+  }
   return n
 }
 
@@ -65,11 +56,13 @@ fun main() {
       sum += v - m
       if (sum >= goal) break
     }
-    if (sum >= goal) {
-      max = m
-      l = m + 1
-    } else {
-      r = m - 1
+    when {
+      sum >= goal -> {
+        max = m
+        l = m + 1
+      }
+
+      else -> r = m - 1
     }
   }
 
