@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
 private const val INBufSize = 1 shl 14
 private val IN = DataInputStream(System.`in`)
 private val INBuf = ByteArray(INBufSize)
@@ -59,9 +59,8 @@ fun main() {
   var max = 0
   while (l <= r) {
     var sum = 0L
-    val m = (l + r) ushr 1
-    for (i in 0 until n) {
-      val v = a[i]
+    val m = (l + r) / 2
+    for (v in a) {
       if (v <= m) continue
       sum += v - m
       if (sum >= goal) break
