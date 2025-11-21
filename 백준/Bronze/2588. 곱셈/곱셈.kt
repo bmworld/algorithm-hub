@@ -1,12 +1,9 @@
+import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
-
-private val IN: ByteArray = System.`in`.readBytes()
-private var inPos = 0
-private const val EOF = -1
-
-private fun r(): Int = if (inPos < IN.size) (IN[inPos++].toInt() and 0xFF) else EOF
+val IN = BufferedInputStream(System.`in`)
+private fun r(): Int = IN.read()
 private fun i(): Int {
   var n = 0
   var c = r()
@@ -48,7 +45,6 @@ fun main() {
     arr[i++] = (c - 48).toByte()
     c = r()
   }
-
   for (i in 2 downTo 0) w(a * arr[i])
   w(a * b)
   OUT.flush()
