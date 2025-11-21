@@ -45,37 +45,39 @@ fun main() {
   val n = i()
   val a = IntArray(k)
   var min = Int.MAX_VALUE
-  var max = 0
   repeat(k) {
     val v = i()
     a[it] = v
     if (v < min) min = v
-    if (v > max) max = v
   }
 
-  a.sortDescending()
-
-  fun bs(
-    l: Int,
-    r: Int,
+  var max = 0
+  fun parametricSearch(
+    stt: Int,
+    end: Int,
   ) {
-    val m = (l + r) / 2
-    var cnt = 0
-    for (v in a) {
-      cnt += v / m
-      if (cnt > n) {
-        if (m < min) min = m
-        break
+    var l = stt
+    var r = end
+    while (l <= r) {
+      val m = (l + r) / 2
+      var cnt = 0
+      for (v in a) cnt += v / m
+      when {
+        cnt >= n -> {
+          if (m > max) max = m
+          l = m + 1
+        }
+
+        cnt < n -> r = m - 1
       }
     }
-
-    when {
-      cnt < n -> bs(l, m - 1)
-      cnt > n -> bs(m + 1, r)
-      else -> min = m
-    }
   }
-  if (k < n) bs(1, min)
-  w(min)
+
+  w(
+    if (k < n) {
+      parametricSearch(1, min)
+      max
+    } else min
+  )
   OUT.flush()
 }
