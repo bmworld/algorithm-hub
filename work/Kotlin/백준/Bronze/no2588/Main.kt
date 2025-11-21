@@ -1,14 +1,11 @@
 package 백준.Bronze.no2588
 
+import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
-
-private val IN: ByteArray = System.`in`.readBytes()
-private var inPos = 0
-private const val EOF = -1
-
-private fun r(): Int = if (inPos < IN.size) (IN[inPos++].toInt() and 0xFF) else EOF
+private val IN = BufferedInputStream(System.`in`)
+private fun r(): Int = IN.read()
 private fun i(): Int {
   var n = 0
   var c = r()
