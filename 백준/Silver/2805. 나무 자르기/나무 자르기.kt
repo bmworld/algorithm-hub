@@ -1,21 +1,21 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 10)
-private const val INBufSize = 1 shl 14
-private val IN = DataInputStream(System.`in`)
-private val INBuf = ByteArray(INBufSize)
+private val O = BufferedOutputStream(System.`out`, 1 shl 12)
+private const val IBS = 1 shl 14
+private val I = DataInputStream(System.`in`)
+private val IB = ByteArray(IBS)
 private const val EOF = -1
-private var INPos = 0
-private var INLen = 0
+private var Ii = 0
+private var Il = 0
 
 private fun r(): Byte {
-  if (INPos == INLen) {
-    INLen = IN.read(INBuf, 0, INBufSize)
-    if (INLen == EOF) INBuf[0] = EOF.toByte()
-    INPos = 0
+  if (Ii == Il) {
+    Il = I.read(IB, 0, IBS)
+    if (Il == EOF) IB[0] = EOF.toByte()
+    Ii = 0
   }
-  return INBuf[INPos++]
+  return IB[Ii++]
 }
 
 private fun i(): Int {
@@ -25,28 +25,28 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 10
-private val OUTBuf = ByteArray(MAX_NUM_LEN)
+private const val OBS = 10
+private val OB = ByteArray(OBS)
 
 private fun w(
   num: Int,
 ) {
   var x = num
-  var end = MAX_NUM_LEN - 1
+  var end = OBS - 1
   do {
-    OUTBuf[end--] = ((x % 10) + 48).toByte()
+    OB[end--] = ((x % 10) + 48).toByte()
     x /= 10
   } while (x > 0)
   val stt = end + 1
 
-  OUT.write(
-    OUTBuf, stt, MAX_NUM_LEN - stt
+  O.write(
+    OB, stt, OBS - stt
   )
 }
 
 fun main() {
   val n = i()
-  val goal = i()
+  val t = i()
   val a = IntArray(n)
   var l = 0
   var r = 0
@@ -60,12 +60,11 @@ fun main() {
   while (l <= r) {
     var sum = 0L
     val m = (l + r) / 2
-    for (v in a) {
-      if (v <= m) continue
-      sum += v - m
-      if (sum >= goal) break
+    repeat(n) {
+      val v = a[it]
+      if (v > m) sum += v - m
     }
-    if (sum >= goal) {
+    if (sum >= t) {
       max = m
       l = m + 1
     } else {
@@ -74,5 +73,5 @@ fun main() {
   }
 
   w(max)
-  OUT.flush()
+  O.flush()
 }
