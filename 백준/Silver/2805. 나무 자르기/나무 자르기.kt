@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private val OUT = BufferedOutputStream(System.`out`, 1 shl 11)
-private const val INBufSize = 1 shl 11
+private val OUT = BufferedOutputStream(System.`out`, 1 shl 12)
+private const val INBufSize = 1 shl 14
 private val IN = DataInputStream(System.`in`)
 private val INBuf = ByteArray(INBufSize)
 private const val EOF = -1
