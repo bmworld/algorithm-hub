@@ -26,7 +26,7 @@ private fun i(): Int {
 }
 
 private const val MAX_NUM_LEN = 10
-private val outBuf = ByteArray(MAX_NUM_LEN)
+private val OUTBuf = ByteArray(MAX_NUM_LEN)
 
 private fun w(
   num: Int,
@@ -34,13 +34,13 @@ private fun w(
   var x = num
   var end = MAX_NUM_LEN - 1
   do {
-    outBuf[end--] = ((x % 10) + 48).toByte()
+    OUTBuf[end--] = ((x % 10) + 48).toByte()
     x /= 10
   } while (x > 0)
   val stt = end + 1
 
   OUT.write(
-    outBuf, stt, MAX_NUM_LEN - stt
+    OUTBuf, stt, MAX_NUM_LEN - stt
   )
 }
 
@@ -59,8 +59,9 @@ fun main() {
   var max = 0
   while (l <= r) {
     var sum = 0L
-    val m = (l + r) / 2
-    for (v in a) {
+    val m = (l + r) ushr 1
+    for (i in 0 until n) {
+      val v = a[i]
       if (v <= m) continue
       sum += v - m
       if (sum >= goal) break
