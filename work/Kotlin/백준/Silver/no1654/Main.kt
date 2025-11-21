@@ -19,11 +19,11 @@ private fun i(): Int {
   return n
 }
 
-private const val MAX_NUM_LEN = 11
+private const val MAX_NUM_LEN = 10
 private val outBuf = ByteArray(MAX_NUM_LEN)
 
 private fun w(
-  num: Long,
+  num: Int,
 ) {
   var x = num
   var end = MAX_NUM_LEN - 1
@@ -42,7 +42,7 @@ private fun w(
 
 fun main() {
   val k = i()
-  val n = i().toLong()
+  val n = i()
   val a = IntArray(k)
   var minV = Int.MAX_VALUE
   repeat(k) {
@@ -51,32 +51,29 @@ fun main() {
     if (v < minV) minV = v
   }
 
-  var max = 0L
   fun parametricSearch(
-    stt: Int,
-    end: Int,
-  ) {
-    var l = stt.toLong()
-    var r = end.toLong()
+    min: Int,
+    max: Int,
+  ): Int {
+    var result = min
+    var l = min.toLong()
+    var r = max.toLong()
     while (l <= r) {
       val m = (l + r) / 2
       var cnt = 0L
       for (v in a) cnt += v / m
       when {
         cnt >= n -> {
-          if (m > max) max = m
+          if (m > result) result = m.toInt()
           l = m + 1
         }
 
         else -> r = m - 1
       }
     }
+    return result
   }
 
-  parametricSearch(
-    1, minV
-  )
-
-  w(max)
+  w(if (k == n) minV else parametricSearch(1, minV))
   OUT.flush()
 }
