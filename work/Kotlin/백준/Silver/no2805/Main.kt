@@ -41,18 +41,17 @@ fun main() {
   val n = i()
   val goal = i()
   val a = IntArray(n)
+  var l = 0
   var r = 0
-  var l = 1_000_000_000
   repeat(n) {
     val v = i()
     a[it] = v
-    if (v < l) l = v
     if (v > r) r = v
   }
 
-  var maxH = 0
+  var max = 0
   while (l <= r) {
-    var sum = 0
+    var sum = 0L
     val m = (l + r) / 2
     for (v in a) {
       if (v <= m) continue
@@ -60,7 +59,7 @@ fun main() {
     }
     when {
       sum >= goal -> {
-        maxH = m
+        max = m
         l = m + 1
       }
 
@@ -68,6 +67,6 @@ fun main() {
     }
   }
 
-  w(maxH)
+  w(max)
   OUT.flush()
 }
