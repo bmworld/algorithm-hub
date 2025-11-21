@@ -44,14 +44,15 @@ fun main() {
   val k = i()
   val n = i()
   val a = IntArray(k)
-  var minV = Int.MAX_VALUE
+  var minV: Int = Int.MAX_VALUE
   repeat(k) {
     val v = i()
     a[it] = v
     if (v < minV) minV = v
   }
 
-  fun parametricSearch(
+
+  fun pSearch(
     min: Int,
     max: Int,
   ): Int {
@@ -71,9 +72,10 @@ fun main() {
         else -> r = m - 1
       }
     }
+
     return result
   }
 
-  w(if (k == n) minV else parametricSearch(1, minV))
+  w(if (k == n) minV else pSearch(1, minV))
   OUT.flush()
 }
