@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 4
-private const val OBS = 1 shl 3
+private const val IBS = 1 shl 3
+private const val OBS = 1 shl 2
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -21,7 +21,7 @@ private fun r(): Byte {
 
 
 
-private const val WS = 9
+private const val WS = 3
 private val WB = ByteArray(WS)
 
 private fun w(
@@ -40,19 +40,14 @@ private fun w(
   )
 }
 
-private val isNUM = 48..57
-
 private fun i(): Int {
   var n = 0
-
   val i1 = r() - 48
   val i2 = r() - 48
   val i3 = r() - 48
-
   n += i3 * 100
   n += i2 * 10
   n += i1
-
   r()
   return n
 }
