@@ -54,6 +54,7 @@ fun main() {
     for (v in a) {
       if (v <= m) continue
       sum += v - m
+      if (sum >= goal) break
     }
     when {
       sum >= goal -> {
