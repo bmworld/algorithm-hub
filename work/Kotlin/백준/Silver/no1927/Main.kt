@@ -2,7 +2,6 @@ package 백준.Silver.no1927
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
-import java.util.*
 
 private const val IBS = 1 shl 16
 private const val OBS = 1 shl 11
@@ -47,17 +46,46 @@ private fun w(
 }
 
 fun main() {
-  val h = i()
-  val q = PriorityQueue<Int>()
-  repeat(h) {
+  val n = i()
+  val q = IntArray(n)
+  var len = 0
+
+  fun offer(v: Int) {
+    q[len++] = v
+    var i = len - 1
+    while (i > 0) {
+      val l = q[i - 1]
+      val r = q[i]
+      if (l > r) {
+        q[i - 1] = r
+        q[i] = l
+        i--
+      } else break
+    }
+  }
+
+  fun poll(): Int {
+    if (len == 0) return 0
+    val v = q[0]
+    var i = 0
+    while (i < len - 1) {
+      val r = q[i + 1]
+      if (r != v) q[i] = r
+      i++
+    }
+    q[--len] = 0
+    return v
+  }
+
+  repeat(n) {
     val x = i()
     when {
       x == 0 -> {
-        if (q.isEmpty()) w(0)
-        else w(q.poll())
+        if (len == 0) w(0)
+        else w(poll())
       }
 
-      else -> q.offer(x)
+      else -> offer(x)
     }
   }
   O.flush()
