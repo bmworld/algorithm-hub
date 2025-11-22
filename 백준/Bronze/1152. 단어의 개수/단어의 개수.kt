@@ -1,19 +1,57 @@
-const val SPACE = 32.toByte()
+import java.io.BufferedOutputStream
+import java.io.DataInputStream
+
+private const val IBS = 1 shl 12
+private const val OBS = 1 shl 4
+private val O = BufferedOutputStream(System.`out`, OBS)
+private val I = DataInputStream(System.`in`)
+private val IB = ByteArray(IBS)
+private const val EOF = -1
+private var Ii = 0
+private var Il = 0
+
+private fun r(): Byte {
+  if (Ii == Il) {
+    Il = I.read(IB, 0, IBS)
+    if (Il == EOF) IB[0] = EOF.toByte()
+    Ii = 0
+  }
+  return IB[Ii++]
+}
+
+
+
+private const val WS = 7
+private val WB = ByteArray(WS)
+
+private fun w(
+  num: Int,
+) {
+  var x = num
+  var end = WS - 1
+  do {
+    WB[end--] = ((x % 10) + 48).toByte()
+    x /= 10
+  } while (x > 0)
+  val stt = end + 1
+
+  O.write(
+    WB, stt, WS - stt
+  )
+}
+
+private const val SPACE = 32.toByte()
 
 fun main() {
-  val bArr = ByteArray(1_000_000)
-  val n = System.`in`.read(bArr)
-  if (n <= 0) return print(0)
-
   var cnt = 0
   var inWord = false
-  var i = 0
-  while (i < n) {
-    val isWord = bArr[i] > SPACE // 공백: 32 / 대문자: 65..90 / 소문자: 97..122
-    if (!inWord && isWord) cnt++
-    inWord = isWord
-    i++
+  var c: Byte
+  while (r().also { c = it } >= SPACE) {
+    if (c != SPACE) {
+      if (!inWord) cnt++
+      inWord = true
+    } else inWord = false
   }
-
-  print(cnt)
+  w(cnt)
+  O.flush()
 }
