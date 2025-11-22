@@ -1,8 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
-import java.util.*
 
-private const val IBS = 1 shl 15
+private const val IBS = 1 shl 16
 private const val OBS = 1 shl 11
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -45,17 +44,59 @@ private fun w(
 }
 
 fun main() {
-  val h = i()
-  val q = PriorityQueue<Int>()
-  repeat(h) {
+  val n = i()
+  val heap = IntArray(n + 1)
+  var len = 0
+  val root = 1
+
+  fun insert(v: Int) {
+    var ci = ++len
+    heap[len] = v
+    while (ci > root) {
+      val pi = ci shr 1
+      val p = heap[pi]
+      val c = heap[ci]
+      if (p > c) {
+        heap[pi] = c
+        heap[ci] = p
+        ci = pi
+      } else break
+    }
+
+  }
+
+  fun pop(): Int {
+    if (len == 0) return 0
+
+    val v = heap[root]
+    heap[root] = heap[len]
+    heap[len] = 0
+    len--
+
+    var pi = root
+    while (true) {
+      val li = pi shl 1
+      val end = li > len
+      if (end) break
+      val ri = li + 1
+      var minIdx = li
+      if (ri <= len && heap[ri] < heap[li]) minIdx = ri
+      val p = heap[pi]
+      val min = heap[minIdx]
+      if (p > min) {
+        heap[pi] = min
+        heap[minIdx] = p
+        pi = minIdx
+      } else break
+    }
+    return v
+  }
+
+  repeat(n) {
     val x = i()
     when {
-      x == 0 -> {
-        if (q.isEmpty()) w(0)
-        else w(q.poll())
-      }
-
-      else -> q.offer(x)
+      x == 0 -> w(pop())
+      else -> insert(x)
     }
   }
   O.flush()
