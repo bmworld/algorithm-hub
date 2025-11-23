@@ -38,7 +38,7 @@ private const val WS = 10
 private val WB = ByteArray(WS + 1).also { it[WS] = '\n'.code.toByte() }
 
 private fun w(
-    num: Int,
+  num: Int,
 ) {
   var x = num
   var end = WS - 1
@@ -54,7 +54,7 @@ private fun w(
 private const val ZERO = 48.toByte()
 private const val BL = 1.toByte()
 private const val WH = 0.toByte()
-private const val CHECKED = (-1).toByte()
+private const val MIXED = (-1).toByte()
 
 fun main() {
 
@@ -64,44 +64,34 @@ fun main() {
 
   var whCnt = 0
   var blCnt = 0
-
-  fun chk(y: Int, x: Int) {
-    val v = a[y][x]
-    if (v == CHECKED) return
+  fun updateCnt(v: Byte) {
+    if (v == MIXED) return
     if (v == BL) blCnt++ else whCnt++
-
-    var w = 0
-    while (x + w < n) {
-      val nw = w + 1
-      val nx = x + nw
-      val ny = y + nw
-      if (nx >= n || ny >= n || a[ny][nx] != v) break
-
-      var valid = true
-      var ty = ny
-      while (y <= ty) {
-        if (a[ty][nx] != v) {
-          valid = false
-          break
-        }
-        ty--
-      }
-
-      var tx = nx
-      while (valid && x <= tx) {
-        if (a[ny][tx] != v) {
-          valid = false
-          break
-        }
-        tx--
-      }
-      if (valid) w++ else break
-    }
-
-    for (ny in y + w downTo y) for (nx in x + w downTo x) a[ny][nx] = CHECKED
   }
 
-  for (y in 0 until n) for (x in 0 until n) chk(y, x)
+  fun chk(
+    y: Int,
+    x: Int,
+    len: Int,
+  ): Byte {
+    if (len == 1) return a[y][x]
+    val nl = len / 2
+    val v1 = chk(y, x, nl)
+    val v2 = chk(y + nl, x, nl)
+    val v3 = chk(y, x + nl, nl)
+    val v4 = chk(y + nl, x + nl, nl)
+
+    return if (v1 == v2 && v2 == v3 && v3 == v4) v1
+    else {
+      updateCnt(v1)
+      updateCnt(v2)
+      updateCnt(v3)
+      updateCnt(v4)
+      MIXED
+    }
+  }
+
+  updateCnt(chk(0, 0, n))
   w(whCnt)
   w(blCnt)
   O.flush()
