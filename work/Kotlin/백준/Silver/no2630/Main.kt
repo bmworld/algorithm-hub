@@ -3,7 +3,7 @@ package 백준.Silver.no2630
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 15
+private const val IBS = 1 shl 16
 private const val OBS = 1 shl 11
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -75,14 +75,33 @@ fun main() {
       val nw = w + 1
       val nx = x + nw
       val ny = y + nw
-      if (nx >= n || ny >= n || a[ny][x] != v || a[y][nx] != v || a[ny][nx] != v) break else w++
+      if (nx >= n || ny >= n || a[ny][nx] != v) break
+
+      var valid = true
+      var ty = ny
+      while (y <= ty) {
+        if (a[ty][nx] != v) {
+          valid = false
+          break
+        }
+        ty--
+      }
+
+      var tx = nx
+      while (valid && x <= tx) {
+        if (a[ny][tx] != v) {
+          valid = false
+          break
+        }
+        tx--
+      }
+      if (valid) w++ else break
     }
 
     for (ny in y + w downTo y) for (nx in x + w downTo x) a[ny][nx] = CHECKED
   }
 
   for (y in 0 until n) for (x in 0 until n) chk(y, x)
-
   w(whCnt)
   w(blCnt)
   O.flush()
