@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 16
-private const val OBS = 1 shl 4
+private const val IBS = 1 shl 11
+private const val OBS = 1 shl 3
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -62,11 +62,6 @@ fun main() {
 
   var whCnt = 0
   var blCnt = 0
-  fun updateCnt(v: Byte) {
-    if (v == MIXED) return
-    if (v == BL) blCnt++ else whCnt++
-  }
-
   fun chk(
     y: Int,
     x: Int,
@@ -74,23 +69,40 @@ fun main() {
   ): Byte {
     if (len == 1) return a[y][x]
     val nl = len / 2
-    val v1 = chk(y, x, nl)
-    val v2 = chk(y + nl, x, nl)
-    val v3 = chk(y, x + nl, nl)
-    val v4 = chk(y + nl, x + nl, nl)
+    var whc = 0
+    var blc = 0
+    for (yi in 0..1) for (xi in 0..1) {
+      val r = chk(y + yi * nl, x + xi * nl, nl)
+      if (r == BL) blc++ else if (r == WH) whc++
+    }
 
-    return if (v1 == v2 && v2 == v3 && v3 == v4) v1
-    else {
-      updateCnt(v1)
-      updateCnt(v2)
-      updateCnt(v3)
-      updateCnt(v4)
-      MIXED
+    return when {
+      whc == 4 -> WH
+      blc == 4 -> BL
+
+      else -> {
+        whCnt += whc
+        blCnt += blc
+        MIXED
+      }
     }
   }
 
-  updateCnt(chk(0, 0, n))
-  w(whCnt)
-  w(blCnt)
+  when (chk(0, 0, n)) {
+    MIXED -> {
+      w(whCnt)
+      w(blCnt)
+    }
+
+    WH -> {
+      w(1)
+      w(0)
+    }
+
+    BL -> {
+      w(0)
+      w(1)
+    }
+  }
   O.flush()
 }
