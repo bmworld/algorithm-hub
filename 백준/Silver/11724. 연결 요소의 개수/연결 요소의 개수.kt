@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 15
+private const val IBS = 1 shl 16
 private const val OBS = 1 shl 2
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -65,10 +65,12 @@ fun main() {
   }
 
   var cnt = 0
-  for (v in 1..n) {
-    if (ch[v]) continue
-    cnt++
-    dfs(v)
+  repeat(n) {
+    val v = it + 1
+    if (!ch[v]) {
+      cnt++
+      dfs(v)
+    }
   }
 
   w(cnt)
