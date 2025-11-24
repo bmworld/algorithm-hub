@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 16
+private const val IBS = 1 shl 15
 private const val OBS = 1 shl 2
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -46,22 +46,35 @@ private fun w(
 
 fun main() {
   val n = i()
-  val g = Array(n + 1) { ArrayList<Int>() }
+  val g = Array(n + 1) { it }
   val ch = BooleanArray(n + 1)
+
+  fun findRoot(v: Int): Int {
+    val r = g[v]
+    return if (r == v) v
+    else {
+      val nr = findRoot(r)
+      g[v] = nr
+      nr
+    }
+  }
+
+  fun merge(
+    a: Int,
+    b: Int,
+  ) {
+    val r1 = findRoot(a)
+    val r2 = findRoot(b)
+    when {
+      r1 < r2 -> g[r2] = r1
+      r1 > r2 -> g[r1] = r2
+    }
+  }
+
   repeat(i()) {
     val a = i()
     val b = i()
-    g[a] += b
-    g[b] += a
-  }
-
-  fun dfs(v: Int) {
-    if (ch[v]) return
-    ch[v] = true
-    val lnks = g[v]
-    repeat(lnks.size) {
-      dfs(lnks[it])
-    }
+    merge(a, b)
   }
 
   var cnt = 0
@@ -69,7 +82,9 @@ fun main() {
     val v = it + 1
     if (!ch[v]) {
       cnt++
-      dfs(v)
+      for (nv in 1..n) {
+        if (findRoot(nv) == v) ch[nv] = true
+      }
     }
   }
 
