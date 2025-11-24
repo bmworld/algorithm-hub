@@ -3,7 +3,7 @@ package 백준.Silver.no11724
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 11
+private const val IBS = 1 shl 16
 private const val OBS = 1 shl 2
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -45,12 +45,13 @@ private fun w(
   O.write(WB, stt, WS - stt + 1)
 }
 
+private const val CHK = 1.toByte()
 
 fun main() {
 
   val n = i()
   val g = Array(n + 1) { mutableSetOf<Int>() }
-  val ch = BooleanArray(n + 1)
+  val ch = ByteArray(n + 1)
   repeat(i()) {
     val a = i()
     val b = i()
@@ -59,14 +60,14 @@ fun main() {
   }
 
   fun dfs(v: Int) {
-    if (ch[v]) return
-    ch[v] = true
+    if (ch[v] == CHK) return
+    ch[v] = CHK
     for (nv in g[v]) dfs(nv)
   }
 
   var cnt = 0
   for (v in 1..n) {
-    if (ch[v]) continue
+    if (ch[v] == CHK) continue
     cnt++
     dfs(v)
   }
