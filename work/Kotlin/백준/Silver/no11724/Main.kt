@@ -3,7 +3,7 @@ package 백준.Silver.no11724
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 16
+private const val IBS = 1 shl 15
 private const val OBS = 1 shl 2
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -29,7 +29,7 @@ private fun i(): Int {
 }
 
 private const val WS = 4
-private val WB = ByteArray(WS + 1).also { it[WS] = '\n'.code.toByte() }
+private val WB = ByteArray(WS)
 
 private fun w(
   num: Int,
@@ -42,39 +42,37 @@ private fun w(
   } while (x > 0)
   val stt = end + 1
 
-  O.write(WB, stt, WS - stt + 1)
+  O.write(WB, stt, WS - stt)
 }
 
-private const val CHK = 1.toByte()
 
 fun main() {
   val n = i()
-  val g = Array(n + 1) { mutableSetOf<Int>() }
-  val ch = ByteArray(n + 1)
+  val g = Array(n + 1) { ArrayList<Int>() }
+  val ch = BooleanArray(n + 1)
   repeat(i()) {
     val a = i()
     val b = i()
-    g[a].add(b)
-    g[b].add(a)
-  }
-
-  var cnt = 0
-  val q = HashSet<Int>().also {
-    for (i in 1..n) it.add(i)
+    g[a] += b
+    g[b] += a
   }
 
   fun dfs(v: Int) {
-    if (ch[v] == CHK) return
-    ch[v] = CHK
-    q.remove(v)
-    for (nv in g[v]) dfs(nv)
+    if (ch[v]) return
+    ch[v] = true
+    val lnks = g[v]
+    repeat(lnks.size) {
+      dfs(lnks[it])
+    }
   }
 
-  while (q.isNotEmpty()) {
-    val v = q.first()
-    if (ch[v] == CHK) continue
-    cnt++
-    dfs(v)
+  var cnt = 0
+  repeat(n) {
+    val v = it + 1
+    if (!ch[v]) {
+      cnt++
+      dfs(v)
+    }
   }
 
   w(cnt)
