@@ -48,7 +48,6 @@ private fun w(
 private const val CHK = 1.toByte()
 
 fun main() {
-
   val n = i()
   val g = Array(n + 1) { mutableSetOf<Int>() }
   val ch = ByteArray(n + 1)
@@ -59,14 +58,20 @@ fun main() {
     g[b].add(a)
   }
 
+  var cnt = 0
+  val q = HashSet<Int>().also {
+    for (i in 1..n) it.add(i)
+  }
+
   fun dfs(v: Int) {
     if (ch[v] == CHK) return
     ch[v] = CHK
+    q.remove(v)
     for (nv in g[v]) dfs(nv)
   }
 
-  var cnt = 0
-  for (v in 1..n) {
+  while (q.isNotEmpty()) {
+    val v = q.first()
     if (ch[v] == CHK) continue
     cnt++
     dfs(v)
