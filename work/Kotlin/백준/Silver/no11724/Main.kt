@@ -82,14 +82,11 @@ fun main() {
   var cnt = 0
   repeat(n) {
     val v = it + 1
-    if (!ch[v]) {
+    if (!ch[findRoot(v)]) {
       cnt++
-      for (nv in 1..n) {
-        if (findRoot(nv) == v) ch[nv] = true
-      }
+      ch[v] = true
     }
   }
-
   w(cnt)
   O.flush()
 }
