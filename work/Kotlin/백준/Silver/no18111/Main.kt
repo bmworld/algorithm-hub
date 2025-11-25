@@ -79,14 +79,14 @@ fun main() {
   }
 
   val avgH = (minH + maxH) / 2
-  var finalH = avgH
+  var finalH = -1
   var finalT = Int.MAX_VALUE
 
   // 선
   for (h in avgH..maxH) {
     val t = even(h)
     if (t < 0) break
-    else if (t <= finalT) {
+    if (t <= finalT) {
       finalH = h
       finalT = t
     }
@@ -95,14 +95,14 @@ fun main() {
   // 후
   for (h in avgH - 1 downTo minH) {
     val t = even(h)
-    if (t < 0) break
-    else if (t < finalT) {
+    if (t < 0) continue
+    if (t < finalT) {
       finalH = h
       finalT = t
     }
   }
 
-  w(if (finalT == Int.MAX_VALUE) 0 else finalT)
+  w(finalT)
   w(finalH)
   O.flush()
 }
