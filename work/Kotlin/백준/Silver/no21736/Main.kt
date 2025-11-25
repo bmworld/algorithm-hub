@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 1 shl 15
-private const val OBS = 1 shl 3
+private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -89,9 +89,9 @@ fun main() {
     }
     a[x][y] = WALL
     used[x][y] = true
-    for (i in 0..3) {
-      val nx = x + dx[i]
-      val ny = y + dy[i]
+    repeat(4) {
+      val nx = x + dx[it]
+      val ny = y + dy[it]
       if (nx in 0 until n && ny in 0 until m && a[nx][ny] != WALL && !used[nx][ny]) {
         q[tail++] = nx * xySEP + ny
         used[nx][ny] = true
