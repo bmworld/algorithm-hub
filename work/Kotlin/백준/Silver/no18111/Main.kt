@@ -97,10 +97,10 @@ fun main() {
   }
 
   // 후 하방
-  for (h in avgH - 1 downTo 0) {
+  for (h in avgH - 1 downTo minH) {
     val t = even(h)
     if (t == IMPOSSIBLE) continue
-    else if (t <= finalT) {
+    else if (t < finalT) {
       finalH = h
       finalT = t
     }
