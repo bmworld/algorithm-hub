@@ -44,8 +44,6 @@ private fun w(
   O.write(WB, stt, WS - stt + 1)
 }
 
-private const val IMPOSSIBLE = -1
-
 fun main() {
   val n = i()
   val m = i()
@@ -77,36 +75,34 @@ fun main() {
         t += -diff
       }
     }
-    return if (b < 0) IMPOSSIBLE else t
+    return if (b < 0) -1 else t
   }
 
-
   val avgH = (minH + maxH) / 2
-  val avgT = even(avgH)
   var finalH = avgH
-  var finalT = avgT
+  var finalT = Int.MAX_VALUE
 
-  // 선 상방
+  // 선
   for (h in avgH..maxH) {
     val t = even(h)
-    if (t == IMPOSSIBLE) continue
+    if (t < 0) break
     else if (t <= finalT) {
       finalH = h
       finalT = t
     }
   }
 
-  // 후 하방
+  // 후
   for (h in avgH - 1 downTo minH) {
     val t = even(h)
-    if (t == IMPOSSIBLE) continue
+    if (t < 0) break
     else if (t < finalT) {
       finalH = h
       finalT = t
     }
   }
 
-  w(finalT)
+  w(if (finalT == Int.MAX_VALUE) 0 else finalT)
   w(finalH)
   O.flush()
 }
