@@ -24,34 +24,23 @@ private fun r(): Byte {
 private const val A = 65
 private const val a = 97
 private const val LEN = 26
-private val UC = A until A + LEN
-private val LC = a until a + LEN
-
-private fun s(): Int {
-  return when (val c = r()) {
-    in UC -> c - A
-    in LC -> c - a
-    else -> -1
-  }
-}
 
 fun main() {
   val ch = IntArray(LEN)
-  var i: Int
-  while (s().also { i = it } != -1) ch[i]++
-
   var fi = 0
   var si = 0
   var maxCnt = 0
-  for (i in 0 until LEN) {
-    val cnt = ch[i]
+  var v: Int
+  while (r().also {
+      val i = it.toInt()
+      v = if (i >= a) i - a else i - A
+    } >= A) {
+    val cnt = ++ch[v]
     if (cnt > maxCnt) {
       maxCnt = cnt
-      fi = i
-      si = i
-    } else if (cnt == maxCnt) {
-      si = i
-    }
+      fi = v
+      si = v
+    } else if (cnt == maxCnt) si = v
   }
 
   O.write(
