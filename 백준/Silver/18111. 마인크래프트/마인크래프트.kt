@@ -42,35 +42,36 @@ private fun w(
   O.write(WB, stt, WS - stt + 1)
 }
 
+private const val MAX_HEIGHT = 256
 fun main() {
   val n = i()
   val m = i()
   val initB = i()
-  val estLen = n * m
-  val est = IntArray(estLen)
-  var minH = 256
+  val a = IntArray(MAX_HEIGHT + 1)
+  var minH = MAX_HEIGHT
   var maxH = 0
-  var i = 0
-  repeat(estLen) {
+  repeat(n * m) {
     val h = i()
-    est[i++] = h
+    a[h]++
     if (h < minH) minH = h
     if (h > maxH) maxH = h
   }
 
-  fun even(h: Int): Int {
+  fun even(th: Int): Int {
     var t = 0
     var b = initB
-    for (i in 0 until estLen) {
-      val curH = est[i]
-      val diff = curH - h
+
+    for (h in 0..MAX_HEIGHT) {
+      val cnt = a[h]
+      val diff = h - th
       if (diff == 0) continue
+      val accDiff = diff * cnt
       if (diff > 0) {
-        b += diff
-        t += diff * 2
+        b += accDiff
+        t += accDiff * 2
       } else {
-        b -= -diff
-        t += -diff
+        b -= -accDiff
+        t += -accDiff
       }
     }
     return if (b < 0) -1 else t
