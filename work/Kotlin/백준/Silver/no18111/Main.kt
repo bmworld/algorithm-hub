@@ -89,7 +89,7 @@ fun main() {
   // 선 상방
   for (h in avgH..maxH) {
     val t = even(h)
-    if (t > avgT || t == IMPOSSIBLE) break
+    if (t == IMPOSSIBLE) continue
     else if (t <= finalT) {
       finalH = h
       finalT = t
@@ -99,8 +99,8 @@ fun main() {
   // 후 하방
   for (h in avgH - 1 downTo 0) {
     val t = even(h)
-    if (t > finalT || t == IMPOSSIBLE) break
-    else {
+    if (t == IMPOSSIBLE) continue
+    else if (t <= finalT) {
       finalH = h
       finalT = t
     }
