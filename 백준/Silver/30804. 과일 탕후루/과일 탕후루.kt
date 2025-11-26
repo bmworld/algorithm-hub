@@ -3,10 +3,10 @@ import java.io.DataInputStream
 
 private const val IBS = 1 shl 13
 private const val OBS = 1 shl 3
+private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
-private const val EOF = -1
 private var Ii = 0
 private var Il = 0
 
@@ -55,16 +55,10 @@ fun main() {
   val cnt = IntArray(MaxNum + 1)
   var kind = 0
   var l = 0
-  var r = 1
+  var r = 0
   while (r < n) {
-    if (cnt[a[l]] == 0) {
-      cnt[a[l]]++
-      kind++
-    }
     if (cnt[a[r]]++ == 0) kind++
-    
     while (kind > 2) if (--cnt[a[l++]] == 0) kind--
-
     val len = r - l + 1
     if (len > max) max = len
     r++
