@@ -64,15 +64,18 @@ fun main() {
   while (r < n) {
     val rv = a[r]
     if (rv != ch[0] && rv != ch[1]) {
-      ch[0] = a[++l]
+      l = r - 1
+      ch[0] = a[l]
       ch[1] = a[r]
-      cnt--
+      while (l >= 0 && a[l] == ch[0]) l--
+      l++
+      cnt = r - l
       continue
     }
-    if (++cnt > max) max = cnt
     r++
+    if (++cnt > max) max = cnt
   }
 
-  w(cnt)
+  w(max)
   O.flush()
 }
