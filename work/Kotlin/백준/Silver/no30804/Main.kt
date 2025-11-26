@@ -48,43 +48,31 @@ private fun w(
 private const val MaxNum = 9
 fun main() {
   val n = i()
-  var kind = 0
   val a = IntArray(n)
-  val c = IntArray(MaxNum + 1)
   repeat(n) {
-    val v = i()
-    a[it] = v
-    if (c[v]++ == 0) kind++
+    a[it] = i()
   }
 
+  var max = 1
+  var cnt = 1
   var l = 0
-  var r = n - 1
-  while (l < r && kind > 2) {
-    val lv = a[l]
+  var r = 1
+  val ch = IntArray(2)
+  ch[0] = a[l]
+  if (n > 1) ch[1] = a[r]
+
+  while (r < n) {
     val rv = a[r]
-    val lc = c[lv]
-    val rc = c[rv]
-    if (lv == rv) {
-      c[lv] -= 2
-      if (c[lv] == 0) kind--
-      l++
-      r--
+    if (rv != ch[0] && rv != ch[1]) {
+      ch[0] = a[++l]
+      ch[1] = a[r]
+      cnt--
       continue
     }
-
-    if (lc >= rc) {
-      if (--c[rv] == 0) kind--
-      r--
-    } else {
-      if (--c[lv] == 0) kind--
-      l++
-    }
+    if (++cnt > max) max = cnt
+    r++
   }
 
-  var cnt = 0
-  repeat(MaxNum) {
-    cnt += c[it + 1]
-  }
   w(cnt)
   O.flush()
 }
