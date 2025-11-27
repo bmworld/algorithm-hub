@@ -2,7 +2,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 1 shl 15
-private const val OBS = 1 shl 3
+private const val OBS = 1 shl 5
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -57,27 +57,34 @@ fun main() {
     dist[b][a] = DIRECT
   }
 
-  for (mid in 1..n) {
-    for (from in 1..n) {
-      if (from == mid) continue
-      for (to in from + 1..n) {
-        val cur = dist[from][to]
-        val acc = dist[from][mid] + dist[mid][to]
-        if (acc >= cur) continue
-        dist[from][to] = acc
-        dist[to][from] = acc
+  repeat(n) { i ->
+    val mid = i + 1
+    repeat(n) { j ->
+      val from = j + 1
+      if (from != mid) {
+        repeat(n - from) { k ->
+          val to = k + from + 1
+          val cur = dist[from][to]
+          val acc = dist[from][mid] + dist[mid][to]
+          if (acc < cur) {
+            dist[from][to] = acc
+            dist[to][from] = acc
+          }
+        }
       }
     }
   }
 
   var min = Int.MAX_VALUE
   var best = 1
-  for (user in 1..n) {
+  repeat(n) { i ->
+    val user = i + 1
     var num = 0
     for (frnd in 1..n) num += dist[user][frnd]
-    if (num >= min) continue
-    min = num
-    best = user
+    if (num < min) {
+      min = num
+      best = user
+    }
   }
 
   w(best)
