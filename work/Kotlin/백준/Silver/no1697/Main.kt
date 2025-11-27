@@ -54,8 +54,7 @@ fun main() {
   val k = i()
   w(
     when {
-    n == k -> 0
-    n > k -> n - k
+    n >= k -> n - k
 
     else -> {
       var min = k - n
@@ -71,12 +70,13 @@ fun main() {
         val v = pos.v
         if (t >= timer[v] || t >= min) continue
         timer[v] = t
+
         when {
           v < k -> {
             val nt = t + 1
             if (v * 2 <= k + 1) q += Pos(v * 2, nt)
             q += Pos(v + 1, nt)
-            if (v >= n - 1) q += Pos(v - 1, nt)
+            if (v > 2) q += Pos(v - 1, nt)
           }
 
           v > k -> q += Pos(k, t + (v - k))
