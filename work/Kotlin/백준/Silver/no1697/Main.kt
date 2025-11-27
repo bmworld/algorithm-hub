@@ -3,8 +3,8 @@ package 백준.Silver.no1697
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 4
-private const val OBS = 1 shl 3
+private const val IBS = 1 shl 14
+private const val OBS = 1 shl 4
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -75,14 +75,8 @@ fun main() {
         }
 
         if (v % 2 == 0 && v >= n) q += Pos(v / 2, t + 1)
-
-        if (v in n + 1 until 2 * n) {
-          val diff = v - n
-          q += Pos(v - diff, t + diff)
-        } else {
-          q += Pos(v + 1, t + 1)
-          q += Pos(v - 1, t + 1)
-        }
+        q += Pos(v + 1, t + 1)
+        q += Pos(v - 1, t + 1)
       }
       min
     }
