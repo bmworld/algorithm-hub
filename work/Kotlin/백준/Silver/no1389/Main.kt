@@ -69,6 +69,7 @@ fun main() {
     val q = LinkedList<User>()
     q.add(User(from, 0))
     ch[from] = true
+
     while (q.isNotEmpty()) {
       val u = q.poll()
       for (f in frnd[u.n]) {
@@ -93,12 +94,12 @@ fun main() {
 
   var minD = Int.MAX_VALUE
   var bestUser = 0
-  for (user in 1 until n) {
-    for (frnd in user + 1..n) bfs(user, frnd)
-    val d = dist[user]
+  for (u in 1..n) {
+    for (f in u + 1..n) bfs(u, f)
+    val d = dist[u]
     if (d >= minD) continue
     minD = d
-    bestUser = user
+    bestUser = u
   }
 
   w(bestUser)
