@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 14
-private const val OBS = 1 shl 8
+private const val IBS = 1 shl 15
+private const val OBS = 1 shl 4
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -42,11 +42,6 @@ private fun w(
   O.write(WB, stt, WS - stt)
 }
 
-data class Pos(
-  var v: Int,
-  var t: Int,
-)
-
 fun main() {
   val n = i()
   val k = i()
@@ -57,26 +52,44 @@ fun main() {
     else -> {
       var min = k - n
       val timer = IntArray(k * 2 + 1) { min }
-      val q = ArrayList<Pos>()
-      val p = Pos(k, 0)
-      q.add(p)
+      val q = IntArray(k * 2 + 1)
+      var head = 0
+      var tail = 0
+      q[tail++] = k
 
-      while (q.isNotEmpty()) {
-        val pos = q.removeAt(0)
-        val t = pos.t
-        val v = pos.v
-        if (v < 0 || t >= timer[v] || t >= min) continue
-        timer[v] = t
+      var t = 0
+      timer[k] = t
+      while (head < tail) {
+        val pos = q[head++]
+        val ct = timer[pos]
+        if (ct >= min) continue
+        timer[pos] = ct
 
-        if (v == n) {
-          min = t
-          continue
+        when {
+          pos == n -> min = ct
+
+          else -> {
+            val nt = ct + 1
+            val pnp = pos + 1
+            if (nt < timer[pnp]) {
+              q[tail++] = pnp
+              timer[pnp] = nt
+            }
+
+            val snp = pos - 1
+            if (nt < timer[snp]) {
+              q[tail++] = snp
+              timer[snp] = nt
+            }
+
+            val mnp = pos / 2
+            if (pos % 2 == 0 && pos >= n && nt < timer[mnp]) {
+              q[tail++] = mnp
+              timer[mnp] = nt
+            }
+          }
         }
-
-        val nt = t + 1
-        if (v % 2 == 0 && v >= n) q += Pos(v / 2, nt)
-        if (timer[v + 1] > nt) q += Pos(v + 1, nt)
-        if (timer[v - 1] > nt) q += Pos(v - 1, nt)
+        t++
       }
       min
     }
