@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 16
-private const val OBS = 1 shl 11
+private const val IBS = 1 shl 15
+private const val OBS = 1 shl 3
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -46,7 +46,6 @@ private const val DIRECT = 1
 fun main() {
   val n = i()
   val dist = Array(n + 1) { IntArray(n + 1) { 100 } }
-  val g = Array(n + 1) { mutableSetOf<Int>() }
   repeat(n) {
     dist[it + 1][it + 1] = 0
   }
@@ -54,8 +53,6 @@ fun main() {
   repeat(i()) {
     val a = i()
     val b = i()
-    g[a] += b
-    g[b] += a
     dist[a][b] = DIRECT
     dist[b][a] = DIRECT
   }
