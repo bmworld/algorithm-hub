@@ -47,16 +47,16 @@ private fun w(
 private const val DIRECT = 1
 fun main() {
   val n = i()
-  val dist = Array(n + 1) { IntArray(n + 1) { 100 } }
+  val d = Array(n + 1) { IntArray(n + 1) { 100 } }
   repeat(n) {
-    dist[it + 1][it + 1] = 0
+    d[it + 1][it + 1] = 0
   }
 
   repeat(i()) {
     val a = i()
     val b = i()
-    dist[a][b] = DIRECT
-    dist[b][a] = DIRECT
+    d[a][b] = DIRECT
+    d[b][a] = DIRECT
   }
 
   repeat(n) { i ->
@@ -66,11 +66,11 @@ fun main() {
       if (from != mid) {
         repeat(n - from) { k ->
           val to = from + k + 1
-          val cur = dist[from][to]
-          val acc = dist[from][mid] + dist[mid][to]
+          val cur = d[from][to]
+          val acc = d[from][mid] + d[mid][to]
           if (acc < cur) {
-            dist[from][to] = acc
-            dist[to][from] = acc
+            d[from][to] = acc
+            d[to][from] = acc
           }
         }
       }
@@ -82,7 +82,10 @@ fun main() {
   repeat(n) { i ->
     val user = i + 1
     var num = 0
-    for (frnd in 1..n) num += dist[user][frnd]
+    repeat(n) { j ->
+      val frnd = j + 1
+      num += d[user][frnd]
+    }
     if (num < min) {
       min = num
       best = user
