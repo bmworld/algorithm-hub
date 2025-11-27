@@ -69,13 +69,16 @@ fun main() {
         val v = pos.v
         if (v < 0 || t >= timer[v] || t >= min) continue
         timer[v] = t
+
         if (v == n) {
           min = t
           continue
         }
-        if (v % 2 == 0 && v >= n) q += Pos(v / 2, t + 1)
-        q += Pos(v + 1, t + 1)
-        q += Pos(v - 1, t + 1)
+
+        val nt = t + 1
+        if (v % 2 == 0 && v >= n) q += Pos(v / 2, nt)
+        if (timer[v + 1] > nt) q += Pos(v + 1, nt)
+        if (timer[v - 1] > nt) q += Pos(v - 1, nt)
       }
       min
     }
