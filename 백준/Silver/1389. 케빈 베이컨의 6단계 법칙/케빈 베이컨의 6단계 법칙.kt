@@ -1,6 +1,5 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
-import java.util.*
 
 private const val IBS = 1 shl 13
 private const val OBS = 1 shl 2
@@ -43,63 +42,47 @@ private fun w(
   O.write(WB, stt, WS - stt)
 }
 
-data class User(
-  val n: Int,
-  val dist: Int,
-)
-
+private const val DIRECT = 1
 fun main() {
   val n = i()
-  val frnd = Array(n + 1) { mutableListOf<Int>() }
-  val dist = IntArray(n + 1)
+  val dist = Array(n + 1) { IntArray(n + 1) { 100 } }
+  val g = Array(n + 1) { mutableSetOf<Int>() }
+  repeat(n) {
+    dist[it + 1][it + 1] = 0
+  }
+
   repeat(i()) {
     val a = i()
     val b = i()
-    frnd[a] += b
-    frnd[b] += a
+    g[a] += b
+    g[b] += a
+    dist[a][b] = DIRECT
+    dist[b][a] = DIRECT
   }
 
-  fun bfs(
-    from: Int,
-    to: Int,
-  ) {
-    val ch = BooleanArray(n + 1)
-    val q = LinkedList<User>()
-    q.add(User(from, 0))
-    ch[from] = true
-
-    while (q.isNotEmpty()) {
-      val u = q.poll()
-      for (f in frnd[u.n]) {
-        val nd = u.dist + 1
-        when {
-          f == to -> {
-            dist[from] += nd
-            dist[to] += nd
-            return
-          }
-
-          ch[f] -> continue
-
-          else -> {
-            ch[f] = true
-            q.add(User(f, nd))
-          }
-        }
+  for (mid in 1..n) {
+    for (from in 1..n) {
+      if (from == mid) continue
+      for (to in from + 1..n) {
+        val cur = dist[from][to]
+        val acc = dist[from][mid] + dist[mid][to]
+        if (acc >= cur) continue
+        dist[from][to] = acc
+        dist[to][from] = acc
       }
     }
   }
 
-  var minD = Int.MAX_VALUE
-  var bestUser = 0
-  for (u in 1..n) {
-    for (f in u + 1..n) bfs(u, f)
-    val d = dist[u]
-    if (d >= minD) continue
-    minD = d
-    bestUser = u
+  var min = Int.MAX_VALUE
+  var best = 1
+  for (user in 1..n) {
+    var num = 0
+    for (frnd in 1..n) num += dist[user][frnd]
+    if (num >= min) continue
+    min = num
+    best = user
   }
 
-  w(bestUser)
+  w(best)
   O.flush()
 }
