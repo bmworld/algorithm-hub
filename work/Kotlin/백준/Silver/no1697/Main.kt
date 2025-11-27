@@ -60,10 +60,8 @@ fun main() {
       var min = k - n
       val timer = IntArray(k * 2 + 1) { min }
       val q = ArrayList<Pos>()
-      val end1 = Pos(k, 0)
-      q.add(end1)
-      val end2 = Pos(k + 1, 1)
-      q.add(end2)
+      val p = Pos(k, 0)
+      q.add(p)
 
       while (q.isNotEmpty()) {
         val pos = q.removeAt(0)
@@ -71,19 +69,19 @@ fun main() {
         val v = pos.v
         if (v < 0 || t >= timer[v]) continue
         timer[v] = t
-        when {
-          v == n -> if (t < min) min = t
-          v % 2 == 0 && v / n >= 1 -> q += Pos(v / 2, t + 1)
+        if (v == n && t < min) {
+          min = t
+          continue
+        }
 
-          else -> {
-            if (v in n + 1 until 2 * n) {
-              val diff = v - n
-              q += Pos(v - diff, t + diff)
-            } else {
-              q += Pos(v + 1, t + 1)
-              q += Pos(v - 1, t + 1)
-            }
-          }
+        if (v % 2 == 0 && v >= n) q += Pos(v / 2, t + 1)
+
+        if (v in n + 1 until 2 * n) {
+          val diff = v - n
+          q += Pos(v - diff, t + diff)
+        } else {
+          q += Pos(v + 1, t + 1)
+          q += Pos(v - 1, t + 1)
         }
       }
       min
