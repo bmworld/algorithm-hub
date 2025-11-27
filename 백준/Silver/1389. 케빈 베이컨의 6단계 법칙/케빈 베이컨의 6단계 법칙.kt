@@ -2,7 +2,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 1 shl 15
-private const val OBS = 1 shl 5
+private const val OBS = 1 shl 3
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -63,7 +63,7 @@ fun main() {
       val from = j + 1
       if (from != mid) {
         repeat(n - from) { k ->
-          val to = k + from + 1
+          val to = from + k + 1
           val cur = dist[from][to]
           val acc = dist[from][mid] + dist[mid][to]
           if (acc < cur) {
