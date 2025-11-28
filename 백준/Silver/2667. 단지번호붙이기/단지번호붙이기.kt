@@ -1,8 +1,9 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
+import java.util.*
 
-private const val IBS = 1 shl 15
-private const val OBS = 1 shl 8
+private const val IBS = 1 shl 14
+private const val OBS = 1 shl 2
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -49,52 +50,72 @@ private fun w(
 }
 
 private const val SEP = 100
-private val dx = intArrayOf(0, 0, -1, 1)
-private val dy = intArrayOf(-1, 1, 0, 0)
+private val dx = intArrayOf(-1, 0, 1, 0)
+private val dy = intArrayOf(0, -1, 0, 1)
+
 fun main() {
   val n = i()
   val a = Array(n) { BooleanArray(n) }
+  var hCnt = 0
   repeat(n) { i ->
     repeat(n) { j ->
-      a[i][j] = b()
+      val h = b()
+      a[i][j] = h
+      if (h) hCnt++
     }
   }
 
+  val apt = PriorityQueue<Int>()
+  val mainQ = IntArray(n * n)
+  val subQ = IntArray(n * n)
+  var mqL = 0
+  var mqR = 0
+  mainQ[mqR++] = 0
   val ch = Array(n) { BooleanArray(n) }
-  val apt = IntArray(n * n)
-  var complexCnt = 0
-  val aptQ = IntArray(n * n)
-  repeat(n) { i ->
-    for (j in 0 until n) {
-      if (ch[i][j]) continue
-      ch[i][j] = true
-      val isApt = a[i][j]
-      if (!isApt) continue
+  ch[0][0] = true
 
-      var qh = 0
-      var qt = 0
-      aptQ[qt++] = i * SEP + j
-      while (qh < qt) {
-        val v = aptQ[qh++]
-        val i = v / SEP
-        val j = v % SEP
-        repeat(4) { k ->
-          val ni = i + dx[k]
-          val nj = j + dy[k]
-          if (ni in 0 until n && nj in 0 until n && a[ni][nj] && !ch[ni][nj]) {
-            ch[ni][nj] = true
-            aptQ[qt++] = ni * SEP + nj
-          }
+  fun getAptCnt(v: Int) {
+    var l = 0
+    var r = 0
+    subQ[r++] = v
+    while (l < r) {
+      val v = subQ[l++]
+      val i = v / SEP
+      val j = v % SEP
+      repeat(4) { k ->
+        val ni = i + dx[k]
+        val nj = j + dy[k]
+        if (ni in 0 until n && nj in 0 until n && !ch[ni][nj]) {
+          ch[ni][nj] = true
+          val nv = ni * SEP + nj
+          if (a[ni][nj]) subQ[r++] = nv
+          else mainQ[mqR++] = nv
         }
       }
-      apt[complexCnt++] = qt
+    }
+    apt.add(r)
+  }
+
+  while (mqL < mqR) {
+    val v = mainQ[mqL++]
+    val i = v / SEP
+    val j = v % SEP
+    val h = a[i][j]
+    if (h) getAptCnt(v)
+    else {
+      repeat(4) { k ->
+        val ni = i + dx[k]
+        val nj = j + dy[k]
+        if (ni in 0 until n && nj in 0 until n && !ch[ni][nj]) {
+          ch[ni][nj] = true
+          if (!a[ni][nj]) mainQ[mqR++] = ni * SEP + nj
+          else getAptCnt(ni * SEP + nj)
+        }
+      }
     }
   }
 
-  apt.sortDescending()
-  w(complexCnt)
-  repeat(complexCnt) { i ->
-    w(apt[complexCnt - i - 1])
-  }
+  w(apt.size)
+  while (apt.isNotEmpty()) w(apt.poll())
   O.flush()
 }
