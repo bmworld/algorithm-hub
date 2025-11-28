@@ -83,7 +83,7 @@ fun main() {
     repeat(4) { k ->
       val ni = i + dx[k]
       val nj = j + dy[k]
-      if (ni in 0 until n && nj in 0 until n && a[ni][nj] == 1 && !ch[ni][nj]) {
+      if (ni in 0 until n && nj in 0 until m && a[ni][nj] == 1 && !ch[ni][nj]) {
         a[ni][nj] = cur + 1
         ch[ni][nj] = true
         q[r++] = ni * SEP + nj
@@ -99,5 +99,3 @@ fun main() {
   }
   O.flush()
 }
-
-//      println("-- a[$i][$j] = ${a[i][j]} / nl = ${j >= m - 1}")
