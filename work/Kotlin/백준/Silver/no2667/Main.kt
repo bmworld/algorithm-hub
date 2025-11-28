@@ -53,50 +53,70 @@ private fun w(
 private const val SEP = 100
 private val dx = intArrayOf(0, 0, -1, 1)
 private val dy = intArrayOf(-1, 1, 0, 0)
+
 fun main() {
   val n = i()
   val a = Array(n) { BooleanArray(n) }
+  var hCnt = 0
   repeat(n) { i ->
     repeat(n) { j ->
-      a[i][j] = b()
+      val isH = b()
+      a[i][j] = isH
+      if (isH) hCnt++
     }
   }
 
+  val aptCnt = IntArray(hCnt)
+  var aptI = 0
+  val q = IntArray(n * n + 1)
+  var head = 0
+  var tail = 0
+  q[tail++] = 0
   val ch = Array(n) { BooleanArray(n) }
-  val apt = IntArray(n * n)
-  var complexCnt = 0
-  val aptQ = IntArray(n * n)
-  repeat(n) { i ->
-    for (j in 0 until n) {
-      if (ch[i][j]) continue
-      ch[i][j] = true
-      val isApt = a[i][j]
-      if (!isApt) continue
+  ch[0][0] = true
 
-      var qh = 0
-      var qt = 0
-      aptQ[qt++] = i * SEP + j
-      while (qh < qt) {
-        val v = aptQ[qh++]
-        val i = v / SEP
-        val j = v % SEP
-        repeat(4) { k ->
-          val ni = i + dx[k]
-          val nj = j + dy[k]
-          if (ni in 0 until n && nj in 0 until n && a[ni][nj] && !ch[ni][nj]) {
-            ch[ni][nj] = true
-            aptQ[qt++] = ni * SEP + nj
+  var aptMode = a[0][0]
+
+
+  while (head < tail) {
+    val v = q[head++]
+    val i = v / SEP
+    val j = v % SEP
+    val apt = a[i][j]
+    if (aptMode && !apt) aptI++
+    if (apt) aptCnt[aptI]++
+
+    repeat(4) { k ->
+      val ni = i + dx[k]
+      val nj = j + dy[k]
+      if (ni in 0 until n && nj in 0 until n && !ch[ni][nj]) {
+        val isApt = a[ni][nj]
+        ch[ni][nj] = true
+        val nv = ni * SEP + nj
+        when {
+          isApt -> {
+            var pos = head
+            while (pos <= tail) {
+              val tv = q[pos++]
+              val ti = tv / SEP
+              val tj = tv % SEP
+              if (!a[ti][tj]) break
+            }
+            q[tail++] = q[--pos]
+            q[pos] = nv
           }
+
+          else -> q[tail++] = nv
         }
       }
-      apt[complexCnt++] = qt
     }
+    aptMode = apt
   }
-
-  apt.sortDescending()
-  w(complexCnt)
-  repeat(complexCnt) { i ->
-    w(apt[complexCnt - i - 1])
+  
+  aptCnt.sortDescending()
+  w(aptI)
+  repeat(aptI) { i ->
+    w(aptCnt[aptI - i - 1])
   }
   O.flush()
 }
