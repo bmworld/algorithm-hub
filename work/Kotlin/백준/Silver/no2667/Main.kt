@@ -58,12 +58,10 @@ private val dy = intArrayOf(0, -1, 0, 1)
 fun main() {
   val n = i()
   val a = Array(n) { BooleanArray(n) }
-  var hCnt = 0
   repeat(n) { i ->
     repeat(n) { j ->
       val h = b()
       a[i][j] = h
-      if (h) hCnt++
     }
   }
 
@@ -102,16 +100,16 @@ fun main() {
     val v = mainQ[mqL++]
     val i = v / SEP
     val j = v % SEP
-    val h = a[i][j]
-    if (h) getAptCnt(v)
+    if (a[i][j]) getAptCnt(v)
     else {
       repeat(4) { k ->
         val ni = i + dx[k]
         val nj = j + dy[k]
         if (ni in 0 until n && nj in 0 until n && !ch[ni][nj]) {
           ch[ni][nj] = true
-          if (!a[ni][nj]) mainQ[mqR++] = ni * SEP + nj
-          else getAptCnt(ni * SEP + nj)
+          val nv = ni * SEP + nj
+          if (a[ni][nj]) getAptCnt(nv)
+          else mainQ[mqR++] = nv
         }
       }
     }
