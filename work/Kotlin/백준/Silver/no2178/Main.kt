@@ -3,8 +3,8 @@ package 백준.Silver.no2178
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 15
-private const val OBS = 1 shl 4
+private const val IBS = 1 shl 14
+private const val OBS = 1 shl 2
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -27,7 +27,6 @@ private fun i(): Int {
   while (r().also { c = it } in 48..57) v = v * 10 + (c - 48)
   return v
 }
-
 
 private fun b(): Byte {
   var c = r()
@@ -67,7 +66,7 @@ fun main() {
     }
   }
 
-  val q = IntArray(n * m + 2)
+  val q = IntArray(n * m + 1)
   var head = 0
   var tail = 0
   q[tail++] = 0
@@ -79,13 +78,14 @@ fun main() {
     val i = v / SEP
     val j = v % SEP
     val pCnt = cnt[i][j]
-    for (k in 0..3) {
+    repeat(4) { k ->
       val ni = i + dx[k]
       val nj = j + dy[k]
-      if (ni !in 0 until n || nj !in 0 until m || a[ni][nj] == N || cnt[ni][nj] > 0) continue
-      a[ni][nj] = N
-      cnt[ni][nj] = pCnt + 1
-      q[tail++] = ni * SEP + nj
+      if (ni in 0 until n && nj in 0 until m && a[ni][nj] == Y && cnt[ni][nj] == 0) {
+        a[ni][nj] = N
+        cnt[ni][nj] = pCnt + 1
+        q[tail++] = ni * SEP + nj
+      }
     }
   }
 
