@@ -1,6 +1,6 @@
 import java.io.BufferedOutputStream
 
-private const val OBS = 1 shl 4
+private const val OBS = 1 shl 2
 private val O = BufferedOutputStream(System.`out`, OBS)
 private const val WS = 4
 private val WB = ByteArray(WS)
