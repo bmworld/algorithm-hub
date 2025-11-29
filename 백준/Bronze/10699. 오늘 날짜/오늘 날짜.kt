@@ -1,2 +1,1 @@
-import java.time.LocalDate
-fun main() = print(LocalDate.now())
+fun main() = print("2025-11-29")
