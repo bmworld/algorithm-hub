@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 1 shl 14
-private const val OBS = 1 shl 11
+private const val OBS = 1 shl 10
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -63,7 +63,7 @@ fun main() {
 
   repeat(n) { f ->
     repeat(n) { t ->
-      WB[t * 2] = if (g[f][t] == WB_MAX_LEN) 48 else 49
+      WB[t * 2] = if (g[f][t] == DISCONNECTED) 48 else 49
     }
     O.write(WB, 0, WBS)
   }
