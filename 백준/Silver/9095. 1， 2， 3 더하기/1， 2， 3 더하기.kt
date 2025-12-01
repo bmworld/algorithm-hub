@@ -49,17 +49,20 @@ private fun w(
   O.write(WB, stt, -stt + WS + 1)
 }
 
+private val cnt = IntArray(10).also { a ->
+  a[0] = 1
+  a[1] = 2
+  a[2] = 4
+  repeat(7) {
+    val v = it + 3
+    a[v] = a[v - 1] + a[v - 2] + a[v - 3]
+  }
+}
+
 
 fun main() {
-  val CNT = IntArray(10).also {
-    it[0] = 1
-    it[1] = 2
-    it[2] = 4
-    for (i in 3..9) it[i] = it[i - 3] + it[i - 2] + it[i - 1]
-  }
-
   repeat(i()) {
-    w(CNT[i() - 1])
+    w(cnt[i() - 1])
   }
   O.flush()
 }
