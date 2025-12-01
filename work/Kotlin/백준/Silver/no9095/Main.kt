@@ -3,8 +3,8 @@ package 백준.Silver.no9095
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 24
-private const val OBS = 30
+private const val IBS = 8
+private const val OBS = 8
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -53,18 +53,15 @@ private fun w(
 
 
 fun main() {
-  val n = i()
-
-  fun c(v: Int): Int {
-    return when (v) {
-      1 -> 1
-      2 -> 2
-      3 -> 4
-      else -> c(v - 1) + c(v - 2) + c(v - 3)
-    }
+  val CNT = IntArray(10).also {
+    it[0] = 1
+    it[1] = 2
+    it[2] = 4
+    for (i in 3..9) it[i] = it[i - 3] + it[i - 2] + it[i - 1]
   }
-  repeat(n) {
-    w(c(i()))
+
+  repeat(i()) {
+    w(CNT[i() - 1])
   }
   O.flush()
 }
