@@ -3,8 +3,8 @@ package 백준.Bronze.no10989
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 19
-private const val OBS = 1 shl 19
+private const val IBS = 1 shl 1_500_000
+private const val OBS = 1 shl 1_500_000
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -60,8 +60,9 @@ fun main() {
   }
 
   for (v in min..max) {
-    var cnt = arr[v]
-    while (cnt-- > 0) w(v)
+    repeat(arr[v]) {
+      w(v)
+    }
   }
   O.flush()
 }
