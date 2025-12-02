@@ -57,17 +57,42 @@ private const val o = 79.toByte()
 fun main() {
   val n = i()
   val m = i()
+  var minI = m
+  var maxI = 0
+  val s = ByteArray(m)
+  repeat(m) { idx ->
+    val c = r()
+    s[idx] = c
+    if (c == i) {
+      if (idx < minI) minI = idx
+      if (idx > maxI) maxI = idx
+    }
+  }
+
+  if (minI == m) {
+    w(0)
+    O.flush()
+    return
+  }
+
   var cnt = 0
   val goal = 2 * n + 1
   var seq = 0
-  repeat(m) {
-    val c = r()
-    val r = seq % 2
-    if (r == 0 && c == i || r == 1 && c == o) seq++
-    else seq = if (c == i) 1 else 0
-    if (seq == goal) {
+  var l = minI
+  var r = minI
+  while (r <= maxI) {
+    val c = s[r++]
+    val even = seq % 2 == 0
+    val valid = even && c == i || !even && c == o
+    if (!valid) {
+      l = r
+      seq = if (c == i) 1 else 0
+      continue
+    }
+    if (++seq == goal) {
       cnt++
-      seq = 1
+      l += 2
+      seq -= 2
     }
   }
 
