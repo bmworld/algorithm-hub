@@ -3,7 +3,7 @@ package 백준.Bronze.no1110
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 2
+private const val IBS = 8
 private const val OBS = 4
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
@@ -51,18 +51,29 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
+
 fun main() {
-  val og = i()
-  var v = og
-  var cnt = 1
-  while (v > 0) {
-    val a = v / 10
-    val b = v % 10
-    val nv = b * 10 + ((a + b) % 10)
-    if (nv == og) break
-    cnt++
-    v = nv
+  val ch = IntArray(2)
+  val cnts = IntArray(100).also { it[0] = 1 }
+  val cycle = intArrayOf(3, 4, 12, 20, 60)
+  intArrayOf(5, 26, 13, 2, 1).apply {
+    for (i in 0 until this.size) {
+      val v = this[i]
+      val o1 = v / 10
+      val o2 = v % 10
+      ch[0] = o1
+      ch[1] = o2
+      while (true) {
+        val a = ch[0]
+        val b = ch[1]
+        cnts[a * 10 + b] = cycle[i]
+        ch[0] = b
+        ch[1] = (a + b) % 10
+        if (ch[0] == o1 && ch[1] == o2) break
+      }
+    }
   }
-  w(cnt)
+
+  w(cnts[i()])
   O.flush()
 }
