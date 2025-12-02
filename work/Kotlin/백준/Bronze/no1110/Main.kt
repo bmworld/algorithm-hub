@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 2
-private const val OBS = 2
+private const val OBS = 4
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -51,24 +51,18 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
-
 fun main() {
-  val n = i()
-  val og = IntArray(2).also {
-    it[0] = n / 10
-    it[1] = n % 10
-  }
-  val ch = og.copyOf()
+  val og = i()
+  var v = og
   var cnt = 1
-  while (true) {
-    val a = ch[0]
-    val b = ch[1]
-    ch[0] = b
-    ch[1] = (a + b) % 10
-    if (ch[0] == og[0] && ch[1] == og[1]) break
+  while (v > 0) {
+    val a = v / 10
+    val b = v % 10
+    val nv = b * 10 + ((a + b) % 10)
+    if (nv == og) break
     cnt++
+    v = nv
   }
-
   w(cnt)
   O.flush()
 }
