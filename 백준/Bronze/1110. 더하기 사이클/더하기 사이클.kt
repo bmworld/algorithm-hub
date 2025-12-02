@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 4
-private const val OBS = 4
+private const val IBS = 8
+private const val OBS = 8
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -49,24 +49,28 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
+private val ch = IntArray(2)
+private val cnts = IntArray(100).also { it[0] = 1 }
+private val cycle = intArrayOf(3, 4, 12, 20, 60)
+private val a = intArrayOf(5, 26, 13, 2, 1).apply {
+  for (i in 0 until this.size) {
+    val v = this[i]
+    val o1 = v / 10
+    val o2 = v % 10
+    ch[0] = o1
+    ch[1] = o2
+    while (true) {
+      val a = ch[0]
+      val b = ch[1]
+      cnts[a * 10 + b] = cycle[i]
+      ch[0] = b
+      ch[1] = (a + b) % 10
+      if (ch[0] == o1 && ch[1] == o2) break
+    }
+  }
+}
 
 fun main() {
-  val n = i()
-  val og = IntArray(2).also {
-    it[0] = n / 10
-    it[1] = n % 10
-  }
-  val ch = og.copyOf()
-  var cnt = 1
-  while (true) {
-    val a = ch[0]
-    val b = ch[1]
-    ch[0] = b
-    ch[1] = (a + b) % 10
-    if (ch[0] == og[0] && ch[1] == og[1]) break
-    cnt++
-  }
-
-  w(cnt)
+  w(cnts[i()])
   O.flush()
 }
