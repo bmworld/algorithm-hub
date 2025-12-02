@@ -78,20 +78,15 @@ fun main() {
   var cnt = 0
   val goal = 2 * n + 1
   var seq = 0
-  var l = minI
-  var r = minI
-  while (r <= maxI) {
-    val c = s[r++]
+  repeat(maxI - minI + 1) {
+    val r = minI + it
+    val c = s[r]
     val even = seq % 2 == 0
     val valid = even && c == i || !even && c == o
     if (!valid) {
-      l = r
       seq = if (c == i) 1 else 0
-      continue
-    }
-    if (++seq == goal) {
+    } else if (++seq == goal) {
       cnt++
-      l += 2
       seq -= 2
     }
   }
