@@ -63,22 +63,30 @@ fun main() {
     }
   }
 
-  var found = true
+  var found = len > 0
   var i = 0
-  while (found && i < len && r().also { c = it } >= 65.toByte()) { //    println("c=$c, a[$i]=${a[i]}")
-    if (i == 0) {
-      while (i < len) {
-        if (a[i++] == c) {
-          found = true
-          break
-        } else found = false
+  while (found && r().also { c = it } >= 65.toByte()) {
+    when {
+      i >= len -> {
+        found = false
+        break
       }
-      continue
-    }
 
-    if (a[i++] != c) {
-      found = false
-      break
+      i == 0 -> {
+        while (i < len) {
+          if (a[i++] == c) {
+            found = true
+            break
+          } else found = false
+        }
+      }
+
+      else -> {
+        if (a[i++] != c) {
+          found = false
+          break
+        }
+      }
     }
   }
 
