@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 100
+private const val IBS = 50
 private const val OBS = 1
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
@@ -35,28 +35,24 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
-private const val MAX_LEN = 200_000
-private val sb = StringBuilder(MAX_LEN)
-private fun s(): String {
+private const val MAX_LEN = 100
+private val inBuf = ByteArray(MAX_LEN)
+private fun s(): ByteArray {
   var c = r()
   while (c != EOF.toByte() && c <= 32) c = r()
+  var len = 0
   while (c >= 48) {
-    if (c in 65..90 || c in 97..122) sb.append(
-      c.toInt()
-        .toChar()
-    )
+    if (c in 65..90 || c in 97..122) inBuf[len++] = c
     c = r()
   }
-  val s = sb.toString()
-  sb.setLength(0)
-  return s
+  return inBuf.copyOf(len)
 }
 
 fun main() {
   val a = s()
   val k = s()
-  val aLen = a.length
-  val kLen = k.length
+  val aLen = a.size
+  val kLen = k.size
 
   var found = false
   for (i in 0 until aLen) {
