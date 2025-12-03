@@ -57,12 +57,13 @@ fun main() {
   var bLen = 0
   while (r().also { c = it } >= 65.toByte()) b[bLen++] = c
 
-  outer@ for (i in 0 until aLen) {
-    if (a[i] != b[0]) continue
+  val diffLen = aLen - bLen
+
+  outer@ for (i in 0..diffLen) {
     var ch = true
-    for (j in 1 until bLen) {
-      if (j + i >= aLen) break@outer
-      if (a[j + i] != b[j]) {
+    for (l in 0 until (bLen + 1) / 2) {
+      val r = bLen - 1 - l
+      if (a[i + l] != b[l] || b[r] != a[i + r]) {
         ch = false
         break
       }
