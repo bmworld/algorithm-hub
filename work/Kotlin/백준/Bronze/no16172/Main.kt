@@ -22,18 +22,6 @@ private fun r(): Byte {
 }
 
 private val NUM = 48..57
-private fun i(): Int {
-  var v = 0
-  var s = 1
-  var c: Byte
-  while (r().also { c = it } in NUM || c == 45.toByte()) {
-    when (c) {
-      in NUM -> v = v * 10 + c - 48
-      else -> s = -1
-    }
-  }
-  return s * v
-}
 
 private const val WS = 10
 private val WB = ByteArray(WS)
@@ -51,42 +39,37 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
+private const val MAX_LEN = 200_000
 
 fun main() {
-  val a = ByteArray(200_000)
+  var found = false
+  val a = ByteArray(MAX_LEN)
   var c: Byte
-  var len = 0
+  var aLen = 0
   while (r().also { c = it } >= 32.toByte()) {
     when (c) {
       in NUM -> continue
-      else -> a[len++] = c
+      else -> a[aLen++] = c
     }
   }
 
-  var found = len > 0
-  var i = 0
-  while (found && r().also { c = it } >= 65.toByte()) {
-    when {
-      i >= len -> {
-        found = false
+  val b = ByteArray(MAX_LEN)
+  var bLen = 0
+  while (r().also { c = it } >= 65.toByte()) b[bLen++] = c
+
+  outer@ for (i in 0 until aLen) {
+    if (a[i] != b[0]) continue
+    var ch = true
+    for (j in 1 until bLen) {
+      if (j + i >= aLen) break@outer
+      if (a[j + i] != b[j]) {
+        ch = false
         break
       }
-
-      i == 0 -> {
-        while (i < len) {
-          if (a[i++] == c) {
-            found = true
-            break
-          } else found = false
-        }
-      }
-
-      else -> {
-        if (a[i++] != c) {
-          found = false
-          break
-        }
-      }
+    }
+    if (ch) {
+      found = true
+      break@outer
     }
   }
 
