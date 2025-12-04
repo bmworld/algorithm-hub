@@ -48,23 +48,28 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
+private const val SEP = 10_000_000_000UL
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
   val n = i()
-  val a = ArrayList<Pair<Int, Int>>(n)
-  var nextTo = Int.MAX_VALUE
+  val a = ULongArray(n)
+  var nextTo = Int.MAX_VALUE.toULong()
+  var i = 0
   repeat(n) {
-    val fr = i()
-    val to = i()
-    a += to to fr
+    val fr = i().toULong()
+    val to = i().toULong()
+    a[i++] = to * SEP + fr
     if (to < nextTo) nextTo = to
   }
 
   var cnt = 1
-  val sorted = a.sortedWith(compareBy({ it.first }, { it.second }))
+  a.sort()
   for (i in 1 until n) {
-    val (to, from) = sorted[i]
-    if (from < nextTo) continue
+    val ul = a[i]
+    val to = ul / SEP
+    val fr = ul % SEP
+    if (fr < nextTo) continue
     cnt++
     nextTo = to
   }
