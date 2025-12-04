@@ -56,24 +56,25 @@ private const val SEP = 10_000_000_000UL
 fun main() {
   val n = i()
   val a = ULongArray(n)
-  var nextTo = Int.MAX_VALUE.toULong()
   var i = 0
+  var nt = Int.MAX_VALUE.toULong()
   repeat(n) {
-    val fr = i().toULong()
-    val to = i().toULong()
-    a[i++] = to * SEP + fr
-    if (to < nextTo) nextTo = to
+    val f = i().toULong()
+    val t = i().toULong()
+    a[i++] = t * SEP + f
+    if (t < nt) nt = t
   }
+  a.sort()
 
   var cnt = 1
-  a.sort()
-  for (i in 1 until n) {
-    val ul = a[i]
-    val to = ul / SEP
-    val fr = ul % SEP
-    if (fr < nextTo) continue
-    cnt++
-    nextTo = to
+  repeat(n - 1) {
+    val ul = a[it + 1]
+    val t = ul / SEP
+    val f = ul % SEP
+    if (f >= nt) {
+      cnt++
+      nt = t
+    }
   }
 
   w(cnt)
