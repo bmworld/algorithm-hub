@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 15
+private const val IBS = 14
 private const val OBS = 10
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
@@ -48,7 +48,7 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
-private val qr = intArrayOf(0, 0, 1, 1) // 1~4분면
+private val qr = intArrayOf(0, 0, 1, 1)
 private val qc = intArrayOf(0, 1, 0, 1)
 
 fun main() {
@@ -59,10 +59,7 @@ fun main() {
   var cnt = 0
   var sr = 0
   var sc = 0
-  var len = 1
-  repeat(n) {
-    len *= 2
-  }
+  var len = 1 shl n
 
   while (len > 1) {
     val nl = len / 2
@@ -81,7 +78,6 @@ fun main() {
     cnt += quadVol * qi
     len = nl
   }
-
   w(cnt)
   O.flush()
 }
