@@ -50,42 +50,40 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
-private val dr = intArrayOf(0, 0, 1, 1)
-private val dc = intArrayOf(0, 1, 0, 1)
+private val qr = intArrayOf(0, 0, 1, 1) // 1~4분면
+private val qc = intArrayOf(0, 1, 0, 1)
 
 fun main() {
   val n = i()
-  val tr = i()
-  val tc = i()
-  var cnt = -1
-  var done = false
+  val r = i()
+  val c = i()
 
-  fun dfs(
-    len: Int,
-    r: Int,
-    c: Int,
-  ) {
-    if (done) return
-    if (len <= 1) {
-      if (r == tr && c == tc) done = true
-      cnt++
-      return
-    }
-
-    val nl = len / 2
-    repeat(4) {
-      val nr = r + nl * dr[it]
-      val nc = c + nl * dc[it]
-      dfs(nl, nr, nc)
-    }
-
-  }
-
+  var cnt = 0
+  var sr = 0
+  var sc = 0
   var len = 1
   repeat(n) {
     len *= 2
   }
-  dfs(len, 0, 0)
+
+  while (len > 1) {
+    val nl = len / 2
+    val quadVol = nl * nl
+    var qi = 3
+    while (qi >= 0) {
+      val nsr = sr + nl * qr[qi]
+      val nsc = sc + nl * qc[qi]
+      if (nsr <= r && nsc <= c) {
+        sr = nsr
+        sc = nsc
+        break
+      }
+      qi--
+    }
+    cnt += quadVol * qi
+    len = nl
+  }
+
   w(cnt)
   O.flush()
 }
