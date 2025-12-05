@@ -80,7 +80,6 @@ fun main() {
     }
     cnt += quadVol * qi
     len = nl
-
   }
 
   w(cnt)
