@@ -58,6 +58,6 @@ fun main() {
     if (v < min) min = v
     if (v > max) max = v
   }
-  w(if (min == max) max else min * max)
+  w(min * max)
   O.flush()
 }
