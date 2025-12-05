@@ -50,36 +50,36 @@ private fun w(
   O.write(WB, stt, -stt + WS)
 }
 
-private val qr = intArrayOf(0, 0, 1, 1)
-private val qc = intArrayOf(0, 1, 0, 1)
-
 fun main() {
   val n = i()
   val r = i()
   val c = i()
 
   var cnt = 0
-  var sr = 0
-  var sc = 0
   var len = 1 shl n
+  var vol = len * len / 4
+  var sDist = len / 4
+  var sr = len / 2 - 1
+  var sc = sr
 
-  while (len > 1) {
-    val nl = len / 2
-    val quadVol = nl * nl
-    var qi = 3
-    while (qi >= 0) {
-      val nsr = sr + nl * qr[qi]
-      val nsc = sc + nl * qc[qi]
-      if (nsr <= r && nsc <= c) {
-        sr = nsr
-        sc = nsc
-        break
-      }
-      qi--
-    }
-    cnt += quadVol * qi
-    len = nl
+  repeat(n) {
+    var bigger = 0
+    if (c > sc) {
+      bigger += 1
+      sc += sDist
+    } else sc -= sDist
+
+    if (r > sr) {
+      bigger += 2
+      sr += sDist
+    } else sr -= sDist
+
+    cnt += vol * bigger
+    len /= 2
+    vol /= 4
+    sDist /= 2
   }
+
   w(cnt)
   O.flush()
 }
