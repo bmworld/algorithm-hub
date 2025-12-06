@@ -75,6 +75,7 @@ fun main() {
         7 -> getNum(b, a7)
         8 -> getNum(b, a8)
         9 -> getNum(b, a9)
+        0 -> 10
         else -> units
       }
     )
