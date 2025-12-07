@@ -41,6 +41,10 @@ private fun w(
   num: Int,
 ) {
   var v = num
+  if (v < 0) {
+    v = -v
+    O.write(45)
+  }
   var pos = WS - 1
   do {
     WB[pos--] = (v % 10 + 48).toByte()
