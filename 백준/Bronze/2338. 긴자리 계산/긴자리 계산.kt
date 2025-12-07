@@ -1,11 +1,8 @@
-import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.math.BigInteger
 
-private const val IBS = 2_024
-private const val OBS = 2_000
+private const val IBS = 2_048
 private const val EOF = -1
-private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private var Ii = 0
@@ -42,5 +39,4 @@ fun main() {
   println(a + b)
   println(a - b)
   println(a * b)
-  O.flush()
 }
