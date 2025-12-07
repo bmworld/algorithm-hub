@@ -50,7 +50,8 @@ private fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, pos + 1, -(pos + 1) + WS)
+  val off = pos + 1
+  O.write(WB, off, WS - off)
 }
 
 private const val RIPE = 1
@@ -75,7 +76,7 @@ fun main() {
         val v = i()
         box[h][r][c] = v
         if (v == UNRIPE) unripeCnt++
-        if (v == RIPE) q[qt++] = h * H_SEP + r * R_SEP + c
+        else if (v == RIPE) q[qt++] = h * H_SEP + r * R_SEP + c
       }
     }
   }
