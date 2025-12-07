@@ -41,17 +41,12 @@ private fun w(
   num: Int,
 ) {
   var v = num
-  if (v < 0) {
-    O.write('-'.code)
-    v = -v
-  }
-  var end = WS - 1
+  var pos = WS - 1
   do {
-    WB[end--] = (v % 10 + 48).toByte()
+    WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  val stt = end + 1
-  O.write(WB, stt, -stt + WS)
+  O.write(WB, ++pos, -pos + WS)
 }
 
 private const val RIPE = 1
