@@ -54,23 +54,25 @@ private fun w(
 
 private const val RIPE = 1
 private const val UNRIPE = 0
-private const val EMPTY = -1
 private const val SEP = 1000
 private val dr = intArrayOf(1, 0, -1, 0)
 private val dc = intArrayOf(0, 1, 0, -1)
 fun main() {
+  var totalDays = 0
+
   val rs = i()
   val cs = i()
   val box = Array(rs) { IntArray(cs) }
-  val ripes = IntArray(rs * cs)
-  var ripeCnt = 0
+  val q = IntArray(rs * cs)
+  var qh = 0
+  var qt = 0
   var unripeCnt = 0
   repeat(cs) { c ->
     repeat(rs) { r ->
       val v = i()
       box[r][c] = v
       if (v == UNRIPE) unripeCnt++
-      if (v == RIPE) ripes[ripeCnt++] = r * SEP + c
+      if (v == RIPE) q[qt++] = r * SEP + c
     }
   }
 
@@ -78,14 +80,6 @@ fun main() {
     w(0)
     O.flush()
     return
-  }
-
-  var totalDays = 0
-  val q = IntArray(ripeCnt + unripeCnt)
-  var qh = 0
-  var qt = 0
-  repeat(ripeCnt) {
-    q[qt++] = ripes[it]
   }
 
   while (qh < qt) {
