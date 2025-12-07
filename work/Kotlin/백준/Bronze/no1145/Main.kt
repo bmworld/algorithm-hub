@@ -58,18 +58,23 @@ fun main() {
   }
 
   var min = Int.MAX_VALUE
-  for (i in 0..2) for (j in i + 1..3) for (k in j + 1..4) {
-    val v1 = a[i]
-    val v2 = a[j]
-    val v3 = a[k]
-    var x = v3
-    val max = v1 * v2 * v3
-    while (x < min && x <= max) {
-      if (x % v1 == 0 && x % v2 == 0) break
-      else x += v3
+  for (i in 0..2) for (j in i + 1..3) {
+    val l1 = lcm(a[i], a[j])
+    for (k in j + 1..4) {
+      val l2 = lcm(l1, a[k])
+      if (l2 < min) min = l2
     }
-    if (x < min) min = x
   }
   w(min)
   O.flush()
 }
+
+fun gcd(
+  a: Int,
+  b: Int,
+): Int = if (b == 0) a else gcd(b, a % b)
+
+fun lcm(
+  a: Int,
+  b: Int,
+): Int = a * b / gcd(a, b)
