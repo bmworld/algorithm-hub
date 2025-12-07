@@ -54,7 +54,6 @@ fun main() {
   repeat(5) {
     a[i++] = i()
   }
-  a.sort()
 
   var min = Int.MAX_VALUE
   for (i in 0..2) for (j in i + 1..3) for (k in j + 1..4) {
