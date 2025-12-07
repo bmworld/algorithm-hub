@@ -1,4 +1,4 @@
-package 백준.Gold.no7576
+package 백준.Gold.no7569
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -50,30 +50,33 @@ private fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, -pos + WS)
+  O.write(WB, pos + 1, -(pos + 1) + WS)
 }
 
 private const val RIPE = 1
 private const val UNRIPE = 0
-private const val SEP = 1000
-private val dr = intArrayOf(1, 0, -1, 0)
-private val dc = intArrayOf(0, 1, 0, -1)
+private const val H_SEP = 10000
+private const val R_SEP = 100
+private val dh = intArrayOf(1, -1, 0, 0, 0, 0)
+private val dr = intArrayOf(0, 0, 1, 0, -1, 0)
+private val dc = intArrayOf(0, 0, 0, 1, 0, -1)
 fun main() {
-  var totalDays = 0
-
   val rs = i()
   val cs = i()
-  val box = Array(rs) { IntArray(cs) }
-  val q = IntArray(rs * cs)
+  val hs = i()
+  val box = Array(hs) { Array(rs) { IntArray(cs) } }
+  val q = IntArray(hs * rs * cs)
   var qh = 0
   var qt = 0
   var unripeCnt = 0
-  repeat(cs) { c ->
-    repeat(rs) { r ->
-      val v = i()
-      box[r][c] = v
-      if (v == UNRIPE) unripeCnt++
-      if (v == RIPE) q[qt++] = r * SEP + c
+  repeat(hs) { h ->
+    repeat(cs) { c ->
+      repeat(rs) { r ->
+        val v = i()
+        box[h][r][c] = v
+        if (v == UNRIPE) unripeCnt++
+        if (v == RIPE) q[qt++] = h * H_SEP + r * R_SEP + c
+      }
     }
   }
 
@@ -83,19 +86,23 @@ fun main() {
     return
   }
 
+  var totalDays = 0
   while (qh < qt) {
-    val rc = q[qh++]
-    val r = rc / SEP
-    val c = rc % SEP
-    val day = box[r][c]
-    repeat(4) { j ->
-      val nr = r + dr[j]
-      val nc = c + dc[j]
-      if (nr in 0 until rs && nc in 0 until cs && box[nr][nc] == UNRIPE) {
-        box[nr][nc] = day + 1
-        q[qt++] = nr * SEP + nc
+    val hrc = q[qh++]
+    val h = hrc / H_SEP
+    val rc = hrc % H_SEP
+    val r = rc / R_SEP
+    val c = rc % R_SEP
+    val days = box[h][r][c]
+    repeat(6) {
+      val nh = h + dh[it]
+      val nr = r + dr[it]
+      val nc = c + dc[it]
+      if (nh in 0 until hs && nr in 0 until rs && nc in 0 until cs && box[nh][nr][nc] == UNRIPE) {
+        box[nh][nr][nc] = days + 1
+        q[qt++] = nh * H_SEP + nr * R_SEP + nc
         unripeCnt--
-        if (totalDays < day) totalDays = day
+        if (totalDays < days) totalDays = days
       }
     }
   }
