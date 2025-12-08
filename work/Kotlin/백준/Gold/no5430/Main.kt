@@ -3,8 +3,8 @@ package 백준.Gold.no5430
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 20_000
-private const val OBS = 2_000
+private const val IBS = 45_000
+private const val OBS = 3_000
 private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -35,6 +35,11 @@ private fun i(): Int {
   return s * v
 }
 
+private fun clearLine() {
+  while (r() != 10.toByte()) {
+  }
+}
+
 private const val WS = 10
 private val WB = ByteArray(WS + 1).also { it[WS] = ','.code.toByte() }
 private fun w(
@@ -60,30 +65,28 @@ private const val D = 68.toByte()
 private const val MAX_LEN = 100_000
 private val ERROR = byteArrayOf(101, 114, 114, 111, 114)
 fun main() {
-
-  val cmdQ = BooleanArray(MAX_LEN)
+  val q = BooleanArray(MAX_LEN)
   val a = IntArray(MAX_LEN)
   repeat(i()) {
-    var cmdH = 0
-    var cmdT = 0
+    var qh = 0
+    var qt = 0
     var c: Byte
-    while (r().also { c = it } == R || c == D) cmdQ[cmdT++] = c == D
+    while (r().also { c = it } == R || c == D) q[qt++] = c == D
 
     val aLen = i()
-
     r()
     repeat(aLen) {
       a[it] = i()
     }
-    r()
+    clearLine()
 
     var l = 0
     var r = aLen - 1
     var reverse = false
     var hasError = false
 
-    while (cmdH < cmdT) {
-      val isD = cmdQ[cmdH++]
+    while (qh < qt) {
+      val isD = q[qh++]
       when {
         isD -> {
           val len = r - l + 1
@@ -110,7 +113,6 @@ fun main() {
         O.write(']'.code)
       }
     }
-
     O.write('\n'.code)
   }
   O.flush()
