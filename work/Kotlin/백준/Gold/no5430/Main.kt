@@ -83,17 +83,18 @@ fun main() {
     var l = 0
     var r = aLen - 1
     var reverse = false
-    var hasError = false
 
     while (qh < qt) {
       val isD = q[qh++]
       when {
         isD -> {
           val len = r - l + 1
-          hasError = len == 0
-          if (!hasError) {
-            if (reverse) r-- else l++
-          }
+          val hasError = len == 0
+          if (hasError) {
+            O.write(ERROR)
+            O.write('\n'.code)
+            return@repeat
+          } else if (reverse) r-- else l++
         }
 
         else -> reverse = !reverse
@@ -101,18 +102,12 @@ fun main() {
     }
 
     val len = r - l + 1
-    when {
-      hasError -> O.write(ERROR)
-
-      else -> {
-        O.write('['.code)
-        repeat(len) {
-          val i = if (reverse) r - it else l + it
-          w(a[i], it + 1 >= len)
-        }
-        O.write(']'.code)
-      }
+    O.write('['.code)
+    repeat(len) {
+      val i = if (reverse) r - it else l + it
+      w(a[i], it + 1 >= len)
     }
+    O.write(']'.code)
     O.write('\n'.code)
   }
   O.flush()
