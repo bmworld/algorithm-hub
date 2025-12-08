@@ -36,7 +36,7 @@ private fun i(): Int {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1)
+private val WB = ByteArray(WS + 1).also { it[WS] = ','.code.toByte() }
 private fun w(
   num: Int,
   isEnd: Boolean,
@@ -46,15 +46,13 @@ private fun w(
     O.write(45)
     -num
   }
-
-  WB[WS] = (if (isEnd) ']' else ',').code.toByte()
   var pos = WS - 1
   do {
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
   pos++
-  O.write(WB, pos, WS - pos + 1)
+  O.write(WB, pos, WS - pos + if (isEnd) 0 else 1)
 }
 
 private const val R = 82.toByte()
@@ -82,25 +80,35 @@ fun main() {
     var l = 0
     var r = aLen - 1
     var reverse = false
+    var hasError = false
 
     while (cmdH < cmdT) {
+      val isD = cmdQ[cmdH++]
       when {
-        cmdQ[cmdH++] -> if (reverse) r-- else l++
+        isD -> {
+          val len = r - l + 1
+          hasError = len == 0
+          if (!hasError) {
+            if (reverse) r-- else l++
+          }
+        }
+
         else -> reverse = !reverse
       }
     }
 
     val len = r - l + 1
     when {
-      len > 0 -> {
+      hasError -> O.write(ERROR)
+
+      else -> {
         O.write('['.code)
         repeat(len) {
           val i = if (reverse) r - it else l + it
           w(a[i], it + 1 >= len)
         }
+        O.write(']'.code)
       }
-
-      else -> O.write(ERROR)
     }
 
     O.write('\n'.code)
