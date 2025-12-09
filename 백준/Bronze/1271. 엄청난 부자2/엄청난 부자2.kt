@@ -1,14 +1,14 @@
-import java.io.BufferedReader
-import java.io.InputStreamReader
+import java.io.*
 import java.util.*
 
 fun main() = with(BufferedReader(InputStreamReader(System.`in`))) {
+  val O = BufferedWriter(OutputStreamWriter(System.out))
   val tk = StringTokenizer(readLine())
   val a = tk.nextToken()
     .toBigInteger()
   val b = tk.nextToken()
     .toBigInteger()
   val (q, r) = a.divideAndRemainder(b)
-  println(q)
-  print(r)
+  O.write("$q\n$r")
+  O.flush()
 }
