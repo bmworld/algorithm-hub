@@ -36,6 +36,6 @@ private fun i(): BigInteger {
 fun main() {
   val a = i()
   val b = i()
-  println(a / b)
-  println(a % b)
+  println(a.divide(b))
+  print(a.remainder(b))
 }
