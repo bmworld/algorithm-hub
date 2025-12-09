@@ -9,6 +9,8 @@ fun main() = with(BufferedReader(InputStreamReader(System.`in`))) {
   val b = tk.nextToken()
     .toBigInteger()
   val (q, r) = a.divideAndRemainder(b)
-  O.write("$q\n$r")
+  O.write("$q")
+  O.write("\n")
+  O.write("$r")
   O.flush()
 }
