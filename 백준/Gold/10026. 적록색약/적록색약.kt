@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 11_000
-private const val OBS = 16
+private const val IBS = 10_100
+private const val OBS = 500
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -74,12 +74,13 @@ private const val B = 3
 
 fun main() {
   val n = i()
-  val maxLen = n * n
-  val q = IntArray(maxLen)
-  val a = Array(n) { IntArray(n) }
+  val maxLen = n * n + n
+  val a = IntArray(maxLen)
+  val qr = IntArray(n * n)
+  val qc = IntArray(n * n)
   repeat(n) { r ->
     repeat(n) { c ->
-      a[r][c] = b()
+      a[r * n + c] = b()
     }
   }
 
@@ -88,48 +89,58 @@ fun main() {
   var bZoneCnt = 0
   var rgZoneCnt = 0
 
+
   fun bfs(
     row: Int,
     col: Int,
     rgbMode: Boolean,
   ) {
-    val t = a[row][col]
-    if (t == EMPTY || rgbMode && t < EMPTY) return
+    val pos = row * n + col
+    val v = a[pos]
+    if (v == EMPTY || rgbMode && v < EMPTY) return
 
-    when (rgbMode) {
-      true -> when (t) {
-        R -> rZoneCnt++
-        G -> gZoneCnt++
-        B -> bZoneCnt++
+    a[pos] = when (v) {
+      R -> {
+        rZoneCnt++
+        RG
       }
 
-      else -> rgZoneCnt++
-    }
+      G -> {
+        gZoneCnt++
+        RG
+      }
 
-    a[row][col] = when (t) {
-      R, G -> RG
-      else -> EMPTY
+      B -> {
+        bZoneCnt++
+        EMPTY
+      }
+
+      else -> {
+        rgZoneCnt++
+        EMPTY
+      }
     }
 
     var qh = 0
     var qt = 0
-    q[qt++] = row * SEP + col
-
+    qr[qt] = row
+    qc[qt++] = col
     while (qh < qt) {
-      val v = q[qh++]
-      val r = v / SEP
-      val c = v % SEP
+      val r = qr[qh]
+      val c = qc[qh++]
       repeat(4) { i ->
         val nr = r + dr[i]
         val nc = c + dc[i]
-        if (nr !in 0 until n || nc !in 0 until n) return@repeat
-        val nt = a[nr][nc]
-        if (t != nt) return@repeat
-        a[nr][nc] = when (nt) {
-          R, G -> RG
-          else -> EMPTY
+        val nextPos = nr * n + nc
+        if (nr in 0 until n && nc in 0 until n && a[nextPos] == v) {
+          val nv = a[nextPos]
+          a[nextPos] = when (nv) {
+            R, G -> RG
+            else -> EMPTY
+          }
+          qr[qt] = nr
+          qc[qt++] = nc
         }
-        q[qt++] = nr * SEP + nc
       }
     }
   }
