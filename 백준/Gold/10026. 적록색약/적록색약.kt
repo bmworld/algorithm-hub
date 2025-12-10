@@ -66,109 +66,87 @@ private fun w(
 private const val SEP = 100
 private val dr = intArrayOf(0, 1, 0, -1)
 private val dc = intArrayOf(1, 0, -1, 0)
-private const val R = 0
-private const val G = 1
-private const val B = 2
-private val depMapper = Array(3) { IntArray(3) }.also {
-  it[R][R] = 2
-  it[R][G] = 1
-  it[R][B] = 0
-
-  it[G][R] = 1
-  it[G][G] = 2
-  it[G][B] = 0
-
-  it[B][R] = 0
-  it[B][G] = 0
-  it[B][B] = 2
-}
+private const val RG = -1
+private const val EMPTY = 0
+private const val R = 1
+private const val G = 2
+private const val B = 3
 
 fun main() {
   val n = i()
   val maxLen = n * n
+  val q = IntArray(maxLen)
   val a = Array(n) { IntArray(n) }
   repeat(n) { r ->
     repeat(n) { c ->
-      val v = b()
-      a[r][c] = v
+      a[r][c] = b()
     }
   }
 
-  var rCnt = 0
-  var gCnt = 0
-  var rgCnt = 0
-  var bCnt = 0
+  var rZoneCnt = 0
+  var gZoneCnt = 0
+  var bZoneCnt = 0
+  var rgZoneCnt = 0
 
-  val usedDep = Array(n) { IntArray(n) { -1 } }
-  val depQ = Array(3) { IntArray(maxLen) }
-  val depPos = Array(3) {
-    intArrayOf(
-      0, // head
-      0  // tail
-    )
-  }
-  depQ[depPos[0][0]][depPos[0][1]++] = 0
-
-
-  fun depCounter(
-    r: Int,
-    c: Int,
-    dep: Int,
+  fun bfs(
+    row: Int,
+    col: Int,
+    rgbMode: Boolean,
   ) {
-    if (usedDep[r][c] >= dep) return
-    val rgb = a[r][c]
-    when (dep) {
-      2 -> when (rgb) {
-        R -> rCnt++
-        G -> gCnt++
-        B -> bCnt++
+    val t = a[row][col]
+    if (t == EMPTY || rgbMode && t < EMPTY) return
+
+    when (rgbMode) {
+      true -> when (t) {
+        R -> rZoneCnt++
+        G -> gZoneCnt++
+        B -> bZoneCnt++
       }
 
-      1 -> when (rgb) {
-        R, G -> rgCnt++
-      }
+      else -> rgZoneCnt++
     }
 
-    val q = depQ[dep]
-    q[depPos[dep][1]++] = r * SEP + c
-    usedDep[r][c] = dep
+    a[row][col] = when (t) {
+      R, G -> RG
+      else -> EMPTY
+    }
 
-    while (depPos[dep][0] < depPos[dep][1]) {
-      val v = q[depPos[dep][0]++]
+    var qh = 0
+    var qt = 0
+    q[qt++] = row * SEP + col
+
+    while (qh < qt) {
+      val v = q[qh++]
       val r = v / SEP
       val c = v % SEP
-      when (dep) {
-        2 -> {
-          repeat(4) { i ->
-            val nr = r + dr[i]
-            val nc = c + dc[i]
-            if (nr !in 0 until n || nc !in 0 until n) return@repeat
-            val nextDep = depMapper[a[r][c]][a[nr][nc]]
-            if (usedDep[nr][nc] >= nextDep) return@repeat
-            usedDep[nr][nc] = nextDep
-            depQ[nextDep][depPos[nextDep][1]++] = nr * SEP + nc
-          }
+      repeat(4) { i ->
+        val nr = r + dr[i]
+        val nc = c + dc[i]
+        if (nr !in 0 until n || nc !in 0 until n) return@repeat
+        val nt = a[nr][nc]
+        if (t != nt) return@repeat
+        a[nr][nc] = when (nt) {
+          R, G -> RG
+          else -> EMPTY
         }
-
-        1 -> depCounter(r, c, dep + 1)
-
+        q[qt++] = nr * SEP + nc
       }
     }
   }
 
-  while (depPos[0][0] < depPos[0][1]) {
-    val v = depQ[0][depPos[0][0]++]
-    val r = v / SEP
-    val c = v % SEP
-    depCounter(
-      r, c, when (a[r][c]) {
-        R, G -> 1
-        else -> 2
-      }
-    )
+  repeat(n) { r ->
+    repeat(n) { c ->
+      bfs(r, c, true)
+    }
   }
 
-  w(bCnt + rCnt + gCnt)
-  w(bCnt + rgCnt)
+  repeat(n) { r ->
+    repeat(n) { c ->
+      bfs(r, c, false)
+    }
+  }
+
+  w(bZoneCnt + rZoneCnt + gZoneCnt)
+  w(bZoneCnt + rgZoneCnt)
   O.flush()
 }
