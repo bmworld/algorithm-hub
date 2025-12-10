@@ -107,7 +107,7 @@ fun main() {
       0  // tail
     )
   }
-  depQ[depPos[0][0]][depPos[0][1]++] = encodePos(0, 0)
+  depQ[depPos[0][0]][depPos[0][1]++] = 0
 
 
   fun depCounter(
@@ -130,14 +130,14 @@ fun main() {
     }
 
     val q = depQ[dep]
-    q[depPos[dep][1]++] = encodePos(r, c)
+    q[depPos[dep][1]++] = r * SEP + c
     usedDep[r][c] = dep
 
     while (depPos[dep][0] < depPos[dep][1]) {
-      val (r, c) = decodePos(q[depPos[dep][0]++])
+      val v = q[depPos[dep][0]++]
+      val r = v / SEP
+      val c = v % SEP
       when (dep) {
-        1 -> depCounter(r, c, dep + 1)
-
         2 -> {
           repeat(4) { i ->
             val nr = r + dr[i]
@@ -146,15 +146,20 @@ fun main() {
             val nextDep = depMapper[a[r][c]][a[nr][nc]]
             if (usedDep[nr][nc] >= nextDep) return@repeat
             usedDep[nr][nc] = nextDep
-            depQ[nextDep][depPos[nextDep][1]++] = encodePos(nr, nc)
+            depQ[nextDep][depPos[nextDep][1]++] = nr * SEP + nc
           }
         }
+
+        1 -> depCounter(r, c, dep + 1)
+
       }
     }
   }
 
   while (depPos[0][0] < depPos[0][1]) {
-    val (r, c) = decodePos(depQ[0][depPos[0][0]++])
+    val v = depQ[0][depPos[0][0]++]
+    val r = v / SEP
+    val c = v % SEP
     depCounter(
       r, c, when (a[r][c]) {
         R, G -> 1
@@ -167,14 +172,3 @@ fun main() {
   w(bCnt + rgCnt)
   O.flush()
 }
-
-fun decodePos(v: Int): Pair<Int, Int> {
-  val r = v / SEP
-  val c = v % SEP
-  return Pair(r, c)
-}
-
-fun encodePos(
-  r: Int,
-  c: Int,
-): Int = r * SEP + c
