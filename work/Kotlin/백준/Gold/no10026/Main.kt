@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 10_100
-private const val OBS = 1_000
+private const val OBS = 100
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -35,7 +35,7 @@ private fun i(): Int {
   return s * v
 }
 
-private fun b(): Int {
+private fun b(): Byte {
   var c: Byte
   while (r().also { c = it } <= 32) {
   }
@@ -67,17 +67,15 @@ private fun w(
 
 private val dr = intArrayOf(0, 1, 0, -1)
 private val dc = intArrayOf(1, 0, -1, 0)
-private const val RG = -1
-private const val EMPTY = 0
-private const val R = 1
-private const val G = 2
-private const val B = 3
+private const val RG = (-1).toByte()
+private const val EMPTY = 0.toByte()
+private const val R = 1.toByte()
+private const val G = 2.toByte()
+private const val B = 3.toByte()
 
 fun main() {
   val n = i()
-  val a = IntArray(n * n + n)
-  val qr = IntArray(n * n)
-  val qc = IntArray(n * n)
+  val a = ByteArray(n * n + n)
   repeat(n) { r ->
     repeat(n) { c ->
       a[r * n + c] = b()
@@ -89,70 +87,40 @@ fun main() {
   var bZoneCnt = 0
   var rgZoneCnt = 0
 
-  fun bfs(
-    row: Int,
-    col: Int,
-    rgbMode: Boolean,
+  fun dfs(
+    r: Int,
+    c: Int,
   ) {
-    val pos = row * n + col
+    val pos = r * n + c
     val v = a[pos]
-    if (v == EMPTY || rgbMode && v < EMPTY) return
+    a[pos] = if (v == R || v == G) RG else EMPTY
 
-    a[pos] = when (v) {
-      R -> {
-        rZoneCnt++
-        RG
-      }
-
-      G -> {
-        gZoneCnt++
-        RG
-      }
-
-      B -> {
-        bZoneCnt++
-        EMPTY
-      }
-
-      else -> {
-        rgZoneCnt++
-        EMPTY
-      }
-    }
-
-    var qh = 0
-    var qt = 0
-    qr[qt] = row
-    qc[qt++] = col
-    while (qh < qt) {
-      val r = qr[qh]
-      val c = qc[qh++]
-      repeat(4) { i ->
-        val nr = r + dr[i]
-        val nc = c + dc[i]
-        val nextPos = nr * n + nc
-        if (nr in 0 until n && nc in 0 until n && a[nextPos] == v) {
-          val nv = a[nextPos]
-          a[nextPos] = when (nv) {
-            R, G -> RG
-            else -> EMPTY
-          }
-          qr[qt] = nr
-          qc[qt++] = nc
-        }
-      }
+    repeat(4) { i ->
+      val nr = r + dr[i]
+      val nc = c + dc[i]
+      if (nr in 0 until n && nc in 0 until n && a[nr * n + nc] == v) dfs(nr, nc)
     }
   }
 
   repeat(n) { r ->
     repeat(n) { c ->
-      bfs(r, c, true)
+      when (a[r * n + c]) {
+        R -> rZoneCnt++
+        G -> gZoneCnt++
+        B -> bZoneCnt++
+        else -> return@repeat
+      }
+      dfs(r, c)
     }
   }
 
   repeat(n) { r ->
     repeat(n) { c ->
-      bfs(r, c, false)
+      when (a[r * n + c]) {
+        RG -> rgZoneCnt++
+        else -> return@repeat
+      }
+      dfs(r, c)
     }
   }
 
