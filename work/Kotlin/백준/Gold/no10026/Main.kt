@@ -105,8 +105,8 @@ fun main() {
   val depQ = Array(3) { IntArray(maxLen) }
   val depPos = Array(3) {
     intArrayOf(
-      0, // q > head
-      0  // q > tail
+      0, // head
+      0  // tail
     )
   }
   depQ[depPos[0][0]][depPos[0][1]++] = encodePos(0, 0)
@@ -132,13 +132,11 @@ fun main() {
     }
 
     val q = depQ[dep]
-    val curDepPos = depPos[dep]
-    q[curDepPos[1]++] = encodePos(r, c)
+    q[depPos[dep][1]++] = encodePos(r, c)
     usedDep[r][c] = dep
 
-    while (curDepPos[0] < curDepPos[1]) {
-      val (r, c) = decodePos(q[curDepPos[0]++])
-      println("--- cur  $r, $c ($dep)")
+    while (depPos[dep][0] < depPos[dep][1]) {
+      val (r, c) = decodePos(q[depPos[dep][0]++])
       when (dep) {
         1 -> depCounter(r, c, dep + 1)
 
@@ -149,11 +147,8 @@ fun main() {
             if (nr !in 0 until n || nc !in 0 until n) return@repeat
             val nextDep = depMapper[a[r][c]][a[nr][nc]]
             if (usedDep[nr][nc] >= nextDep) return@repeat
-            println(
-              "-> next = $nr, $nc (${rgbViewer(a[nr][nc])}), usedDep=${usedDep[nr][nc]}, nextDep =" + " $nextDep"
-            )
             usedDep[nr][nc] = nextDep
-            depQ[nextDep][curDepPos[1]++] = encodePos(nr, nc)
+            depQ[nextDep][depPos[nextDep][1]++] = encodePos(nr, nc)
           }
         }
       }
@@ -162,7 +157,6 @@ fun main() {
 
   while (depPos[0][0] < depPos[0][1]) {
     val (r, c) = decodePos(depQ[0][depPos[0][0]++])
-    println("- dep0 > a[$r][$c] = ${a[r][c]}")
     depCounter(
       r, c, when (a[r][c]) {
         R, G -> 1
@@ -171,15 +165,10 @@ fun main() {
     )
   }
 
-  println("-------- r = $rCnt")
-  println("-------- g = $gCnt")
-  println("-------- b = $bCnt")
-  println("-------- r+g= $rgCnt")
   w(bCnt + rCnt + gCnt)
   w(bCnt + rgCnt)
   O.flush()
 }
-
 
 fun decodePos(v: Int): Pair<Int, Int> {
   val r = v / SEP
@@ -191,13 +180,3 @@ fun encodePos(
   r: Int,
   c: Int,
 ): Int = r * SEP + c
-
-
-
-fun rgbViewer(rgb: Int): String {
-  return when (rgb) {
-    R -> "R"
-    G -> "G"
-    else -> "B"
-  }
-}
