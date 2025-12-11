@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 5_000
+private const val IBS = 3_000
 private const val OBS = 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -61,32 +61,9 @@ fun main() {
   val a = IntArray(GOAL + 1) { it }
   val cnts = IntArray(GOAL + 1) { GOAL }
 
-  fun findRoot(v: Int): Int {
-    val r = a[v]
-    return if (r == v) v
-    else {
-      val nr = findRoot(r)
-      a[v] = nr
-      nr
-    }
-  }
-
-  fun merge(
-    v1: Int,
-    v2: Int,
-  ) {
-    val r1 = findRoot(v1)
-    val r2 = findRoot(v2)
-    when {
-      r1 < r2 -> a[r1] = r2
-      r1 > r2 -> a[r2] = r1
-    }
-  }
-
   repeat(n) {
-    merge(i(), i())
+    a[i()] = i()
   }
-
   repeat(m) {
     a[i()] = i()
   }
@@ -100,7 +77,7 @@ fun main() {
     val v = q[qh++]
     val pos = v / SEP
     val cnt = v % SEP
-    if (pos == GOAL) continue
+    if (pos == GOAL) break
     val p = a[pos]
     val nc = cnt + 1
     repeat(6) {
