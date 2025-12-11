@@ -86,7 +86,7 @@ fun main() {
       val jump = p + (it + 1)
       if (jump > GOAL) return@repeat
       val np = a[jump]
-      if (cnts[np] <= nc || a[np] < np) return@repeat
+      if (cnts[np] <= nc) return@repeat
       cnts[np] = nc
       q[qt++] = np * SEP + nc
     }
