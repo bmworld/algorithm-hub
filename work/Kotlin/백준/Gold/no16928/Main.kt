@@ -63,10 +63,7 @@ fun main() {
   val a = IntArray(GOAL + 1) { it }
   val cnts = IntArray(GOAL + 1) { GOAL }
 
-  repeat(n) {
-    a[i()] = i()
-  }
-  repeat(m) {
+  repeat(n + m) {
     a[i()] = i()
   }
 
@@ -75,20 +72,19 @@ fun main() {
   var qt = 0
   q[qt++] = 1 * SEP + 0
 
-  while (qh < qt) {
+  loop@ while (qh < qt) {
     val v = q[qh++]
     val pos = v / SEP
     val cnt = v % SEP
-    if (pos == GOAL) break
     val p = a[pos]
     val nc = cnt + 1
-    repeat(6) {
-      val jump = p + (it + 1)
-      if (jump > GOAL) return@repeat
+    for (jump in p + 1..p + 6) {
+      if (jump > GOAL) break
       val np = a[jump]
-      if (cnts[np] <= nc) return@repeat
+      if (cnts[np] <= nc) continue
       cnts[np] = nc
-      q[qt++] = np * SEP + nc
+      if (np == GOAL) break@loop
+      else q[qt++] = np * SEP + nc
     }
   }
 
