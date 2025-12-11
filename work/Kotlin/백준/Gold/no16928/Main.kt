@@ -3,7 +3,7 @@ package 백준.Gold.no16928
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 5_000
+private const val IBS = 3_000
 private const val OBS = 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -79,12 +79,14 @@ fun main() {
     val v = q[qh++]
     val pos = v / SEP
     val cnt = v % SEP
-    val rootPos = a[pos]
+    if (pos == GOAL) break
+    val p = a[pos]
     val nc = cnt + 1
     repeat(6) {
-      val jump = it + 1
-      val np = rootPos + jump
-      if (np > GOAL || cnts[np] <= nc || a[np] < np) return@repeat
+      val jump = p + (it + 1)
+      if (jump > GOAL) return@repeat
+      val np = a[jump]
+      if (cnts[np] <= nc || a[np] < np) return@repeat
       cnts[np] = nc
       q[qt++] = np * SEP + nc
     }
