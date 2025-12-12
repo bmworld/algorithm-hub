@@ -74,14 +74,14 @@ fun main() {
     repeat(c) {
       val guard = s()
       if (!rowCh && guard) rowCh = true
-      if (!colCh[it] && guard) colCh[it] = true
+      if (!colCh[it] && guard) {
+        colCh[it] = true
+        tc--
+      }
     }
     if (rowCh) tr--
   }
 
-  repeat(c) {
-    if (colCh[it]) tc--
-  }
 
   w(if (tr > tc) tr else tc)
   O.flush()
