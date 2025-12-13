@@ -51,7 +51,7 @@ private fun w(
   num: Int,
 ) {
   var v = if (num >= 0) num
-  else if (num == Int.MIN_VALUE) return O.write(INT_MIN)
+  else if (num == Int.MIN_VALUE) return O.write(INT_MIN) // <------- 여기가 문제
   else {
     O.write(45)
     -num
