@@ -79,12 +79,18 @@ fun main() {
       val op = op()
       val v = i()
       if (op == INSERT) {
-        a[v] = a.getOrDefault(v, 0) + 1
+        val cnt = a.put(v, 1)
+        if (cnt != null) a[v] = cnt + 1
       } else if (a.isNotEmpty()) {
-        val key = if (v == 1) a.lastKey() else a.firstKey()
-        val cnt = a[key]!!
-        if (cnt <= 1) a.remove(key)
-        else a[key] = cnt - 1
+        if (v == 1) {
+          val etr = a.lastEntry()
+          val cnt = etr.value
+          if (cnt == 1) a.pollLastEntry() else a[etr.key] = cnt - 1
+        } else {
+          val etr = a.firstEntry()
+          val cnt = etr.value
+          if (cnt == 1) a.pollFirstEntry() else a[etr.key] = cnt - 1
+        }
       }
     }
 
