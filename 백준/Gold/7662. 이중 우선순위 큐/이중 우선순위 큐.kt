@@ -2,7 +2,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.util.*
 
-private const val IBS = 50_000
+private const val IBS = 30_000
 private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -44,18 +44,19 @@ private fun op(): Byte {
 
 private const val WS = 10
 private val WB = ByteArray(WS + 1).also { it[WS] = ' '.code.toByte() }
+private val INT_MIN = "-2147483648".toByteArray()
 private fun w(
   num: Int,
 ) {
-  var v = num.toLong()
-    .let {
-      if (it >= 0) it
-      else {
-        O.write(45)
-        -it
-      }
-    }
-
+  var v = if (num >= 0) num
+  else if (num == Int.MIN_VALUE) {
+    O.write(INT_MIN)
+    O.write(' '.code)
+    return
+  } else {
+    O.write(45)
+    -num
+  }
   var pos = WS - 1
   do {
     WB[pos--] = (v % 10 + 48).toByte()
@@ -67,6 +68,7 @@ private fun w(
 
 private const val INSERT = 73.toByte()
 private val EMPTY = byteArrayOf(69, 77, 80, 84, 89)
+
 fun main() {
   val a = TreeMap<Int, Int>()
   repeat(i()) {
