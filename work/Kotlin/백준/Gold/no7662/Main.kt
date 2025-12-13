@@ -46,10 +46,12 @@ private fun op(): Byte {
 
 private const val WS = 10
 private val WB = ByteArray(WS + 1).also { it[WS] = ' '.code.toByte() }
+private val INT_MIN = "-2147483648".toByteArray()
 private fun w(
   num: Int,
 ) {
   var v = if (num >= 0) num
+  else if (num == Int.MIN_VALUE) return O.write(INT_MIN)
   else {
     O.write(45)
     -num
@@ -66,9 +68,9 @@ private fun w(
 private const val INSERT = 73.toByte()
 private val EMPTY = byteArrayOf(69, 77, 80, 84, 89)
 fun main() {
-
   val a = TreeMap<Int, Int>()
   repeat(i()) {
+    a.clear()
     repeat(i()) {
       val op = op()
       val v = i()
