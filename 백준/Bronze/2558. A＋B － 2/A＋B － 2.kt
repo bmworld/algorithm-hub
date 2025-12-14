@@ -1,6 +1,6 @@
 import java.io.DataInputStream
 
-private const val IBS = 10
+private const val IBS = 5
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private var Ii = 0
