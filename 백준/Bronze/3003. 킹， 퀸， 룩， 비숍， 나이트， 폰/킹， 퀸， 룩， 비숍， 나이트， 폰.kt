@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 12
-private const val OBS = 17
+private const val IBS = 20
+private const val OBS = 18
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
