@@ -35,14 +35,6 @@ private fun i(): Int {
   return s * v
 }
 
-private fun op(): Byte {
-  var c: Byte
-  while (r().also { c = it } <= 32) {
-  }
-  r()
-  return c
-}
-
 private const val WS = 10
 private val WB = ByteArray(WS + 1)
 private fun w(
@@ -64,23 +56,49 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-private const val MAX = 1000
 fun main() {
-  val a = BooleanArray(MAX + 1)
-  var len = 0
-  var min = MAX
-  var max = 1
-  repeat(i()) {
-    val v = i()
-    if (!a[v]) {
-      len++
-      a[v] = true
-    }
-    if (v < min) min = v
-    if (v > max) max = v
+
+  val end = i()
+  val a = IntArray(end)
+  repeat(end) {
+    a[it] = i()
   }
 
-  w(len, true)
-  for (i in min..max) if (a[i]) w(i, false)
+  val tmp = IntArray(end)
+  val best = IntArray(end)
+  var bestLen = 0
+  fun dfs(
+    pos: Int,
+    stt: Int,
+  ) {
+    val remain = end - stt
+    if (pos + remain <= bestLen) return
+
+    if (pos > bestLen) {
+      bestLen = pos
+      var k = 0
+      while (k < pos) {
+        best[k] = tmp[k]
+        k++
+      }
+    }
+
+    repeat(remain) {
+      val i = stt + it
+      tmp[pos] = a[i]
+      val tv = tmp[pos]
+      if (pos > 0 && tv <= tmp[pos - 1]) return@repeat
+      dfs(pos + 1, i + 1)
+    }
+  }
+
+  dfs(0, 0)
+  w(bestLen, true)
+  repeat(bestLen) {
+    w(best[it], false)
+  }
+
   O.flush()
 }
+
+// println("-------------- pos=$pos, remain=$remain bestLen=$bestLen")
