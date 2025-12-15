@@ -1,4 +1,4 @@
-package 백준.Gold.no14402
+package 백준.Gold.no14002
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
@@ -57,48 +57,42 @@ private fun w(
 }
 
 fun main() {
-
   val end = i()
   val a = IntArray(end)
+  val order = IntArray(end)
+  var maxOrder = 0
+
+
+  fun getOrder(
+    v: Int,
+    end: Int,
+  ): Int {
+    var max = 0
+    for (i in 0 until end) {
+      val o = order[i]
+      if (v > a[i] && o > max) max = o
+    }
+    return max + 1
+  }
+
   repeat(end) {
-    a[it] = i()
+    val v = i()
+    a[it] = v
+    val o = getOrder(v, it)
+    order[it] = o
+    if (o > maxOrder) maxOrder = o
   }
 
-  val tmp = IntArray(end)
-  val best = IntArray(end)
-  var bestLen = 0
-  fun dfs(
-    pos: Int,
-    stt: Int,
-  ) {
-    val remain = end - stt
-    if (pos + remain <= bestLen) return
+  w(maxOrder, true)
 
-    if (pos > bestLen) {
-      bestLen = pos
-      var k = 0
-      while (k < pos) {
-        best[k] = tmp[k]
-        k++
-      }
-    }
-
-    repeat(remain) {
-      val i = stt + it
-      tmp[pos] = a[i]
-      val tv = tmp[pos]
-      if (pos > 0 && tv <= tmp[pos - 1]) return@repeat
-      dfs(pos + 1, i + 1)
-    }
+  val lis = IntArray(maxOrder)
+  for (i in end - 1 downTo 0) {
+    if (order[i] != maxOrder) continue
+    lis[maxOrder - 1] = a[i]
+    maxOrder--
+    if (maxOrder == 0) break
   }
-
-  dfs(0, 0)
-  w(bestLen, true)
-  repeat(bestLen) {
-    w(best[it], false)
-  }
+  for (v in lis) w(v, false)
 
   O.flush()
 }
-
-// println("-------------- pos=$pos, remain=$remain bestLen=$bestLen")
