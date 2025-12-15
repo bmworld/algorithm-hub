@@ -44,15 +44,17 @@ private fun op(): Byte {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1).also { it[WS] = (' ').code.toByte() }
+private val WB = ByteArray(WS + 1)
 private fun w(
   num: Int,
+  nl: Boolean,
 ) {
   var v = if (num >= 0) num
   else {
     O.write(45)
     -num
   }
+  WB[WS] = (if (nl) '\n' else ' ').code.toByte()
   var pos = WS - 1
   do {
     WB[pos--] = (v % 10 + 48).toByte()
@@ -78,8 +80,7 @@ fun main() {
     if (v > max) max = v
   }
 
-  w(len)
-  O.write('\n'.code)
-  for (i in min..max) if (a[i]) w(i)
+  w(len, true)
+  for (i in min..max) if (a[i]) w(i, false)
   O.flush()
 }
