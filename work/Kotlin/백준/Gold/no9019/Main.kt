@@ -35,11 +35,12 @@ private fun i(): Int {
   return s * v
 }
 
-private const val D = 68
-private const val S = 83
-private const val L = 76
-private const val R = 82
-private val ops = intArrayOf(D, S, L, R)
+private const val CAP_D = 86.toByte()
+private const val D = 68.toByte()
+private const val S = 83.toByte()
+private const val L = 76.toByte()
+private const val R = 82.toByte()
+private val ops = byteArrayOf(D, S, L, R, CAP_D)
 private const val CAP = 10_000
 private const val SEP = CAP
 fun main() {
@@ -53,13 +54,11 @@ fun main() {
     var qt = 0
     cnts[from] = 0
     q[qt++] = from
-
-
     bfs@ while (qh < qt) {
       val t = q[qh++]
       val v = t % SEP
       val c = t / SEP
-
+      if (v == to) break@bfs
       for (i in 0..3) {
         val nv = fwd(v, ops[i])
         val nc = c + 1
@@ -74,14 +73,16 @@ fun main() {
     var toCnt = cnts[to]
     var traced = to
     val tracedOps = ByteArray(toCnt)
+
     repeat(toCnt) {
       toCnt--
-      for (i in 0..3) {
+      for (i in 0..4) {
         val op = ops[i]
         val v = bwd(traced, op)
         val c = cnts[v]
+        if (c == CAP) continue
         if (c == toCnt) {
-          tracedOps[toCnt] = op.toByte()
+          tracedOps[toCnt] = if (op == CAP_D) D else op
           traced = v
           break
         }
@@ -95,7 +96,7 @@ fun main() {
 
 private fun fwd(
   v: Int,
-  op: Int,
+  op: Byte,
 ): Int {
   return when (op) {
     D -> v shl 1
@@ -106,23 +107,39 @@ private fun fwd(
 
     R -> (v % 10) * 1000 + v / 10
 
-    else -> v
+    else -> throw Exception()
   } % CAP
 }
 
 private fun bwd(
-  v: Int,
-  op: Int,
+  x: Int,
+  op: Byte,
 ): Int {
   return when (op) {
-    D -> v shr 1
+    CAP_D -> (x + CAP) shr 1
 
-    S -> v + 1 + CAP
+    D -> x shr 1
 
-    L -> (v % 10) * 1000 + v / 10
+    S -> x + 1
 
-    R -> v * 10 + v / 1000
+    L -> (x % 10) * 1000 + x / 10
 
-    else -> v
+    R -> x * 10 + x / 1000
+
+    else -> throw Exception()
   } % CAP
 }
+
+//     println("---- $from -> $to")
+//         println(">>> nv = $nv ($nc) / v=$v ($c) / op=${ops[i]}")
+//         println("<<< v = ${v}($c)")
+//         println(
+//            "----------> $traced (${toCnt} / op=${
+//              when (revOps[i]) {
+//                D -> "D"
+//                S -> "S"
+//                L -> "L"
+//                else -> "R"
+//              }
+//            })"
+//          )
