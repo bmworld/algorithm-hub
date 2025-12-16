@@ -42,7 +42,6 @@ private const val L = 76.toByte()
 private const val R = 82.toByte()
 private val ops = byteArrayOf(D, S, L, R)
 private const val CAP = 10_000
-private const val SEP = CAP
 fun main() {
   val q = IntArray(CAP)
   repeat(i()) {
