@@ -35,59 +35,53 @@ private fun i(): Int {
   return s * v
 }
 
-private const val CAP_D = 86.toByte()
+private const val EMPTY = 0.toByte()
 private const val D = 68.toByte()
 private const val S = 83.toByte()
 private const val L = 76.toByte()
 private const val R = 82.toByte()
-private val ops = byteArrayOf(D, S, L, R, CAP_D)
+private val ops = byteArrayOf(D, S, L, R)
 private const val CAP = 10_000
 private const val SEP = CAP
 fun main() {
   val q = IntArray(CAP)
   repeat(i()) {
-    val cnts = IntArray(CAP) { CAP }
+    val usedOps = ByteArray(CAP) { EMPTY }
+    val froms = IntArray(CAP)
     val from = i()
     val to = i()
     var qh = 0
     var qt = 0
-    cnts[from] = 0
+    usedOps[from] = 0
     q[qt++] = from
     bfs@ while (qh < qt) {
-      val t = q[qh++]
-      val v = t % SEP
-      val c = t / SEP
+      val v = q[qh++]
       for (i in 0..3) {
-        val nv = fwd(v, ops[i])
-        val nc = c + 1
-        if (nc < cnts[nv]) {
-          cnts[nv] = nc
-          if (nv == to) break@bfs
-          q[qt++] = nc * SEP + nv
-        }
-      }
-    }
-
-    var toCnt = cnts[to]
-    if (toCnt == CAP) return@repeat
-    var traced = to
-    val tracedOps = ByteArray(toCnt)
-
-    repeat(toCnt) {
-      toCnt--
-      for (i in 0..4) {
         val op = ops[i]
-        val isOdd = traced % 2 != 0
-        if (isOdd && (op == D || op == CAP_D)) continue
-        val v = bwd(traced, op)
-        val c = cnts[v]
-        if (c == toCnt) {
-          tracedOps[toCnt] = if (op == CAP_D) D else op
-          traced = v
-          break
+        val nv = fwd(v, op)
+        if (usedOps[nv] == EMPTY) {
+          usedOps[nv] = op
+          froms[nv] = v
+          if (nv == to) break@bfs
+          q[qt++] = nv
         }
       }
     }
+
+    var v = to
+    var cnt = 0
+    while (v != from) {
+      cnt++
+      v = froms[v]
+    }
+    val tracedOps = ByteArray(cnt)
+
+    v = to
+    while (cnt > 0) {
+      tracedOps[--cnt] = usedOps[v]
+      v = froms[v]
+    }
+
     O.write(tracedOps)
     O.write('\n'.code)
   }
@@ -110,26 +104,3 @@ private fun fwd(
     else -> throw Exception()
   } % CAP
 }
-
-private fun bwd(
-  x: Int,
-  op: Byte,
-): Int {
-  return when (op) {
-    CAP_D -> (x + CAP) shr 1
-
-    D -> x shr 1
-
-    S -> x + 1
-
-    L -> (x % 10) * 1000 + x / 10
-
-    R -> x * 10 + x / 1000
-
-    else -> throw Exception()
-  } % CAP
-}
-
-// 핵심 엣지케이스:
-// 1
-// 3222 147
