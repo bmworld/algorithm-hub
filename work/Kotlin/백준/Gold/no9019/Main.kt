@@ -3,8 +3,8 @@ package 백준.Gold.no9019
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 10_000
-private const val OBS = 3_000
+private const val IBS = 20_000
+private const val OBS = 6_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -57,7 +57,6 @@ fun main() {
       val t = q[qh++]
       val v = t % SEP
       val c = t / SEP
-      if (v == to) break@bfs
       for (i in 0..3) {
         val nv = fwd(v, ops[i])
         val nc = c + 1
@@ -70,6 +69,7 @@ fun main() {
     }
 
     var toCnt = cnts[to]
+    if (toCnt == CAP) return@repeat
     var traced = to
     val tracedOps = ByteArray(toCnt)
 
@@ -77,9 +77,10 @@ fun main() {
       toCnt--
       for (i in 0..4) {
         val op = ops[i]
+        val isOdd = traced % 2 != 0
+        if (isOdd && (op == D || op == CAP_D)) continue
         val v = bwd(traced, op)
         val c = cnts[v]
-        if (c == CAP) continue
         if (c == toCnt) {
           tracedOps[toCnt] = if (op == CAP_D) D else op
           traced = v
@@ -129,16 +130,6 @@ private fun bwd(
   } % CAP
 }
 
-//     println("---- $from -> $to")
-//         println(">>> nv = $nv ($nc) / v=$v ($c) / op=${ops[i]}")
-//         println("<<< v = ${v}($c)")
-//         println(
-//            "----------> $traced (${toCnt} / op=${
-//              when (revOps[i]) {
-//                D -> "D"
-//                S -> "S"
-//                L -> "L"
-//                else -> "R"
-//              }
-//            })"
-//          )
+// 핵심 엣지케이스:
+// 1
+// 3222 147
