@@ -45,9 +45,8 @@ private const val CAP = 10_000
 private const val SEP = CAP
 fun main() {
   val q = IntArray(CAP)
-  val cnts = IntArray(CAP) { CAP }
-
   repeat(i()) {
+    val cnts = IntArray(CAP) { CAP }
     val from = i()
     val to = i()
     var qh = 0
