@@ -3,8 +3,8 @@ package 백준.Bronze.no3733
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 6_000
-private const val OBS = 1_000
+private const val IBS = 10_000
+private const val OBS = 2_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -24,14 +24,15 @@ private fun r(): Byte {
 private val NUM = 48..57
 private fun i(): Int {
   var v = 0
+  var s = 1
   var c: Byte
-  while (r().also { c = it } in NUM || c == EOF.toByte()) {
+  while (r().also { c = it } in NUM || c == 45.toByte()) {
     when (c) {
       in NUM -> v = v * 10 + c - 48
-      else -> return EOF
+      else -> s = -1
     }
   }
-  return v
+  return s * v
 }
 
 private const val WS = 10
@@ -57,7 +58,7 @@ fun main() {
   while (true) {
     val n = i()
     val s = i()
-    if (n == EOF || s == EOF) break
+    if (n == 0 || s == 0) break
     w(s / (n + 1))
   }
   O.flush()
