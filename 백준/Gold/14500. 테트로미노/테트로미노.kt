@@ -52,19 +52,15 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private val pos2 = listOf(
-  Pair(1, 0), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(1, 0), Pair(1, 0), Pair(1, 0), Pair(1, 0), Pair(0, 1), Pair(1, 0), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(1, 0), Pair(1, 0)
+private val tetros = listOf(
+  listOf(
+    Pair(1, 0), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(1, 0), Pair(1, 0), Pair(1, 0), Pair(1, 0), Pair(0, 1), Pair(1, 0), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(1, 0), Pair(1, 0)
+  ), listOf(
+    Pair(2, 0), Pair(0, 2), Pair(1, 0), Pair(1, 0), Pair(1, 1), Pair(1, -1), Pair(1, 1), Pair(2, 0), Pair(2, 0), Pair(0, 2), Pair(1, 1), Pair(0, 2), Pair(0, 2), Pair(0, 2), Pair(0, 2), Pair(1, 1), Pair(-1, 1), Pair(1, 1), Pair(1, -1)
+  ), listOf(
+    Pair(3, 0), Pair(0, 3), Pair(1, 1), Pair(2, 0), Pair(2, 1), Pair(2, 0), Pair(2, 0), Pair(2, -1), Pair(2, 1), Pair(1, 0), Pair(1, 2), Pair(-1, 1), Pair(1, 1), Pair(-1, 2), Pair(1, 2), Pair(1, 2), Pair(-1, 2), Pair(2, 1), Pair(2, -1)
+  )
 )
-private val pos3 = listOf(
-  Pair(2, 0), Pair(0, 2), Pair(1, 0), Pair(1, 0), Pair(1, 1), Pair(1, -1), Pair(1, 1), Pair(2, 0), Pair(2, 0), Pair(0, 2), Pair(1, 1), Pair(0, 2), Pair(0, 2), Pair(0, 2), Pair(0, 2), Pair(1, 1), Pair(-1, 1), Pair(1, 1), Pair(1, -1)
-)
-private val pos4 = listOf(
-  Pair(3, 0), Pair(0, 3), Pair(1, 1), Pair(2, 0), Pair(2, 1), Pair(2, 0), Pair(2, 0), Pair(2, -1), Pair(2, 1), Pair(1, 0), Pair(1, 2), Pair(-1, 1), Pair(1, 1), Pair(-1, 2), Pair(1, 2), Pair(1, 2), Pair(-1, 2), Pair(2, 1), Pair(2, -1)
-)
-
-private val posArr = listOf(pos2, pos3, pos4)
-
-private const val OUT_OF_RANGE = -1
 
 fun main() {
   val rs = i()
@@ -76,28 +72,19 @@ fun main() {
     }
   }
 
-  fun getV(
-    r: Int,
-    c: Int,
-    pos: Pair<Int, Int>,
-  ): Int {
-    val nr = r + pos.first
-    val nc = c + pos.second
-    val inRange = nr in 0 until rs && nc in 0 until cs
-    return if (inRange) a[nr][nc] else OUT_OF_RANGE
-  }
-
   var max = 0
   repeat(rs) { r ->
     repeat(cs) { c ->
-      val v1 = a[r][c]
-      repeat(pos2.size) { i ->
-        var sum = v1
-        pos@ for (j in 0..2) {
-          val pos = posArr[j]
-          val v = getV(r, c, pos[i])
-          if (v == OUT_OF_RANGE) break@pos
-          sum += v
+      val v = a[r][c]
+      repeat(19) { i ->
+        var sum = v
+        for (j in 0..2) {
+          val (tr, tc) = tetros[j][i]
+          val nr = r + tr
+          val nc = c + tc
+          val inRange = nr in 0 until rs && nc in 0 until cs
+          if (!inRange) break
+          sum += a[nr][nc]
         }
         if (sum > max) max = sum
       }
