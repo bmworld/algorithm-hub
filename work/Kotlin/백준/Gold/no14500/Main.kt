@@ -3,7 +3,7 @@ package 백준.Gold.no14500
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 80_000
+private const val IBS = 75_000
 private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -54,6 +54,8 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
+private const val MAX_NUM = 1_000
+
 fun main() {
   val rs = i()
   val cs = i()
@@ -65,62 +67,68 @@ fun main() {
   }
 
   var max = 0
-  fun updateMax(sum: Int) {
-    if (sum > max) max = sum
-  }
 
   // 1x4
   repeat(rs) { r ->
     repeat(cs - 3) { c ->
-      updateMax(a[r][c] + a[r][c + 1] + a[r][c + 2] + a[r][c + 3])
+      val sum = a[r][c] + a[r][c + 1] + a[r][c + 2] + a[r][c + 3]
+      if (sum > max) max = sum
     }
   }
 
   // 4x1
   repeat(rs - 3) { r ->
     repeat(cs) { c ->
-      updateMax(a[r][c] + a[r + 1][c] + a[r + 2][c] + a[r + 3][c])
+      val sum = a[r][c] + a[r + 1][c] + a[r + 2][c] + a[r + 3][c]
+      if (sum > max) max = sum
     }
   }
 
   // 2x2
   repeat(rs - 1) { r ->
     repeat(cs - 1) { c ->
-      updateMax(a[r][c] + a[r][c + 1] + a[r + 1][c] + a[r + 1][c + 1])
+      val sum = a[r][c] + a[r][c + 1] + a[r + 1][c] + a[r + 1][c + 1]
+      if (sum > max) max = sum
     }
   }
 
   // 2x3
   repeat(rs - 1) { r ->
     repeat(cs - 2) { c ->
+      val six = a[r][c] + a[r][c + 1] + a[r][c + 2] + a[r + 1][c] + a[r + 1][c + 1] + a[r + 1][c + 2]
+      var two = MAX_NUM * 2
       repeat(2) { tr ->
-        updateMax(a[r + tr][c] + a[r + tr][c + 1] + a[r + tr][c + 2] + a[r + 1 - tr][c + 1])
-      }
-      repeat(2) { lr ->
-        repeat(2) { lc ->
-          updateMax(a[r + lr][c] + a[r + lr][c + 1] + a[r + lr][c + 2] + a[r + 1 - lr][c + 2 * lc])
+        repeat(3) { tc ->
+          val sum = a[r + tr][c + tc] + a[r + tr][c + (tc + 1) % 3]
+          if (sum < two) two = sum
         }
       }
-      repeat(2) { sr ->
-        updateMax(a[r + sr][c] + a[r][c + 1] + a[r + 1][c + 1] + a[r + 1 - sr][c + 2])
+      repeat(2) { tr ->
+        val sum = a[r + tr][c] + a[r + 1 - tr][c + 2]
+        if (sum < two) two = sum
       }
+      val sum = six - two
+      if (sum > max) max = sum
     }
   }
 
   // 3x2
   repeat(rs - 2) { r ->
     repeat(cs - 1) { c ->
-      repeat(2) { tc ->
-        updateMax(a[r][c + tc] + a[r + 1][c + tc] + a[r + 2][c + tc] + a[r + 1][c + 1 - tc])
-      }
-      repeat(2) { lr ->
-        repeat(2) { lc ->
-          updateMax(a[r][c + lc] + a[r + 1][c + lc] + a[r + 2][c + lc] + a[r + 2 * lr][c + 1 - lc])
+      val six = a[r][c] + a[r + 1][c] + a[r + 2][c] + a[r][c + 1] + a[r + 1][c + 1] + a[r + 2][c + 1]
+      var two = MAX_NUM * 2
+      repeat(3) { tr ->
+        repeat(2) { tc ->
+          val sum = a[r + tr][c + tc] + a[r + (tr + 1) % 3][c + tc]
+          if (sum < two) two = sum
         }
       }
-      repeat(2) { sc ->
-        updateMax(a[r][c + sc] + a[r + 1][c] + a[r + 1][c + 1] + a[r + 2][c + 1 - sc])
+      repeat(2) { tc ->
+        val sum = a[r][c + tc] + a[r + 2][c + 1 - tc]
+        if (sum < two) two = sum
       }
+      val sum = six - two
+      if (sum > max) max = sum
     }
   }
 
