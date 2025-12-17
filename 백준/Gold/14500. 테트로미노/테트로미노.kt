@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 70_000
+private const val IBS = 80_000
 private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -52,16 +52,6 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private val tetros = listOf(
-  listOf(
-    Pair(1, 0), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(1, 0), Pair(1, 0), Pair(1, 0), Pair(1, 0), Pair(0, 1), Pair(1, 0), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(0, 1), Pair(1, 0), Pair(1, 0)
-  ), listOf(
-    Pair(2, 0), Pair(0, 2), Pair(1, 0), Pair(1, 0), Pair(1, 1), Pair(1, -1), Pair(1, 1), Pair(2, 0), Pair(2, 0), Pair(0, 2), Pair(1, 1), Pair(0, 2), Pair(0, 2), Pair(0, 2), Pair(0, 2), Pair(1, 1), Pair(-1, 1), Pair(1, 1), Pair(1, -1)
-  ), listOf(
-    Pair(3, 0), Pair(0, 3), Pair(1, 1), Pair(2, 0), Pair(2, 1), Pair(2, 0), Pair(2, 0), Pair(2, -1), Pair(2, 1), Pair(1, 0), Pair(1, 2), Pair(-1, 1), Pair(1, 1), Pair(-1, 2), Pair(1, 2), Pair(1, 2), Pair(-1, 2), Pair(2, 1), Pair(2, -1)
-  )
-)
-
 fun main() {
   val rs = i()
   val cs = i()
@@ -73,20 +63,61 @@ fun main() {
   }
 
   var max = 0
+  fun updateMax(sum: Int) {
+    if (sum > max) max = sum
+  }
+
+  // 1x4
   repeat(rs) { r ->
+    repeat(cs - 3) { c ->
+      updateMax(a[r][c] + a[r][c + 1] + a[r][c + 2] + a[r][c + 3])
+    }
+  }
+
+  // 4x1
+  repeat(rs - 3) { r ->
     repeat(cs) { c ->
-      val v = a[r][c]
-      repeat(19) { i ->
-        var sum = v
-        for (j in 0..2) {
-          val (tr, tc) = tetros[j][i]
-          val nr = r + tr
-          val nc = c + tc
-          val inRange = nr in 0 until rs && nc in 0 until cs
-          if (!inRange) break
-          sum += a[nr][nc]
+      updateMax(a[r][c] + a[r + 1][c] + a[r + 2][c] + a[r + 3][c])
+    }
+  }
+
+  // 2x2
+  repeat(rs - 1) { r ->
+    repeat(cs - 1) { c ->
+      updateMax(a[r][c] + a[r][c + 1] + a[r + 1][c] + a[r + 1][c + 1])
+    }
+  }
+
+  // 2x3
+  repeat(rs - 1) { r ->
+    repeat(cs - 2) { c ->
+      repeat(2) { tr ->
+        updateMax(a[r + tr][c] + a[r + tr][c + 1] + a[r + tr][c + 2] + a[r + 1 - tr][c + 1])
+      }
+      repeat(2) { lr ->
+        repeat(2) { lc ->
+          updateMax(a[r + lr][c] + a[r + lr][c + 1] + a[r + lr][c + 2] + a[r + 1 - lr][c + 2 * lc])
         }
-        if (sum > max) max = sum
+      }
+      repeat(2) { sr ->
+        updateMax(a[r + sr][c] + a[r][c + 1] + a[r + 1][c + 1] + a[r + 1 - sr][c + 2])
+      }
+    }
+  }
+
+  // 3x2
+  repeat(rs - 2) { r ->
+    repeat(cs - 1) { c ->
+      repeat(2) { tc ->
+        updateMax(a[r][c + tc] + a[r + 1][c + tc] + a[r + 2][c + tc] + a[r + 1][c + 1 - tc])
+      }
+      repeat(2) { lr ->
+        repeat(2) { lc ->
+          updateMax(a[r][c + lc] + a[r + 1][c + lc] + a[r + 2][c + lc] + a[r + 2 * lr][c + 1 - lc])
+        }
+      }
+      repeat(2) { sc ->
+        updateMax(a[r][c + sc] + a[r + 1][c] + a[r + 1][c + 1] + a[r + 2][c + 1 - sc])
       }
     }
   }
