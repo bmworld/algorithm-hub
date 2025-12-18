@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 7_000
-private const val OBS = 500
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -61,27 +61,17 @@ private const val B = 2
 fun main() {
   val n = i()
   val a = IntArray(3)
-  var min = 0
   repeat(n) {
-    val r = i()
-    val g = i()
-    val b = i()
-
     val accR = a[R]
     val accG = a[G]
     val accB = a[B]
-
-    val nr = r + if (accG < accB) accG else accB
-    val ng = g + if (accR < accB) accR else accB
-    val nb = b + if (accR < accG) accR else accG
-
-    a[R] = nr
-    a[G] = ng
-    a[B] = nb
-
-    min = if (nr <= ng && nr <= nb) nr else if (ng <= nr && ng <= nb) ng else nb
+    a[R] = i() + if (accG < accB) accG else accB
+    a[G] = i() + if (accR < accB) accR else accB
+    a[B] = i() + if (accR < accG) accR else accG
   }
-
-  w(min)
+  val nr = a[R]
+  val ng = a[G]
+  val nb = a[B]
+  w(if (nr <= ng && nr <= nb) nr else if (ng <= nr && ng <= nb) ng else nb)
   O.flush()
 }
