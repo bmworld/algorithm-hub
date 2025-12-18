@@ -60,7 +60,6 @@ fun main() {
   val n = i()
   val m = i()
   val a = IntArray(n)
-  val ch = BooleanArray(n)
   val dupCh = IntArray(m)
   val out = IntArray(m)
 
