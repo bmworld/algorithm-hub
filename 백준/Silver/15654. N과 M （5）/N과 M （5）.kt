@@ -34,11 +34,12 @@ private fun i(): Int {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1).also { it[WS] = ' '.code.toByte() }
+private val WB = ByteArray(WS + 1)
 private fun w(
   num: Int,
+  nl: Boolean,
 ) {
-
+  WB[WS] = (if (nl) '\n' else ' ').code.toByte()
   var v = if (num >= 0) num
   else {
     O.write(45)
@@ -79,8 +80,7 @@ fun main() {
     dep: Int,
   ) {
     if (dep == m) {
-      for (i in 0 until m) w(used[i])
-      O.write('\n'.code)
+      for (i in 0 until m) w(used[i], i + 1 >= m)
       return
     }
 
