@@ -82,12 +82,14 @@ fun main() {
     dep: Int,
   ) {
     if (dep == m) {
-      for (i in 0 until m) w(used[i], i + 1 >= m)
+      repeat(m) { i ->
+        w(used[i], i + 1 >= m)
+      }
       return
     }
 
-    for (i in 0 until n) {
-      if (ch[i]) continue
+    repeat(n) { i ->
+      if (ch[i]) return@repeat
       ch[i] = true
       used[dep] = a[i]
       dfs(dep + 1)
