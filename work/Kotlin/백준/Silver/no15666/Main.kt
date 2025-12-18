@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 64
-private const val OBS = 10_000
+private const val OBS = 11_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -81,6 +81,7 @@ fun main() {
 
   fun dfs(
     dep: Int,
+    stt: Int,
   ) {
     if (dep == m) {
       repeat(m) { dep ->
@@ -90,17 +91,17 @@ fun main() {
       return
     }
 
-    for (i in 0 until n) {
+    for (i in stt until n) {
       val v = a[i]
-      if (dupCh[dep] == v || (dep > 0 && dupCh[dep - 1] > v)) continue
+      if (dupCh[dep] == v) continue
       dupCh[dep] = v
       out[dep] = v
-      dfs(dep + 1)
+      dfs(dep + 1, i)
     }
 
     dupCh[dep] = 0
   }
 
-  dfs(0)
+  dfs(0, 0)
   O.flush()
 }
