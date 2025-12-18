@@ -88,9 +88,9 @@ fun main() {
       return
     }
 
-    for (i in 0 until n) {
+    repeat(n) { i ->
       val v = a[i]
-      if (dupCh[dep] == v || (dep > 0 && dupCh[dep - 1] > v)) continue
+      if (dupCh[dep] == v || (dep > 0 && dupCh[dep - 1] > v)) return@repeat
       dupCh[dep] = v
       out[dep] = v
       dfs(dep + 1)
