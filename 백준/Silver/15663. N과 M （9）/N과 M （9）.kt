@@ -54,15 +54,12 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-private const val MAX_NUM = 10_000
-private const val NOT_USED = -1
-
 fun main() {
   val n = i()
   val m = i()
   val a = IntArray(n)
   val ch = BooleanArray(n)
-  val dupCh = Array(m) { IntArray(MAX_NUM + 1) { NOT_USED } }
+  val dupCh = IntArray(m)
   val out = IntArray(m)
 
   repeat(n) {
@@ -94,18 +91,15 @@ fun main() {
     repeat(n) { i ->
       if (ch[i]) return@repeat
       val v = a[i]
-      if (dupCh[dep][v] != NOT_USED && dupCh[dep][v] != i) return@repeat
+      if (dupCh[dep] == v) return@repeat
       ch[i] = true
-      dupCh[dep][v] = i
+      dupCh[dep] = v
       out[dep] = v
       dfs(dep + 1)
       ch[i] = false
     }
 
-    repeat(n) { i ->
-      dupCh[dep][a[i]] = NOT_USED
-    }
-
+    dupCh[dep] = 0
   }
 
   dfs(0)
