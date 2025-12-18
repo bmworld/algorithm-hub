@@ -60,7 +60,7 @@ fun main() {
   val n = i()
   val m = i()
   val a = IntArray(n)
-  val dupCh = IntArray(m)
+  val ch = IntArray(m)
   val out = IntArray(m)
 
   repeat(n) {
@@ -71,9 +71,7 @@ fun main() {
         a[i + 1] = a[i]
         j = i
         continue
-      }
-      j = i + 1
-      break
+      } else break
     }
     a[j] = v
   }
@@ -90,15 +88,16 @@ fun main() {
       return
     }
 
-    for (i in stt until n) {
+    repeat(n - stt) {
+      val i = stt + it
       val v = a[i]
-      if (dupCh[dep] == v) continue
-      dupCh[dep] = v
+      if (ch[dep] == v) return@repeat
+      ch[dep] = v
       out[dep] = v
       dfs(dep + 1, i)
     }
 
-    dupCh[dep] = 0
+    ch[dep] = 0
   }
 
   dfs(0, 0)
