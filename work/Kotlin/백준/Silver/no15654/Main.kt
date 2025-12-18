@@ -62,20 +62,26 @@ fun main() {
   val ch = BooleanArray(n)
   val used = IntArray(m)
 
+  //  repeat(n) {
+  //    val v = i()
+  //    var j = it
+  //    for (i in it - 1 downTo 0) {
+  //      if (a[i] > v) {
+  //        a[i + 1] = a[i]
+  //        j = i
+  //        continue
+  //      }
+  //      j = i + 1
+  //      break
+  //    }
+  //    a[j] = v
+  //  }
+  //
+  
   repeat(n) {
-    val v = i()
-    var j = it
-    for (i in it - 1 downTo 0) {
-      if (a[i] > v) {
-        a[i + 1] = a[i]
-        j = i
-        continue
-      }
-      j = i + 1
-      break
-    }
-    a[j] = v
+    a[it] = i()
   }
+  a.sort()
 
   fun dfs(
     dep: Int,
