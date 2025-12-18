@@ -3,8 +3,8 @@ package 백준.Silver.no1149
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 60_000
-private const val OBS = 100
+private const val IBS = 7_000
+private const val OBS = 500
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -78,8 +78,8 @@ fun main() {
     a[R] = nr
     a[G] = ng
     a[B] = nb
-    
-    min = if (nr < ng && nr < nb) nr else if (ng < nr && ng < nb) ng else nb
+
+    min = if (nr <= ng && nr <= nb) nr else if (ng <= nr && ng <= nb) ng else nb
   }
 
   w(min)
