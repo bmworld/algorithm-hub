@@ -2,7 +2,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 64
-private const val OBS = 23_000
+private const val OBS = 21_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -80,12 +80,14 @@ fun main() {
     dep: Int,
   ) {
     if (dep == m) {
-      for (i in 0 until m) w(used[i], i + 1 >= m)
+      repeat(m) { i ->
+        w(used[i], i + 1 >= m)
+      }
       return
     }
 
-    for (i in 0 until n) {
-      if (ch[i]) continue
+    repeat(n) { i ->
+      if (ch[i]) return@repeat
       ch[i] = true
       used[dep] = a[i]
       dfs(dep + 1)
