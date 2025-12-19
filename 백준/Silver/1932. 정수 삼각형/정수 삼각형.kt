@@ -56,18 +56,20 @@ private fun w(
 private const val SEP = 10_000
 fun main() {
   val n = i()
-  val a = Array(n) { mutableListOf<Long>() }
+  val a = Array(n) { mutableListOf<Int>() }
+  val acc = Array(n) { mutableListOf<Int>() }
 
 
   repeat(n) { i ->
-    var v = 0L
+    var v = 0
     var c: Byte
     while (r().also { c = it } in NUM || c == 32.toByte() || c == 10.toByte()) {
       when (c) {
         in NUM -> v = v * 10 + c - 48
 
         else -> {
-          a[i] += v * SEP + v
+          a[i] += v
+          acc[i] += v
           v = 0
           if (c == 10.toByte()) return@repeat
         }
@@ -79,22 +81,19 @@ fun main() {
   for (i in 0 until n) {
     val isGround = i + 1 == n
     for (j in 0 until a[i].size) {
-      val p = a[i][j]
-      val pAcc = (p / SEP).toInt()
+      val pAcc = acc[i][j]
       if (isGround) {
         if (pAcc > max) max = pAcc
       } else {
-        val l = a[i + 1][j]
-        val lAcc = l / SEP
-        val lv = l % SEP
+        val lv = a[i + 1][j]
+        val lAcc = acc[i + 1][j]
         val nlAcc = pAcc + lv
-        if (nlAcc > lAcc) a[i + 1][j] = nlAcc * SEP + lv
+        if (nlAcc > lAcc) acc[i + 1][j] = nlAcc
 
-        val r = a[i + 1][j + 1]
-        val rAcc = r / SEP
-        val rv = r % SEP
+        val rv = a[i + 1][j + 1]
+        val rAcc = acc[i + 1][j + 1]
         val nrAcc = pAcc + rv
-        if (nrAcc > rAcc) a[i + 1][j + 1] = nrAcc * SEP + rv
+        if (nrAcc > rAcc) acc[i + 1][j + 1] = nrAcc
       }
     }
   }
