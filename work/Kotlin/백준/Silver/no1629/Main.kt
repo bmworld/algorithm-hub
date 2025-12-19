@@ -33,18 +33,25 @@ private fun i(): Int {
 }
 
 fun main() {
-  val a = i()
+  val a = i().toLong()
   val b = i()
   val c = i()
 
-  val cycle = IntArray(100_000)
-  cycle[0] = a % c
-  var ci = 0
+  fun pow(
+    base: Long,
+    exp: Int,
+    mod: Int,
+  ): Long {
+    return when (exp) {
+      0 -> 1L
+      1 -> base
 
-  while (ci <= b) {
-    val nv = (cycle[ci++] * a) % c
-    cycle[ci] = nv
-    if (nv == cycle[0]) break
+      else -> {
+        val nb = (base * base) % mod
+        val nc = exp / 2
+        pow(nb, nc, mod) * if (exp % 2 == 1) base else 1
+      }
+    } % mod
   }
-  print(cycle[b % ci])
+  print(pow(a, b, c))
 }
