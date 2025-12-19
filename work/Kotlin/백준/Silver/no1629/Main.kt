@@ -1,8 +1,11 @@
 package 백준.Silver.no1629
 
+import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 36
+private const val IBS = 32
+private const val OBS = 10
+private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private var Ii = 0
@@ -32,6 +35,26 @@ private fun i(): Int {
   return s * v
 }
 
+
+private const val WS = 10
+private val WB = ByteArray(WS)
+private fun w(
+  num: Int,
+) {
+  var v = if (num >= 0) num
+  else {
+    O.write(45)
+    -num
+  }
+  var pos = WS - 1
+  do {
+    WB[pos--] = (v % 10 + 48).toByte()
+    v /= 10
+  } while (v > 0)
+  pos++
+  O.write(WB, pos, WS - pos)
+}
+
 fun main() {
   val a = i().toLong()
   val b = i()
@@ -45,13 +68,9 @@ fun main() {
     return when (exp) {
       0 -> 1L
       1 -> base
-
-      else -> {
-        val nb = (base * base) % mod
-        val nc = exp / 2
-        pow(nb, nc, mod) * if (exp % 2 == 1) base else 1
-      }
+      else -> pow((base * base) % mod, exp / 2, mod) * if (exp % 2 == 1) base else 1
     } % mod
   }
-  print(pow(a, b, c))
+  w(pow(a, b, c).toInt())
+  O.flush()
 }
