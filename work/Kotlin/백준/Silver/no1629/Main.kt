@@ -37,9 +37,14 @@ fun main() {
   val b = i()
   val c = i()
 
-  var v = 1
-  repeat(b) {
-    v = (v * a) % c
+  val cycle = IntArray(100_000)
+  cycle[0] = a % c
+  var ci = 0
+
+  while (ci <= b) {
+    val nv = (cycle[ci++] * a) % c
+    cycle[ci] = nv
+    if (nv == cycle[0]) break
   }
-  print(v)
+  print(cycle[b % ci])
 }
