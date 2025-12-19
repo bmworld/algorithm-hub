@@ -3,8 +3,8 @@ package 백준.Bronze.no2748
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 8
-private const val OBS = 1_000
+private const val IBS = 2
+private const val OBS = 20
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -55,10 +55,11 @@ private fun w(
 }
 
 fun main() {
-  val n = i()
-  val fib = LongArray(n + 1)
-  if (n > 0) fib[1] = 1
-  for (i in 2..n) fib[i] = fib[i - 1] + fib[i - 2]
-  w(fib[n])
+  w(fib[i()])
   O.flush()
+}
+
+private val fib = LongArray(91).also {
+  it[1] = 1
+  for (i in 2..90) it[i] = it[i - 1] + it[i - 2]
 }
