@@ -55,7 +55,6 @@ private fun w(
 }
 
 private const val ROOT = 1
-private const val ORPHAN = 0
 
 fun main() {
   val n = i()
@@ -68,19 +67,17 @@ fun main() {
     val n2 = i()
     g[n1] += n2
     g[n2] += n1
-    if (a[n1] >= ROOT) a[n2] = n1
-    else if (a[n2] >= ROOT) a[n1] = n2
   }
 
   val ch = BooleanArray(n + 1)
   fun dfs(
-    parent: Int,
+    p: Int,
   ) {
-    ch[parent] = true
-    for (child in g[parent]) {
-      if (ch[child]) continue
-      if (a[child] == ORPHAN) a[child] = parent
-      dfs(child)
+    ch[p] = true
+    for (c in g[p]) {
+      if (ch[c]) continue
+      a[c] = p
+      dfs(c)
     }
   }
 
