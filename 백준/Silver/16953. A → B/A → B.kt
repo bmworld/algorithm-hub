@@ -52,40 +52,22 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-private const val SEP = 10_000_000_000u
-private const val MAX_NUM = 1_000_000_000u
 
-@OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
-  val fr = i().toULong()
-  val to = i().toULong()
+  val fr = i()
+  var to = i()
 
-  val q = ULongArray(100_000)
-  var qh = 0
-  var qt = 0
-  q[qt++] = 1u * SEP + fr
-
-  var min = ULong.MAX_VALUE
-  bfs@ while (qh < qt) {
-    val t = q[qh++]
-    val c = (t / SEP)
-    val v = t % SEP
-    for (op in 0..1) {
-      val nv = when (op) {
-        0 -> v * 10u + 1u
-        else -> v * 2u
-      }
-      if (nv > MAX_NUM) continue
-      val nc = c + 1u
-      if (nv == to) {
-        if (min > nc) min = nc
-        break@bfs
-      }
-
-      q[qt++] = nc * SEP + nv
+  var cnt = 1
+  while (fr < to) {
+    to /= when {
+      to % 10 == 1 -> 10
+      to % 2 == 0 -> 2
+      else -> break
     }
+    cnt++
   }
 
-  w(if (min == ULong.MAX_VALUE) -1 else min.toInt())
+
+  w(if (fr == to) cnt else -1)
   O.flush()
 }
