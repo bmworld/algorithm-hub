@@ -3,7 +3,7 @@ package 백준.Silver.no11725
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 60_000
+private const val IBS = 50_000
 private const val OBS = 20_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -70,18 +70,19 @@ fun main() {
   }
 
   val ch = BooleanArray(n + 1)
-  fun dfs(
-    p: Int,
-  ) {
+  val q = IntArray(n)
+  var qh = 0
+  var qt = 0
+  q[qt++] = ROOT
+  while (qh < qt) {
+    val p = q[qh++]
     ch[p] = true
     for (c in g[p]) {
       if (ch[c]) continue
       a[c] = p
-      dfs(c)
+      q[qt++] = c
     }
   }
-
-  dfs(ROOT)
 
   repeat(n - 1) {
     w(a[it + 2])
