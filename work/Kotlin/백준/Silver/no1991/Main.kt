@@ -1,8 +1,11 @@
 package 백준.Silver.no1991
 
+import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
 private const val IBS = 160
+private const val OBS = 84
+private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private var Ii = 0
@@ -42,11 +45,13 @@ private const val NODE_CNT = 26
 private const val A = 65
 private val ALPHABET = A until A + NODE_CNT
 private const val EMPTY = 46.toByte()
+private const val NL = 10.toByte()
 
 fun main() {
   val n = i()
   val l = IntArray(NODE_CNT)
   val r = IntArray(NODE_CNT)
+  val WB = ByteArray(3 * n + 2)
   repeat(n) {
     val root = s() - A
     val ln = s()
@@ -55,10 +60,11 @@ fun main() {
     if (rn != EMPTY) r[root] = rn - A
   }
 
+  var bi = 0
   fun preOrder(
     v: Int,
   ) {
-    print((v + A).toChar())
+    WB[bi++] = (v + A).toByte()
 
     val lv = l[v]
     if (lv > 0) preOrder(lv)
@@ -72,7 +78,7 @@ fun main() {
     val lv = l[v]
     if (lv > 0) inOrder(lv)
 
-    print((v + A).toChar())
+    WB[bi++] = (v + A).toByte()
 
     val rv = r[v]
     if (rv > 0) inOrder(rv)
@@ -85,14 +91,17 @@ fun main() {
     val rv = r[v]
     if (rv > 0) postOrder(rv)
 
-    print((v + A).toChar())
+    WB[bi++] = (v + A).toByte()
   }
 
   preOrder(0)
-  println()
+  WB[bi++] = NL
 
   inOrder(0)
-  println()
+  WB[bi++] = NL
 
   postOrder(0)
+  O.write(WB, 0, bi)
+
+  O.flush()
 }
