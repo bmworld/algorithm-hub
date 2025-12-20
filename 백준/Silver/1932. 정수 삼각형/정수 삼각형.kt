@@ -1,8 +1,8 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1_000
-private const val OBS = 100
+private const val IBS = 3_000
+private const val OBS = 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -55,7 +55,7 @@ private fun w(
 
 fun main() {
   val n = i()
-  val a = Array(n) { mutableListOf<Int>() }
+  val a = Array(n) { IntArray(it + 1) }
   var max = 0
   repeat(n) { i ->
     val len = i + 1
@@ -86,8 +86,7 @@ fun main() {
             if (rAcc > acc) acc = rAcc
           }
 
-          a[i] += acc
-
+          a[i][j] = acc
           if (acc > max) max = acc
           v = 0
           if (c == 10.toByte()) return@repeat
