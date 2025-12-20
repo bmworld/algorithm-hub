@@ -53,14 +53,13 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private const val SEP = 10_000
 fun main() {
   val n = i()
   val a = Array(n) { mutableListOf<Int>() }
-  val acc = Array(n) { mutableListOf<Int>() }
-
-
+  var max = 0
   repeat(n) { i ->
+    val len = i + 1
+    var cnt = 0
     var v = 0
     var c: Byte
     while (r().also { c = it } in NUM || c == 32.toByte() || c == 10.toByte()) {
@@ -68,8 +67,28 @@ fun main() {
         in NUM -> v = v * 10 + c - 48
 
         else -> {
-          a[i] += v
-          acc[i] += v
+          var acc = v
+          cnt++
+
+          val first = cnt == 1
+          val last = cnt == len
+
+          val j = cnt - 1
+          if (!first) {
+            val l = a[i - 1][j - 1]
+            val lAcc = l + v
+            if (lAcc > acc) acc = lAcc
+          }
+
+          if (!last) {
+            val r = a[i - 1][j]
+            val rAcc = r + v
+            if (rAcc > acc) acc = rAcc
+          }
+
+          a[i] += acc
+
+          if (acc > max) max = acc
           v = 0
           if (c == 10.toByte()) return@repeat
         }
@@ -77,26 +96,6 @@ fun main() {
     }
   }
 
-  var max = 0
-  for (i in 0 until n) {
-    val isGround = i + 1 == n
-    for (j in 0 until a[i].size) {
-      val pAcc = acc[i][j]
-      if (isGround) {
-        if (pAcc > max) max = pAcc
-      } else {
-        val lv = a[i + 1][j]
-        val lAcc = acc[i + 1][j]
-        val nlAcc = pAcc + lv
-        if (nlAcc > lAcc) acc[i + 1][j] = nlAcc
-
-        val rv = a[i + 1][j + 1]
-        val rAcc = acc[i + 1][j + 1]
-        val nrAcc = pAcc + rv
-        if (nrAcc > rAcc) acc[i + 1][j + 1] = nrAcc
-      }
-    }
-  }
   w(max)
   O.flush()
 }
