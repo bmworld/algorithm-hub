@@ -38,7 +38,7 @@ private fun i(): Int {
 private const val WS = 10
 private val WB = ByteArray(WS)
 private fun w(
-  num: Int,
+  num: Long,
 ) {
   var v = if (num >= 0) num
   else {
@@ -54,19 +54,19 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private const val INF = Int.MAX_VALUE
+private const val INF = Long.MAX_VALUE
 private const val SEP = 10_000
 
 fun main() {
   val n = i()
   val m = i()
 
-  val g = Array(n + 1) { mutableMapOf<Int, Int>() }
+  val g = Array(n + 1) { mutableMapOf<Int, Long>() }
   val cost = Array(n + 1) { INF }
   repeat(m) {
     val fr = i()
     val to = i()
-    val c = i()
+    val c = i().toLong()
     if ((g[fr][to] ?: INF) > c) g[fr][to] = c
   }
 
@@ -81,10 +81,10 @@ fun main() {
     if (cost[to] <= acc) continue
     for (etr in g[f.toInt()]) {
       val t = etr.key
-      val c = etr.value.toLong()
+      val c = etr.value
       val nAcc = acc + c
-      if (fr != f && cost[t] <= nAcc) continue
-      cost[t] = nAcc.toInt()
+      if (cost[t] <= nAcc) continue
+      cost[t] = nAcc
       q.add(nAcc * SEP + t)
     }
   }
