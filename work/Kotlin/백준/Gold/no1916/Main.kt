@@ -4,8 +4,8 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.util.*
 
-private const val IBS = 100_000
-private const val OBS = 1_000
+private const val IBS = 20_000
+private const val OBS = 3_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -38,7 +38,7 @@ private fun i(): Int {
 
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1).also { it[WS] = 10 }
+private val WB = ByteArray(WS)
 private fun w(
   num: Int,
 ) {
@@ -53,7 +53,7 @@ private fun w(
     v /= 10
   } while (v > 0)
   pos++
-  O.write(WB, pos, WS - pos + 1)
+  O.write(WB, pos, WS - pos)
 }
 
 private const val INF = Int.MAX_VALUE
@@ -65,7 +65,6 @@ fun main() {
 
   val g = Array(n + 1) { mutableMapOf<Int, Int>() }
   val cost = Array(n + 1) { INF }
-
   repeat(m) {
     val fr = i()
     val to = i()
@@ -73,22 +72,22 @@ fun main() {
     if ((g[fr][to] ?: INF) > c) g[fr][to] = c
   }
 
-  val fr = i()
+  val fr = i().toLong()
   val to = i()
-  val q = PriorityQueue<Int>()
+  val q = PriorityQueue<Long>()
   q.add(fr)
-  bfs@ while (q.isNotEmpty()) {
+  while (q.isNotEmpty()) {
     val e = q.poll()
     val acc = e / SEP
-    if (cost[to] <= acc) continue
     val f = e % SEP
-    for (etr in g[f]) {
+    if (cost[to] <= acc) continue
+    for (etr in g[f.toInt()]) {
       val t = etr.key
-      val c = etr.value
-      val nc = c + acc
-      if (fr != f && cost[t] <= nc) continue
-      cost[t] = nc
-      q.add(nc * SEP + t)
+      val c = etr.value.toLong()
+      val nAcc = acc + c
+      if (fr != f && cost[t] <= nAcc) continue
+      cost[t] = nAcc.toInt()
+      q.add(nAcc * SEP + t)
     }
   }
   w(cost[to])
