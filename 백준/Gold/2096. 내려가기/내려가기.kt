@@ -68,22 +68,30 @@ fun main() {
     val M1 = M[1]
     val M2 = M[2]
 
-    M[0] = maxOf(M0, M1) + v1
-    M[1] = maxOf(M0, M1, M2) + v2
-    M[2] = maxOf(M1, M2) + v3
+    M[0] = v1 + if (M0 > M1) M0 else M1
+    M[1] = v2 + if (M0 >= M1 && M0 >= M2) M0 else if (M1 >= M0 && M1 > M2) M1 else M2
+    M[2] = v3 + if (M1 > M2) M1 else M2
 
     val m0 = m[0]
     val m1 = m[1]
     val m2 = m[2]
 
-    m[0] = minOf(m0, m1) + v1
-    m[1] = minOf(m0, m1, m2) + v2
-    m[2] = minOf(m1, m2) + v3
+    m[0] = v1 + if (m0 < m1) m0 else m1
+    m[1] = v2 + if (m0 <= m1 && m0 <= m2) m0 else if (m1 <= m0 && m1 < m2) m1 else m2
+    m[2] = v3 + if (m1 < m2) m1 else m2
 
   }
 
-  w(maxOf(M[0], M[1], M[2]))
+  val M0 = M[0]
+  val M1 = M[1]
+  val M2 = M[2]
+
+  val m0 = m[0]
+  val m1 = m[1]
+  val m2 = m[2]
+
+  w(if (M0 >= M1 && M0 >= M2) M0 else if (M1 >= M0 && M1 > M2) M1 else M2)
   O.write(32)
-  w(minOf(m[0], m[1], m[2]))
+  w(if (m0 <= m1 && m0 <= m2) m0 else if (m1 <= m0 && m1 < m2) m1 else m2)
   O.flush()
 }
