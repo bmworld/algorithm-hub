@@ -56,7 +56,7 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-private const val MAX = 100_000
+private const val INF = Int.MAX_VALUE
 private const val SEP = 10_000
 
 fun main() {
@@ -64,7 +64,7 @@ fun main() {
   val m = i()
 
   val g = Array(n + 1) { mutableListOf<Int>() }
-  val cost = Array(n + 1) { i -> Array(n + 1) { j -> if (i == j) 0 else MAX } }
+  val cost = Array(n + 1) { i -> Array(n + 1) { j -> if (i == j) 0 else INF } }
 
   repeat(m) {
     val fr = i()
@@ -85,6 +85,7 @@ fun main() {
     val cities = g[f]
     repeat(cities.size) {
       val t = cities[it]
+      if (t == fr) return@repeat
       val c = cost[f][t]
       val nc = c + acc
       if (fr != f && cost[fr][t] <= nc) return@repeat
@@ -95,6 +96,8 @@ fun main() {
   w(cost[fr][to])
   O.flush()
 }
+
+// println("--- cost[$fr][$t] = ${cost[fr][t]} vs cost[$f][$t] = $nc  ---> ${fr != f && cost[fr][t] <= nc}")
 
 //      println("--- cost[$f][$t]: $nc  ->  ${cost[fr][t]} ? ")
 //for (f in 1..n) for (t in 1..n) {
