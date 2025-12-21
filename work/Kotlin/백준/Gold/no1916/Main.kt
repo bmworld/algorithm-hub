@@ -2,6 +2,7 @@ package 백준.Gold.no1916
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
+import java.util.*
 
 private const val IBS = 100_000
 private const val OBS = 1_000
@@ -55,34 +56,42 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-private const val MAX = 99_999
+private const val MAX = 100_000
+private const val SEP = 10_000
 
 fun main() {
   val n = i()
   val m = i()
-  val a = Array(n + 1) { IntArray(n + 1) { MAX } }
+
+  val g = Array(n + 1) { mutableListOf<Int>() }
+  val cost = Array(n + 1) { i -> Array(n + 1) { j -> if (i == j) 0 else MAX } }
+
   repeat(m) {
     val fr = i()
     val to = i()
-    val v = i()
-    a[fr][to] = v
+    val c = i()
+    g[fr].add(to)
+    if (cost[fr][to] > c) cost[fr][to] = c
   }
 
-  repeat(n) { i ->
-    val mid = i + 1
-    repeat(n) { j ->
-      val fr = j + 1
-      if (mid == fr) return@repeat
-      repeat(n) { k ->
-        val to = k + 1
-        if (fr == to) return@repeat
-        val v = a[fr][mid] + a[mid][to]
-        if (a[fr][to] > v) a[fr][to] = v
-      }
+  val fr = i()
+  val to = i()
+  val q = PriorityQueue<Int>(n)
+  q.add(fr)
+  while (q.isNotEmpty()) {
+    val e = q.poll()
+    val acc = e / SEP
+    val f = e % SEP
+    val cities = g[f]
+    repeat(cities.size) {
+      val t = cities[it]
+      val c = cost[f][t]
+      val nc = c + acc
+      if (cost[fr][t] < nc) return@repeat
+      cost[fr][t] = nc
+      q.add(nc * SEP + t)
     }
   }
-  w(a[i()][i()])
+  w(cost[fr][to])
   O.flush()
 }
-
-//         println("--- costs[$fr][$to] = ${costs[fr][to]}  vs  $v")
