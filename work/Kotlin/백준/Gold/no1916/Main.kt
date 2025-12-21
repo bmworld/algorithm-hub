@@ -64,42 +64,35 @@ fun main() {
   val m = i()
 
   val g = Array(n + 1) { mutableListOf<Int>() }
-  val cost = Array(n + 1) { i -> Array(n + 1) { j -> if (i == j) 0 else INF } }
+  val cost = Array(n + 1) { INF }
 
   repeat(m) {
     val fr = i()
     val to = i()
     val c = i()
-    g[fr].add(to)
-    if (cost[fr][to] > c) cost[fr][to] = c
+    g[fr].add(c * SEP + to)
   }
 
   val fr = i()
   val to = i()
-  val q = PriorityQueue<Int>(n)
+  val q = PriorityQueue<Int>()
   q.add(fr)
-  while (q.isNotEmpty()) {
+  bfs@ while (q.isNotEmpty()) {
     val e = q.poll()
     val acc = e / SEP
+    if (cost[to] <= acc) continue
     val f = e % SEP
     val cities = g[f]
     repeat(cities.size) {
-      val t = cities[it]
-      if (t == fr) return@repeat
-      val c = cost[f][t]
+      val etr = cities[it]
+      val c = etr / SEP
+      val t = etr % SEP
       val nc = c + acc
-      if (fr != f && cost[fr][t] <= nc) return@repeat
-      cost[fr][t] = nc
+      if (fr != f && cost[t] <= nc) return@repeat
+      cost[t] = nc
       q.add(nc * SEP + t)
     }
   }
-  w(cost[fr][to])
+  w(cost[to])
   O.flush()
 }
-
-// println("--- cost[$fr][$t] = ${cost[fr][t]} vs cost[$f][$t] = $nc  ---> ${fr != f && cost[fr][t] <= nc}")
-
-//      println("--- cost[$f][$t]: $nc  ->  ${cost[fr][t]} ? ")
-//for (f in 1..n) for (t in 1..n) {
-//  println(">>>> cost[$f][$t]: ${cost[f][t]}")
-//}
