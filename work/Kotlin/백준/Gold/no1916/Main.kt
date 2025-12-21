@@ -87,7 +87,7 @@ fun main() {
       val t = cities[it]
       val c = cost[f][t]
       val nc = c + acc
-      if (cost[fr][t] < nc) return@repeat
+      if (fr != f && cost[fr][t] <= nc) return@repeat
       cost[fr][t] = nc
       q.add(nc * SEP + t)
     }
@@ -95,3 +95,8 @@ fun main() {
   w(cost[fr][to])
   O.flush()
 }
+
+//      println("--- cost[$f][$t]: $nc  ->  ${cost[fr][t]} ? ")
+//for (f in 1..n) for (t in 1..n) {
+//  println(">>>> cost[$f][$t]: ${cost[f][t]}")
+//}
