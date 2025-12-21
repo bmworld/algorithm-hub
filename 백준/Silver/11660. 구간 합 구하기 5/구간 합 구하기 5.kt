@@ -1,7 +1,7 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 120_000
+private const val IBS = 100_000
 private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -56,16 +56,15 @@ private fun w(
 fun main() {
   val n = i()
   val m = i()
-  val rowAcc = Array(n + 1) { IntArray(n + 1) }
+  val rowAcc = IntArray(n + 1)
   val total = Array(n + 1) { IntArray(n + 1) }
   repeat(n) { i ->
     val r = i + 1
     repeat(n) { j ->
       val c = j + 1
-      val v = rowAcc[r][c - 1] + i()
-      rowAcc[r][c] = v
+      val v = rowAcc[c - 1] + i()
+      rowAcc[c] = v
       total[r][c] = v + total[r - 1][c]
-
     }
   }
 
