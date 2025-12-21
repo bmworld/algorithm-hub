@@ -63,14 +63,14 @@ fun main() {
   val n = i()
   val m = i()
 
-  val g = Array(n + 1) { mutableListOf<Int>() }
+  val g = Array(n + 1) { mutableMapOf<Int, Int>() }
   val cost = Array(n + 1) { INF }
 
   repeat(m) {
     val fr = i()
     val to = i()
     val c = i()
-    g[fr].add(c * SEP + to)
+    if ((g[fr][to] ?: INF) > c) g[fr][to] = c
   }
 
   val fr = i()
@@ -82,13 +82,11 @@ fun main() {
     val acc = e / SEP
     if (cost[to] <= acc) continue
     val f = e % SEP
-    val cities = g[f]
-    repeat(cities.size) {
-      val etr = cities[it]
-      val c = etr / SEP
-      val t = etr % SEP
+    for (etr in g[f]) {
+      val t = etr.key
+      val c = etr.value
       val nc = c + acc
-      if (fr != f && cost[t] <= nc) return@repeat
+      if (fr != f && cost[t] <= nc) continue
       cost[t] = nc
       q.add(nc * SEP + t)
     }
