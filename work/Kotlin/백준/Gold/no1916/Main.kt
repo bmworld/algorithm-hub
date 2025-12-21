@@ -63,13 +63,13 @@ fun main() {
   val n = i()
   val m = i()
 
-  val g = Array(n + 1) { mutableMapOf<Int, Long>() }
+  val g = Array(n + 1) { mutableListOf<Long>() }
   val cost = Array(n + 1) { INF }
   repeat(m) {
     val fr = i()
     val to = i()
     val c = i().toLong()
-    if ((g[fr][to] ?: INF) > c) g[fr][to] = c
+    g[fr].add(c * SEP + to)
   }
 
   val fr = i().toLong()
@@ -79,13 +79,15 @@ fun main() {
   while (q.isNotEmpty()) {
     val e = q.poll()
     val acc = e / SEP
-    val f = e % SEP
+    val f = (e % SEP).toInt()
     if (cost[to] <= acc) continue
-    for (etr in g[f.toInt()]) {
-      val t = etr.key
-      val c = etr.value
+    val cities = g[f]
+    repeat(cities.size) {
+      val e = cities[it]
+      val c = e / SEP
+      val t = (e % SEP).toInt()
       val nAcc = acc + c
-      if (cost[t] <= nAcc) continue
+      if (cost[t] <= nAcc) return@repeat
       cost[t] = nAcc
       q.add(nAcc * SEP + t)
     }
