@@ -45,23 +45,27 @@ private const val ALPH_LEN = 26
 private val CAPITAL = A..<A + ALPH_LEN
 private const val MAX_LEN = 1_000
 fun main() {
-  var c: Byte = 0
+  var c = r()
   val a = ByteArray(MAX_LEN)
   var aLen = 0
   val cnts = IntArray(ALPH_LEN)
-  while (r().also { c = it } in CAPITAL) {
+  while (c !in CAPITAL) c = r()
+  while (c in CAPITAL) {
     a[aLen++] = c
     cnts[c - A]++
+    c = r()
   }
 
   val dp = IntArray(aLen)
-  while (r().also { c = it } in CAPITAL) {
+  while (c !in CAPITAL) c = r()
+  while (c in CAPITAL) {
     var matched = false
     repeat(aLen) { i ->
       if (a[i] == c && cnts[c - A] > 0) dp[i]++.also { matched = true; }
       else if (matched) dp[i] = dp[i - 1]
     }
     cnts[c - A]--
+    c = r()
   }
 
   w(dp[aLen - 1])
