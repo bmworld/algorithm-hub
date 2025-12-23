@@ -40,21 +40,28 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private val CAPITAL = 65..90
+private const val A = 65
+private const val ALPH_LEN = 26
+private val CAPITAL = A..<A + ALPH_LEN
 private const val MAX_LEN = 1_000
 fun main() {
   var c: Byte = 0
   val a = ByteArray(MAX_LEN)
   var aLen = 0
-  while (r().also { c = it } in CAPITAL) a[aLen++] = c
+  val cnts = IntArray(ALPH_LEN)
+  while (r().also { c = it } in CAPITAL) {
+    a[aLen++] = c
+    cnts[c - A]++
+  }
 
   val dp = IntArray(aLen)
   while (r().also { c = it } in CAPITAL) {
     var matched = false
-    for (i in 0 until aLen) {
-      if (a[i] == c) dp[i]++.also { matched = true }
+    repeat(aLen) { i ->
+      if (a[i] == c && cnts[c - A] > 0) dp[i]++.also { matched = true; }
       else if (matched) dp[i] = dp[i - 1]
     }
+    cnts[c - A]--
   }
 
   w(dp[aLen - 1])
