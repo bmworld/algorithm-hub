@@ -3,8 +3,8 @@ package 백준.Gold.no9251
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 2_002
-private const val OBS = 1_000
+private const val IBS = 10_000
+private const val OBS = 2_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -40,34 +40,38 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private const val A = 65
-private const val ALPH_LEN = 26
-private val CAPITAL = A..<A + ALPH_LEN
+private val CAPITAL = 65..90
 private const val MAX_LEN = 1_000
 fun main() {
-  var c = r()
-  val a = ByteArray(MAX_LEN)
-  var aLen = 0
-  val cnts = IntArray(ALPH_LEN)
-  while (c !in CAPITAL) c = r()
-  while (c in CAPITAL) {
-    a[aLen++] = c
-    cnts[c - A]++
-    c = r()
+  var b: Byte = 0
+  val str = ByteArray(MAX_LEN)
+  var strLen = 0
+  while (b !in CAPITAL) b = r()
+  while (b in CAPITAL) {
+    str[strLen++] = b
+    b = r()
   }
 
-  val dp = IntArray(aLen)
-  while (c !in CAPITAL) c = r()
-  while (c in CAPITAL) {
-    var matched = false
-    repeat(aLen) { i ->
-      if (a[i] == c && cnts[c - A] > 0) dp[i]++.also { matched = true; }
-      else if (matched) dp[i] = dp[i - 1]
+  val prev = IntArray(strLen + 1)
+  val cur = IntArray(strLen + 1)
+
+  while (b !in CAPITAL) b = r()
+  while (b in CAPITAL) {
+    repeat(strLen) {
+      val i = it + 1
+      val a = str[it]
+      prev[i] = cur[i]
+      val comp = if (a == b) prev[i - 1] + 1
+      else {
+        val prevB = cur[i - 1]
+        val prevA = prev[i]
+        if (prevB > prevA) prevB else prevA
+      }
+      cur[i] = comp
     }
-    cnts[c - A]--
-    c = r()
+    b = r()
   }
 
-  w(dp[aLen - 1])
+  w(cur[strLen])
   O.flush()
 }
