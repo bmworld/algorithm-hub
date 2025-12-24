@@ -71,31 +71,15 @@ fun main() {
     total += v
   }
 
-  var found = false
-  val ch = BooleanArray(TOTAL_CNT)
-  fun dfs(
-    dep: Int,
-    stt: Int,
-    acc: Int,
-  ) {
-    if (acc < 100 || dep > 2) return
-    if (acc == 100) {
-      repeat(TOTAL_CNT) {
-        if (!ch[it]) w(a[it])
+  outer@ for (i in 0 until TOTAL_CNT - 1) {
+    for (j in i + 1 until TOTAL_CNT) {
+      if (total - a[i] - a[j] == 100) {
+        repeat(TOTAL_CNT) {
+          if (it != i && it != j) w(a[it])
+        }
+        O.flush()
+        break@outer
       }
-      found = true
-      return
-    } else if (dep == 2) return
-
-    for (i in stt until stt + TOTAL_CNT - 1) {
-      if (found) break
-      if (ch[i]) continue
-      ch[i] = true
-      dfs(dep + 1, stt + 1, acc - a[i])
-      ch[i] = false
     }
   }
-
-  dfs(0, 0, total)
-  O.flush()
 }
