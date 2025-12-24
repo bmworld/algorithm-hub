@@ -3,8 +3,8 @@ package 백준.Bronze.no2309
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 30
-private const val OBS = 22
+private const val IBS = 1_000
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -71,23 +71,25 @@ fun main() {
     total += v
   }
 
+  var found = false
   val ch = BooleanArray(TOTAL_CNT)
   fun dfs(
     dep: Int,
     stt: Int,
     acc: Int,
   ) {
-    if (acc == 100 && dep == 2) {
+    if (acc < 100 || dep > 2) return
+    if (acc == 100) {
       repeat(TOTAL_CNT) {
         if (!ch[it]) w(a[it])
       }
+      found = true
       return
-    } else if (acc < 100 || dep >= 2) return
+    } else if (dep == 2) return
 
-    repeat(TOTAL_CNT - 1) {
-      val i = it + stt
-      if (ch[i]) return@repeat
-
+    for (i in stt until stt + TOTAL_CNT - 1) {
+      if (found) break
+      if (ch[i]) continue
       ch[i] = true
       dfs(dep + 1, stt + 1, acc - a[i])
       ch[i] = false
