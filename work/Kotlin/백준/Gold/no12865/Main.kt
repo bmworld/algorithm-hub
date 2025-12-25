@@ -84,7 +84,7 @@ fun main() {
     a[j] = w * SEP + v
   }
 
-  val ch = IntArray(MAX_V + 1) { MAX_W }
+  val ch = IntArray(MAX_V + 1) { MAX_W + 1 }
   var maxV = 0
   fun dfs(
     stt: Int,
@@ -109,4 +109,4 @@ fun main() {
   O.flush()
 }
 
-// println("stt= $stt:$i --> v=($v->$nv), w=($w->$nw /max=${vCh[nw]}) ")
+//      println("stt= $stt:$i --> v=($v->$nv vs ${ch[nv]}), w=($w->$nw) ")
