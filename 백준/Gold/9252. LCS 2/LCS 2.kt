@@ -60,51 +60,42 @@ fun main() {
   while (b().also { b = it } != END) str[strLen++] = b
 
   val lcs = Array(MAX_LEN + 1) { IntArray(strLen + 1) }
-  val tracer = Array(MAX_LEN + 1) { IntArray(strLen + 1) }
 
   var r = 1
   while (b().also { b = it } != END) {
     repeat(strLen) {
       val c = it + 1
       val a = str[it]
-
-      var tr = r - 1
-      var tc = c - 1
-
       lcs[r][c] = if (a == b) lcs[r - 1][c - 1] + 1 else {
-        val c1 = lcs[r - 1][c]
-        val c2 = lcs[r][c - 1]
-        if (c1 >= c2) {
-          tr = r - 1
-          tc = c
-          c1
-        } else {
-          tr = r
-          tc = c - 1
-          c2
-        }
+        val uc = lcs[r - 1][c]
+        val lc = lcs[r][c - 1]
+        if (uc >= lc) uc else lc
       }
-      tracer[r][c] = tr * SEP + tc
     }
     r++
   }
 
-  var maxLen = lcs[--r][strLen]
+  val maxLen = lcs[--r][strLen]
+  val WB = ByteArray(maxLen)
+  var WI = maxLen
+  var c = strLen
+  while (r > 0 && c > 0) {
+    val cc = lcs[r][c]
+    val lc = lcs[r][c - 1]
+    val uc = lcs[r - 1][c]
+    if (cc == uc) {
+      r--
+    } else if (cc == lc) {
+      c--
+    } else {
+      WB[--WI] = str[c - 1]
+      r--
+      c--
+    }
+  }
+
   w(maxLen)
   O.write(10)
-
-  val WB = ByteArray(maxLen)
-  var tr = r
-  var tc = strLen
-  while (maxLen > 0) {
-    val np = tracer[tr][tc]
-    val nr = np / SEP
-    val nc = np % SEP
-    val found = tr == nr + 1 && tc == nc + 1
-    if (found) WB[--maxLen] = str[tc - 1]
-    tr = nr
-    tc = nc
-  }
   O.write(WB)
   O.flush()
 }
