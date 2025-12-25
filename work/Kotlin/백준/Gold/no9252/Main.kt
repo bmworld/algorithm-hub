@@ -102,7 +102,7 @@ fun main() {
     val np = tracer[tr][tc]
     val nr = np / SEP
     val nc = np % SEP
-    if (nr == 0 && nc == 0) break
+
     val found = tr == nr + 1 && tc == nc + 1
     if (found) WB[--maxLen] = str[tc - 1]
     tr = nr
