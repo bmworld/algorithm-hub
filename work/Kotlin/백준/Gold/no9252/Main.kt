@@ -54,60 +54,64 @@ private const val ALPHABET_SIZE = 26
 private const val A = 65
 private val CAPITAL = A until A + ALPHABET_SIZE
 private const val MAX_LEN = 1_000
-private const val SEP = 10000
+private const val POS_SEP = MAX_LEN * 10
+private const val CNT_SEP = POS_SEP * POS_SEP
 fun main() {
   var b: Byte = 0
   val str = ByteArray(MAX_LEN)
   var strLen = 0
   while (b().also { b = it } != END) str[strLen++] = b
 
-  val lcs = Array(MAX_LEN + 1) { IntArray(strLen + 1) }
-  val tracer = Array(MAX_LEN + 1) { IntArray(strLen + 1) }
+  val tracer = Array(MAX_LEN + 1) { LongArray(strLen + 1) }
 
   var r = 1
   while (b().also { b = it } != END) {
     repeat(strLen) {
       val c = it + 1
       val a = str[it]
-
+      var cnt: Long
       var tr = r - 1
       var tc = c - 1
-
-      lcs[r][c] = if (a == b) lcs[r - 1][c - 1] + 1 else {
-        val c1 = lcs[r - 1][c]
-        val c2 = lcs[r][c - 1]
+      if (a == b) {
+        cnt = tracer[r - 1][c - 1] / CNT_SEP + 1
+      } else {
+        val c1 = tracer[r - 1][c] / CNT_SEP
+        val c2 = tracer[r][c - 1] / CNT_SEP
         if (c1 >= c2) {
           tr = r - 1
           tc = c
-          c1
+          cnt = c1
         } else {
           tr = r
           tc = c - 1
-          c2
+          cnt = c2
         }
       }
-      tracer[r][c] = tr * SEP + tc
+      tracer[r][c] = cnt * CNT_SEP + tr * POS_SEP + tc
     }
     r++
   }
 
-  var maxLen = lcs[--r][strLen]
-  w(maxLen)
-  O.write(10)
-
-  val WB = ByteArray(maxLen)
-  var tr = r
+  val WB = ByteArray(strLen)
+  var WS = strLen - 1
+  var tr = --r
   var tc = strLen
-  while (maxLen > 0) {
-    val np = tracer[tr][tc]
-    val nr = np / SEP
-    val nc = np % SEP
-
+  while (WS >= 0) {
+    val e = tracer[tr][tc]
+    val pos = (e % CNT_SEP).toInt()
+    val nr = pos / POS_SEP
+    val nc = pos % POS_SEP
     val found = tr == nr + 1 && tc == nc + 1
-    if (found) WB[--maxLen] = str[tc - 1]
+    if (found) WB[WS--] = str[tc - 1]
+    if (nr == 0 && nc == 0) break
     tr = nr
     tc = nc
   }
-  O.write(WB)
+  WS++
+
+  val maxLen = strLen - WS
+  w(maxLen)
+  O.write(10)
+  O.write(WB, WS, maxLen)
   O.flush()
 }
