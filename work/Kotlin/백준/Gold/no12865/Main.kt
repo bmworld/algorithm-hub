@@ -54,6 +54,7 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
+private const val MAX_V = 100_000
 private const val MAX_W = 100_000
 private const val SEP = 10_000
 fun main() {
@@ -83,6 +84,7 @@ fun main() {
     a[j] = w * SEP + v
   }
 
+  val ch = IntArray(MAX_V + 1) { MAX_W }
   var maxV = 0
   fun dfs(
     stt: Int,
@@ -95,7 +97,8 @@ fun main() {
       val v = e % SEP
       val nw = w + accW
       val nv = v + accV
-      if (nw > W) continue
+      if (ch[nv] <= nw || nw > W) continue
+      ch[nv] = nw
       if (maxV < nv) maxV = nv
       dfs(i + 1, nw, nv)
     }
@@ -105,3 +108,5 @@ fun main() {
   w(maxV)
   O.flush()
 }
+
+// println("stt= $stt:$i --> v=($v->$nv), w=($w->$nw /max=${vCh[nw]}) ")
