@@ -55,26 +55,20 @@ private fun w(
 }
 
 fun main() {
-
   val N = i()
   val W = i()
-  val dp = Array(N + 1) { IntArray(W + 1) }
+  val dp = IntArray(W + 1)
   repeat(N) {
-    val o = it + 1
     val iw = i()
     val iv = i()
-    val prv = dp[o - 1]
-    val cur = dp[o]
-    repeat(W) {
-      val w = it + 1
-      val pw = prv[w]
-      cur[w] = if (w >= iw) {
-        val nw = iv + prv[w - iw]
-        if (nw > pw) nw else pw
-      } else pw
+    repeat(W - iw + 1) {
+      val w = W - it
+      val pw = dp[w]
+      val nw = iv + dp[w - iw]
+      dp[w] = if (nw > pw) nw else pw
     }
   }
 
-  w(dp[N][W])
+  w(dp[W])
   O.flush()
 }
