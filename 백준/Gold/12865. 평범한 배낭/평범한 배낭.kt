@@ -1,8 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 2_000
-private const val OBS = 100
+private const val IBS = 3_000
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -56,23 +56,18 @@ fun main() {
 
   val N = i()
   val W = i()
-  val dp = Array(N + 1) { IntArray(W + 1) }
+  val dp = IntArray(W + 1)
   repeat(N) {
-    val o = it + 1
     val iw = i()
     val iv = i()
-    val prv = dp[o - 1]
-    val cur = dp[o]
-    repeat(W) {
-      val w = it + 1
-      val pw = prv[w]
-      cur[w] = if (w >= iw) {
-        val nw = iv + prv[w - iw]
-        if (nw > pw) nw else pw
-      } else pw
+    repeat(W - iw + 1) {
+      val w = W - it
+      val pw = dp[w]
+      val nw = iv + dp[w - iw]
+      dp[w] = if (nw > pw) nw else pw
     }
   }
 
-  w(dp[N][W])
+  w(dp[W])
   O.flush()
 }
