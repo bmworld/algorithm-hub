@@ -3,8 +3,8 @@ package 백준.Gold.no12865
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 2_000
-private const val OBS = 100
+private const val IBS = 3_000
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -56,29 +56,15 @@ private fun w(
 
 fun main() {
 
-  var N = i()
+  val N = i()
   val W = i()
-  val ivs = IntArray(N)
-  val iws = IntArray(N)
-  var i = 0
+  val dp = Array(N + 1) { IntArray(W + 1) }
   repeat(N) {
-    val w = i()
-    val v = i()
-    if (v == 0 || w > W) {
-      N--
-      return@repeat
-    }
-    ivs[i] = v
-    iws[i] = w
-    i++
-  }
-
-  var prv = IntArray(W + 1)
-  val cur = IntArray(W + 1)
-  for (o in 1..N) {
-    val i = o - 1
-    val iv = ivs[i]
-    val iw = iws[i]
+    val o = it + 1
+    val iw = i()
+    val iv = i()
+    val prv = dp[o - 1]
+    val cur = dp[o]
     repeat(W) {
       val w = it + 1
       val pw = prv[w]
@@ -87,11 +73,8 @@ fun main() {
         if (nw > pw) nw else pw
       } else pw
     }
-    prv = cur.copyOf()
   }
 
-  w(cur[W])
+  w(dp[N][W])
   O.flush()
 }
-
-// println("---- o=$o, w=$w  ($pw vs $nw) ")
