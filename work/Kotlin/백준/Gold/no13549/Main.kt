@@ -55,6 +55,7 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
+private const val MAX = 100_000
 fun main() {
   val n = i()
   val k = i()
@@ -64,36 +65,36 @@ fun main() {
 
     else -> {
       var min = k - n
-      val timer = IntArray(k + 1) { min }
+
+      val l = if (n / 2 > 0) n / 2 else 0
+      val r = if (k + 2 < MAX) k + 2 else MAX
+
+      val timer = IntArray(MAX + 1) { min }
       val q = PriorityQueue<Int>()
-      q.add(k)
       timer[k] = 0
+      q.add(k)
       while (q.isNotEmpty()) {
         val pos = q.poll()
         val t = timer[pos]
         when {
-          pos == n -> {
-            min = t
-            break
-          }
+          pos == n -> min = t
 
           else -> {
             var np = pos / 2
-            if (pos % 2 == 0 && np in 0..k && timer[np] > t) {
-
+            if (pos % 2 == 0 && np in l until r && timer[np] > t && t < min) {
               timer[np] = t
               q.add(np)
             }
 
             val nt = t + 1
             np = pos + 1
-            if (np in n..k && timer[np] > nt) {
+            if (np in l until r && timer[np] > nt && nt < min) {
               timer[np] = nt
               q.add(np)
             }
 
             np = pos - 1
-            if (np in n - 1..k && timer[np] > nt) {
+            if (np in l until r && timer[np] > nt && nt < min) {
               timer[np] = nt
               q.add(np)
             }
@@ -105,5 +106,3 @@ fun main() {
   })
   O.flush()
 }
-
-//         println("pos = ${pos}, t= $t")
