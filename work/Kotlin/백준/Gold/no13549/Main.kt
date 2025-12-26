@@ -2,6 +2,7 @@ package 백준.Gold.no13549
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.util.*
 
 private const val IBS = 16
 private const val OBS = 16
@@ -63,36 +64,38 @@ fun main() {
 
     else -> {
       var min = k - n
-      val timer = IntArray(k * 2 + 1) { min }
-      val q = IntArray(k * 2 + 1)
-      var qh = 0
-      var qt = 0
-      q[qt++] = k
+      val timer = IntArray(k + 1) { min }
+      val q = PriorityQueue<Int>()
+      q.add(k)
       timer[k] = 0
-      while (qh < qt) {
-        val pos = q[qh++]
+      while (q.isNotEmpty()) {
+        val pos = q.poll()
         val t = timer[pos]
         when {
-          pos == n -> min = t
+          pos == n -> {
+            min = t
+            break
+          }
 
           else -> {
+            var np = pos / 2
+            if (pos % 2 == 0 && np in 0..k && timer[np] > t) {
+
+              timer[np] = t
+              q.add(np)
+            }
+
             val nt = t + 1
-            var np = pos + 1
-            if (timer[np] > nt && np >= n) {
+            np = pos + 1
+            if (np in n..k && timer[np] > nt) {
               timer[np] = nt
-              q[qt++] = np
+              q.add(np)
             }
 
             np = pos - 1
-            if (timer[np] > nt && np >= n) {
+            if (np in n - 1..k && timer[np] > nt) {
               timer[np] = nt
-              q[qt++] = np
-            }
-
-            np = pos / 2
-            if (pos % 2 == 0 && np >= n && timer[np] > t) {
-              timer[np] = t
-              q[qt++] = np
+              q.add(np)
             }
           }
         }
@@ -102,3 +105,5 @@ fun main() {
   })
   O.flush()
 }
+
+//         println("pos = ${pos}, t= $t")
