@@ -73,13 +73,12 @@ fun main() {
     i++
   }
 
-  val dp = Array(N + 1) { IntArray(W + 1) }
+  var prv = IntArray(W + 1)
+  val cur = IntArray(W + 1)
   for (o in 1..N) {
     val i = o - 1
     val iv = ivs[i]
     val iw = iws[i]
-    val prv = dp[o - 1]
-    val cur = dp[o]
     repeat(W) {
       val w = it + 1
       val pw = prv[w]
@@ -88,8 +87,11 @@ fun main() {
         if (nw > pw) nw else pw
       } else pw
     }
+    prv = cur.copyOf()
   }
 
-  w(dp[N][W])
+  w(cur[W])
   O.flush()
 }
+
+// println("---- o=$o, w=$w  ($pw vs $nw) ")
