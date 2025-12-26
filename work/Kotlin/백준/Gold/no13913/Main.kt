@@ -115,12 +115,14 @@ fun main() {
 
       w(min, true)
       var traced = n
-      while (traced != k) {
+      repeat(min + 1) {
         w(traced)
         traced = (timer[traced] % SEP).toInt()
       }
-      w(k)
+
     }
   }
   O.flush()
 }
+
+//         println("->timer[$pos]=${timer[pos] / SEP}, from ${timer[pos] % SEP}")
