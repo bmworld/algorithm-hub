@@ -54,28 +54,13 @@ private fun w(
 
 fun main() {
 
-  var N = i()
+  val N = i()
   val W = i()
-  val ivs = IntArray(N)
-  val iws = IntArray(N)
-  var i = 0
-  repeat(N) {
-    val w = i()
-    val v = i()
-    if (v == 0 || w > W) {
-      N--
-      return@repeat
-    }
-    ivs[i] = v
-    iws[i] = w
-    i++
-  }
-
   val dp = Array(N + 1) { IntArray(W + 1) }
-  for (o in 1..N) {
-    val i = o - 1
-    val iv = ivs[i]
-    val iw = iws[i]
+  repeat(N) {
+    val o = it + 1
+    val iw = i()
+    val iv = i()
     val prv = dp[o - 1]
     val cur = dp[o]
     repeat(W) {
