@@ -75,37 +75,39 @@ fun main() {
       var min = k - n + 1
       val l = if (n / 2 > 0) n / 2 else 0
       val r = if (k + 2 < MAX) k + 2 else MAX
+      val inRange = l..r
 
       val timer = LongArray(MAX + 1) { min * SEP }
       val q = IntArray(MAX)
       var qh = 0
       var qt = 0
       q[qt++] = k
-      timer[k] = k.toLong()
+      timer[k] = 0
 
       while (qh < qt) {
         val pos = q[qh++]
         val e = timer[pos]
         val t = (e / SEP).toInt()
+
         when {
           pos == n -> min = t
 
           else -> {
             var np = pos / 2
             val nt = t + 1
-            if (pos % 2 == 0 && np in l until r && timer[np] / SEP > nt && nt < min) {
+            if (pos % 2 == 0 && np in inRange && timer[np] / SEP > nt && nt < min) {
               timer[np] = nt * SEP + pos
               q[qt++] = np
             }
 
             np = pos + 1
-            if (np in l until r && timer[np] / SEP > nt && nt < min) {
+            if (np in inRange && timer[np] / SEP > nt && nt < min) {
               timer[np] = nt * SEP + pos
               q[qt++] = np
             }
 
             np = pos - 1
-            if (np in l until r && timer[np] / SEP > nt && nt < min) {
+            if (np in inRange && timer[np] / SEP > nt && nt < min) {
               timer[np] = nt * SEP + pos
               q[qt++] = np
             }
@@ -119,10 +121,7 @@ fun main() {
         w(traced)
         traced = (timer[traced] % SEP).toInt()
       }
-
     }
   }
   O.flush()
 }
-
-//         println("->timer[$pos]=${timer[pos] / SEP}, from ${timer[pos] % SEP}")
