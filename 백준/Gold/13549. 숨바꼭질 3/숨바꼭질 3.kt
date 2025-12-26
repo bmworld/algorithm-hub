@@ -1,6 +1,5 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 16
 private const val OBS = 16
@@ -68,35 +67,37 @@ fun main() {
       val r = if (k + 2 < MAX) k + 2 else MAX
 
       val timer = IntArray(MAX + 1) { min }
-      val q = PriorityQueue<Int>()
+      val q = IntArray(MAX)
       timer[k] = 0
-      q.add(k)
-      while (q.isNotEmpty()) {
-        val pos = q.poll()
+      var qh = 0
+      var qt = 0
+      q[qt++] = k
+
+      while (qh < qt) {
+        val pos = q[qh++]
         val t = timer[pos]
-        if (timer[pos] >= min) continue
 
         when {
           pos == n -> min = t
 
           else -> {
             var np = pos / 2
-            if (pos % 2 == 0 && np in l until r && timer[np] > t) {
+            if (pos % 2 == 0 && np in l until r && timer[np] > t && t < min) {
               timer[np] = t
-              q.add(np)
+              q[qt++] = np
             }
 
             val nt = t + 1
             np = pos + 1
-            if (np in l until r && timer[np] > nt) {
+            if (np in l until r && timer[np] > nt && nt < min) {
               timer[np] = nt
-              q.add(np)
+              q[qt++] = np
             }
 
             np = pos - 1
-            if (np in l until r && timer[np] > nt) {
+            if (np in l until r && timer[np] > nt && nt < min) {
               timer[np] = nt
-              q.add(np)
+              q[qt++] = np
             }
           }
         }
