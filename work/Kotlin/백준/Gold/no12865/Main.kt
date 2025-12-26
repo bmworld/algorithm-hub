@@ -54,59 +54,42 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private const val MAX_V = 100_000
-private const val MAX_W = 100_000
-private const val SEP = 10_000
 fun main() {
 
-  var n = i()
+  var N = i()
   val W = i()
-  val a = IntArray(n)
-
+  val ivs = IntArray(N)
+  val iws = IntArray(N)
   var i = 0
-  repeat(n) {
+  repeat(N) {
     val w = i()
     val v = i()
     if (v == 0 || w > W) {
-      n--
+      N--
       return@repeat
     }
-
-    var j = i++
-    while (j > 0) {
-      val e = a[j - 1]
-      val w2 = e / SEP
-      val v2 = e % SEP
-      if (w < w2 || w == w2 && v < v2) a[j--] = e
-      else break
-    }
-
-    a[j] = w * SEP + v
+    ivs[i] = v
+    iws[i] = w
+    i++
   }
 
-  val ch = IntArray(MAX_V + 1) { MAX_W + 1 }
-  var maxV = 0
-  fun dfs(
-    stt: Int,
-    accW: Int,
-    accV: Int,
-  ) {
-    for (i in stt until n) {
-      val e = a[i]
-      val w = e / SEP
-      val v = e % SEP
-      val nw = w + accW
-      val nv = v + accV
-      if (ch[nv] <= nw || nw > W) continue
-      ch[nv] = nw
-      if (maxV < nv) maxV = nv
-      dfs(i + 1, nw, nv)
+  val dp = Array(N + 1) { IntArray(W + 1) }
+  for (o in 1..N) {
+    val i = o - 1
+    val iv = ivs[i]
+    val iw = iws[i]
+    val prv = dp[o - 1]
+    val cur = dp[o]
+    repeat(W) {
+      val w = it + 1
+      val pw = prv[w]
+      cur[w] = if (w >= iw) {
+        val nw = iv + prv[w - iw]
+        if (nw > pw) nw else pw
+      } else pw
     }
   }
 
-  dfs(0, 0, 0)
-  w(maxV)
+  w(dp[N][W])
   O.flush()
 }
-
-//      println("stt= $stt:$i --> v=($v->$nv vs ${ch[nv]}), w=($w->$nw) ")
