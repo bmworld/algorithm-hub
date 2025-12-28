@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 10_000
-private const val OBS = 100
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -95,40 +95,37 @@ fun main() {
     }
   }
 
-  var result = Int.MAX_VALUE
-  val ch = BooleanArray(cLen)
+  var minAcc = Int.MAX_VALUE
+  val used = IntArray(M)
   fun dfs(
     stt: Int,
     dep: Int,
   ) {
     if (dep == M) {
-      var cDist = 0
+      var acc = 0
       repeat(hLen) { hi ->
-        var hMinDist = Int.MAX_VALUE
-        repeat(cLen) { ci ->
-          if (ch[ci]) {
-            val v = a[ci][hi]
-            if (v < hMinDist) hMinDist = v
-          }
+        var minDist = Int.MAX_VALUE
+        repeat(M) { ci ->
+          val v = a[used[ci]][hi]
+          if (v < minDist) minDist = v
         }
-        cDist += hMinDist
+        acc += minDist
       }
 
-      if (result > cDist) result = cDist
+      if (minAcc > acc) minAcc = acc
       return
     }
 
     val end = cLen - M + dep
     for (i in stt..end) {
-      ch[i] = true
+      used[dep] = i
       dfs(i + 1, dep + 1)
-      ch[i] = false
     }
   }
 
   dfs(0, 0)
 
-  w(result)
+  w(minAcc)
   O.flush()
 }
 
