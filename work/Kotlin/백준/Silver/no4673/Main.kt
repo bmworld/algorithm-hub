@@ -2,7 +2,7 @@ package 백준.Silver.no4673
 
 import java.io.BufferedOutputStream
 
-private const val OBS = 10_000
+private const val OBS = 50_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 
 private const val WS = 10
@@ -37,9 +37,7 @@ fun main() {
       x /= 10
     } while (x > 0)
 
-    if (nv > MAX || ch[nv]) return
-    ch[nv] = true
-    builder(nv)
+    if (nv <= MAX) ch[nv] = true
   }
 
   repeat(MAX) {
@@ -50,5 +48,6 @@ fun main() {
     val n = it + 1
     if (!ch[n]) w(n)
   }
+
   O.flush()
 }
