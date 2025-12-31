@@ -57,14 +57,32 @@ private fun w(
 fun main() {
 
   val N = i()
-  val map = HashMap<Int, Boolean>(N)
+  val a = IntArray(N)
+
   repeat(N) {
-    map[i()] = true
+    a[it] = i()
+  }
+  a.sort()
+
+  fun bs(
+    t: Int,
+  ): Boolean {
+    var l = 0
+    var r = N - 1
+    while (l <= r) {
+      val m = (l + r) shr 1
+      val mv = a[m]
+      when {
+        mv > t -> r = m - 1
+        mv < t -> l = m + 1
+        else -> return true
+      }
+    }
+    return false
   }
 
-  val M = i()
-  repeat(M) {
-    w(if (map[i()] == true) 1 else 0)
+  repeat(i()) {
+    w(if (bs(i())) 1 else 0)
   }
 
   O.flush()
