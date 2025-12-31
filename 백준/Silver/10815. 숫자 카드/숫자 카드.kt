@@ -52,17 +52,16 @@ private fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
+private const val HALF = 10_000_000
 fun main() {
 
-  val N = i()
-  val map = HashMap<Int, Boolean>(N)
-  repeat(N) {
-    map[i()] = true
+  val ch = BooleanArray(HALF * 2 + 1)
+  repeat(i()) {
+    ch[i() + HALF] = true
   }
 
-  val M = i()
-  repeat(M) {
-    w(if (map[i()] == true) 1 else 0)
+  repeat(i()) {
+    w(if (ch[i() + HALF]) 1 else 0)
   }
 
   O.flush()
