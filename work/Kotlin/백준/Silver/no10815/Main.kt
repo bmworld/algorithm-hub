@@ -57,11 +57,7 @@ private fun w(
 fun main() {
 
   val N = i()
-  val a = IntArray(N)
-
-  repeat(N) {
-    a[it] = i()
-  }
+  val a = IntArray(N) { i() }
   a.sort()
 
   fun bs(
