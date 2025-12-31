@@ -3,8 +3,8 @@ package 백준.Silver.no10815
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 60_000
-private const val OBS = 20_000
+private const val IBS = 80_000
+private const val OBS = 10_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -54,31 +54,16 @@ private fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
+private const val HALF = 10_000_000
 fun main() {
 
-  val N = i()
-  val a = IntArray(N) { i() }
-  a.sort()
-
-  fun bs(
-    t: Int,
-  ): Boolean {
-    var l = 0
-    var r = N - 1
-    while (l <= r) {
-      val m = (l + r) shr 1
-      val mv = a[m]
-      when {
-        mv > t -> r = m - 1
-        mv < t -> l = m + 1
-        else -> return true
-      }
-    }
-    return false
+  val ch = BooleanArray(HALF * 2 + 1)
+  repeat(i()) {
+    ch[i() + HALF] = true
   }
 
   repeat(i()) {
-    w(if (bs(i())) 1 else 0)
+    w(if (ch[i() + HALF]) 1 else 0)
   }
 
   O.flush()
