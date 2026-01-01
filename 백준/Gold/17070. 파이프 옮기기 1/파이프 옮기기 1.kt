@@ -1,9 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
-private const val IBS = 1_000
-private const val OBS = 500
+private const val IBS = 2_000
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -64,8 +63,6 @@ private const val H = 0
 private const val V = 1
 private const val D = 2
 private const val EMPTY = 0
-private const val POS_SEP = 100
-
 private const val H_SEP = 1_000_000_000_000UL
 private const val V_SEP = 1_000_000UL
 private val dr = intArrayOf(0, 1, 1)
@@ -84,10 +81,7 @@ fun main() {
   }
 
   val cnts = Array(N) { ULongArray(N) }
-  val q = PriorityQueue<Int>()
-  q.add(0 * POS_SEP + 1)
   cnts[0][1] = encodeCnt(1UL, 0UL, 0UL)
-
 
   fun move(
     r: Int,
@@ -102,35 +96,30 @@ fun main() {
     val nv = vd / V_SEP + v
     val nd = vd % V_SEP + d
     cnts[r][c] = encodeCnt(nh, nv, nd)
-
-    val notUsed = hvd == 0UL
-    if (notUsed) q.add(r * POS_SEP + c)
   }
 
-  while (q.isNotEmpty()) {
-    val rc = q.poll()
-    val r = rc / POS_SEP
-    val c = rc % POS_SEP
+  repeat(N) { r ->
+    repeat(N) { c ->
+      val hvd = cnts[r][c]
+      val vd = hvd % H_SEP
+      val h = hvd / H_SEP
+      val v = vd / V_SEP
+      val d = vd % V_SEP
 
-    val hvd = cnts[r][c]
-    val vd = hvd % H_SEP
-    val h = hvd / H_SEP
-    val v = vd / V_SEP
-    val d = vd % V_SEP
+      val hasH = h > 0UL
+      val hasV = v > 0UL
+      val hasD = d > 0UL
 
-    val hasH = h > 0UL
-    val hasV = v > 0UL
-    val hasD = d > 0UL
+      for (dir in 0..2) {
+        val nr = r + dr[dir]
+        val nc = c + dc[dir]
+        val movable = inRange(nr, nc, N) && a[nr][nc] == EMPTY && if (dir == D) a[nr][c] == EMPTY && a[r][nc] == EMPTY else true
+        if (!movable) continue
 
-    repeat(3) { dir ->
-      val nr = r + dr[dir]
-      val nc = c + dc[dir]
-      val movable = inRange(nr, nc, N) && a[nr][nc] == EMPTY && if (dir == D) a[nr][c] == EMPTY && a[r][nc] == EMPTY else true
-      if (!movable) return@repeat
-
-      if (dir == H && (hasH || hasD)) move(nr, nc, h = h + d)
-      if (dir == V && (hasV || hasD)) move(nr, nc, v = v + d)
-      if (dir == D && (hasH || hasV || hasD)) move(nr, nc, d = h + v + d)
+        if (dir == H && (hasH || hasD)) move(nr, nc, h = h + d)
+        if (dir == V && (hasV || hasD)) move(nr, nc, v = v + d)
+        if (dir == D && (hasH || hasV || hasD)) move(nr, nc, d = h + v + d)
+      }
     }
   }
 
