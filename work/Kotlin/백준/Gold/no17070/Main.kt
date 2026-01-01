@@ -3,7 +3,7 @@ package 백준.Gold.no17070
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 30_000
+private const val IBS = 40_000
 private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -82,13 +82,16 @@ fun main() {
       val c = it + 2
       if (a[r][c] != EMPTY) return@repeat
 
-      val movableH = r in 0 until N && c - 1 in 0 until N && a[r][c - 1] == EMPTY
-      if (movableH) cntsH[r][c] = cntsH[r][c - 1] + cntsD[r][c - 1]
+      val pr = r - 1
+      val pc = c - 1
 
-      val movableV = r - 1 in 0 until N && c in 0 until N && a[r - 1][c] == EMPTY
-      if (movableV) cntsV[r][c] = cntsV[r - 1][c] + cntsD[r - 1][c]
+      val movableH = inRange(r, pc, N) && a[r][pc] == EMPTY
+      if (movableH) cntsH[r][c] = cntsH[r][pc] + cntsD[r][pc]
 
-      if (movableH && movableV) cntsD[r][c] = cntsH[r - 1][c - 1] + cntsV[r - 1][c - 1] + cntsD[r - 1][c - 1]
+      val movableV = inRange(pr, c, N) && a[pr][c] == EMPTY
+      if (movableV) cntsV[r][c] = cntsV[pr][c] + cntsD[pr][c]
+
+      if (movableH && movableV) cntsD[r][c] = cntsH[pr][pc] + cntsV[pr][pc] + cntsD[pr][pc]
     }
   }
 
@@ -96,3 +99,9 @@ fun main() {
   w(cntsH[t][t] + cntsV[t][t] + cntsD[t][t])
   O.flush()
 }
+
+private fun inRange(
+  r: Int,
+  c: Int,
+  size: Int,
+) = r in 0 until size && c in 0 until size
