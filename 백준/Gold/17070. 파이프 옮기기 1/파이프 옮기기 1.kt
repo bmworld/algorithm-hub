@@ -1,7 +1,7 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 10_000
+private const val IBS = 30_000
 private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -59,14 +59,9 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
-private const val H = 0
-private const val V = 1
-private const val D = 2
 private const val EMPTY = 0
 private const val H_SEP = 1_000_000_000_000UL
 private const val V_SEP = 1_000_000UL
-private val dr = intArrayOf(0, 1, 1)
-private val dc = intArrayOf(1, 0, 1)
 
 @OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
@@ -74,62 +69,34 @@ fun main() {
   val N = i()
   val a = Array(N) { IntArray(N) { b() } }
 
-  if (a[N - 1][N - 1] == 1) {
+  if (a[0][2] == 1 || a[N - 1][N - 1] == 1) {
     w(0)
     O.flush()
     return
   }
 
-  val cnts = Array(N) { ULongArray(N) }
-  cnts[0][1] = encodeCnt(1UL, 0UL, 0UL)
-
-  fun move(
-    r: Int,
-    c: Int,
-    h: ULong = 0UL,
-    v: ULong = 0UL,
-    d: ULong = 0UL,
-  ) {
-    val hvd = cnts[r][c]
-    val vd = hvd % H_SEP
-    val nh = hvd / H_SEP + h
-    val nv = vd / V_SEP + v
-    val nd = vd % V_SEP + d
-    cnts[r][c] = encodeCnt(nh, nv, nd)
-  }
+  val cntsV = Array(N) { IntArray(N) }
+  val cntsH = Array(N) { IntArray(N) }
+  val cntsD = Array(N) { IntArray(N) }
+  cntsH[0][1] = 1
 
   repeat(N) { r ->
-    repeat(N) { c ->
-      val hvd = cnts[r][c]
-      val vd = hvd % H_SEP
-      val h = hvd / H_SEP
-      val v = vd / V_SEP
-      val d = vd % V_SEP
+    repeat(N - 2) {
+      val c = it + 2
+      if (a[r][c] != EMPTY) return@repeat
 
-      val hasH = h > 0UL
-      val hasV = v > 0UL
-      val hasD = d > 0UL
+      val movableH = inRange(r, c - 1, N) && a[r][c - 1] == EMPTY
+      if (movableH) cntsH[r][c] = cntsH[r][c - 1] + cntsD[r][c - 1]
 
-      for (dir in 0..2) {
-        val nr = r + dr[dir]
-        val nc = c + dc[dir]
-        val movable = inRange(nr, nc, N) && a[nr][nc] == EMPTY && if (dir == D) a[nr][c] == EMPTY && a[r][nc] == EMPTY else true
-        if (!movable) continue
+      val movableV = inRange(r - 1, c, N) && a[r - 1][c] == EMPTY
+      if (movableV) cntsV[r][c] = cntsV[r - 1][c] + cntsD[r - 1][c]
 
-        if (dir == H && (hasH || hasD)) move(nr, nc, h = h + d)
-        if (dir == V && (hasV || hasD)) move(nr, nc, v = v + d)
-        if (dir == D && (hasH || hasV || hasD)) move(nr, nc, d = h + v + d)
-      }
+      if (movableH && movableV) cntsD[r][c] = cntsH[r - 1][c - 1] + cntsV[r - 1][c - 1] + cntsD[r - 1][c - 1]
     }
   }
 
-  val hvd = cnts[N - 1][N - 1]
-  val vd = hvd % H_SEP
-  val h = hvd / H_SEP
-  val v = vd / V_SEP
-  val d = vd % V_SEP
-
-  w((h + v + d).toInt())
+  val t = N - 1
+  w(cntsH[t][t] + cntsV[t][t] + cntsD[t][t])
   O.flush()
 }
 
@@ -138,9 +105,3 @@ private fun inRange(
   c: Int,
   size: Int,
 ) = c in 0 until size && r in 0 until size
-
-private fun encodeCnt(
-  h: ULong,
-  v: ULong,
-  d: ULong,
-): ULong = h * H_SEP + v * V_SEP + d
