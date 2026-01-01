@@ -3,8 +3,8 @@ package 백준.Gold.no17070
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 40_000
-private const val OBS = 1_000
+private const val IBS = 1 shl 16
+private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -72,31 +72,45 @@ fun main() {
     return
   }
 
-  val cntsH = Array(N) { IntArray(N) }
-  val cntsV = Array(N) { IntArray(N) }
-  val cntsD = Array(N) { IntArray(N) }
-  cntsH[0][1] = 1
+  val cnts = IntArray(
+    N * N * 3 // [H, V, D]
+  )
+  cnts[encodePos(0, 1, N)] = 1
 
   repeat(N) { r ->
     repeat(N - 2) {
       val c = it + 2
       if (a[r][c] != EMPTY) return@repeat
 
+      val h = encodePos(r, c, N)
+      val v = h + 1
+      val d = h + 2
+
       val pr = r - 1
       val pc = c - 1
 
       val movableH = inRange(r, pc, N) && a[r][pc] == EMPTY
-      if (movableH) cntsH[r][c] = cntsH[r][pc] + cntsD[r][pc]
+      if (movableH) {
+        val ph = encodePos(r, pc, N)
+        cnts[h] = cnts[ph] + cnts[ph + 2]
+      }
 
       val movableV = inRange(pr, c, N) && a[pr][c] == EMPTY
-      if (movableV) cntsV[r][c] = cntsV[pr][c] + cntsD[pr][c]
+      if (movableV) {
+        val ph = encodePos(pr, c, N)
+        cnts[v] = cnts[ph + 1] + cnts[ph + 2]
+      }
 
-      if (movableH && movableV) cntsD[r][c] = cntsH[pr][pc] + cntsV[pr][pc] + cntsD[pr][pc]
+      if (movableH && movableV) {
+        val ph = encodePos(pr, pc, N)
+        cnts[d] = cnts[ph] + cnts[ph + 1] + cnts[ph + 2]
+      }
     }
   }
 
   val t = N - 1
-  w(cntsH[t][t] + cntsV[t][t] + cntsD[t][t])
+  val h = encodePos(t, t, N)
+  w(cnts[h] + cnts[h + 1] + cnts[h + 2])
   O.flush()
 }
 
@@ -105,3 +119,9 @@ private fun inRange(
   c: Int,
   size: Int,
 ) = r in 0 until size && c in 0 until size
+
+private fun encodePos(
+  r: Int,
+  c: Int,
+  size: Int,
+) = 3 * (r * size + c)
