@@ -1,8 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 50_000
-private const val OBS = 2_000
+private const val IBS = 40_000
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -75,54 +75,28 @@ fun main() {
     return
   }
 
-  val cnts = Array(N) { ULongArray(N) }
-  cnts[0][1] = encodeCnt(h = 1UL)
+  val cntsV = Array(N) { IntArray(N) }
+  val cntsH = Array(N) { IntArray(N) }
+  val cntsD = Array(N) { IntArray(N) }
+  cntsH[0][1] = 1
 
   repeat(N) { r ->
     repeat(N - 2) {
       val c = it + 2
       if (a[r][c] != EMPTY) return@repeat
 
-      var nh = 0UL
       val movableH = inRange(r, c - 1, N) && a[r][c - 1] == EMPTY
-      if (movableH) {
-        val hvd = cnts[r][c - 1]
-        val vd = hvd % H_SEP
-        val h = hvd / H_SEP
-        val d = vd % V_SEP
-        nh = h + d
-      }
+      if (movableH) cntsH[r][c] = cntsH[r][c - 1] + cntsD[r][c - 1]
 
-      var nv = 0UL
       val movableV = inRange(r - 1, c, N) && a[r - 1][c] == EMPTY
-      if (movableV) {
-        val hvd = cnts[r - 1][c]
-        val vd = hvd % H_SEP
-        val v = vd / V_SEP
-        val d = vd % V_SEP
-        nv = v + d
-      }
+      if (movableV) cntsV[r][c] = cntsV[r - 1][c] + cntsD[r - 1][c]
 
-      var nd = 0UL
-      if (movableH && movableV) {
-        val hvd = cnts[r - 1][c - 1]
-        val vd = hvd % H_SEP
-        val h = hvd / H_SEP
-        val v = vd / V_SEP
-        val d = vd % V_SEP
-        nd = h + v + d
-      }
-
-      cnts[r][c] = encodeCnt(nh, nv, nd)
+      if (movableH && movableV) cntsD[r][c] = cntsH[r - 1][c - 1] + cntsV[r - 1][c - 1] + cntsD[r - 1][c - 1]
     }
   }
 
-  val hvd = cnts[N - 1][N - 1]
-  val vd = hvd % H_SEP
-  val h = hvd / H_SEP
-  val v = vd / V_SEP
-  val d = vd % V_SEP
-  w((h + v + d).toInt())
+  val t = N - 1
+  w(cntsH[t][t] + cntsV[t][t] + cntsD[t][t])
   O.flush()
 }
 
@@ -131,9 +105,3 @@ private fun inRange(
   c: Int,
   size: Int,
 ) = c in 0 until size && r in 0 until size
-
-private fun encodeCnt(
-  h: ULong = 0UL,
-  v: ULong = 0UL,
-  d: ULong = 0UL,
-): ULong = h * H_SEP + v * V_SEP + d
