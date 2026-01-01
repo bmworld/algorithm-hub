@@ -4,8 +4,8 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.util.*
 
-private const val IBS = 256
-private const val OBS = 64
+private const val IBS = 2_000
+private const val OBS = 1_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -70,6 +70,8 @@ private const val POS_SEP = 100
 
 private const val H_SEP = 1_000_000_000_000UL
 private const val V_SEP = 1_000_000UL
+private val dr = intArrayOf(0, 1, 1)
+private val dc = intArrayOf(1, 0, 1)
 
 @OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
@@ -77,7 +79,7 @@ fun main() {
   val N = i()
   val a = Array(N) { IntArray(N) { b() } }
 
-  if (a[0][0] == 1 || a[0][1] == 1 || a[0][2] == 1) {
+  if (a[N - 1][N - 1] == 1) {
     w(0)
     O.flush()
     return
@@ -92,16 +94,15 @@ fun main() {
   fun move(
     r: Int,
     c: Int,
-    h: ULong,
-    d: ULong,
-    v: ULong,
-    dir: Int,
+    h: ULong = 0UL,
+    v: ULong = 0UL,
+    d: ULong = 0UL,
   ) {
     val hvd = cnts[r][c]
     val vd = hvd % H_SEP
-    val nh = hvd / H_SEP + if (dir == H) (h + d) else 0UL
-    val nv = vd / V_SEP + if (dir == V) (v + d) else 0UL
-    val nd = vd % V_SEP + if (dir == D) (h + v + d) else 0UL
+    val nh = hvd / H_SEP + h
+    val nv = vd / V_SEP + v
+    val nd = vd % V_SEP + d
     cnts[r][c] = encodeCnt(nh, nv, nd)
 
     val notUsed = hvd == 0UL
@@ -119,21 +120,20 @@ fun main() {
     val v = vd / V_SEP
     val d = vd % V_SEP
 
-    val nc = c + 1
-    val nr = r + 1
+    val hasH = h > 0UL
+    val hasV = v > 0UL
+    val hasD = d > 0UL
 
-    val movableH = nc in 0 until N && a[r][nc] == EMPTY
-    val movableV = nr in 0 until N && a[nr][c] == EMPTY
-    val movableD = movableH && movableV && a[nr][nc] == EMPTY
+    repeat(3) { dir ->
+      val nr = r + dr[dir]
+      val nc = c + dc[dir]
+      val movable = inRange(nr, nc, N) && a[nr][nc] == EMPTY && if (dir == D) a[nr][c] == EMPTY && a[r][nc] == EMPTY else true
+      if (!movable) return@repeat
 
-    if (movableH && (h > 0UL || d > 0UL)) move(r, nc, h, d, v, H)
-    if (movableV && (v > 0UL || d > 0UL)) move(nr, c, h, d, v, V)
-    if (movableD && (h > 0UL || v > 0UL || d > 0UL)) move(nr, nc, h, d, v, D)
-
-    println(
-      "--- $r, $c ($h, $v, $d) -> $nr, $nc"
-    )
-
+      if (dir == H && (hasH || hasD)) move(nr, nc, h = h + d)
+      if (dir == V && (hasV || hasD)) move(nr, nc, v = v + d)
+      if (dir == D && (hasH || hasV || hasD)) move(nr, nc, d = h + v + d)
+    }
   }
 
   val hvd = cnts[N - 1][N - 1]
@@ -145,6 +145,12 @@ fun main() {
   w((h + v + d).toInt())
   O.flush()
 }
+
+private fun inRange(
+  r: Int,
+  c: Int,
+  size: Int,
+) = c in 0 until size && r in 0 until size
 
 private fun encodeCnt(
   h: ULong,
