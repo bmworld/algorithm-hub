@@ -53,63 +53,81 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val EMPTY = 0
 fun main() {
 
   val N = i()
   val M = i()
-  val map = HashMap<Int, Boolean>()
+  val g = IntArray(N + 1) { it }
+  var ROOT = EMPTY
   repeat(i()) {
-    map[i()] = true
+    val v = i()
+    var r = findRoot(v, g)
+    if (ROOT != EMPTY) r = merge(r, ROOT, g)
+    ROOT = r
   }
 
-  val parties = Array(M) { IntArray(N + 1) }
-  val partyIdxs = IntArray(M)
-  var chi = 0
-
-  repeat(M) { i ->
-    var spreadTruth = false
-    val cnt = i()
-    parties[i][0] = cnt
-    repeat(cnt) { j ->
-      val v = i()
-      if (map[v] == true) spreadTruth = true
-      parties[i][j + 1] = v
-    }
-
-    if (spreadTruth) {
-      repeat(cnt) { j ->
-        map[parties[i][j + 1]] = true
+  w(
+    if (ROOT == EMPTY) {
+    M
+  } else {
+    val partyRoots = IntArray(M)
+    repeat(M) { i ->
+      var R = EMPTY
+      repeat(i()) {
+        val v = i()
+        var r = findRoot(v, g)
+        if (R != EMPTY && r != R) {
+          r = merge(r, R, g)
+          if (v == ROOT && r < ROOT) ROOT = r
+        }
+        R = r
       }
-    } else {
-      partyIdxs[chi++] = i
+      partyRoots[i] = R
     }
-  }
 
-  var result = 0
-  repeat(chi) {
-    val party = parties[partyIdxs[it]]
-    val cnt = party[0]
-    var spreadTruth = false
-    for (i in 1..cnt) {
-      if (map[party[i]] == true) {
-        spreadTruth = true
-        break
-      }
-    }
-    if (!spreadTruth) result++
-  }
+    var cnt = 0
+    for (i in 0 until M) if (g[findRoot(partyRoots[i], g)] != ROOT) cnt++
+    cnt
+  })
 
-  w(result)
   O.flush()
 }
 
-//  for (e in map) {
-//    println("entry = ${e.key} ${e.value}")
-//  }
-//
-//  repeat(M) { i ->
-//    val cnt = parties[i][0]
-//    repeat(cnt) { j ->
-//      println("parties[$i][${j + 1}]=${parties[i][j + 1]}")
-//    }
-//  }
+fun merge(
+  a: Int,
+  b: Int,
+  g: IntArray,
+): Int {
+  val r1 = findRoot(a, g)
+  val r2 = findRoot(b, g)
+  return when {
+    r1 <= r2 -> {
+      g[r2] = r1
+      r1
+    }
+
+    else -> {
+      g[r1] = r2
+      r2
+    }
+  }
+}
+
+fun findRoot(
+  v: Int,
+  graph: IntArray,
+): Int {
+  val r = graph[v]
+  return if (r == v) v
+  else {
+    val nr = findRoot(r, graph)
+    graph[v] = nr
+    nr
+  }
+}
+
+//println("-- ROOT = ${ROOT}")
+//for (i in 1..N) {
+//  println("g[$i] = ${g[i]}")
+//}
