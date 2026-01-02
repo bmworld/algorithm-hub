@@ -3,7 +3,7 @@ package 백준.Gold.no1043
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 13
+private const val IBS = 5_000
 private const val OBS = 128
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -68,26 +68,22 @@ fun main() {
   }
 
   w(
-    if (ROOT == EMPTY) {
-    M
-  } else {
+    if (ROOT == EMPTY) M else {
+
     val partyRoots = IntArray(M)
     repeat(M) { i ->
       var R = EMPTY
       repeat(i()) {
         val v = i()
         var r = findRoot(v, g)
-        if (R != EMPTY && r != R) {
-          r = merge(r, R, g)
-          if (v == ROOT && r < ROOT) ROOT = r
-        }
+        if (R != EMPTY && r != R) r = merge(r, R, g)
         R = r
       }
       partyRoots[i] = R
     }
 
     var cnt = 0
-    for (i in 0 until M) if (g[findRoot(partyRoots[i], g)] != ROOT) cnt++
+    for (i in 0 until M) if (g[findRoot(partyRoots[i], g)] != findRoot(ROOT, g)) cnt++
     cnt
   })
 
@@ -126,8 +122,3 @@ fun findRoot(
     nr
   }
 }
-
-//println("-- ROOT = ${ROOT}")
-//for (i in 1..N) {
-//  println("g[$i] = ${g[i]}")
-//}
