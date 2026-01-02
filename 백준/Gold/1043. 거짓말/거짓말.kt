@@ -1,7 +1,7 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 5_000
+private const val IBS = 7_000
 private const val OBS = 512
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -67,7 +67,7 @@ fun main() {
 
   w(
     if (ROOT == EMPTY) M else {
-      
+
     val partyRoots = IntArray(M)
     repeat(M) { i ->
       var R = EMPTY
@@ -80,8 +80,9 @@ fun main() {
       partyRoots[i] = R
     }
 
+    val finalROOT = findRoot(ROOT, g)
     var cnt = 0
-    for (i in 0 until M) if (g[findRoot(partyRoots[i], g)] != findRoot(ROOT, g)) cnt++
+    for (i in 0 until M) if (g[findRoot(partyRoots[i], g)] != finalROOT) cnt++
     cnt
   })
 
