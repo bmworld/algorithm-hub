@@ -2,7 +2,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 128
-private const val OBS = 60_000
+private const val OBS = 20_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
