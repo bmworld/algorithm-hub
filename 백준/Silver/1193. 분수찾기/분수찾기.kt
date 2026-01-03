@@ -51,51 +51,17 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-private const val UP = 0
-private const val DOWN = 1
 fun main() {
+  var order = i()
 
-  val N = i()
+  var round = 1
+  while (order > round) order -= round++
 
-  var a = 0
-  var b = 0
+  val oddRound = round % 2 == 0
+  val rOrder = round - order + 1
 
-  fun f(
-    r: Int,
-    c: Int,
-    dir: Int,
-    cnt: Int,
-  ) {
-    
-    if (cnt <= 1) {
-      a = r
-      b = c
-      return
-    }
-
-    var nd = dir
-    var nr = r
-    var nc = c
-
-    when (dir) {
-      UP -> {
-        if (r == 1) nd++ else nr--
-        nc++
-      }
-
-      DOWN -> {
-        if (c == 1) nd++ else nc--
-        nr++
-      }
-    }
-
-    f(nr, nc, nd % 2, cnt - 1)
-  }
-
-  f(1, 1, UP, N)
-
-  w(a)
+  w(if (oddRound) order else rOrder)
   O.write(47)
-  w(b)
+  w(if (oddRound) rOrder else order)
   O.flush()
 }
