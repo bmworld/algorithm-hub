@@ -1,8 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 16
-private const val OBS = 16
+private const val IBS = 1 shl 10
+private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -51,17 +51,48 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+
 fun main() {
-  var order = i()
-
-  var round = 1
-  while (order > round) order -= round++
-
-  val oddRound = round % 2 == 0
-  val rOrder = round - order + 1
-
-  w(if (oddRound) order else rOrder)
-  O.write(47)
-  w(if (oddRound) rOrder else order)
+  val n = i()
+  val r = searchRound(n)
+  val end = r * (r + 1) shr 1
+  val stt = end - r + 1
+  val o = n - stt + 1
+  val ro = r - o + 1
+  
+  if (r % 2 == 0) {
+    w(o)
+    O.write(47)
+    w(ro)
+  } else {
+    w(ro)
+    O.write(47)
+    w(o)
+  }
   O.flush()
+}
+
+private fun searchRound(
+  n: Int,
+): Int {
+  if (n == 1) return 1
+  var round = 0
+  var l = 1
+  var r = 4472
+
+  while (l <= r) {
+    val m = (l + r) shr 1
+    val end = m * (m + 1) shr 1
+    val stt = end - m + 1
+    when {
+      n > end -> l = m + 1
+      n < stt -> r = m - 1
+
+      else -> {
+        round = m
+        break
+      }
+    }
+  }
+  return round
 }
