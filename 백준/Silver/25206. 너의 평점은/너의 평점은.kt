@@ -1,6 +1,6 @@
 import java.io.BufferedInputStream
 
-private const val IBS = 1 shl 11
+private const val IBS = 1_024
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private var Ii = 0
