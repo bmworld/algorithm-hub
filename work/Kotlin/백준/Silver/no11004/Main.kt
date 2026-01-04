@@ -2,7 +2,6 @@ package 백준.Silver.no11004
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 16
 private const val OBS = 1 shl 5
@@ -56,15 +55,54 @@ private fun w(
 
 fun main() {
   val n = i()
-  val k = i()
-  val a = PriorityQueue<Int>(n)
+  val k = i() - 1
+  val a = IntArray(n)
   repeat(n) {
-    a += i()
+    a[it] = i()
   }
 
-  repeat(k - 1) {
-    a.poll()
+  var found = false
+
+  fun swap(
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
   }
-  w(a.poll())
+
+  fun sorter(
+    l: Int,
+    r: Int,
+  ): Int {
+    val mv = a[r]
+    var i = l - 1
+    for (j in l until r) {
+      val lo = a[j]
+      if (lo > mv) continue
+      swap(++i, j)
+    }
+    val m = i + 1
+    if (m != r) swap(m, r)
+    return m
+  }
+
+  fun qs(
+    l: Int,
+    r: Int,
+  ) {
+    if (found || l > r) return
+    val m = sorter(l, r)
+    if (m == k) {
+      w(a[k])
+      found = true
+      return
+    }
+    qs(l, m - 1)
+    qs(m + 1, r)
+  }
+
+  qs(0, n - 1)
   O.flush()
 }
