@@ -2,7 +2,6 @@ package 백준.Silver.no1026
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 9
 private const val OBS = 1 shl 4
@@ -56,21 +55,74 @@ private fun w(
 
 fun main() {
   val n = i()
-  val a = PriorityQueue<Int>()
-  val b = PriorityQueue<Int>(Comparator.reverseOrder())
+  val a = IntArray(n)
+  val b = IntArray(n)
   repeat(n) {
-    a += i()
+    a[it] = i()
+  }
+  repeat(n) {
+    b[it] = i()
   }
 
-  repeat(n) {
-    b += i()
-  }
+  qs(a, 0, n - 1)
+  qs(b, 0, n - 1)
 
   var r = 0
   repeat(n) {
-    r += a.poll() * b.poll()
+    r += a[it] * b[n - 1 - it]
   }
 
   w(r)
   O.flush()
+}
+
+fun swap(
+  a: IntArray,
+  i: Int,
+  j: Int,
+) {
+  val tmp = a[i]
+  a[i] = a[j]
+  a[j] = tmp
+}
+
+fun `3way_qs`(
+  a: IntArray,
+  l: Int,
+  r: Int,
+): Pair<Int, Int> {
+  var pos = l
+  var pl = l
+  var pr = r
+  val piv = a[(l + r) shr 1]
+
+  while (pos <= pr) {
+    val v = a[pos]
+    when {
+      v < piv -> {
+        swap(a, pos, pl)
+        pl++
+        pos++
+      }
+
+      v > piv -> {
+        swap(a, pos, pr)
+        pr--
+      }
+
+      else -> pos++
+    }
+  }
+  return Pair(pl, pr)
+}
+
+fun qs(
+  a: IntArray,
+  l: Int,
+  r: Int,
+) {
+  if (l >= r) return
+  val (pl, pr) = `3way_qs`(a, l, r)
+  qs(a, l, pl - 1)
+  qs(a, pr + 1, r)
 }
