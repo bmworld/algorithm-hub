@@ -2,6 +2,7 @@ package 백준.Silver.no2563
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.util.*
 
 private const val IBS = 1 shl 10
 private const val OBS = 1 shl 6
@@ -55,22 +56,17 @@ private fun w(
 
 private const val LEN = 100
 fun main() {
-  val a = BooleanArray(LEN * LEN)
+  val bs = BitSet(LEN * LEN)
 
   repeat(i()) {
     val x = i()
     val y = i()
     repeat(10) { ty ->
-      repeat(10) { tx ->
-        val nx = x + tx
-        val ny = y + ty
-        a[ny * LEN + nx] = true
-      }
+      val from = (y + ty) * LEN + x
+      bs.set(from, from + 10)
     }
   }
 
-  var cnt = 0
-  for (b in a) if (b) cnt++
-  w(cnt)
+  w(bs.cardinality())
   O.flush()
 }
