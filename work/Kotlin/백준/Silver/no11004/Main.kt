@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 1 shl 16
-private const val OBS = 1 shl 5
+private const val OBS = 1 shl 3
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -76,16 +76,20 @@ fun main() {
     l: Int,
     r: Int,
   ): Int {
-    val mv = a[r]
-    var i = l - 1
-    for (j in l until r) {
-      val lo = a[j]
-      if (lo > mv) continue
-      swap(++i, j)
+    val m = (l + r) / 2
+    val mv = a[m]
+    swap(m, r)
+
+    var i = l
+    repeat(r - l) {
+      val j = l + it
+      if (a[j] >= mv) return@repeat
+      swap(i, j)
+      i++
     }
-    val m = i + 1
-    if (m != r) swap(m, r)
-    return m
+
+    swap(i, r)
+    return i
   }
 
   fun qs(
