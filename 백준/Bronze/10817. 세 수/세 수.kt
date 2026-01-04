@@ -1,6 +1,5 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 4
 private const val OBS = 1 shl 2
@@ -52,13 +51,14 @@ private fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-private const val LEN = 3
 fun main() {
-  val a = PriorityQueue<Int>(LEN)
-  repeat(LEN) {
-    a += i()
+  val a = i()
+  val b = i()
+  val c = i()
+  when {
+    a >= b && a >= c -> w(if (b > c) b else c)
+    b >= a && b >= c -> w(if (a > c) a else c)
+    c >= a && c >= b -> w(if (a > b) a else b)
   }
-  a.poll()
-  w(a.poll())
   O.flush()
 }
