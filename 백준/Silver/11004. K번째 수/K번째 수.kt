@@ -1,9 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 16
-private const val OBS = 1 shl 5
+private const val OBS = 1 shl 3
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -54,15 +53,63 @@ private fun w(
 
 fun main() {
   val n = i()
-  val k = i()
-  val a = PriorityQueue<Int>(n)
+  val k = i() - 1
+  val a = IntArray(n)
   repeat(n) {
-    a += i()
+    a[it] = i()
   }
 
-  repeat(k - 1) {
-    a.poll()
+  fun swap(
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
   }
-  w(a.poll())
+
+  fun `3way_qs`(
+    stt: Int,
+    end: Int,
+  ) {
+
+    var l = stt
+    var r = end
+    
+    while (l <= r) {
+      var pos = l
+      var pl = l
+      var pr = r
+      val piv = a[(l + r) shr 1]
+
+      while (pos <= pr) {
+        val v = a[pos]
+        when {
+          v < piv -> {
+            swap(pos, pl)
+            pl++
+            pos++
+          }
+
+          v > piv -> {
+            swap(pos, pr)
+            pr--
+          }
+
+          else -> pos++
+        }
+      }
+
+      when {
+        k < pl -> r = pl - 1
+        k > pr -> l = pr + 1
+        else -> return
+      }
+    }
+  }
+
+  `3way_qs`(0, n - 1)
+
+  w(a[k])
   O.flush()
 }
