@@ -83,7 +83,7 @@ fun main() {
     var i = l
     repeat(r - l) {
       val j = l + it
-      if (a[j] >= mv) return@repeat
+      if (a[j] > mv) return@repeat
       swap(i, j)
       i++
     }
