@@ -2,10 +2,9 @@ package 백준.Bronze.no10817
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
-private const val IBS = 1 shl 4
-private const val OBS = 1 shl 2
+private const val IBS = 16
+private const val OBS = 8
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -37,7 +36,7 @@ private fun i(): Int {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1).also { it[WS] = 10 }
+private val WB = ByteArray(WS)
 private fun w(
   num: Int,
 ) {
@@ -51,16 +50,17 @@ private fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
+  O.write(WB, ++pos, WS - pos)
 }
 
-private const val LEN = 3
 fun main() {
-  val a = PriorityQueue<Int>(LEN)
-  repeat(LEN) {
-    a += i()
+  val a = i()
+  val b = i()
+  val c = i()
+  when {
+    a >= b && a >= c -> w(if (b > c) b else c)
+    b >= a && b >= c -> w(if (a > c) a else c)
+    c >= a && c >= b -> w(if (a > b) a else b)
   }
-  a.poll()
-  w(a.poll())
   O.flush()
 }
