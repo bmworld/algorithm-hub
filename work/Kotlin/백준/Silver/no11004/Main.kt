@@ -60,7 +60,42 @@ fun main() {
   repeat(n) {
     a[it] = i()
   }
-  a.sort()
+
+  fun swap(
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+  }
+
+  fun sorter(
+    l: Int,
+    r: Int,
+  ): Int {
+    val mv = a[r]
+    var i = l - 1
+    for (j in l until r) {
+      val lo = a[j]
+      if (lo > mv) continue
+      swap(++i, j)
+    }
+    val m = i + 1
+    if (m != r) swap(m, r)
+    return m
+  }
+
+  fun qs(
+    l: Int,
+    r: Int,
+  ) {
+    if (l >= r) return
+    val m = sorter(l, r)
+    qs(l, m - 1)
+    qs(m + 1, r)
+  }
+  qs(0, n - 1)
 
   w(a[k])
   O.flush()
