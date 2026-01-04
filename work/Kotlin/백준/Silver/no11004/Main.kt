@@ -94,15 +94,13 @@ fun main() {
   ) {
     if (found || l > r) return
     val m = sorter(l, r)
-    if (m == k) {
-      w(a[k])
-      found = true
-      return
-    }
-    qs(l, m - 1)
-    qs(m + 1, r)
+    if (m == k) found = true
+    else if (m > k) qs(l, m - 1)
+    else qs(m + 1, r)
   }
 
   qs(0, n - 1)
+
+  w(a[k])
   O.flush()
 }
