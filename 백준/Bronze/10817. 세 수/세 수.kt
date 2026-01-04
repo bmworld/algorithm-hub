@@ -1,8 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 4
-private const val OBS = 1 shl 2
+private const val IBS = 12
+private const val OBS = 3
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -34,7 +34,7 @@ private fun i(): Int {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1).also { it[WS] = 10 }
+private val WB = ByteArray(WS)
 private fun w(
   num: Int,
 ) {
@@ -48,7 +48,7 @@ private fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
+  O.write(WB, ++pos, WS - pos)
 }
 
 fun main() {
