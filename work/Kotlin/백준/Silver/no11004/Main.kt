@@ -61,8 +61,6 @@ fun main() {
     a[it] = i()
   }
 
-  var found = false
-
   fun swap(
     i: Int,
     j: Int,
@@ -72,38 +70,47 @@ fun main() {
     a[j] = tmp
   }
 
-  fun sorter(
-    l: Int,
-    r: Int,
-  ): Int {
-    val m = (l + r) / 2
-    val mv = a[m]
-    swap(m, r)
-
-    var i = l
-    repeat(r - l) {
-      val j = l + it
-      if (a[j] > mv) return@repeat
-      swap(i, j)
-      i++
-    }
-
-    swap(i, r)
-    return i
-  }
-
-  fun qs(
-    l: Int,
-    r: Int,
+  fun `3way_qs`(
+    stt: Int,
+    end: Int,
   ) {
-    if (found || l > r) return
-    val m = sorter(l, r)
-    if (m == k) found = true
-    else if (m > k) qs(l, m - 1)
-    else qs(m + 1, r)
+
+    var l = stt
+    var r = end
+    
+    while (l <= r) {
+      var pos = l
+      var pl = l
+      var pr = r
+      val piv = a[(l + r) shr 1]
+
+      while (pos <= pr) {
+        val v = a[pos]
+        when {
+          v < piv -> {
+            swap(pos, pl)
+            pl++
+            pos++
+          }
+
+          v > piv -> {
+            swap(pos, pr)
+            pr--
+          }
+
+          else -> pos++
+        }
+      }
+
+      when {
+        k < pl -> r = pl - 1
+        k > pr -> l = pr + 1
+        else -> return
+      }
+    }
   }
 
-  qs(0, n - 1)
+  `3way_qs`(0, n - 1)
 
   w(a[k])
   O.flush()
