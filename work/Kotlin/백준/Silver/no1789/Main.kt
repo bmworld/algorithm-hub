@@ -38,7 +38,7 @@ private fun i(): Long {
 private const val WS = 10
 private val WB = ByteArray(WS)
 private fun w(
-  num: Int,
+  num: Long,
 ) {
   var v = if (num >= 0) num
   else {
@@ -55,25 +55,22 @@ private fun w(
 
 fun main() {
   val n = i()
-
   var max: Long = 0
   var l: Long = 0
   var r: Long = 93_000
   while (l <= r) {
     val m = (l + r) shr 1
-    val fr = m * (m + 1) / 2
-    val to = fr + m
+    val sum = m * (m + 1) / 2
     when {
-      n < fr -> r = m - 1
-      n > to -> l = m + 1
-
-      else -> {
+      sum <= n -> {
+        l = m + 1
         max = m
-        break
       }
+
+      else -> r = m - 1
     }
   }
 
-  w(max.toInt())
+  w(max)
   O.flush()
 }
