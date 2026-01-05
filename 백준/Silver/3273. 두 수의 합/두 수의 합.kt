@@ -1,7 +1,7 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 100_000
+private const val IBS = 20_000
 private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -51,72 +51,41 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val MAX_NUM = 1_000_000
 fun main() {
-
+  val ch = BooleanArray(MAX_NUM + 1)
   val n = i()
-  val a = IntArray(n)
+  var max = 0
   repeat(n) {
-    a[it] = i()
+    val v = i()
+    ch[v] = true
+    if (max < v) max = v
   }
-
   val k = i()
 
-  fun swap(
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
+  var cnt = 0
+  var l = 1
+  var r = if (max < k) max else k
+  while (l < r) {
+    when {
+      !ch[l] -> {
+        l++
+        continue
+      }
 
-  fun partition(
-    l: Int,
-    r: Int,
-  ): Int {
-    val piv = (l + r) shr 1
-    val mv = a[piv]
-    swap(piv, r)
-
-    var pos = l - 1
-    repeat(r - l) {
-      val j = l + it
-      if (a[j] < mv) swap(++pos, j)
+      !ch[r] -> {
+        r--
+        continue
+      }
     }
 
-    swap(++pos, r)
-    return pos
-  }
+    val sum = l + r
+    when {
+      sum < k -> l++
 
-  fun qs(
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-    val m = partition(l, r)
-    qs(l, m - 1)
-    qs(m + 1, r)
-  }
-
-  qs(0, n - 1)
-
-  var l = 0
-  var cnt = 0
-  repeat(n) {
-    val r = n - 1 - it
-    val rv = a[r]
-    if (rv >= k) return@repeat
-
-    while (l < r) {
-      val lv = a[l]
-      val sum = rv + lv
-      when {
-        sum < k -> l++
-
-        else -> {
-          if (sum == k) cnt++
-          break
-        }
+      else -> {
+        if (sum == k) cnt++
+        r--
       }
     }
   }
