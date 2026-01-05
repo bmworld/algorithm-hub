@@ -81,36 +81,21 @@ fun main() {
       while (qh < qt) {
         val pos = q[qh++]
         val t = timer[pos]
-
-        when {
-          pos == n -> {
-            min = t
-            cnt++
-          }
-
-          else -> {
-            var np = pos / 2
-            val nt = t + 1
-            if (pos % 2 == 0 && np in inRange && timer[np] >= nt && nt <= min) {
-              timer[np] = nt
-              q[qt++] = np
-            }
-
-            np = pos + 1
-            if (np in inRange && timer[np] >= nt && nt <= min) {
-              timer[np] = nt
-              q[qt++] = np
-            }
-
-            np = pos - 1
-            if (np in inRange && timer[np] >= nt && nt <= min) {
-              timer[np] = nt
-              q[qt++] = np
-            }
+        val nt = t + 1
+        repeat(3) {
+          val i = it - 1
+          val useTeleport = i == 0
+          if (useTeleport && pos % 2 != 0) return@repeat
+          val np = if (useTeleport) pos / 2 else pos + i
+          if (np in inRange && timer[np] >= nt && nt <= min) {
+            timer[np] = nt
+            if (np == n) {
+              min = nt
+              cnt++
+            } else q[qt++] = np
           }
         }
       }
-
       w(min)
       w(cnt)
     }
