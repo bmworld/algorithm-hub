@@ -54,6 +54,8 @@ private fun w(
   O.write(WB, pos, WS - pos)
 }
 
+private const val LongBitLen = 64
+
 fun main() {
   var k = i()
   w(
@@ -63,15 +65,7 @@ fun main() {
 
       else -> {
         if (k < 0) k = -k
-        var cnt = 0
-        var jump = 0L
-        while (true) {
-          val next = if (jump == 0L) 1L else jump * 2
-          if (next > k) break
-          jump = next
-          cnt++
-        }
-        cnt
+        LongBitLen - k.countLeadingZeroBits()
       }
     }
   )
