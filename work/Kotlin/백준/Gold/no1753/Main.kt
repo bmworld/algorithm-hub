@@ -80,6 +80,7 @@ fun main() {
     val e = heap.pop()
     val acc = e / SEP
     val fr = (e % SEP).toInt()
+    if (dist[fr] < acc) continue
 
     val nodes = graph[fr]
     repeat(nodes.size) {
@@ -107,7 +108,7 @@ private class HEAP(size: Int) {
 
   private var len = 0
   private val ROOT = 1
-  private val heap = LongArray(size)
+  private val heap = LongArray(size + 1)
 
   fun isNotEmpty() = len > 0
   fun push(v: Long) {
