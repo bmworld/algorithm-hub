@@ -76,7 +76,7 @@ fun main() {
   while (pq.isNotEmpty()) {
     val v = pq.poll()
     var isGcd = true
-    for (i in 0 until n - 1) {
+    for (i in 0 until n) {
       if (a[i] % v != 0) {
         isGcd = false
         break
