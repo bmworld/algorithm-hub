@@ -61,14 +61,14 @@ fun main() {
 
       else -> {
         if (k < 0) k = -k
-
         var cnt = 0
-        var jump = 1L
-        while (jump < k) {
-          jump *= 2
+        var jump = 0L
+        while (true) {
+          val next = if (jump == 0L) 1L else jump * 2
+          if (next > k) break
+          jump = next
           cnt++
         }
-
         cnt
       }
     }
