@@ -2,7 +2,6 @@ package 백준.Gold.no1753
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 16
 private const val OBS = 1 shl 16
@@ -73,12 +72,12 @@ fun main() {
 
   val dist = LongArray(N + 1) { MAX }
   dist[stt] = 0
-  val q = PriorityQueue<Long>()
-  q.add(stt.toLong())
+  val heap = HEAP(300_001)
+  heap.push(stt.toLong())
 
 
-  while (q.isNotEmpty()) {
-    val e = q.poll()
+  while (heap.isNotEmpty()) {
+    val e = heap.pop()
     val acc = e / SEP
     val fr = (e % SEP).toInt()
 
@@ -90,7 +89,7 @@ fun main() {
       val nw = acc + w
       if (dist[to] > nw) {
         dist[to] = nw
-        q.add(nw * SEP + to)
+        heap.push(nw * SEP + to)
       }
     }
   }
@@ -102,4 +101,55 @@ fun main() {
   }
 
   O.flush()
+}
+
+private class HEAP(size: Int) {
+
+  private var len = 0
+  private val ROOT = 1
+  private val heap = LongArray(size)
+
+  fun isNotEmpty() = len > 0
+  fun push(v: Long) {
+    var ci = ++len
+    heap[len] = v
+    while (ci > ROOT) {
+      val pi = ci shr 1
+      val p = heap[pi]
+      val c = heap[ci]
+      if (p > c) {
+        heap[pi] = c
+        heap[ci] = p
+        ci = pi
+      } else break
+    }
+
+  }
+
+  fun pop(): Long {
+    if (len == 0) return 0
+
+    val v = heap[ROOT]
+    heap[ROOT] = heap[len]
+    heap[len] = 0
+    len--
+
+    var pi = ROOT
+    while (true) {
+      val li = pi shl 1
+      val end = li > len
+      if (end) break
+      val ri = li + 1
+      var minIdx = li
+      if (ri <= len && heap[ri] < heap[li]) minIdx = ri
+      val p = heap[pi]
+      val min = heap[minIdx]
+      if (p > min) {
+        heap[pi] = min
+        heap[minIdx] = p
+        pi = minIdx
+      } else break
+    }
+    return v
+  }
 }
