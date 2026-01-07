@@ -1,6 +1,5 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 16
 private const val OBS = 1 shl 16
@@ -53,17 +52,37 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-
+private const val MAX = 1_000_000_001
 fun main() {
   val aLen = i()
   val bLen = i()
-  val n = aLen + bLen
-  val a = PriorityQueue<Int>(n)
-  repeat(n) {
-    a.add(i())
+  val a = IntArray(aLen + 1)
+  a[aLen] = MAX
+  repeat(aLen) {
+    a[it] = i()
   }
 
-  while (a.isNotEmpty()) w(a.poll())
+  val b = IntArray(bLen + 1)
+  b[bLen] = MAX
+  repeat(bLen) {
+    b[it] = i()
+  }
+
+  var ai = 0
+  var bi = 0
+
+  while (ai <= aLen && bi <= bLen) {
+    val av = a[ai]
+    val bv = b[bi]
+    if (av < bv) {
+      w(av)
+      ai++
+    } else if (av == MAX && bv == MAX) break
+    else {
+      w(bv)
+      bi++
+    }
+  }
 
   O.flush()
 }
