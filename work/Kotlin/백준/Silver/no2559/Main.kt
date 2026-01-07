@@ -57,7 +57,7 @@ fun main() {
   var max = Int.MIN_VALUE
   val N = i()
   val K = i()
-  val a = IntArray(N + 1)
+  val a = IntArray(N)
   var sum = 0
   repeat(N) { i ->
     val v = i()
