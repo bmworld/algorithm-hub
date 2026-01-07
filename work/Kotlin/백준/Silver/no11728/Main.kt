@@ -2,6 +2,7 @@ package 백준.Silver.no11728
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.util.*
 
 private const val IBS = 1 shl 16
 private const val OBS = 1 shl 16
@@ -59,64 +60,12 @@ fun main() {
   val aLen = i()
   val bLen = i()
   val n = aLen + bLen
-  val a = IntArray(n)
+  val a = PriorityQueue<Int>(n)
   repeat(n) {
-    a[it] = i()
+    a.add(i())
   }
 
-
-  fun swap(
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun `3way_qs`(
-    a: IntArray,
-    l: Int,
-    r: Int,
-  ): Pair<Int, Int> {
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1]
-
-    while (pos <= pr) {
-      val v = a[pos]
-      when {
-        v < piv -> {
-          swap(pos, pl)
-          pl++
-          pos++
-        }
-
-        v > piv -> {
-          swap(pos, pr)
-          pr--
-        }
-
-        else -> pos++
-      }
-    }
-    return Pair(pl, pr)
-  }
-
-  fun qs(
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-    val (pl, pr) = `3way_qs`(a, l, r)
-    qs(l, pl - 1)
-    qs(pr + 1, r)
-  }
-
-  qs(0, n - 1)
-
-  for (v in a) w(v)
+  while (a.isNotEmpty()) w(a.poll())
 
   O.flush()
 }
