@@ -3,8 +3,8 @@ package 백준.Silver.no2167
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 16
-private const val OBS = 1 shl 10
+private const val IBS = 120_000
+private const val OBS = 10_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -56,27 +56,37 @@ private fun w(
 fun main() {
   val N = i()
   val M = i()
-  val a = Array(N) { IntArray(M) }
-  repeat(N) { r ->
-    repeat(M) { c ->
+  val CAP = M + 1
+  val a = IntArray((N + 1) * CAP)
+
+  fun encodePos(
+    r: Int,
+    c: Int,
+  ): Int = r * CAP + c
+
+  repeat(N) { i ->
+    val r = i + 1
+    repeat(M) { j ->
+      val c = j + 1
       val v = i()
-      val l = if (c > 0) a[r][c - 1] else 0
-      val u = if (r > 0) a[r - 1][c] else 0
-      val d = if (c > 0 && r > 0) a[r - 1][c - 1] else 0
-      a[r][c] = v + l + u - d
+      val l = a[encodePos(r, c - 1)]
+      val u = a[encodePos(r - 1, c)]
+      val d = a[encodePos(r - 1, c - 1)]
+      a[encodePos(r, c)] = v + l + u - d
     }
   }
 
   repeat(i()) {
-    val i = i() - 1
-    val j = i() - 1
-    val x = i() - 1
-    val y = i() - 1
+    val i = i()
+    val j = i()
+    val x = i()
+    val y = i()
 
-    val l = if (j > 0) a[x][j - 1] else 0
-    val u = if (i > 0) a[i - 1][y] else 0
-    val d = if (i > 0 && j > 0) a[i - 1][j - 1] else 0
-    w(a[x][y] - l - u + d)
+    val l = a[encodePos(x, j - 1)]
+    val u = a[encodePos(i - 1, y)]
+    val d = a[encodePos(i - 1, j - 1)]
+    w(a[encodePos(x, y)] - l - u + d)
   }
+
   O.flush()
 }
