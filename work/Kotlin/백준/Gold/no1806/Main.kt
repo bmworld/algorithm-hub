@@ -3,7 +3,7 @@ package 백준.Gold.no1806
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 16
+private const val IBS = 1 shl 19
 private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -24,15 +24,9 @@ private fun r(): Byte {
 private val NUM = 48..57
 private fun i(): Int {
   var v = 0
-  var s = 1
   var c: Byte
-  while (r().also { c = it } in NUM || c == 45.toByte()) {
-    when (c) {
-      in NUM -> v = v * 10 + c - 48
-      else -> s = -1
-    }
-  }
-  return s * v
+  while (r().also { c = it } in NUM) v = v * 10 + c - 48
+  return v
 }
 
 private const val WS = 10
@@ -40,11 +34,7 @@ private val WB = ByteArray(WS)
 private fun w(
   num: Int,
 ) {
-  var v = if (num >= 0) num
-  else {
-    O.write(45)
-    -num
-  }
+  var v = num
   var pos = WS - 1
   do {
     WB[pos--] = (v % 10 + 48).toByte()
@@ -60,18 +50,16 @@ fun main() {
 
   val a = IntArray(N)
   var sum = 0
-  var seq = 0
   var l = 0
   repeat(N) { r ->
     val v = i()
     a[r] = v
     sum += v
-    seq++
 
     while (sum >= S) {
+      val seq = r - l + 1
       if (min == 0 || min > seq) min = seq
       sum -= a[l++]
-      seq--
     }
   }
 
