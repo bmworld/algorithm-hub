@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 1 shl 18
-private const val OBS = 1 shl 11
+private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -62,14 +62,21 @@ private fun w(
 private const val MAX = 200_000
 private const val NL: Byte = 10
 fun main() {
-  val a = Array(LETTERS_LEN) { IntArray(MAX + 1) }
+  val CAP = MAX + 1
+  val a = IntArray(LETTERS_LEN * CAP)
+
+  fun encodePos(
+    r: Int,
+    c: Int,
+  ): Int = r * CAP + c
+
   var len = 0
   var tmp: Byte
   while (r().also { tmp = it } >= NL) {
     if (tmp == NL) break
     val typed = tmp - A
     repeat(LETTERS_LEN) { char ->
-      a[char][len + 1] = a[char][len] + if (char == typed) 1 else 0
+      a[encodePos(char, len + 1)] = a[encodePos(char, len)] + if (char == typed) 1 else 0
     }
     len++
   }
@@ -78,7 +85,7 @@ fun main() {
     val l = getChar()
     val fr = i() + 1
     val to = i() + 1
-    w(a[l][to] - a[l][fr - 1])
+    w(a[encodePos(l, to)] - a[encodePos(l, fr - 1)])
   }
 
   O.flush()
