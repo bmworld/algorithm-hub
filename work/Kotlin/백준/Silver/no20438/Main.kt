@@ -30,7 +30,7 @@ private fun i(): Int {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS)
+private val WB = ByteArray(WS + 1).also { it[WS] = 10 }
 private fun w(
   num: Int,
 ) {
@@ -40,7 +40,7 @@ private fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, WS - pos)
+  O.write(WB, ++pos, WS - pos + 1)
 }
 
 private const val RECEIVED: Byte = 1
