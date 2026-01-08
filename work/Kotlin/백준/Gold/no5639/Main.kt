@@ -36,65 +36,62 @@ private fun w(
 }
 
 private val NUM = 48..57
+private const val MAX_NODE = 1_000_000
+private const val EMPTY = 0
+
 
 fun main() {
 
   var v = 0
   var b: Byte
-  var ROOT: Node? = null
-  var prev: Node? = null
+  var ROOT = EMPTY
+  var prev = EMPTY
+  val l = IntArray(MAX_NODE + 1)
+  val r = IntArray(MAX_NODE + 1)
   while (r().also { b = it } >= 10 || b == EOF.toByte()) {
     when (b) {
       EOF.toByte() -> break
       in NUM -> v = v * 10 + b - 48
 
       else -> {
-        val node = Node(v)
         when {
-          ROOT == null -> ROOT = node
-          prev!!.v > v -> prev.l = node
+          ROOT == EMPTY -> ROOT = v
+          prev > v -> l[prev] = v
 
           else -> {
-            var root = ROOT!!
+            var root = ROOT
             while (true) {
-              if (root.v > v) {
-                val l = root.l
-                if (l == null) {
-                  root.l = node
+              if (root > v) {
+                val lv = l[root]
+                if (lv == EMPTY) {
+                  l[root] = v
                   break
-                } else root = l
+                } else root = lv
               } else {
-                val r = root.r
-                if (r == null) {
-                  root.r = node
+                val rv = r[root]
+                if (rv == EMPTY) {
+                  r[root] = v
                   break
-                } else root = r
+                } else root = rv
               }
             }
           }
         }
 
-        prev = node
+        prev = v
         v = 0
-        continue
       }
     }
   }
 
-  fun postOrder(node: Node) {
-    val l = node.l
-    if (l != null) postOrder(l)
-    val r = node.r
-    if (r != null) postOrder(r)
-    w(node.v)
+  fun postOrder(v: Int) {
+    val lv = l[v]
+    if (lv != EMPTY) postOrder(lv)
+    val rv = r[v]
+    if (rv != EMPTY) postOrder(rv)
+    w(v)
   }
 
-  postOrder(ROOT!!)
+  postOrder(ROOT)
   O.flush()
 }
-
-private data class Node(
-  val v: Int,
-  var l: Node? = null,
-  var r: Node? = null,
-)
