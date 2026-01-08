@@ -3,8 +3,8 @@ package 백준.Silver.no20438
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 19
-private const val OBS = 1 shl 4
+private const val IBS = 1 shl 17
+private const val OBS = 1 shl 11
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -44,7 +44,7 @@ private fun w(
 }
 
 private const val RECEIVED: Byte = 1
-private const val LOCKED: Byte = -1
+private const val SLEEPY: Byte = -1
 fun main() {
   val N = i()
   val K = i()
@@ -54,14 +54,16 @@ fun main() {
   val MAX = N + 3
   val ch = ByteArray(MAX)
   repeat(K) {
-    ch[i()] = LOCKED
+    ch[i()] = SLEEPY
   }
 
   repeat(Q) {
     val ov = i()
     var v = ov
+    if (ch[v] == SLEEPY || ch[v] == RECEIVED) return@repeat
+
     while (v < MAX) {
-      if (ch[v] != LOCKED) ch[v] = RECEIVED
+      if (ch[v] != SLEEPY) ch[v] = RECEIVED
       v += ov
     }
   }
