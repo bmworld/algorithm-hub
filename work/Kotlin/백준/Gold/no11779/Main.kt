@@ -60,17 +60,17 @@ private fun w(
 
 private const val INF = Long.MAX_VALUE
 private const val SEP = 10_000
-private const val CAP = 1_000
+private const val MAX = 1_000
 
 fun main() {
   val n = i()
   val m = i()
 
-  fun encodePos(r: Int) = r * CAP
+  fun encodePos(r: Int) = r * MAX
 
-  val g = LongArray((n + 1) * CAP)
-  val cost = LongArray(n + 1) { INF }
-  val trace = IntArray(n + 1)
+  val g = LongArray((MAX + 1) * MAX)
+  val cost = LongArray(MAX + 1) { INF }
+  val trace = IntArray(MAX + 1)
   repeat(m) {
     val fr = i()
     val to = i()
@@ -111,17 +111,22 @@ fun main() {
 
   var cnt = 0
   var traced = to
-  while (traced != 0) {
+  while (traced != fr) {
     cost[cnt++] = traced.toLong()
     val next = trace[traced]
-    if (traced == fr || traced == next) break
+    if (traced == next) break
     else traced = next
   }
 
-  w(cnt.toLong(), true)
+  w(1 + cnt.toLong(), true)
+
+  w(fr.toLong())
   repeat(cnt) {
     w(cost[cnt - it - 1])
   }
 
   O.flush()
 }
+
+//println("fr=$fr, pos = $base, cnt=$busCnt")
+//println("--$cnt // trace[$traced]=${trace[traced]} -> $next")
