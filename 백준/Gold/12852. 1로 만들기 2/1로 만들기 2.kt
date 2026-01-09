@@ -1,8 +1,9 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
+import java.util.*
 
-private const val IBS = 1 shl 3
-private const val OBS = 1 shl 7
+private const val IBS = 1 shl 6
+private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -54,53 +55,54 @@ private fun w(
 }
 
 private const val MAX = 1_000_000
-private const val SEP = 1000
-private const val INF = 999 % SEP
+private const val Q_SEP = MAX * 10
+private const val NUM_SEP = 1000
+private const val INF = NUM_SEP - 1
 fun main() {
   val N = i()
   var opCnt = INF
-  val dp = IntArray(MAX + 1) { INF }
 
-  fun op(
-    v: Int,
-    cnt: Int,
-  ) {
-    if (cnt >= opCnt) return
-    if (v <= 1) {
-      opCnt = cnt
-      return
+  val dp = IntArray(MAX + 1) { INF }
+  dp[N] = 0 * NUM_SEP + 0
+
+  val q = PriorityQueue<Int>()
+  q.add(N)
+
+  op@ while (q.isNotEmpty()) {
+    val e = q.poll()
+    val cnt = e / Q_SEP
+    val fr = e % Q_SEP
+    if (fr == 1) {
+      if (opCnt > cnt) opCnt = cnt
+      continue
     }
 
-    repeat(2) {
-      val div = 3 - it
-      val nv = v / div
-      val nc = cnt + 1 + v % div
-      val pc = dp[nv] % SEP
-      if (pc > nc) {
-        dp[nv] = v * SEP + nc
-      }
-      op(nv, nc)
-
+    for (num in 3 downTo 2) {
+      val to = fr / num
+      val nc = cnt + 1 + fr % num
+      val pc = dp[to] % NUM_SEP
+      if (pc <= nc || to < 1) continue
+      dp[to] = fr * NUM_SEP + nc
+      q.add(nc * Q_SEP + to)
     }
   }
 
-  op(N, 0)
+
   w(opCnt, true)
 
-  var to = 1
   val out = IntArray(opCnt + 1)
-  var i = opCnt
-  while (i >= 0 && to != INF) {
-    out[i--] = to
+  var oi = opCnt
+  var to = 1
+  while (oi >= 0 && to != 0) {
+    out[oi--] = to
     val e = dp[to]
-    val fr = e / SEP
-
+    val fr = e / NUM_SEP
     if (e != INF && to * 3 != fr && to * 2 != fr) {
       var mid = to * 2
       val mid3 = to * 3
       if (mid3 < fr && mid3 > mid) mid = mid3
       repeat(fr - mid) {
-        out[i--] = mid + it
+        out[oi--] = mid + it
       }
     }
     to = fr
