@@ -34,65 +34,42 @@ private fun w(
 }
 
 private val NUM = 48..57
+private const val MAX = 10_000
 
 fun main() {
 
   var v = 0
   var b: Byte
-  var ROOT: Node? = null
-  var prev: Node? = null
+  val a = IntArray(MAX)
+  var len = 0
   while (r().also { b = it } >= 10 || b == EOF.toByte()) {
     when (b) {
       EOF.toByte() -> break
       in NUM -> v = v * 10 + b - 48
 
-      else -> {
-        val node = Node(v)
-        when {
-          ROOT == null -> ROOT = node
-          prev!!.v > v -> prev.l = node
-
-          else -> {
-            var root = ROOT!!
-            while (true) {
-              if (root.v > v) {
-                val l = root.l
-                if (l == null) {
-                  root.l = node
-                  break
-                } else root = l
-              } else {
-                val r = root.r
-                if (r == null) {
-                  root.r = node
-                  break
-                } else root = r
-              }
-            }
-          }
-        }
-
-        prev = node
-        v = 0
-        continue
-      }
+      else -> a[len++] = v.also { v = 0 }
     }
   }
 
-  fun postOrder(node: Node) {
-    val l = node.l
-    if (l != null) postOrder(l)
-    val r = node.r
-    if (r != null) postOrder(r)
-    w(node.v)
+  fun postOrder(
+    i: Int,
+    max: Int,
+  ) {
+    val node = a[i]
+    val l = i + 1
+
+    var r = l
+    while (r <= max) {
+      if (a[r] > node) break
+      r++
+    }
+
+    if (l < len && a[l] < node) postOrder(l, r - 1)
+    if (r <= max) postOrder(r, max)
+
+    w(node)
   }
 
-  postOrder(ROOT!!)
+  postOrder(0, len - 1)
   O.flush()
 }
-
-private data class Node(
-  val v: Int,
-  var l: Node? = null,
-  var r: Node? = null,
-)
