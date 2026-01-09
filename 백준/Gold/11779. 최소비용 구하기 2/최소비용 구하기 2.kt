@@ -2,8 +2,8 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.util.*
 
-private const val IBS = 100_000
-private const val OBS = 10_000
+private const val IBS = 300_000
+private const val OBS = 30_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
