@@ -4,8 +4,8 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.util.*
 
-private const val IBS = 100_000
-private const val OBS = 10_000
+private const val IBS = 30_000
+private const val OBS = 30_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -61,26 +61,19 @@ private fun w(
 private const val INF = Long.MAX_VALUE
 private const val SEP = 10_000
 private const val MAX = 1_000
-private const val BUS_MAX_CNT = 100_000
 
 fun main() {
   val n = i()
   val m = i()
 
-  fun encodePos(r: Int) = r * MAX
-
-  val g = LongArray((MAX + 1) * (BUS_MAX_CNT + 1))
+  val g = Array(MAX + 1) { mutableListOf<Long>() }
   val cost = LongArray(MAX + 1) { INF }
   val trace = IntArray(MAX + 1)
   repeat(m) {
     val fr = i()
     val to = i()
     val cost = i().toLong()
-
-    val base = encodePos(fr)
-    val busCnt = g[base].toInt()
-    g[base + busCnt + 1] = cost * SEP + to
-    g[base]++
+    g[fr] += cost * SEP + to
   }
 
   val fr = i()
@@ -93,11 +86,10 @@ fun main() {
     val acc = e / SEP
     val f = (e % SEP).toInt()
     if (cost[to] <= acc) continue
-    val base = encodePos(f)
-    val busCnt = g[base].toInt()
-    repeat(busCnt) {
-      val pos = base + 1 + it
-      val e = g[pos]
+
+    val buses = g[f]
+    repeat(buses.size) {
+      val e = buses[it]
       val c = e / SEP
       val t = (e % SEP).toInt()
       val nAcc = acc + c
