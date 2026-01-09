@@ -86,7 +86,6 @@ fun main() {
   val to = i()
   val q = PriorityQueue<Long>()
   q.add(fr.toLong())
-  cost[fr] = 0
 
   while (q.isNotEmpty()) {
     val e = q.poll()
@@ -108,15 +107,15 @@ fun main() {
     }
   }
 
-  val c = cost[to]
-  w(c, true)
+  w(cost[to], true)
 
   var cnt = 0
-  var v = to
-  while (v != 0) {
-    cost[cnt++] = v.toLong()
-    if (v == fr) break
-    else v = trace[v]
+  var traced = to
+  while (traced != 0) {
+    cost[cnt++] = traced.toLong()
+    val next = trace[traced]
+    if (traced == fr || traced == next) break
+    else traced = next
   }
 
   w(cnt.toLong(), true)
@@ -126,5 +125,3 @@ fun main() {
 
   O.flush()
 }
-
-//println("fr=$fr, pos = $base, cnt=$busCnt")
