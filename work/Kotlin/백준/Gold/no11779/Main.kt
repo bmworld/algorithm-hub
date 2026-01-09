@@ -4,7 +4,7 @@ import java.io.BufferedOutputStream
 import java.io.DataInputStream
 import java.util.*
 
-private const val IBS = 30_000
+private const val IBS = 300_000
 private const val OBS = 30_000
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -60,20 +60,24 @@ private fun w(
 
 private const val INF = Long.MAX_VALUE
 private const val SEP = 10_000
-private const val MAX = 1_000
+private const val MAX_BUS_CNT = 100_000
 
 fun main() {
   val n = i()
   val m = i()
 
-  val g = Array(MAX + 1) { mutableListOf<Long>() }
-  val cost = LongArray(MAX + 1) { INF }
-  val trace = IntArray(MAX + 1)
+  val g = Array(n + 1) { LongArray(MAX_BUS_CNT + 1) }
+  val cost = LongArray(n + 1) { INF }
+  val trace = IntArray(n + 1)
   repeat(m) {
     val fr = i()
     val to = i()
     val cost = i().toLong()
-    g[fr] += cost * SEP + to
+
+    val buses = g[fr]
+    val busCnt = buses[0].toInt()
+    buses[busCnt + 1] = cost * SEP + to
+    buses[0]++
   }
 
   val fr = i()
@@ -86,10 +90,10 @@ fun main() {
     val acc = e / SEP
     val f = (e % SEP).toInt()
     if (cost[to] <= acc) continue
-
     val buses = g[f]
-    repeat(buses.size) {
-      val e = buses[it]
+    val busCnt = buses[0].toInt()
+    repeat(busCnt) {
+      val e = buses[it + 1]
       val c = e / SEP
       val t = (e % SEP).toInt()
       val nAcc = acc + c
