@@ -40,7 +40,7 @@ private fun i(): Int {
 private const val WS = 20
 private val WB = ByteArray(WS + 1)
 private fun w(
-  num: Long,
+  num: Int,
   end: Boolean = false,
 ) {
   WB[WS] = if (end) 10 else 32
@@ -58,26 +58,24 @@ private fun w(
   O.write(WB, pos, WS - pos + 1)
 }
 
-private const val INF = Long.MAX_VALUE
+private const val INF = Int.MAX_VALUE
 private const val SEP = 10_000
-private const val MAX_BUS_CNT = 100_000
 
 fun main() {
   val n = i()
   val m = i()
 
-  val g = Array(n + 1) { LongArray(MAX_BUS_CNT + 1) }
-  val cost = LongArray(n + 1) { INF }
+  val g = Array(n + 1) { HashMap<Int, Int>() }
+  val cost = IntArray(n + 1) { INF }
   val trace = IntArray(n + 1)
   repeat(m) {
     val fr = i()
     val to = i()
-    val cost = i().toLong()
+    val cost = i()
 
     val buses = g[fr]
-    val busCnt = buses[0].toInt()
-    buses[busCnt + 1] = cost * SEP + to
-    buses[0]++
+    val prev = buses[to] ?: INF
+    if (prev > cost) buses[to] = cost
   }
 
   val fr = i()
@@ -91,14 +89,12 @@ fun main() {
     val f = (e % SEP).toInt()
     if (cost[to] <= acc) continue
     val buses = g[f]
-    val busCnt = buses[0].toInt()
-    repeat(busCnt) {
-      val e = buses[it + 1]
-      val c = e / SEP
-      val t = (e % SEP).toInt()
+    for (e in buses) {
+      val c = e.value
+      val t = e.key
       val nAcc = acc + c
-      if (cost[t] <= nAcc) return@repeat
-      cost[t] = nAcc
+      if (cost[t] <= nAcc) continue
+      cost[t] = nAcc.toInt()
       trace[t] = f
       q.add(nAcc * SEP + t)
     }
@@ -109,13 +105,13 @@ fun main() {
   var cnt = 0
   var prev = to
   while (prev != 0) {
-    cost[cnt++] = prev.toLong()
+    cost[cnt++] = prev
     val next = trace[prev]
     if (prev == fr || prev == next) break
     else prev = next
   }
 
-  w(cnt.toLong(), true)
+  w(cnt, true)
 
   repeat(cnt) {
     w(cost[cnt - it - 1])
