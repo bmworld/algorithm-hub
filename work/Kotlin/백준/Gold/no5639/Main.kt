@@ -37,7 +37,6 @@ private fun w(
 
 private val NUM = 48..57
 private const val MAX = 10_000
-private const val INF = 1_000_001
 
 fun main() {
 
@@ -49,7 +48,6 @@ fun main() {
     when (b) {
       EOF.toByte() -> break
       in NUM -> v = v * 10 + b - 48
-
       else -> a[len++] = v.also { v = 0 }
     }
   }
@@ -60,21 +58,18 @@ fun main() {
   ) {
     val node = a[i]
     val l = i + 1
-    if (l < len && a[l] < node) postOrder(l, node)
-
     var r = l
-    while (r < len) {
-      val v = a[r]
-      if (v >= max) break
-      else if (v > node) {
-        postOrder(r, max)
-        break
-      }
+    while (r <= max) {
+      if (a[r] > node) break
       r++
     }
+
+    if (l < len && a[l] < node) postOrder(l, r - 1)
+    if (r <= max) postOrder(r, max)
+
     w(node)
   }
 
-  postOrder(0, INF)
+  postOrder(0, len - 1)
   O.flush()
 }
