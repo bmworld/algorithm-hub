@@ -84,14 +84,13 @@ fun main() {
     c: Int,
   ): Int = r * cSize + c
 
-  fun nextFlag(
+  fun mergeFlag(
     flag: Int,
-    c: Int,
-  ): Int = flag or (1 shl c)
+    char: Int,
+  ): Int = flag or (1 shl char)
 
-  val used = Array(rSize * cSize) { mutableMapOf<Int, Boolean>() }
   val chars = IntArray(rSize * cSize) { b() }
-  val sttPos = encodePos(0, 0)
+  val traced = IntArray(rSize * cSize)
 
   var maxCnt = 1
 
@@ -101,29 +100,26 @@ fun main() {
     cnt: Int,
     flag: Int,
   ) {
-    if (maxCnt >= ALPHABET_MAX) return
-    if (maxCnt < cnt) maxCnt = cnt
+    val pos = encodePos(r, c)
+    val visited = traced[pos] == flag
+    if (visited || maxCnt >= ALPHABET_MAX) return
+    traced[pos] = flag
 
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
       if (!inRange(nr, nc)) return@repeat
-      val pos = encodePos(nr, nc)
-      val char = chars[pos]
-      val nextFlag = nextFlag(flag, char)
-      val ch = used[pos]
-      val mask = 1 shl char
-      val isUsed = flag and mask != 0
-      if (isUsed || ch[nextFlag] == true) return@repeat
-      ch[nextFlag] = true
-      dfs(nr, nc, cnt + 1, nextFlag)
+      val char = chars[encodePos(nr, nc)]
+      val contained = flag and (1 shl char) != 0
+      if (contained) return@repeat
+      val nextCnt = cnt + 1
+      if (maxCnt < nextCnt) maxCnt = nextCnt
+      dfs(nr, nc, nextCnt, mergeFlag(flag, char))
     }
   }
 
-  val sttFlag = 1 shl chars[sttPos]
-  used[sttPos][sttFlag] = true
-  dfs(0, 0, 1, sttFlag)
-
+  dfs(0, 0, 1, mergeFlag(0, chars[encodePos(0, 0)]))
+  
   w(maxCnt)
   O.flush()
 }
