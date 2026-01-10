@@ -66,51 +66,64 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-private val dr = intArrayOf(1, 0, -1, 0)
-private val dc = intArrayOf(0, 1, 0, -1)
+private val dr = intArrayOf(0, 1, 0, -1)
+private val dc = intArrayOf(1, 0, -1, 0)
+private const val ALPHABET_MAX = 26
 
 fun main() {
   val rSize = i()
   val cSize = i()
-
-  fun encodePos(
-    r: Int,
-    c: Int,
-  ) = r * cSize + c
-
-  val a = IntArray(rSize * cSize) { b() }
 
   fun inRange(
     r: Int,
     c: Int,
   ) = r in 0 until rSize && c in 0 until cSize
 
-  var max = 0
-  val used = BooleanArray(26)
+  fun encodePos(
+    r: Int,
+    c: Int,
+  ): Int = r * cSize + c
+
+  fun nextFlag(
+    flag: Int,
+    c: Int,
+  ): Int = flag or (1 shl c)
+
+  val used = Array(rSize * cSize) { mutableMapOf<Int, Boolean>() }
+  val chars = IntArray(rSize * cSize) { b() }
+  val sttPos = encodePos(0, 0)
+
+  var maxCnt = 1
 
   fun dfs(
     r: Int,
     c: Int,
     cnt: Int,
+    flag: Int,
   ) {
-    if (cnt > max) max = cnt
-
+    if (maxCnt >= ALPHABET_MAX) return
+    if (maxCnt < cnt) maxCnt = cnt
 
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
       if (!inRange(nr, nc)) return@repeat
-      val next = a[encodePos(nr, nc)]
-      if (used[next]) return@repeat
-      used[next] = true
-      dfs(nr, nc, cnt + 1)
-      used[next] = false
+      val pos = encodePos(nr, nc)
+      val char = chars[pos]
+      val nextFlag = nextFlag(flag, char)
+      val ch = used[pos]
+      val mask = 1 shl char
+      val isUsed = flag and mask != 0
+      if (isUsed || ch[nextFlag] == true) return@repeat
+      ch[nextFlag] = true
+      dfs(nr, nc, cnt + 1, nextFlag)
     }
   }
 
-  used[a[0]] = true
-  dfs(0, 0, 1)
+  val sttFlag = 1 shl chars[sttPos]
+  used[sttPos][sttFlag] = true
+  dfs(0, 0, 1, sttFlag)
 
-  w(max)
+  w(maxCnt)
   O.flush()
 }
