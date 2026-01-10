@@ -3,8 +3,8 @@ package 백준.Silver.no1182
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 8
-private const val OBS = 1 shl 5
+private const val IBS = 1 shl 10
+private const val OBS = 1 shl 7
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -57,7 +57,60 @@ fun main() {
   var cnt = 0
   val N = i()
   val S = i()
+
   val a = IntArray(N) { i() }
+
+  fun swap(
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+  }
+
+  fun `3way_qs`(
+    a: IntArray,
+    l: Int,
+    r: Int,
+  ): Pair<Int, Int> {
+    var pos = l
+    var pl = l
+    var pr = r
+    val piv = a[(l + r) shr 1]
+
+    while (pos <= pr) {
+      val v = a[pos]
+      when {
+        S >= 0 && v < piv || S < 0 && v > piv -> {
+          swap(pos, pl)
+          pl++
+          pos++
+        }
+
+        S >= 0 && v > piv || S < 0 && v < piv -> {
+          swap(pos, pr)
+          pr--
+        }
+
+        else -> pos++
+      }
+    }
+    return Pair(pl, pr)
+  }
+
+  fun qs(
+    l: Int,
+    r: Int,
+  ) {
+    if (l >= r) return
+    val (pl, pr) = `3way_qs`(a, l, r)
+    qs(l, pl - 1)
+    qs(pr + 1, r)
+  }
+
+  qs(0, N - 1)
+
 
   fun dfs(
     stt: Int,
@@ -66,12 +119,15 @@ fun main() {
     repeat(N - stt) {
       val i = stt + it
       val next = acc + a[i]
+      if (S >= 0 && S < next || S < 0 && S > next) return@repeat
       if (next == S) cnt++
+
       dfs(i + 1, next)
     }
   }
 
   dfs(0, 0)
+
   w(cnt)
   O.flush()
 }
