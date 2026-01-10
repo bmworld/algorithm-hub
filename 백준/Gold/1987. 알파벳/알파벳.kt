@@ -70,13 +70,20 @@ private val dr = intArrayOf(1, 0, -1, 0)
 private val dc = intArrayOf(0, 1, 0, -1)
 
 fun main() {
-  val R = i()
-  val C = i()
-  val a = Array(R) { IntArray(C) { b() } }
+  val rSize = i()
+  val cSize = i()
+
+  fun encodePos(
+    r: Int,
+    c: Int,
+  ) = r * cSize + c
+
+  val a = IntArray(rSize * cSize) { b() }
+
   fun inRange(
     r: Int,
     c: Int,
-  ) = r in 0 until R && c in 0 until C
+  ) = r in 0 until rSize && c in 0 until cSize
 
   var max = 0
   val used = BooleanArray(26)
@@ -88,11 +95,12 @@ fun main() {
   ) {
     if (cnt > max) max = cnt
 
+
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
       if (!inRange(nr, nc)) return@repeat
-      val next = a[nr][nc]
+      val next = a[encodePos(nr, nc)]
       if (used[next]) return@repeat
       used[next] = true
       dfs(nr, nc, cnt + 1)
@@ -100,7 +108,7 @@ fun main() {
     }
   }
 
-  used[a[0][0]] = true
+  used[a[0]] = true
   dfs(0, 0, 1)
 
   w(max)
