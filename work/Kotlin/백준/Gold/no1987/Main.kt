@@ -88,12 +88,11 @@ fun main() {
 
   fun nextFlag(
     flag: Int,
-    c: Int,
-  ): Int = flag or (1 shl c)
+    char: Int,
+  ): Int = flag or (1 shl char)
 
-  val used = Array(rSize * cSize) { mutableMapOf<Int, Boolean>() }
+
   val chars = IntArray(rSize * cSize) { b() }
-  val sttPos = encodePos(0, 0)
 
   var maxCnt = 1
 
@@ -112,22 +111,19 @@ fun main() {
       if (!inRange(nr, nc)) return@repeat
       val pos = encodePos(nr, nc)
       val char = chars[pos]
-      val nextFlag = nextFlag(flag, char)
-      val ch = used[pos]
       val mask = 1 shl char
       val isUsed = flag and mask != 0
-      if (isUsed || ch[nextFlag] == true) return@repeat
-      ch[nextFlag] = true
-      dfs(nr, nc, cnt + 1, nextFlag)
+      val nextCnt = cnt + 1
+      if (isUsed) return@repeat
+      val nextFlag = nextFlag(flag, char)
+      dfs(nr, nc, nextCnt, nextFlag)
     }
   }
 
-  val sttFlag = 1 shl chars[sttPos]
-  used[sttPos][sttFlag] = true
-  dfs(0, 0, 1, sttFlag)
+  dfs(0, 0, 1, 1 shl chars[encodePos(0, 0)])
 
   w(maxCnt)
   O.flush()
 }
 
-//      println("$cnt --- $r, $c, ${(chars[encodePos(r, c)] + A).toChar()} ->  $nr, $nc (${(chars[encodePos(nr, nc)] + A).toChar()}) (${nextFlag.toString(2)}) ")
+//       println("$cnt --- $r, $c, ${(chars[encodePos(r, c)] + A).toChar()} ->  $nr, $nc (${(chars[encodePos(nr, nc)] + A).toChar()}) (${nextFlag.toString(2)}) ")
