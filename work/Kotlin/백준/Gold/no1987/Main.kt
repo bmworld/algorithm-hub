@@ -2,7 +2,6 @@ package 백준.Gold.no1987
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
-import java.util.*
 
 private const val IBS = 1 shl 10
 private const val OBS = 1 shl 5
@@ -71,6 +70,7 @@ private fun w(
 
 private val dr = intArrayOf(0, 1, 0, -1)
 private val dc = intArrayOf(1, 0, -1, 0)
+private const val ALPHABET_MAX = 26
 
 fun main() {
   val rSize = i()
@@ -86,51 +86,48 @@ fun main() {
     c: Int,
   ): Int = r * cSize + c
 
-  val chars = IntArray(rSize * cSize) { b() }
-  val q = PriorityQueue(compareBy<Node> { it.cnt }.thenBy { it.r }
-    .thenBy { it.c })
+  fun nextFlag(
+    flag: Int,
+    c: Int,
+  ): Int = flag or (1 shl c)
+
   val used = Array(rSize * cSize) { mutableMapOf<Int, Boolean>() }
+  val chars = IntArray(rSize * cSize) { b() }
   val sttPos = encodePos(0, 0)
-  val char = chars[sttPos]
-  used[sttPos][char] = true
-  q.add(Node(0, 0, 1, 1 shl char))
 
   var maxCnt = 1
-  while (q.isNotEmpty()) {
-    val node = q.poll()
-    val r = node.r
-    val c = node.c
-    val cnt = node.cnt
 
+  fun dfs(
+    r: Int,
+    c: Int,
+    cnt: Int,
+    flag: Int,
+  ) {
+    if (maxCnt >= ALPHABET_MAX) return
+    if (maxCnt < cnt) maxCnt = cnt
 
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
       if (!inRange(nr, nc)) return@repeat
       val pos = encodePos(nr, nc)
-      val nextChar = chars[pos]
-      val mask = node.nextMask(nextChar)
+      val char = chars[pos]
+      val nextFlag = nextFlag(flag, char)
       val ch = used[pos]
-      if (node.isUsed(nextChar) || ch[mask] == true) return@repeat
-      ch[mask] = true
-      val nCnt = cnt + 1
-
-      q.add(Node(nr, nc, nCnt, mask))
-      if (maxCnt < nCnt) maxCnt = nCnt
+      val mask = 1 shl char
+      val isUsed = flag and mask != 0
+      if (isUsed || ch[nextFlag] == true) return@repeat
+      ch[nextFlag] = true
+      dfs(nr, nc, cnt + 1, nextFlag)
     }
   }
+
+  val sttFlag = 1 shl chars[sttPos]
+  used[sttPos][sttFlag] = true
+  dfs(0, 0, 1, sttFlag)
 
   w(maxCnt)
   O.flush()
 }
 
-private data class Node(
-  var r: Int,
-  var c: Int,
-  var cnt: Int,
-  var flag: Int,
-) {
-
-  fun nextMask(c: Int): Int = flag or (1 shl c)
-  fun isUsed(c: Int): Boolean = flag and (1 shl c) != 0
-}
+//      println("$cnt --- $r, $c, ${(chars[encodePos(r, c)] + A).toChar()} ->  $nr, $nc (${(chars[encodePos(nr, nc)] + A).toChar()}) (${nextFlag.toString(2)}) ")
