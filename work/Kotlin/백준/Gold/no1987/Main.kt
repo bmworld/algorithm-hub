@@ -69,9 +69,9 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-private const val ALPHABET_SIZE = 26
-private val dr = intArrayOf(1, 0, -1, 0)
-private val dc = intArrayOf(0, 1, 0, -1)
+private val dr = intArrayOf(0, 1, 0, -1)
+private val dc = intArrayOf(1, 0, -1, 0)
+
 fun main() {
   val rSize = i()
   val cSize = i()
@@ -87,33 +87,36 @@ fun main() {
   ): Int = r * cSize + c
 
   val chars = IntArray(rSize * cSize) { b() }
-  val q = PriorityQueue(compareBy<Node> { it.r }.thenBy { it.c }
-    .thenBy { it.cnt })
-  val stt = Node(0, 0, 1)
-  val sss = chars[encodePos(0, 0)]
-  stt.useChar(sss)
-  q.add(stt)
+  val q = PriorityQueue(compareBy<Node> { it.cnt }.thenBy { it.r }
+    .thenBy { it.c })
+  val used = Array(rSize * cSize) { mutableMapOf<Int, Boolean>() }
+  val sttPos = encodePos(0, 0)
+  val char = chars[sttPos]
+  used[sttPos][char] = true
+  q.add(Node(0, 0, 1, 1 shl char))
 
-  var maxCnt = 0
+  var maxCnt = 1
   while (q.isNotEmpty()) {
     val node = q.poll()
     val r = node.r
     val c = node.c
     val cnt = node.cnt
-    val used = node.ch
-    if (maxCnt < cnt) maxCnt = cnt
+
 
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
       if (!inRange(nr, nc)) return@repeat
-      val nPos = encodePos(nr, nc)
-      val char = chars[nPos]
-      val nextCnt = cnt + 1
-      if (used[char]) return@repeat
-      val next = Node(nr, nc, nextCnt, used.copyOf())
-      next.useChar(char)
-      q.add(next)
+      val pos = encodePos(nr, nc)
+      val nextChar = chars[pos]
+      val mask = node.nextMask(nextChar)
+      val ch = used[pos]
+      if (node.isUsed(nextChar) || ch[mask] == true) return@repeat
+      ch[mask] = true
+      val nCnt = cnt + 1
+
+      q.add(Node(nr, nc, nCnt, mask))
+      if (maxCnt < nCnt) maxCnt = nCnt
     }
   }
 
@@ -125,15 +128,9 @@ private data class Node(
   var r: Int,
   var c: Int,
   var cnt: Int,
-  val ch: BooleanArray = BooleanArray(ALPHABET_SIZE),
+  var flag: Int,
 ) {
 
-  fun useChar(char: Int) {
-    ch[char] = true
-  }
+  fun nextMask(c: Int): Int = flag or (1 shl c)
+  fun isUsed(c: Int): Boolean = flag and (1 shl c) != 0
 }
-
-//println("---- $r, $c ($cnt)")
-//repeat(ALPHABET_SIZE) { char ->
-//  if (used[char]) println("used[${(char + A).toChar()}]")
-//}
