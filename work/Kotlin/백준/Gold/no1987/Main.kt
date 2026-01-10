@@ -76,31 +76,51 @@ fun main() {
   val rSize = i()
   val cSize = i()
 
+  fun inRange(
+    r: Int,
+    c: Int,
+  ) = r in 0 until rSize && c in 0 until cSize
+
+  fun encodePos(
+    r: Int,
+    c: Int,
+  ): Int = r * cSize + c
+
+  fun mergeFlag(
+    flag: Int,
+    char: Int,
+  ): Int = flag or (1 shl char)
+
   val chars = IntArray(rSize * cSize) { b() }
+  val traced = IntArray(rSize * cSize)
 
   var maxCnt = 1
+
   fun dfs(
     r: Int,
     c: Int,
     cnt: Int,
     flag: Int,
   ) {
-    if (maxCnt < cnt) {
-      maxCnt = cnt
-      if (maxCnt >= ALPHABET_MAX) return
-    }
+    val pos = encodePos(r, c)
+    val visited = traced[pos] == flag
+    if (visited || maxCnt >= ALPHABET_MAX) return
+    traced[pos] = flag
 
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
-      if (nr !in 0 until rSize || nc !in 0 until cSize) return@repeat
-      val char = chars[nr * cSize + nc]
-      if (flag and (1 shl char) != 0) return@repeat
-      dfs(nr, nc, cnt + 1, flag or (1 shl char))
+      if (!inRange(nr, nc)) return@repeat
+      val char = chars[encodePos(nr, nc)]
+      val contained = flag and (1 shl char) != 0
+      if (contained) return@repeat
+      val nextCnt = cnt + 1
+      if (maxCnt < nextCnt) maxCnt = nextCnt
+      dfs(nr, nc, nextCnt, mergeFlag(flag, char))
     }
   }
 
-  dfs(0, 0, 1, 1 shl chars[0])
+  dfs(0, 0, 1, mergeFlag(0, chars[encodePos(0, 0)]))
 
   w(maxCnt)
   O.flush()
