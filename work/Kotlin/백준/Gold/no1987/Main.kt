@@ -2,6 +2,7 @@ package 백준.Gold.no1987
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
+import java.util.*
 
 private const val IBS = 1 shl 10
 private const val OBS = 1 shl 5
@@ -71,59 +72,81 @@ private fun w(
 private val dr = intArrayOf(0, 1, 0, -1)
 private val dc = intArrayOf(1, 0, -1, 0)
 private const val ALPHABET_MAX = 26
+private const val R_SEP = 10_000_000_000L
+private const val C_SEP = R_SEP * 100
+private const val CNT_SEP = C_SEP * 100
 
 fun main() {
   val rSize = i()
   val cSize = i()
 
-  fun inRange(
-    r: Int,
-    c: Int,
-  ) = r in 0 until rSize && c in 0 until cSize
-
-  fun encodePos(
-    r: Int,
-    c: Int,
-  ): Int = r * cSize + c
-
-  fun nextFlag(
-    flag: Int,
-    char: Int,
-  ): Int = flag or (1 shl char)
-
-
   val chars = IntArray(rSize * cSize) { b() }
-
+  val flags = IntArray(rSize * cSize)
   var maxCnt = 1
 
-  fun dfs(
-    r: Int,
-    c: Int,
-    cnt: Int,
-    flag: Int,
-  ) {
-    if (maxCnt >= ALPHABET_MAX) return
-    if (maxCnt < cnt) maxCnt = cnt
+  val q = PriorityQueue<Long>()
+  val sttPos = encodePos(0, 0, cSize)
+  val sttFlag = getFlag(0, chars[sttPos])
+  flags[sttPos] = sttFlag
+  q.add(qPos(0, 0, 1, sttFlag))
 
-    repeat(4) {
-      val nr = dr[it] + r
-      val nc = dc[it] + c
-      if (!inRange(nr, nc)) return@repeat
-      val pos = encodePos(nr, nc)
-      val char = chars[pos]
-      val mask = 1 shl char
-      val isUsed = flag and mask != 0
-      val nextCnt = cnt + 1
-      if (isUsed) return@repeat
-      val nextFlag = nextFlag(flag, char)
-      dfs(nr, nc, nextCnt, nextFlag)
+  bfs@ while (q.isNotEmpty()) {
+    val e = q.poll()
+    val cnt = (e / CNT_SEP).toInt()
+    val crf = e % CNT_SEP
+    val c = (crf / C_SEP).toInt()
+    val rf = crf % C_SEP
+    val r = (rf / R_SEP).toInt()
+    val flag = (rf % R_SEP).toInt()
+
+    for (i in 0..3) {
+      val nr = dr[i] + r
+      val nc = dc[i] + c
+      if (!inRange(nr, nc, rSize, cSize)) continue
+      val nextPos = encodePos(nr, nc, cSize)
+      val char = chars[nextPos]
+      val nextFlag = getFlag(flag, char)
+      if (isUsed(flag, char) || flags[nextPos] == nextFlag) continue
+      flags[nextPos] = nextFlag
+      val nCnt = cnt + 1
+      if (maxCnt < nCnt) maxCnt = nCnt
+      if (maxCnt >= ALPHABET_MAX) break@bfs
+      q.add(qPos(nr, nc, nCnt, nextFlag))
     }
   }
-
-  dfs(0, 0, 1, 1 shl chars[encodePos(0, 0)])
 
   w(maxCnt)
   O.flush()
 }
 
-//       println("$cnt --- $r, $c, ${(chars[encodePos(r, c)] + A).toChar()} ->  $nr, $nc (${(chars[encodePos(nr, nc)] + A).toChar()}) (${nextFlag.toString(2)}) ")
+private fun qPos(
+  r: Int,
+  c: Int,
+  cnt: Int,
+  flag: Int,
+): Long = cnt * CNT_SEP + c * C_SEP + r * R_SEP + flag
+
+private fun isUsed(
+  flag: Int,
+  char: Int,
+): Boolean = flag and (1 shl char) != 0
+
+private fun encodePos(
+  r: Int,
+  c: Int,
+  CAP: Int,
+): Int = r * CAP + c
+
+private fun getFlag(
+  flag: Int,
+  char: Int,
+): Int = flag or (1 shl char)
+
+private fun inRange(
+  r: Int,
+  c: Int,
+  rSize: Int,
+  cSize: Int,
+) = r in 0 until rSize && c in 0 until cSize
+
+//    println("$cnt (${flag.toString(2)}) --- $r, $c (${(chars[encodePos(r, c, cSize)] + A).toChar()})")
