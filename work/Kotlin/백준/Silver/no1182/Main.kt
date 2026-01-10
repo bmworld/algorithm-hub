@@ -57,18 +57,7 @@ fun main() {
   var cnt = 0
   val N = i()
   val S = i()
-
-  val a = IntArray(N)
-  repeat(N) {
-    val v = i()
-    var i = it
-    while (i > 0) {
-      val pv = a[i - 1]
-      if (S >= 0 && pv > v || S < 0 && pv < v) a[i--] = pv
-      else break
-    }
-    a[i] = v
-  }
+  val a = IntArray(N) { i() }
 
   fun dfs(
     stt: Int,
@@ -77,14 +66,12 @@ fun main() {
     repeat(N - stt) {
       val i = stt + it
       val next = acc + a[i]
-      if (S > 0 && S < next || S < 0 && S > next) return@repeat
       if (next == S) cnt++
       dfs(i + 1, next)
     }
   }
 
   dfs(0, 0)
-
   w(cnt)
   O.flush()
 }
