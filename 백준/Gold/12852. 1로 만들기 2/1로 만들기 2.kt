@@ -73,8 +73,8 @@ fun main() {
     val cnt = e / Q_SEP
     val fr = e % Q_SEP
     if (fr == 1) {
-      if (opCnt > cnt) opCnt = cnt
-      continue
+      opCnt = cnt
+      break
     }
 
     for (num in 3 downTo 2) {
@@ -86,7 +86,6 @@ fun main() {
       q.add(nc * Q_SEP + to)
     }
   }
-
 
   w(opCnt, true)
 
