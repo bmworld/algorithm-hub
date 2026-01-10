@@ -2,6 +2,7 @@ package 백준.Gold.no1987
 
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
+import java.util.*
 
 private const val IBS = 1 shl 10
 private const val OBS = 1 shl 5
@@ -68,59 +69,71 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val ALPHABET_SIZE = 26
 private val dr = intArrayOf(1, 0, -1, 0)
 private val dc = intArrayOf(0, 1, 0, -1)
-
 fun main() {
   val rSize = i()
   val cSize = i()
-
-  fun encodePos(
-    r: Int,
-    c: Int,
-  ) = r * cSize + c
-
-  val a = IntArray(rSize * cSize) { b() }
 
   fun inRange(
     r: Int,
     c: Int,
   ) = r in 0 until rSize && c in 0 until cSize
 
-  var max = 0
-  val used = BooleanArray(26)
-
-  fun dfs(
+  fun encodePos(
     r: Int,
     c: Int,
-    cnt: Int,
-  ) {
-    if (cnt > max) max = cnt
+  ): Int = r * cSize + c
 
+  val chars = IntArray(rSize * cSize) { b() }
+  val q = PriorityQueue(compareBy<Node> { it.r }.thenBy { it.c }
+    .thenBy { it.cnt })
+  val stt = Node(0, 0, 1)
+  val sss = chars[encodePos(0, 0)]
+  stt.useChar(sss)
+  q.add(stt)
+
+  var maxCnt = 0
+  while (q.isNotEmpty()) {
+    val node = q.poll()
+    val r = node.r
+    val c = node.c
+    val cnt = node.cnt
+    val used = node.ch
+    if (maxCnt < cnt) maxCnt = cnt
 
     repeat(4) {
       val nr = dr[it] + r
       val nc = dc[it] + c
       if (!inRange(nr, nc)) return@repeat
-      val next = a[encodePos(nr, nc)]
-      if (used[next]) return@repeat
-      used[next] = true
-      dfs(nr, nc, cnt + 1)
-      used[next] = false
+      val nPos = encodePos(nr, nc)
+      val char = chars[nPos]
+      val nextCnt = cnt + 1
+      if (used[char]) return@repeat
+      val next = Node(nr, nc, nextCnt, used.copyOf())
+      next.useChar(char)
+      q.add(next)
     }
   }
 
-  used[a[0]] = true
-  dfs(0, 0, 1)
-
-  w(max)
+  w(maxCnt)
   O.flush()
 }
 
-//repeat(R) { r ->
-//  repeat(C) { c ->
-//    println("a[$r][$c] = ${a[r][c]}")
-//  }
-//}
+private data class Node(
+  var r: Int,
+  var c: Int,
+  var cnt: Int,
+  val ch: BooleanArray = BooleanArray(ALPHABET_SIZE),
+) {
 
-//println("cnt=${cnt} / a[$r][$c] = ${(a[encodePos(r, c) + A]).toChar()}")
+  fun useChar(char: Int) {
+    ch[char] = true
+  }
+}
+
+//println("---- $r, $c ($cnt)")
+//repeat(ALPHABET_SIZE) { char ->
+//  if (used[char]) println("used[${(char + A).toChar()}]")
+//}
