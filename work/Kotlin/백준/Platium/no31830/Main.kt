@@ -1,4 +1,4 @@
-package 백준.platium.no31830
+package 백준.Platium.no31830
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
