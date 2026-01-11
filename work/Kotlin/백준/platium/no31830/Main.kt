@@ -3,6 +3,10 @@ package 백준.platium.no31830
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
+// ! ---------------------------------------------------------------------
+// ! 상태: 실패 260111
+// ! ---------------------------------------------------------------------
+
 private const val IBS = 1 shl 18
 private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.out, OBS)
