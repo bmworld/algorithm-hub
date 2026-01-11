@@ -1,4 +1,4 @@
-package 백준.Bronze.no2443
+package 백준.Bronze.no2444
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
@@ -40,13 +40,16 @@ private const val SPACE = 32
 
 fun main() {
   val n = i()
-  val len = 2 * n - 1
-  var cnt = len
-  while (cnt > 0) {
-    repeat((len - cnt) / 2) { O.write(SPACE) }
+  val max = 2 * n - 1
+  var cnt = 1
+  var seq = 1
+  while (true) {
+    repeat((max - cnt) / 2) { O.write(SPACE) }
     repeat(cnt) { O.write(STAR) }
     O.write(10)
-    cnt -= 2
+
+    cnt += if (seq < n) +2 else -2
+    if (seq++ == max) break
   }
   O.flush()
 }
