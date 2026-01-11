@@ -38,14 +38,20 @@ private fun i(): Int {
 private const val NL: Byte = 10
 private const val STAR: Byte = 42
 private const val SPACE: Byte = 32
-private val dr = intArrayOf(0, 1, 0, -1)
-private val dc = intArrayOf(-1, 0, 1, 0)
 private const val DIR_CAP = 4
-private const val LEFT = 0
-private const val DOWN = 1
-private const val RIGHT = 2
-private const val UP = 3
-private val dirs = intArrayOf(LEFT, DOWN, RIGHT, UP)
+private const val DOWN = 0
+private const val LEFT = 1
+private const val UP = 2
+private const val RIGHT = 3
+private const val INIT_SEQ = 1
+private val dirs = intArrayOf(DOWN, LEFT, UP, RIGHT)
+private val STARS = byteArrayOf(
+  STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR,
+  STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR,
+  STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR,
+  STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR,
+  STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR, STAR,
+)
 
 fun main() {
   val n = i()
@@ -55,65 +61,37 @@ fun main() {
     return
   }
 
-  val cSize = (n - 1) * 4 + 1
-  val rSize = cSize + 2
-  val CAP = cSize + 1
-  val board = ByteArray(rSize * CAP) {
+  val LEN = (n - 1) * 4 + 1
+  O.write(STARS, 0, LEN)
+  O.write(10)
+  O.write(STAR.toInt())
+  O.write(10)
+
+  val CAP = LEN + 1
+  val board = ByteArray(LEN * CAP) {
     val EOF = it % CAP == CAP - 1
-    if (EOF) NL else SPACE
+    if (EOF) NL else STAR
   }
 
-  fun needToChangeDir(
+  fun punchHole(
     r: Int,
     c: Int,
     dir: Int,
-  ) = when (dir) {
-    LEFT -> {
-      val target = c - 2
-      val limit = 0
-      c <= limit || target >= limit && board[encodePos(r, target, CAP)] == STAR
-    }
-
-    DOWN -> {
-      val target = r + 2
-      val limit = rSize - 1
-      r >= limit || target <= limit && board[encodePos(target, c, CAP)] == STAR
-    }
-
-    RIGHT -> {
-      val target = c + 2
-      val limit = cSize - 1
-      c >= limit || target <= limit && board[encodePos(r, target, CAP)] == STAR
-    }
-
-    UP -> {
-      val target = r - 2
-      val limit = 0
-      r <= limit || target >= limit && board[encodePos(target, c, CAP)] == STAR
-    }
-
-    else -> throw Exception()
-  }
-
-  fun move(
-    r: Int,
-    c: Int,
-    dir: Int,
+    seq: Int,
+    dist: Int,
   ) {
-    for (d in dirs) {
-      if (dir != d) continue
-      val changeDir = needToChangeDir(r, c, dir)
-      val nd = if (changeDir) nextDir(dir) else dir
-      val nr = r + dr[nd]
-      val nc = c + dc[nd]
-      board[encodePos(r, c, CAP)] = STAR
-      val end = changeDir && needToChangeDir(r, c, nd)
-      if (!end) move(nr, nc, nd)
-      break
+    repeat(dist) {
+      val nr = r + if (dir == DOWN) it else if (dir == UP) -it else 0
+      val nc = c + if (dir == RIGHT) it else if (dir == LEFT) -it else 0
+      if (inRange(nr, nc, LEN)) board[encodePos(nr, nc, CAP)] = SPACE
+      if (it + 1 == dist && inRange(nr, nc, LEN)) punchHole(nr, nc, nextDir(dir), seq + 1, dist + if (seq > INIT_SEQ && seq % 2 == 0) 2 else 0)
     }
   }
 
-  move(0, cSize - 1, LEFT)
+  val initR = 2 * (n - 2) + 1
+  val initC = initR + 2
+  punchHole(initR, initC, DOWN, INIT_SEQ, 3)
+
   O.write(board)
   O.flush()
 }
@@ -126,10 +104,8 @@ private fun encodePos(
 
 private fun nextDir(dir: Int): Int = (dir + 1) % DIR_CAP
 
-// println("--- $r, $c (${printDir(dir)}) -> $nr, $nc (${printDir(nd)})")
-fun printDir(dir: Int) = when (dir) {
-  LEFT -> "L"
-  DOWN -> "D"
-  RIGHT -> "R"
-  else -> "U"
-}
+private fun inRange(
+  nr: Int,
+  nc: Int,
+  size: Int,
+) = nr in 0 until size && nc in 0 until size
