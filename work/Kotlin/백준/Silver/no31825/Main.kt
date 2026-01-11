@@ -3,8 +3,8 @@ package 백준.Silver.no31825
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 2_600
-private const val OBS = 1 shl 10
+private const val IBS = 1 shl 12
+private const val OBS = 1 shl 6
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -101,16 +101,12 @@ fun main() {
         val lAmount = getChangedAmount(str[l - 1], str[l])
         val rAmount = getChangedAmount(if (r + 1 <= N) str[r + 1] else -1, str[r])
 
-        repeat(r - l + 1) {
-          val i = l + it
-          val char = str[i]
-          str[i] = nextChar(char)
+        for (i in l..r) {
+          str[i] = nextChar(str[i])
           acc[i] += lAmount
         }
-        repeat(N - r) {
-          val i = r + 1
-          acc[i] += lAmount + rAmount
-        }
+
+        for (i in r + 1..N) acc[i] += lAmount + rAmount
       }
     }
   }
@@ -118,14 +114,11 @@ fun main() {
   O.flush()
 }
 
-private fun nextChar(char: Int): Int {
-  val nc = char + 1
-  return if (nc > ALPHABET_CNT) 1 else nc
-}
+private fun nextChar(char: Int): Int = if (char + 1 > ALPHABET_CNT) 1 else char + 1
 
 private const val MERGED = -1
 private const val DETACHED = 1
-private const val NOT_CHANGED = 0
+private const val UNCHANGED = 0
 private fun getChangedAmount(
   fixed: Int,
   changeable: Int,
@@ -134,17 +127,15 @@ private fun getChangedAmount(
   return when {
     fixed != changeable && fixed == changed -> MERGED
     fixed == changeable && fixed != changed -> DETACHED
-    else -> NOT_CHANGED
+    else -> UNCHANGED
   }
 }
 
-//
-//
 //private fun printStr(
-//  N: Int,
 //  str: IntArray,
 //  acc: IntArray,
 //) {
+//  val N = str.size - 1
 //  repeat(N) {
 //    print((str[it + 1] + A - 1).toChar())
 //  }
@@ -154,3 +145,12 @@ private fun getChangedAmount(
 //  }
 //  println()
 //}
+//
+//
+//
+//println("[2] $l ~ $r ---> $lAmount + $rAmount")
+//printStr(str, acc)
+//
+//
+//println("[1] $l - $r")
+//printStr(str, acc)
