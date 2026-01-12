@@ -2,7 +2,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 1 shl 8
-private const val OBS = 1 shl 18
+private const val OBS = 1 shl 19
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -58,7 +58,7 @@ fun main() {
     r: Int,
     c: Int,
     dep: Int,
-  ) { //    println("[$dep] w=$w -> $r, $c")
+  ) {
     if (dep <= 1) {
       repeat(12) { i ->
         val nr = r + dr[i]
