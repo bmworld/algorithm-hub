@@ -82,10 +82,9 @@ fun main() {
   val initLineLen = if (evenSeq) W else CENTER + 1
   repeat(H) {
     val len = initLineLen + it * if (evenSeq) -1 else 1
-    val rest = CAP - len
     O.write(a, stt, len)
     O.write(10)
-    stt += len + rest
+    stt += CAP
   }
 
   O.flush()
