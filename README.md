@@ -25,7 +25,7 @@
 
 <!-- TOTAL_PROBLEM_STATS_START -->
 ## 🚀 문제 집계 (2026-01-13 00:47 KST)
-- Baekjoon: 294 문제
+- Baekjoon: 295 문제
 - Programmers: 0 문제
-- Total: 294 문제
+- Total: 295 문제
 <!-- TOTAL_PROBLEM_STATS_END -->
