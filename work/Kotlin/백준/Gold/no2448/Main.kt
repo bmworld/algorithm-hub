@@ -50,8 +50,8 @@ fun main() {
   val CAP = W + 1
   val SIZE = H * CAP
   val a = ByteArray(SIZE) {
-    val EOF = it % CAP == CAP - 1
-    if (EOF) NL else SPACE
+    val EOL = it % CAP == CAP - 1
+    if (EOL) NL else SPACE
   }
 
   fun twinkle(
