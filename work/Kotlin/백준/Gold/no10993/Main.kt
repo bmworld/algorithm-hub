@@ -43,7 +43,7 @@ fun main() {
   val cnt = i()
   val H = getH(cnt)
   val W = getW(H)
-  val CENTER = W / 2
+  val CENTER = W shr 1
   val CAP = W + 1
   val SIZE = H * CAP
   val a = ByteArray(SIZE) {
@@ -71,7 +71,7 @@ fun main() {
       a[encodePos(lastRow, CENTER - delta, CAP)] = STAR
     }
 
-    val nh = h / 2
+    val nh = h shr 1
     twinkle(nextVertextRow(r, h, seq), getW(nh), nh, seq - 1)
   }
 
@@ -97,12 +97,7 @@ private fun nextVertextRow(
   seq: Int,
 ): Int = r + (h - 2) * if (seq % 2 == 0) -1 else 1
 
-private fun getH(cnt: Int): Int {
-  var H = 1
-  var i = cnt
-  while (i-- > 0) H *= 2
-  return H - 1
-}
+private fun getH(cnt: Int): Int = (1 shl cnt) - 1
 
 private fun getW(h: Int) = 2 * h - 1
 
