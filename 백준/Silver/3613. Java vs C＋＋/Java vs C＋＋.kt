@@ -1,8 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 256
-private const val OBS = 256
+private const val IBS = 1 shl 8
+private const val OBS = 1 shl 8
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -40,9 +40,7 @@ fun main() {
     if (b == NL) break
     if (error) continue
     when {
-      len == 0 && (b in JAVA_IDF || b == CPP_IDF)
-        || (cppTrigger && b == CPP_IDF)
-        || (javaFormat && cppFormat)
+      len == 0 && (b in JAVA_IDF || b == CPP_IDF) || (cppTrigger && b == CPP_IDF)
       -> error = true
       b in JAVA_IDF -> {
         typed[len++] = CPP_IDF
@@ -63,7 +61,7 @@ fun main() {
     }
   }
 
-  if (error || cppTrigger) O.write(ERROR)
+  if (error || cppTrigger || javaFormat && cppFormat) O.write(ERROR)
   else O.write(typed, 0, len)
 
   O.flush()
