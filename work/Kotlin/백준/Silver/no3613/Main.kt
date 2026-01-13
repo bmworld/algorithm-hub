@@ -52,7 +52,6 @@ fun main() {
       b == CPP_IDF -> {
         cppTrigger = true
         cppFormat = true
-
       }
       else -> {
         typed[len++] = (b - if (cppTrigger) {
@@ -65,29 +64,31 @@ fun main() {
 
   if (error || cppTrigger || javaFormat && cppFormat) O.write(ERROR)
   else O.write(typed, 0, len)
-
   O.flush()
 }
 
 /**
 
-### CASE: 첫 IDF (CPP, JAVA)
+// ❌ OUT: ERROR!
+
+// 첫 IDF (CPP, JAVA)
 _a
 Aa
 
-### CASE: 끝 IDF (CPP)
+// 끝 IDF (CPP)
 a_
 
-### CASE: 중복 IDF (CPP)
+// 중복 IDF (CPP)
 a__a
 
-
-### CASE: 혼합 IDF
+// 혼합 IDF
 aA_a
 a_Aa
 a_bB
 
-### CASE: 정상
+
+
+// ✅ OUT: 입력과 동일
 a
 aAA
 a_a_a
