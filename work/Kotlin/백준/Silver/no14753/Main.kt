@@ -54,52 +54,36 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val HALF = 1_000
 
 fun main() {
 
   val N = i()
-  val a = IntArray(N)
-  var len = 0
+  val SIZE = HALF * 2 + 1
+  val a = IntArray(SIZE)
   repeat(N) {
     val v = i()
-    if (v != 0) a[len++] = v
+    a[v + HALF]++
   }
 
   var max = 0
 
-  fun dfs(
-    stt: Int,
-    dep: Int,
-    acc: Int,
-  ) {
-    when (dep) {
-      2 -> {
-        if (acc < 0) return
-        else if (max < acc) max = acc
-      }
-
-      3 -> {
-        if (max < acc) max = acc
-        return
-      }
-    }
-
-    for (i in stt until len) dfs(i + 1, dep + 1, acc * a[i])
+  // 음수값 중, 최저값 2개만 사용 -> 최대값 업데이트
+  for (v in -HALF..-1) {
+    var cnt = a[v + HALF]
+    if (cnt == 0) continue
+    println("-v = $v")
   }
 
-  dfs(0, 0, 1)
+  // 양수값 중 최대값 2개만 사용 -> 최대값 업데이트
+  for (v in HALF downTo 1) {
+    val cnt = a[v + HALF]
+    if (cnt == 0) continue
+    println("+ v = $v")
+  }
+
   w(max)
-
-
   O.flush()
 }
 
-
-
-private const val HALF = 1_000
-
-// 이거 ........... 입력받을 때, 양수 큰 것 중에서 3개, 음수 큰것 중에서 2개만 고르면 되는 문제임..
-// 이거 ........... 입력받을 때, 양수 큰 것 중에서 3개, 음수 큰것 중에서 2개만 고르면 되는 문제임..
-// 이거 ........... 입력받을 때, 양수 큰 것 중에서 3개, 음수 큰것 중에서 2개만 고르면 되는 문제임..
-// 이거 ........... 입력받을 때, 양수 큰 것 중에서 3개, 음수 큰것 중에서 2개만 고르면 되는 문제임..
 //       println("[$dep] stt=$stt --- a[$i] = ${a[i]} * $acc")
