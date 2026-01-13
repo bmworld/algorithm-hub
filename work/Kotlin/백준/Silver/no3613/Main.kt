@@ -71,14 +71,14 @@ fun main() {
 
 // ❌ OUT: ERROR!
 
-// 첫 IDF (CPP, JAVA)
+// 첫 IDF (C++, Java)
 _a
 Aa
 
-// 끝 IDF (CPP)
+// 끝 IDF (C++)
 a_
 
-// 중복 IDF (CPP)
+// 중복 IDF (C++)
 a__a
 
 // 혼합 IDF
@@ -88,9 +88,15 @@ a_bB
 
 
 
-// ✅ OUT: 입력과 동일
-a
-aAA
-a_a_a
+// ✅ IN -> OUT
+
+// 소문자 only
+a -> a
+
+// C++
+a_a_a -> aAA
+
+// Java
+aAA -> a_a_a
 
  */
