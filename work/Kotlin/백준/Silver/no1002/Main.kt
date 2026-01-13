@@ -2,10 +2,9 @@ package 백준.Silver.no1002
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import kotlin.math.sqrt
 
-private const val IBS = 1 shl 10
-private const val OBS = 1 shl 8
+private const val IBS = 1 shl 12
+private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -66,25 +65,23 @@ fun main() {
     val y2 = i()
     val rad2 = i()
 
-    val dist = getDist(x1, x2, y1, y2)
-    val sum = (rad1 + rad2).toDouble()
+    val sqrdDist = getSquaredDist(x1, x2, y1, y2)
+    val sumOfRad = rad1 + rad2
 
     w(
       when {
-        dist > sum -> 0
-        dist == sum -> 1
+        sqrdDist > sumOfRad * sumOfRad -> 0
+        sqrdDist == sumOfRad * sumOfRad -> 1
         else -> {
           when {
-            dist == 0.0 -> if (rad1 == rad2) -1 else 0
+            sqrdDist == 0 -> if (rad1 == rad2) -1 else 0
             else -> {
-              val smallRad = minOf(rad1, rad2).toDouble()
-              val largeRad = maxOf(rad1, rad2).toDouble()
+              val radDiff = abs(rad2 - rad1)
               when {
-                dist + smallRad > largeRad -> 2
-                dist + smallRad == largeRad -> 1
+                sqrdDist > radDiff * radDiff -> 2
+                sqrdDist == radDiff * radDiff -> 1
                 else -> 0
               }
-
             }
           }
         }
@@ -94,15 +91,15 @@ fun main() {
   O.flush()
 }
 
-private fun getDist(
+private fun getSquaredDist(
   x1: Int,
   x2: Int,
   y1: Int,
   y2: Int,
-): Double {
-  val sx = abs(x1 - x2).toDouble()
-  val sy = abs(y1 - y2).toDouble()
-  return sqrt(sx * sx + sy * sy)
+): Int {
+  val sx = abs(x1 - x2)
+  val sy = abs(y1 - y2)
+  return sx * sx + sy * sy
 }
 
-private fun abs(v: Int): Int = (if (v > 0) v else -v)
+private fun abs(v: Int): Int = if (v > 0) v else -v
