@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 1 shl 16
-private const val OBS = 1 shl 4
+private const val OBS = 1 shl 8
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -55,35 +55,70 @@ private fun w(
 }
 
 private const val HALF = 1_000
+private const val NEG_LIMIT = 2
+private const val POS_LIMIT = 3
 
 fun main() {
 
   val N = i()
-  val SIZE = HALF * 2 + 1
-  val a = IntArray(SIZE)
+  val a = IntArray(HALF * 2 + 1)
+  var MIN = Int.MAX_VALUE
+  var maxOfPos = 1
+  var negCnt = 0
+  var posCnt = 0
   repeat(N) {
     val v = i()
     a[v + HALF]++
+    if (v < 0) negCnt++
+    if (v > 0) posCnt++
+    if (v > 0 && v > maxOfPos) maxOfPos = v
+    if (MIN > v) MIN = v
   }
 
-  var max = 0
+  if (negCnt > NEG_LIMIT) negCnt = NEG_LIMIT
+  if (posCnt > POS_LIMIT) posCnt = POS_LIMIT
 
-  // 음수값 중, 최저값 2개만 사용 -> 최대값 업데이트
-  for (v in -HALF..-1) {
-    var cnt = a[v + HALF]
-    if (cnt == 0) continue
-    println("-v = $v")
-  }
 
-  // 양수값 중 최대값 2개만 사용 -> 최대값 업데이트
-  for (v in HALF downTo 1) {
-    val cnt = a[v + HALF]
-    if (cnt == 0) continue
-    println("+ v = $v")
-  }
+  w(
+    when {
+      negCnt >= NEG_LIMIT -> {
 
-  w(max)
+        var nMax = maxOfPos
+        for (v in MIN..-1) {
+          var cnt = a[v + HALF]
+          while (cnt > 0 && negCnt > 0) {
+            nMax *= v
+            cnt--
+            negCnt--
+          }
+        }
+
+        val pmax = getMaxOfPos(a, maxOfPos, posCnt)
+        if (nMax > pmax) nMax else pmax
+      }
+
+      posCnt >= 2 -> getMaxOfPos(a, maxOfPos, posCnt)
+
+      else -> 0
+    }
+  )
   O.flush()
 }
 
-//       println("[$dep] stt=$stt --- a[$i] = ${a[i]} * $acc")
+private fun getMaxOfPos(
+  a: IntArray,
+  max: Int,
+  limit: Int,
+): Int {
+  var balance = limit
+  var posV = 1
+  for (v in max downTo 1) {
+    var cnt = a[v + HALF]
+    while (cnt > 0 && balance > 0) {
+      posV *= v
+      cnt--
+      balance--
+    }
+  }
+  return posV
+}
