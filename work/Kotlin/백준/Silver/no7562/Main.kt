@@ -2,8 +2,9 @@ package 백준.Silver.no7562
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.util.*
 
-private const val IBS = 1 shl 14
+private const val IBS = 1 shl 15
 private const val OBS = 1 shl 8
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -54,7 +55,6 @@ private fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-private const val MAX_W = 300
 private const val RC_SEP = 1_000
 private const val CNT_SEP = RC_SEP * RC_SEP
 
@@ -63,27 +63,26 @@ private val dc = intArrayOf(2, 1, -1, -2, -2, -1, 1, 2)
 
 fun main() {
 
-  val q = IntArray(MAX_W * MAX_W)
+  val q = PriorityQueue<Int>()
   repeat(i()) {
+
     val size = i()
-    val r1 = i()
-    val c1 = i()
-    val r2 = i()
-    val c2 = i()
-    if (r1 == r2 && c1 == c2) {
+    val frR = i()
+    val frC = i()
+    val toR = i()
+    val toC = i()
+    if (frR == toR && frC == toC) {
       w(0)
       return@repeat
     }
 
     var min = 0
     val ch = BooleanArray(size * size)
-    var qh = 0
-    var qt = 0
-    ch[encodePos(r1, c1, size)] = true
-    q[qt++] = r1 * RC_SEP + c1
+    ch[encodePos(frR, frC, size)] = true
+    q.add(qPos(0, frR, frC))
 
-    bfs@ while (qh < qt) {
-      val e = q[qh++]
+    bfs@ while (q.isNotEmpty()) {
+      val e = q.poll()
       val cnt = e / CNT_SEP
       val rc = e % CNT_SEP
       val r = rc / RC_SEP
@@ -93,23 +92,29 @@ fun main() {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nPos = encodePos(nr, nc, size)
-
         if (!inRange(nr, nc, size) || ch[nPos]) continue
-
-        if (nr == r2 && nc == c2) {
+        if (nr == toR && nc == toC) {
           min = nCnt
           break@bfs
         } else {
+
           ch[nPos] = true
-          q[qt++] = nCnt * CNT_SEP + nr * RC_SEP + nc
+          q.add(qPos(nCnt, nr, nc))
         }
       }
     }
 
     w(min)
+    q.clear()
   }
   O.flush()
 }
+
+private fun qPos(
+  cnt: Int,
+  r: Int,
+  c: Int
+): Int = cnt * CNT_SEP + r * RC_SEP + c
 
 private fun inRange(
   r: Int,
@@ -122,3 +127,6 @@ private fun encodePos(
   c: Int,
   CAP: Int
 ): Int = r * CAP + c
+
+//     println("-------- CASE = ${it + 1}")
+//        println("----- [$nCnt] $r, $c -> $nr, $nc")
