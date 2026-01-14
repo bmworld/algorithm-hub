@@ -57,7 +57,6 @@ private fun w(
 private const val MAX_W = 300
 private const val RC_SEP = 1_000
 private const val CNT_SEP = RC_SEP * RC_SEP
-private const val BACKABLE_DIST = 6
 
 private val dr = intArrayOf(1, 2, 2, 1, -1, -2, -2, -1)
 private val dc = intArrayOf(2, 1, -1, -2, -2, -1, 1, 2)
@@ -67,20 +66,29 @@ fun main() {
   val q = IntArray(MAX_W * MAX_W)
   repeat(i()) {
     val size = i()
-    val sttR = i()
-    val sttC = i()
-    val endR = i()
-    val endC = i()
-    if (sttR == endR && sttC == endC) {
+    var frR = i()
+    var frC = i()
+    var toR = i()
+    var toC = i()
+    if (frR == toR && frC == toC) {
       w(0)
       return@repeat
+    }
+
+    if (frR > toR || frR == toR && toC > toR) {
+      val tR = frR
+      frR = toR
+      toR = tR
+      val tC = frC
+      frC = toC
+      toC = tC
     }
 
     val ch = BooleanArray(size * size)
     var qh = 0
     var qt = 0
-    ch[encodePos(sttR, sttC, size)] = true
-    q[qt++] = qPos(0, sttR, sttC)
+    ch[encodePos(frR, frC, size)] = true
+    q[qt++] = qPos(0, frR, frC)
 
     while (qh < qt) {
       val e = q[qh++]
@@ -89,19 +97,15 @@ fun main() {
       val r = rc / RC_SEP
       val c = rc % RC_SEP
       val nCnt = cnt + 1
-      val dist = getDist(r, c, endR, endC)
-      val backable = dist <= BACKABLE_DIST
       for (i in 0..7) {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nPos = encodePos(nr, nc, size)
         if (!inRange(nr, nc, size) || ch[nPos]) continue
-        else if (nr == endR && nc == endC) {
+        else if (nr == toR && nc == toC) {
           w(nCnt)
           return@repeat
         }
-
-        if (!backable && getDist(nr, nc, endR, endC) > dist) continue
 
         ch[nPos] = true
         q[qt++] = qPos(nCnt, nr, nc)
@@ -129,19 +133,4 @@ private fun qPos(
   c: Int
 ) = cnt * CNT_SEP + r * RC_SEP + c
 
-private fun getDist(
-  r1: Int,
-  c1: Int,
-  r2: Int,
-  c2: Int
-): Int = abs(r1, r2) + abs(c1, c2)
-
-fun abs(
-  a: Int,
-  b: Int
-): Int {
-  val v = a - b
-  return if (v > 0) v else -v
-}
-
-//println("--- CASE = ${it + 1} --- [$nCnt] $r, $c -> $nr, $nc (dist=$dist), backable=$backable")
+//println("--- CASE = ${it + 1} --- [$nCnt] $r, $c -> $nr, $nc")
