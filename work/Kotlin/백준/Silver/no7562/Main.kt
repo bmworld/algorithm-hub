@@ -56,7 +56,8 @@ private fun w(
 
 private const val MAX_W = 300
 private const val RC_SEP = 1_000
-private const val UNVISITED = -1
+private const val CNT_SEP = RC_SEP * RC_SEP
+private const val BACKABLE_DIST = 6
 
 private val dr = intArrayOf(1, 2, 2, 1, -1, -2, -2, -1)
 private val dc = intArrayOf(2, 1, -1, -2, -2, -1, 1, 2)
@@ -66,38 +67,44 @@ fun main() {
   val q = IntArray(MAX_W * MAX_W)
   repeat(i()) {
     val size = i()
-    val r1 = i()
-    val c1 = i()
-    val r2 = i()
-    val c2 = i()
-    if (r1 == r2 && c1 == c2) {
+    val sttR = i()
+    val sttC = i()
+    val endR = i()
+    val endC = i()
+    if (sttR == endR && sttC == endC) {
       w(0)
       return@repeat
     }
 
-    val cnts = IntArray(size * size) { UNVISITED }
+    val ch = BooleanArray(size * size)
     var qh = 0
     var qt = 0
-    cnts[encodePos(r1, c1, size)] = 0
-    q[qt++] = r1 * RC_SEP + c1
+    ch[encodePos(sttR, sttC, size)] = true
+    q[qt++] = qPos(0, sttR, sttC)
 
     while (qh < qt) {
       val e = q[qh++]
-      val r = e / RC_SEP
-      val c = e % RC_SEP
-      val nCnt = cnts[encodePos(r, c, size)] + 1
+      val cnt = e / CNT_SEP
+      val rc = e % CNT_SEP
+      val r = rc / RC_SEP
+      val c = rc % RC_SEP
+      val nCnt = cnt + 1
+      val dist = getDist(r, c, endR, endC)
+      val backable = dist <= BACKABLE_DIST
       for (i in 0..7) {
         val nr = r + dr[i]
         val nc = c + dc[i]
-        val to = encodePos(nr, nc, size)
-        if (!inRange(nr, nc, size) || cnts[to] != UNVISITED) continue
-        else if (nr == r2 && nc == c2) {
+        val nPos = encodePos(nr, nc, size)
+        if (!inRange(nr, nc, size) || ch[nPos]) continue
+        else if (nr == endR && nc == endC) {
           w(nCnt)
           return@repeat
         }
 
-        cnts[to] = nCnt
-        q[qt++] = nr * RC_SEP + nc
+        if (!backable && getDist(nr, nc, endR, endC) > dist) continue
+
+        ch[nPos] = true
+        q[qt++] = qPos(nCnt, nr, nc)
       }
     }
   }
@@ -116,5 +123,25 @@ private fun encodePos(
   CAP: Int
 ): Int = r * CAP + c
 
-//     println("-------- CASE = ${it + 1}")
-//        println("----- [$nCnt] $r, $c -> $nr, $nc")
+private fun qPos(
+  cnt: Int,
+  r: Int,
+  c: Int
+) = cnt * CNT_SEP + r * RC_SEP + c
+
+private fun getDist(
+  r1: Int,
+  c1: Int,
+  r2: Int,
+  c2: Int
+): Int = abs(r1, r2) + abs(c1, c2)
+
+fun abs(
+  a: Int,
+  b: Int
+): Int {
+  val v = a - b
+  return if (v > 0) v else -v
+}
+
+//println("--- CASE = ${it + 1} --- [$nCnt] $r, $c -> $nr, $nc (dist=$dist), backable=$backable")
