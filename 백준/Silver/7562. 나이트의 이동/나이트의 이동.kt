@@ -64,20 +64,29 @@ fun main() {
   val q = IntArray(MAX_W * MAX_W)
   repeat(i()) {
     val size = i()
-    val r1 = i()
-    val c1 = i()
-    val r2 = i()
-    val c2 = i()
-    if (r1 == r2 && c1 == c2) {
+    var frR = i()
+    var frC = i()
+    var toR = i()
+    var toC = i()
+    if (frR == toR && frC == toC) {
       w(0)
       return@repeat
+    }
+
+    if (frR > toR || frR == toR && toC > toR) {
+      val tR = frR
+      frR = toR
+      toR = tR
+      val tC = frC
+      frC = toC
+      toC = tC
     }
 
     val ch = BooleanArray(size * size)
     var qh = 0
     var qt = 0
-    ch[encodePos(r1, c1, size)] = true
-    q[qt++] = r1 * RC_SEP + c1
+    ch[encodePos(frR, frC, size)] = true
+    q[qt++] = qPos(0, frR, frC)
 
     while (qh < qt) {
       val e = q[qh++]
@@ -91,13 +100,13 @@ fun main() {
         val nc = c + dc[i]
         val nPos = encodePos(nr, nc, size)
         if (!inRange(nr, nc, size) || ch[nPos]) continue
-        else if (nr == r2 && nc == c2) {
+        else if (nr == toR && nc == toC) {
           w(nCnt)
           return@repeat
         }
 
         ch[nPos] = true
-        q[qt++] = nCnt * CNT_SEP + nr * RC_SEP + nc
+        q[qt++] = qPos(nCnt, nr, nc)
       }
     }
   }
@@ -115,3 +124,9 @@ private fun encodePos(
   c: Int,
   CAP: Int
 ): Int = r * CAP + c
+
+private fun qPos(
+  cnt: Int,
+  r: Int,
+  c: Int
+) = cnt * CNT_SEP + r * RC_SEP + c
