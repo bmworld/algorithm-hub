@@ -1,7 +1,7 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 14
+private const val IBS = 1 shl 12
 private const val OBS = 1 shl 8
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -73,14 +73,13 @@ fun main() {
       return@repeat
     }
 
-    var min = 0
     val ch = BooleanArray(size * size)
     var qh = 0
     var qt = 0
     ch[encodePos(r1, c1, size)] = true
     q[qt++] = r1 * RC_SEP + c1
 
-    bfs@ while (qh < qt) {
+    while (qh < qt) {
       val e = q[qh++]
       val cnt = e / CNT_SEP
       val rc = e % CNT_SEP
@@ -91,20 +90,16 @@ fun main() {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nPos = encodePos(nr, nc, size)
-
         if (!inRange(nr, nc, size) || ch[nPos]) continue
-
-        if (nr == r2 && nc == c2) {
-          min = nCnt
-          break@bfs
-        } else {
-          ch[nPos] = true
-          q[qt++] = nCnt * CNT_SEP + nr * RC_SEP + nc
+        else if (nr == r2 && nc == c2) {
+          w(nCnt)
+          return@repeat
         }
+
+        ch[nPos] = true
+        q[qt++] = nCnt * CNT_SEP + nr * RC_SEP + nc
       }
     }
-
-    w(min)
   }
   O.flush()
 }
