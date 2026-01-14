@@ -43,17 +43,13 @@ fun main() {
   var oCnt = 0
 
   var b: Byte
-  var endStep = 0
   while (r().also { b = it } >= NL) {
     when (b) {
       x -> xCnt++
       o -> oCnt++
       dot -> {}
-      NL -> if (endStep < 3) continue else break
-      else -> {
-        endStep++
-        continue
-      }
+      NL -> continue
+      else -> break
     }
 
     a[len++] = b
@@ -87,7 +83,7 @@ private fun validate(
       if (dotCnt > 4) return false
       val (xLines, oLines) = calcLines(board)
       if (xLines + oLines != 1
-        || xLines == 1 && xCnt <= oCnt
+        || xLines == 1 && xCnt != oCnt + 1
         || oLines == 1 && xCnt != oCnt
       ) return false
     }
@@ -117,6 +113,7 @@ XOXOXOXOX
 XXOOOXXOX
 XO.OX...X
 X..XO.XO.
+XOXOXOX..
 
 ❌OUT: invalid
 .........
@@ -136,8 +133,14 @@ OOOXX....
 OOOXXXXXO
 OXXXOXOXO
 XO.X.OXO.
-
+XOXOXOXO.
 end
+
+⚠️ 주요 반례: 이미 승리했는데 수를 더 둔 경우
+XXXXOO...
+OOOXXX...
+OOOOXX...
  */
 
 //println("-- isFull=$full / lCnt=$lineCnt / $winner == $t1")
+// 이미 승리했는데, 수를 더 둔 경우
