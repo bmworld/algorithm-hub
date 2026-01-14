@@ -43,14 +43,19 @@ fun main() {
   var oCnt = 0
 
   var b: Byte
+  var endStep = 0
   while (r().also { b = it } >= NL) {
-    if (b == NL) continue
     when (b) {
       x -> xCnt++
       o -> oCnt++
       dot -> {}
-      else -> break
+      NL -> if (endStep < 3) continue else break
+      else -> {
+        endStep++
+        continue
+      }
     }
+
     a[len++] = b
     if (len != BOARD_SIZE) continue
 
@@ -69,7 +74,7 @@ private fun validate(
   xCnt: Int,
   oCnt: Int
 ): Boolean {
-  
+
   val dotCnt = BOARD_SIZE - (xCnt + oCnt)
 
   when {
@@ -100,8 +105,7 @@ private fun calcLines(board: ByteArray): Pair<Int, Int> {
     val t3 = board[p3[i]]
     val line = t1 != dot && t1 == t2 && t2 == t3
     if (!line) continue
-    if (t1 == x) xLines++
-    else oLines++
+    if (t1 == x) xLines++ else oLines++
   }
   return Pair(xLines, oLines)
 }
@@ -113,7 +117,6 @@ XOXOXOXOX
 XXOOOXXOX
 XO.OX...X
 X..XO.XO.
-end
 
 ❌OUT: invalid
 .........
@@ -130,6 +133,10 @@ X.OO..X..
 OOXXXOOXO
 OXXXOXXOO
 OOOXX....
+OOOXXXXXO
+OXXXOXOXO
+XO.X.OXO.
+
 end
  */
 
