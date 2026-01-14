@@ -56,7 +56,7 @@ private fun w(
 
 private const val MAX_W = 300
 private const val RC_SEP = 1_000
-private const val CNT_SEP = RC_SEP * RC_SEP
+private const val UNVISITED = -1
 
 private val dr = intArrayOf(1, 2, 2, 1, -1, -2, -2, -1)
 private val dc = intArrayOf(2, 1, -1, -2, -2, -1, 1, 2)
@@ -75,31 +75,29 @@ fun main() {
       return@repeat
     }
 
-    val ch = BooleanArray(size * size)
+    val cnts = IntArray(size * size) { UNVISITED }
     var qh = 0
     var qt = 0
-    ch[encodePos(r1, c1, size)] = true
+    cnts[encodePos(r1, c1, size)] = 0
     q[qt++] = r1 * RC_SEP + c1
 
     while (qh < qt) {
       val e = q[qh++]
-      val cnt = e / CNT_SEP
-      val rc = e % CNT_SEP
-      val r = rc / RC_SEP
-      val c = rc % RC_SEP
-      val nCnt = cnt + 1
+      val r = e / RC_SEP
+      val c = e % RC_SEP
+      val nCnt = cnts[encodePos(r, c, size)] + 1
       for (i in 0..7) {
         val nr = r + dr[i]
         val nc = c + dc[i]
-        val nPos = encodePos(nr, nc, size)
-        if (!inRange(nr, nc, size) || ch[nPos]) continue
+        val to = encodePos(nr, nc, size)
+        if (!inRange(nr, nc, size) || cnts[to] != UNVISITED) continue
         else if (nr == r2 && nc == c2) {
           w(nCnt)
           return@repeat
         }
 
-        ch[nPos] = true
-        q[qt++] = nCnt * CNT_SEP + nr * RC_SEP + nc
+        cnts[to] = nCnt
+        q[qt++] = nr * RC_SEP + nc
       }
     }
   }
