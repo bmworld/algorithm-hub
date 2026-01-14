@@ -41,17 +41,13 @@ fun main() {
   var oCnt = 0
 
   var b: Byte
-  var endStep = 0
   while (r().also { b = it } >= NL) {
     when (b) {
       x -> xCnt++
       o -> oCnt++
       dot -> {}
-      NL -> if (endStep < 3) continue else break
-      else -> {
-        endStep++
-        continue
-      }
+      NL -> continue
+      else -> break
     }
 
     a[len++] = b
