@@ -76,7 +76,8 @@ fun main() {
   val heap = HEAP(M)
   heap.push(stt)
   ch[stt] = true
-  bfs@ while (heap.isNotEmpty()) {
+
+  while (heap.isNotEmpty()) {
     val e = heap.pop()
     val c = e / SEP
     val city = e % SEP
@@ -111,6 +112,7 @@ private class HEAP(size: Int) {
   private val heap = IntArray(size + 1)
 
   fun isNotEmpty() = len > 0
+
   fun push(v: Int) {
     var ci = ++len
     heap[len] = v
@@ -124,32 +126,24 @@ private class HEAP(size: Int) {
         ci = pi
       } else break
     }
-
   }
 
   fun pop(): Int {
     if (len == 0) return 0
-
     val v = heap[root]
-    heap[root] = heap[len]
-    heap[len] = 0
-    len--
+    val x = heap[len--]
 
     var pi = root
-    while (true) {
-      val li = pi shl 1
-      if (li > len) break
-      val ri = li + 1
-      var minIdx = li
-      if (ri <= len && heap[ri] < heap[li]) minIdx = ri
-      val p = heap[pi]
-      val min = heap[minIdx]
-      if (p > min) {
-        heap[pi] = min
-        heap[minIdx] = p
-        pi = minIdx
-      } else break
+    var ci = root shl 1
+    while (ci <= len) {
+      val ri = ci + 1
+      if (ri <= len && heap[ri] < heap[ci]) ci++
+      if (heap[ci] >= x) break
+      heap[pi] = heap[ci]
+      pi = ci
+      ci = pi shl 1
     }
+    heap[pi] = x
     return v
   }
 }
