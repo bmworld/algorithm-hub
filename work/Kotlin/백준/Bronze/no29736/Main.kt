@@ -3,8 +3,8 @@ package 백준.Bronze.no29736
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 20
-private const val OBS = 10
+private const val IBS = 1 shl 5
+private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -35,15 +35,6 @@ private fun i(): Int {
   return s * v
 }
 
-private const val N = 78.toByte()
-private const val Y = 89.toByte()
-private fun isFrd(): Boolean {
-  var c: Byte
-  while (r().also { c = it } != Y && c != N) {
-  }
-  return c == Y
-}
-
 private const val WS = 10
 private val WB = ByteArray(WS)
 private fun w(
@@ -69,10 +60,7 @@ fun main() {
   val K = i()
   val X = i()
 
-  val r = minOf(K + X, B)
-  val l = maxOf(K - X, A)
-
-  val cnt = r - l + 1
-  if (cnt < 0) O.write(IMPOSSIBLE) else w(cnt)
+  val cnt = minOf(K + X, B) - maxOf(K - X, A) + 1
+  if (cnt <= 0) O.write(IMPOSSIBLE) else w(cnt)
   O.flush()
 }
