@@ -43,6 +43,7 @@ private fun isFrd(): Boolean {
 }
 
 private const val WS = 10
+
 private val WB = ByteArray(WS)
 private fun w(
   num: Int,
@@ -60,10 +61,10 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val BIT_CNT = 64
 fun main() {
   val N = i()
   val size = N + 1
-  val g = Array(size) { mutableListOf<Int>() }
   val ch = LongArray(size)
 
   repeat(N) { i ->
@@ -71,19 +72,27 @@ fun main() {
     repeat(N) { j ->
       val frd = j + 1
       if (!isFrd() || me == frd) return@repeat
-      g[me] += frd
+      ch[me] = 1L shl frd or ch[me]
     }
   }
 
   var max = 0
   repeat(N) { i ->
     val me = i + 1
-    val frds = g[me]
-    for (frd in frds) {
-      ch[me] = 1L shl frd or ch[me]
-      for (frd2 in g[frd]) if (me != frd2) ch[me] = 1L shl frd2 or ch[me]
+    var frds = ch[me]
+    var totalFrds = frds
+    while (frds > 0) {
+      val frd = (BIT_CNT - frds.countLeadingZeroBits() - 1)
+      var dep2 = ch[frd]
+      while (dep2 > 0) {
+        val frd2 = (BIT_CNT - dep2.countLeadingZeroBits() - 1)
+        if (me != frd2) totalFrds = 1L shl frd2 or totalFrds
+        dep2 -= 1L shl frd2
+      }
+      frds -= 1L shl frd
     }
-    val cnt = ch[me].countOneBits()
+
+    val cnt = totalFrds.countOneBits()
     if (max < cnt) max = cnt
   }
 
