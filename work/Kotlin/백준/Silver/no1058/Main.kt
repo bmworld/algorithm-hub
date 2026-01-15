@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 2_600
-private const val OBS = 1 shl 4
+private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -37,7 +37,7 @@ private fun i(): Int {
 
 private const val N = 78.toByte()
 private const val Y = 89.toByte()
-private fun yn(): Boolean {
+private fun isFrd(): Boolean {
   var c: Byte
   while (r().also { c = it } != Y && c != N) {
   }
@@ -45,7 +45,8 @@ private fun yn(): Boolean {
 }
 
 private const val WS = 10
-private val WB = ByteArray(WS + 1).also { it[WS] = 10 }
+
+private val WB = ByteArray(WS)
 private fun w(
   num: Int,
 ) {
@@ -54,53 +55,49 @@ private fun w(
     O.write(45)
     -num
   }
-
   var pos = WS - 1
   do {
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
+  O.write(WB, ++pos, WS - pos)
 }
 
+private const val BIT_CNT = 64
 fun main() {
   val N = i()
   val size = N + 1
-  val g = Array(size) { mutableListOf<Int>() }
-  val ch = BooleanArray(size * size)
+  val ch = LongArray(size)
 
   repeat(N) { i ->
     val me = i + 1
     repeat(N) { j ->
       val frd = j + 1
-      val isFrd = yn()
-      if (me == frd || !isFrd) return@repeat
-      g[me] += frd
-      ch[encodePos(me, frd, size)] = true
+      if (!isFrd() || me == frd) return@repeat
+      ch[me] = 1L shl frd or ch[me]
     }
-    val frds = g[me]
-    for (f1 in frds) for (f2 in frds) if (f1 != f2) ch[encodePos(f1, f2, size)] = true
   }
 
   var max = 0
-
   repeat(N) { i ->
     val me = i + 1
-    val CAP = me * size
-    var cnt = 0
-    repeat(N) { c ->
-      val frd = c + 1
-      if (ch[CAP + frd]) cnt++
+    var frds = ch[me]
+    var totalFrds = frds
+    while (frds > 0) {
+      val frd = (BIT_CNT - frds.countLeadingZeroBits() - 1)
+      var dep2 = ch[frd]
+      while (dep2 > 0) {
+        val frd2 = (BIT_CNT - dep2.countLeadingZeroBits() - 1)
+        if (me != frd2) totalFrds = 1L shl frd2 or totalFrds
+        dep2 -= 1L shl frd2
+      }
+      frds -= 1L shl frd
     }
+
+    val cnt = totalFrds.countOneBits()
     if (max < cnt) max = cnt
   }
 
   w(max)
   O.flush()
 }
-
-private fun encodePos(
-  r: Int,
-  c: Int,
-  CAP: Int
-): Int = r * CAP + c
