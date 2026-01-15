@@ -85,9 +85,12 @@ fun main() {
   var max = 0
   repeat(N) { i ->
     val me = i + 1
-    for (f1 in g[me]) for (f2 in g[f1]) if (f2 != me && !ch[encodePos(me, f2, SIZE)]) {
-      cnts[me]++
-      ch[f2] = true
+    for (f1 in g[me]) for (f2 in g[f1]) {
+      val pos = encodePos(me, f2, SIZE)
+      if (f2 != me && !ch[pos]) {
+        cnts[me]++
+        ch[pos] = true
+      }
     }
     val cnt = cnts[me]
     if (max < cnt) max = cnt
@@ -102,6 +105,3 @@ private fun encodePos(
   c: Int,
   CAP: Int
 ): Int = r * CAP + c
-
-//         println("$me > $f1 > $f2")
-//     println("cnts[$me]=${cnts[me]}")
