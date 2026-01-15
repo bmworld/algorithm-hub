@@ -3,7 +3,7 @@ package 백준.Silver.no1058
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 2_600
+private const val IBS = 1 shl 11
 private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -63,38 +63,37 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-private const val BIT_CNT = 64
 fun main() {
   val N = i()
   val size = N + 1
-  val ch = LongArray(size)
+  val frds = LongArray(size)
 
   repeat(N) { i ->
     val me = i + 1
     repeat(N) { j ->
       val frd = j + 1
       if (!isFrd() || me == frd) return@repeat
-      ch[me] = 1L shl frd or ch[me]
+      frds[me] = 1L shl frd or frds[me]
     }
   }
 
   var max = 0
   repeat(N) { i ->
     val me = i + 1
-    var frds = ch[me]
-    var totalFrds = frds
-    while (frds > 0) {
-      val frd = (BIT_CNT - frds.countLeadingZeroBits() - 1)
-      var dep2 = ch[frd]
+    var dep1 = frds[me]
+    var total = dep1
+    while (dep1 > 0) {
+      val frd = dep1.countTrailingZeroBits()
+      var dep2 = frds[frd]
       while (dep2 > 0) {
-        val frd2 = (BIT_CNT - dep2.countLeadingZeroBits() - 1)
-        if (me != frd2) totalFrds = 1L shl frd2 or totalFrds
-        dep2 -= 1L shl frd2
+        val frd2 = dep2.countTrailingZeroBits()
+        if (me != frd2) total = 1L shl frd2 or total
+        dep2 = dep2 and (dep2 - 1L)
       }
-      frds -= 1L shl frd
+      dep1 = dep1 and (dep1 - 1L)
     }
 
-    val cnt = totalFrds.countOneBits()
+    val cnt = total.countOneBits()
     if (max < cnt) max = cnt
   }
 
