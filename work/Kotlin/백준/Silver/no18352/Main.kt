@@ -71,29 +71,32 @@ fun main() {
     g[fr] += to
   }
 
-  val ch = BooleanArray(N + 1)
+  var found = false
 
+  val ch = BooleanArray(N + 1)
   val q = PriorityQueue<Int>()
   q.add(stt)
   ch[stt] = true
-  val targets = PriorityQueue<Int>()
-
   bfs@ while (q.isNotEmpty()) {
-
     val e = q.poll()
     val c = e / SEP
+    val city = e % SEP
     val nc = c + 1
-    val list = g[e % SEP]
+    if (c == K) {
+      w(city)
+      found = true
+      continue
+    }
+    val list = g[city]
     repeat(list.size) {
-      val city = list[it]
-      if (ch[city]) return@repeat
-      ch[city] = true
-      if (nc == K) targets.add(city) else q.add(qPos(nc, city))
+      val next = list[it]
+      if (ch[next]) return@repeat
+      ch[next] = true
+      if (nc <= K) q.add(qPos(nc, next))
     }
   }
 
-  if (targets.isEmpty()) w(NOT_FOUND)
-  else while (targets.isNotEmpty()) w(targets.poll())
+  if (!found) w(NOT_FOUND)
   O.flush()
 }
 
