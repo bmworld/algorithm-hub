@@ -63,10 +63,9 @@ private fun w(
 
 fun main() {
   val N = i()
-  val SIZE = N + 1
-  val cnts = IntArray(SIZE)
-  val g = Array(SIZE) { ArrayList<Int>() }
-  val ch = BooleanArray(SIZE * SIZE)
+  val size = N + 1
+  val g = Array(size) { mutableListOf<Int>() }
+  val ch = BooleanArray(size * size)
 
   repeat(N) { i ->
     val me = i + 1
@@ -75,22 +74,22 @@ fun main() {
       val isFrd = yn()
       if (me == frd || !isFrd) return@repeat
       g[me] += frd
-      cnts[me]++
-      ch[encodePos(me, frd, SIZE)] = true
+      ch[encodePos(me, frd, size)] = true
     }
+    val frds = g[me]
+    for (f1 in frds) for (f2 in frds) if (f1 != f2) ch[encodePos(f1, f2, size)] = true
   }
 
   var max = 0
+
   repeat(N) { i ->
     val me = i + 1
-    for (f1 in g[me]) for (f2 in g[f1]) {
-      val pos = encodePos(me, f2, SIZE)
-      if (f2 != me && !ch[pos]) {
-        cnts[me]++
-        ch[pos] = true
-      }
+    val CAP = me * size
+    var cnt = 0
+    repeat(N) { c ->
+      val frd = c + 1
+      if (ch[CAP + frd]) cnt++
     }
-    val cnt = cnts[me]
     if (max < cnt) max = cnt
   }
 
