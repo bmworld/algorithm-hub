@@ -71,6 +71,6 @@ fun main() {
   val l = maxOf(K - X, A)
 
   val cnt = r - l + 1
-  if (cnt < 0) O.write(IMPOSSIBLE) else w(cnt)
+  if (cnt <= 0) O.write(IMPOSSIBLE) else w(cnt)
   O.flush()
 }
