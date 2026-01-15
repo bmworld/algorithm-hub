@@ -2,7 +2,6 @@ package 백준.Silver.no18352
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 16
 private const val OBS = 1 shl 12
@@ -74,11 +73,11 @@ fun main() {
   var found = false
 
   val ch = BooleanArray(N + 1)
-  val q = PriorityQueue<Int>()
-  q.add(stt)
+  val heap = HEAP(M)
+  heap.push(stt)
   ch[stt] = true
-  bfs@ while (q.isNotEmpty()) {
-    val e = q.poll()
+  bfs@ while (heap.isNotEmpty()) {
+    val e = heap.pop()
     val c = e / SEP
     val city = e % SEP
     val nc = c + 1
@@ -92,7 +91,7 @@ fun main() {
       val next = list[it]
       if (ch[next]) return@repeat
       ch[next] = true
-      if (nc <= K) q.add(qPos(nc, next))
+      if (nc <= K) heap.push(qPos(nc, next))
     }
   }
 
@@ -104,3 +103,53 @@ fun qPos(
   cnt: Int,
   city: Int
 ): Int = cnt * SEP + city
+
+private class HEAP(size: Int) {
+
+  private var len = 0
+  private val root = 1
+  private val heap = IntArray(size + 1)
+
+  fun isNotEmpty() = len > 0
+  fun push(v: Int) {
+    var ci = ++len
+    heap[len] = v
+    while (ci > root) {
+      val pi = ci shr 1
+      val p = heap[pi]
+      val c = heap[ci]
+      if (p > c) {
+        heap[pi] = c
+        heap[ci] = p
+        ci = pi
+      } else break
+    }
+
+  }
+
+  fun pop(): Int {
+    if (len == 0) return 0
+
+    val v = heap[root]
+    heap[root] = heap[len]
+    heap[len] = 0
+    len--
+
+    var pi = root
+    while (true) {
+      val li = pi shl 1
+      if (li > len) break
+      val ri = li + 1
+      var minIdx = li
+      if (ri <= len && heap[ri] < heap[li]) minIdx = ri
+      val p = heap[pi]
+      val min = heap[minIdx]
+      if (p > min) {
+        heap[pi] = min
+        heap[minIdx] = p
+        pi = minIdx
+      } else break
+    }
+    return v
+  }
+}
