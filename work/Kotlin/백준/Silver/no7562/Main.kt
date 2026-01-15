@@ -57,6 +57,7 @@ private fun w(
 private const val MAX_W = 300
 private const val RC_SEP = 1_000
 private const val CNT_SEP = RC_SEP * RC_SEP
+private const val SAFE_DIST = 4
 
 private val dr = intArrayOf(1, 2, 2, 1, -1, -2, -2, -1)
 private val dc = intArrayOf(2, 1, -1, -2, -2, -1, 1, 2)
@@ -66,31 +67,63 @@ fun main() {
   val q = IntArray(MAX_W * MAX_W)
   repeat(i()) {
     val size = i()
-    var frR = i()
-    var frC = i()
-    var toR = i()
-    var toC = i()
-    if (frR == toR && frC == toC) {
+    var fr = i()
+    var fc = i()
+    var tr = i()
+    var tc = i()
+    if (fr == tr && fc == tc) {
       w(0)
       return@repeat
     }
 
-    if (frR > toR || frR == toR && toC > toR) {
-      val tR = frR
-      frR = toR
-      toR = tR
-      val tC = frC
-      frC = toC
-      toC = tC
+    var distR = getDist(fr, tr)
+    var distC = getDist(fc, tc)
+
+    when {
+      fr >= tr && fc >= tc -> { // flip R, C
+        val tmpR = fr
+        fr = tr
+        tr = tmpR
+        val tmpC = fc
+        fc = tc
+        tc = tmpC
+      }
+      fr > tr && fc <= tc && (fr + 1 < size && tr > 0) -> { // flip R
+        fr -= distR
+        tr += distR
+      }
+      fr <= tr && fc > tc && (fc + 1 < size && tc > 0) -> { // flip C
+        fc -= distC
+        tc += distC
+      }
+    }
+
+    var moved = 0
+    while (distR > SAFE_DIST || distC > SAFE_DIST) {
+
+      if (distR >= distC) {
+        fr += if (tr > fr) 2 else -2
+        distR -= 2
+        val dist = if (inRange(fr, fc + 1, size) && getDist(fc + 1, tc) <= getDist(fc - 1, tc)) 1 else -1
+        fc += dist
+        distC -= if (tc > fc) dist else -dist
+      } else {
+        fc += if (tc > fc) 2 else -2
+        distC -= 2
+        val dist = if (inRange(fr + 1, fc, size) && getDist(fr + 1, tr) <= getDist(fr - 1, tr)) 1 else -1
+        fr += dist
+        distR -= if (tr > fr) dist else -dist
+      }
+      moved++
     }
 
     val ch = BooleanArray(size * size)
     var qh = 0
     var qt = 0
-    ch[encodePos(frR, frC, size)] = true
-    q[qt++] = qPos(0, frR, frC)
+    ch[encodePos(fr, fc, size)] = true
+    if (fr != tr || fc != tc) q[qt++] = qPos(moved, fr, fc)
 
-    while (qh < qt) {
+    bfs@ while (qh < qt) {
       val e = q[qh++]
       val cnt = e / CNT_SEP
       val rc = e % CNT_SEP
@@ -102,15 +135,18 @@ fun main() {
         val nc = c + dc[i]
         val nPos = encodePos(nr, nc, size)
         if (!inRange(nr, nc, size) || ch[nPos]) continue
-        else if (nr == toR && nc == toC) {
-          w(nCnt)
-          return@repeat
+
+        if (nr == tr && nc == tc) {
+          moved = nCnt
+          break@bfs
         }
 
         ch[nPos] = true
         q[qt++] = qPos(nCnt, nr, nc)
       }
     }
+
+    w(moved)
   }
   O.flush()
 }
@@ -133,4 +169,17 @@ private fun qPos(
   c: Int
 ) = cnt * CNT_SEP + r * RC_SEP + c
 
-//println("--- CASE = ${it + 1} --- [$nCnt] $r, $c -> $nr, $nc")
+private fun getDist(
+  a: Int,
+  b: Int
+): Int {
+  val v = a - b
+  return if (v > 0) v else -v
+}
+
+// println("-- ORGN: $fr, $fc -> $tr, $tc (dist = $distR, &$distC)")
+// println("-- NEXT: $fr, $fc -> $tr, $tc (dist = $distR, &$distC)")
+//println("-- MOVE: $fr, $fc -> $tr, $tc (dist = $distR, $distC) ---- $fastMoved")
+
+// println("-- BFS: $fr, $fc -> $tr, $tc")
+//println("---- [case ${it + 1}] $r, $c ($cnt)-> $nr, $nc ($nCnt)")
