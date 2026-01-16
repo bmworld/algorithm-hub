@@ -70,42 +70,37 @@ fun main() {
     var i = len
     while (i > 0) {
       val prv = roads[i - 1]!!
-      if (cur <= prv) roads[i--] = prv else break
+      if (cur < prv) roads[i--] = prv
+      else break
     }
-    roads[len++] = cur
+    roads[i] = cur
+    len++
   }
 
   val dists = IntArray(D + 1) { it }
   val q = PriorityQueue<Int>()
   val stt = 0
-  dists[stt] = -1
   q.add(stt)
 
-  var minFr = 0
+  var loopFr = 0
   while (q.isNotEmpty()) {
     val e = q.poll()
     val pos = e / SEP
     val dist = e % SEP
     val lastDist = D - pos + dist
+    if (dists[pos] < dist) continue
     if (dists[D] > lastDist) dists[D] = lastDist
-    println("------------------ $pos ($dist) / $lastDist  / $minFr")
-    var minTo = D
-    for (ri in 0 until len) {
-      val (fr, to, d) = roads[ri]!!
-      val unusable = fr <= minFr
+    for (ri in loopFr until len) {
+      val (fr, to, added) = roads[ri]!!
+      val unusable = fr < pos
       if (pos > fr || unusable) continue
-      val nd = dist + fr - pos + d
+      val nd = dist + added + fr - pos
       if (dists[to] <= nd) continue
       dists[to] = nd
-      println("$fr ($d) -> $to ($nd) --- vs --- ${dists[to]}")
       q.add(encodePos(to, nd))
-      if (fr in 1..<minTo) minTo = fr
     }
-
-
-    minFr = minTo
+    loopFr++
   }
-
 
   w(dists[D])
   O.flush()
@@ -131,7 +126,3 @@ data class Road(
     }
   }
 }
-
-//for (i in 0 until len) {
-//  println("a[$i] = ${roads[i]}")
-//}
