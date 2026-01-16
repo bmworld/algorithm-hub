@@ -2,7 +2,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.util.*
 
-private const val IBS = 1 shl 10
+private const val IBS = 1 shl 8
 private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
