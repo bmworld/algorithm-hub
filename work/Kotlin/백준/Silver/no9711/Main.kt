@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 private const val IBS = 1 shl 10
-private const val OBS = 1 shl 5
+private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -56,10 +56,11 @@ private fun w(
 
 private val TAG = byteArrayOf(67, 97, 115, 101, 32, 35)
 private val COL = byteArrayOf(58, 32)
+private const val SEP = 10_000_000_000
 private const val MAX = 10_000
 fun main() {
   val T = i()
-  val a = IntArray(MAX + 1)
+  val a = LongArray(MAX + 1)
   a[1] = 1
   a[2] = 1
 
@@ -67,15 +68,14 @@ fun main() {
     fr: Int = 3,
     to: Int,
     Q: Int
-  ): Int = a.also {
+  ): Long = a.also {
     repeat(to - fr + 1) { i ->
       val n = i + fr
-      it[n] = ((it[n - 1].toLong() + it[n - 2].toLong()) % Q).toInt()
+      it[n] = (it[n - 1] + it[n - 2]) % SEP
     }
-  }[to]
+  }[to] % Q
 
-  var pP = 0
-  var pQ = 0
+  var maxP = 2
   repeat(T) {
     val x = it + 1
     val p = i()
@@ -86,13 +86,12 @@ fun main() {
     O.write(COL)
     w(
       when {
-        p <= 2 || q == 1 -> 1
-        q == pQ -> if (pP >= p) a[p] else fib(pP + 1, p, q)
-        else -> fib(3, p, q)
+        p <= 2 -> 1
+        else -> (if (p > maxP) fib(maxP + 1, p, q) else a[p] % q).toInt()
       }
     )
-    pP = p
-    pQ = q
+
+    if (maxP < p) maxP = p
   }
   O.flush()
 }
