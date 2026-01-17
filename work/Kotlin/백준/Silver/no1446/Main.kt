@@ -3,8 +3,8 @@ package 백준.Silver.no1446
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 8
-private const val OBS = 1 shl 6
+private const val IBS = 166
+private const val OBS = 6
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -72,7 +72,7 @@ fun main() {
       val prvFr = prv.fr
       if (fr < prvFr) r[i--] = prv
       else if (fr == prvFr && to == prv.to) {
-        if (dist >= prv.dist) return@repeat
+        if (dist >= prv.d) return@repeat
         else {
           i--
           override = true
@@ -85,16 +85,19 @@ fun main() {
     if (!override) len++
   }
 
-  var ri = 0
-  var road: Road? = getRoad(r, ri, len)
+  var i = 0
+  var road = getRoad(r, i, len)
   repeat(D) { cur ->
     val nxt = cur + 1
     dists[nxt] = minOf(dists[nxt], dists[cur] + 1)
+    if (road == null || road!!.fr != cur) return@repeat
 
-    if (road?.fr != cur) {
+    while (i < len) {
       val (fr, to, d) = road!!
-      dists[to] = minOf(dists[to - 1] + 1, dists[fr] + d)
-      if (ri + 1 < len) road = getRoad(r, ++ri, len)
+      if (cur != fr) break
+      dists[to] = minOf(dists[to], dists[to - 1] + 1, dists[fr] + d)
+      if (i + 1 < len) road = getRoad(r, ++i, len)
+      else break
     }
   }
 
@@ -105,17 +108,17 @@ fun main() {
 data class Road(
   val fr: Int,
   val to: Int,
-  val dist: Int
+  val d: Int
 )
 
 private fun getRoad(
   roads: Array<Road?>,
   ri: Int,
   len: Int
-): Road? = if (len > 0) roads[ri]!! else null
+): Road? = if (len > 0) roads[ri] else null
 
-//println("------dists[$cur] = ${dists[cur]}")
-//println("-> dists[$to] = ${dists[to - 1] + 1} vs ${dists[fr] + d}")
+//     println("------dists[$cur] = ${dists[cur]}")
+//     println("-> [r=$i] dists[$to] = ${dists[to - 1] + 1} vs ${dists[fr] + d}")
 
 //for (i in 0 until len) {
 //  println("---road = ${r[i]}")
@@ -143,6 +146,21 @@ private fun getRoad(
 1 10 1
 1 10 5
 
+
+// 핵심점검
+12 10000
+0 9000 500
+0 100 100
+100 1000 100
+100 200 50
+1000 2000 100
+200 3000 100
+200 5000 100
+3000 4000 100
+4000 5000 100
+5000 7000 1000
+7000 9000 100
+9000 10000 1
 
 
  */
