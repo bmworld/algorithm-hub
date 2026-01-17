@@ -56,49 +56,106 @@ private fun w(
 fun main() {
   val N = i()
   val D = i()
+  val r = Array<Road?>(N) { null }
+  val d = IntArray(D + 1) { it }
 
-  val roads = Array<Road?>(N + 1) { null }
-  roads[0] = Road(0, 0, D)
-  val dists = IntArray(D + 1) { it }
   var len = 0
   repeat(N) {
     val fr = i()
     val to = i()
     val dist = i()
     if (to > D || to - fr <= dist) return@repeat
-    val cur = Road(fr, to, dist)
-    var i = len + 1
+    var i = len
+    var override = false
     while (i > 0) {
-      val prv = roads[i - 1]!!
-      val comp = prv.to
-      if (to == comp && dist >= prv.w) return@repeat
-      else if (to < comp) roads[i--] = prv
+      val prv = r[i - 1]!!
+      val prvFr = prv.fr
+      if (fr < prvFr) r[i--] = prv
+      else if (fr == prvFr && to == prv.to) {
+        if (dist >= prv.dist) return@repeat
+        else {
+          i--
+          override = true
+          break
+        }
+      } else if (fr < prvFr) r[i--] = prv
       else break
     }
-    roads[i] = cur
-    len++
+    r[i] = Road(fr, to, dist)
+    if (!override) len++
   }
 
-  repeat(len) {
-    val i = it + 1
-    val cur = roads[i]!!
-    val prv = roads[i - 1]!!
-    val cDist = cur.fr + cur.w
-    val pDist = dists[prv.to] + (if (prv.to <= cur.fr) cDist else cur.to) - prv.to
-    dists[cur.to] = minOf(pDist, cDist)
-    if (i == len) dists[D] = dists[cur.to] + D - cur.to
+  for (i in 0 until len) {
+    println("---road = ${r[i]}")
   }
 
-  w(dists[D])
+  var ri = 0
+  var nextRoad = r[ri]!! // 처음부터,,,,,,,, prv.to next.fr 연결될 수 있는건 한방에 연결해야함.......
+  var bestRoad: Road? = null
+  repeat(D) { cur ->
+    val str = d[cur]
+    var min = str
+    println("[$cur --> road.fr=${nextRoad.fr}] --- str=$str")
+    if (nextRoad.fr == cur) {
+      val (fr, to, w) = nextRoad
+      val reduced = to - fr - w
+
+      val goShort = if (bestRoad != null) {
+        if (bestRoad!!.to <= fr) {
+          str - reduced
+        } else {
+          val bestFr = bestRoad!!.fr
+          val diff = fr - bestFr
+          println("d[$bestFr] ${d[bestFr]} + $diff - $reduced")
+          d[bestFr] + diff - reduced
+        }
+      } else -reduced
+
+      if (str > goShort) {
+        min = goShort
+        bestRoad = nextRoad
+      }
+
+      println("-------------- dist[$cur] = $str vs $goShort")
+      if (ri + 1 < len) nextRoad = r[++ri]!!
+    }
+
+    d[cur + 1] = min + 1
+  }
+
+
+  w(d[D])
   O.flush()
 }
 
 data class Road(
   val fr: Int,
   val to: Int,
-  var w: Int
+  val dist: Int
 )
 
-//    println("------------------------------------ $pos ($dist) / $lastDist  / $loopFr")
-//println("-----prv=$prv --> $pDist")
-//println("-----cur=$cur --> $cDist")
+/**
+// TEST
+1 100
+0 100 99
+-> 99
+
+//
+1 100
+0 100 101
+-> 101
+
+// 범위 밖
+2 100
+101 104 54
+0 102 50
+
+
+//
+2 100
+1 10 1
+1 10 5
+
+
+
+ */
