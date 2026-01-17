@@ -57,7 +57,7 @@ fun main() {
   val N = i()
   val D = i()
   val r = Array<Road?>(N) { null }
-  val d = IntArray(D + 1) { it }
+  val dists = IntArray(D + 1) { it }
 
   var len = 0
   repeat(N) {
@@ -68,7 +68,7 @@ fun main() {
     var i = len
     var override = false
     while (i > 0) {
-      val prv = r[i - 1]!!
+      val prv = getRoad(r, i - 1, len)!!
       val prvFr = prv.fr
       if (fr < prvFr) r[i--] = prv
       else if (fr == prvFr && to == prv.to) {
@@ -85,46 +85,20 @@ fun main() {
     if (!override) len++
   }
 
-  for (i in 0 until len) {
-    println("---road = ${r[i]}")
-  }
-
   var ri = 0
-  var nextRoad = r[ri]!! // 처음부터,,,,,,,, prv.to next.fr 연결될 수 있는건 한방에 연결해야함.......
-  var bestRoad: Road? = null
+  var road: Road? = getRoad(r, ri, len)
   repeat(D) { cur ->
-    val str = d[cur]
-    var min = str
-    println("[$cur --> road.fr=${nextRoad.fr}] --- str=$str")
-    if (nextRoad.fr == cur) {
-      val (fr, to, w) = nextRoad
-      val reduced = to - fr - w
+    val nxt = cur + 1
+    dists[nxt] = minOf(dists[nxt], dists[cur] + 1)
 
-      val goShort = if (bestRoad != null) {
-        if (bestRoad!!.to <= fr) {
-          str - reduced
-        } else {
-          val bestFr = bestRoad!!.fr
-          val diff = fr - bestFr
-          println("d[$bestFr] ${d[bestFr]} + $diff - $reduced")
-          d[bestFr] + diff - reduced
-        }
-      } else -reduced
-
-      if (str > goShort) {
-        min = goShort
-        bestRoad = nextRoad
-      }
-
-      println("-------------- dist[$cur] = $str vs $goShort")
-      if (ri + 1 < len) nextRoad = r[++ri]!!
+    if (road?.fr != cur) {
+      val (fr, to, d) = road!!
+      dists[to] = minOf(dists[to - 1] + 1, dists[fr] + d)
+      if (ri + 1 < len) road = getRoad(r, ++ri, len)
     }
-
-    d[cur + 1] = min + 1
   }
 
-
-  w(d[D])
+  w(dists[D])
   O.flush()
 }
 
@@ -134,13 +108,26 @@ data class Road(
   val dist: Int
 )
 
+private fun getRoad(
+  roads: Array<Road?>,
+  ri: Int,
+  len: Int
+): Road? = if (len > 0) roads[ri]!! else null
+
+//println("------dists[$cur] = ${dists[cur]}")
+//println("-> dists[$to] = ${dists[to - 1] + 1} vs ${dists[fr] + d}")
+
+//for (i in 0 until len) {
+//  println("---road = ${r[i]}")
+//}
+
 /**
 // TEST
 1 100
 0 100 99
 -> 99
 
-//
+// 범위 밖
 1 100
 0 100 101
 -> 101
