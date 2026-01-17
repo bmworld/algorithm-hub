@@ -66,14 +66,13 @@ fun main() {
 
   fun fib(
     fr: Int = 3,
-    to: Int,
-    Q: Int
+    to: Int
   ): Long = a.also {
     repeat(to - fr + 1) { i ->
       val n = i + fr
       it[n] = (it[n - 1] + it[n - 2]) % SEP
     }
-  }[to] % Q
+  }[to]
 
   var maxP = 2
   repeat(T) {
@@ -85,19 +84,12 @@ fun main() {
     w(x, false)
     O.write(COL)
     w(
-      when {
-        p <= 2 -> 1
-        else -> (if (p > maxP) fib(maxP + 1, p, q) else a[p] % q).toInt()
-      }
+      (if (p > maxP) fib(maxP + 1, p)
+      else a[p]).toInt() % q
     )
 
     if (maxP < p) maxP = p
   }
+
   O.flush()
 }
-
-//println("-> 기존 $p, $q")
-//
-//println("-> 나머지 $p, $q")
-//
-//println("-> 신규 $p, $q")
