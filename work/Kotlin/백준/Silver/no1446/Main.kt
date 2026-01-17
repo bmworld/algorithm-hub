@@ -3,8 +3,8 @@ package 백준.Silver.no1446
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 166
-private const val OBS = 6
+private const val IBS = 1 shl 9
+private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -53,11 +53,21 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val DIST_SEP = 100_000UL
+private const val POS_SEP = 10_000_000_000UL
+private const val EMPTY = 0UL
+
+@OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
   val N = i()
   val D = i()
-  val r = Array<Road?>(N) { null }
+  val r = ULongArray(N)
   val dists = IntArray(D + 1) { it }
+
+  fun getRoad(
+    roads: ULongArray,
+    ri: Int
+  ): ULong = roads[ri]
 
   var len = 0
   repeat(N) {
@@ -66,37 +76,36 @@ fun main() {
     val dist = i()
     if (to > D || to - fr <= dist) return@repeat
     var i = len
-    var override = false
     while (i > 0) {
-      val prv = getRoad(r, i - 1, len)!!
-      val prvFr = prv.fr
+      val prv = getRoad(r, i - 1)
+      val prvFr = (prv / POS_SEP).toInt()
+      val td = prv % POS_SEP
+      val prvTo = (td / DIST_SEP).toInt()
+      val prvD = (td % DIST_SEP).toInt()
       if (fr < prvFr) r[i--] = prv
-      else if (fr == prvFr && to == prv.to) {
-        if (dist >= prv.d) return@repeat
-        else {
-          i--
-          override = true
-          break
-        }
-      } else if (fr < prvFr) r[i--] = prv
+      else if (fr == prvFr && to == prvTo && dist >= prvD) return@repeat
+      else if (fr < prvFr) r[i--] = prv
       else break
     }
-    r[i] = Road(fr, to, dist)
-    if (!override) len++
+    r[i] = fr.toULong() * POS_SEP + to.toULong() * DIST_SEP + dist.toULong()
+    len++
   }
 
   var i = 0
-  var road = getRoad(r, i, len)
+  var road = getRoad(r, i)
   repeat(D) { cur ->
     val nxt = cur + 1
     dists[nxt] = minOf(dists[nxt], dists[cur] + 1)
-    if (road == null || road!!.fr != cur) return@repeat
+    if (road == EMPTY || (road / POS_SEP).toInt() != cur) return@repeat
 
     while (i < len) {
-      val (fr, to, d) = road!!
+      val fr = (road / POS_SEP).toInt()
+      val td = road % POS_SEP
+      val to = (td / DIST_SEP).toInt()
+      val d = (td % DIST_SEP).toInt()
       if (cur != fr) break
       dists[to] = minOf(dists[to], dists[to - 1] + 1, dists[fr] + d)
-      if (i + 1 < len) road = getRoad(r, ++i, len)
+      if (i + 1 < len) road = getRoad(r, ++i)
       else break
     }
   }
@@ -104,18 +113,6 @@ fun main() {
   w(dists[D])
   O.flush()
 }
-
-data class Road(
-  val fr: Int,
-  val to: Int,
-  val d: Int
-)
-
-private fun getRoad(
-  roads: Array<Road?>,
-  ri: Int,
-  len: Int
-): Road? = if (len > 0) roads[ri] else null
 
 //     println("------dists[$cur] = ${dists[cur]}")
 //     println("-> [r=$i] dists[$to] = ${dists[to - 1] + 1} vs ${dists[fr] + d}")
@@ -141,13 +138,7 @@ private fun getRoad(
 0 102 50
 
 
-//
-2 100
-1 10 1
-1 10 5
-
-
-// 핵심점검
+// 핵심점검: 최소거리 dists[to] 고려 -> minOf("dists[to]", dists[to - 1] + 1, dists[fr] + d))
 12 10000
 0 9000 500
 0 100 100
@@ -162,5 +153,6 @@ private fun getRoad(
 7000 9000 100
 9000 10000 1
 
+// OUT: 501
 
  */
