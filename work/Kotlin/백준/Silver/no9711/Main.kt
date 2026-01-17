@@ -56,27 +56,25 @@ private fun w(
 
 private val TAG = byteArrayOf(67, 97, 115, 101, 32, 35)
 private val COL = byteArrayOf(58, 32)
+private const val SEP = 10_000_000_000
 private const val MAX = 10_000
 fun main() {
-  val T = i()
-  val a = IntArray(MAX + 1)
+  val a = LongArray(MAX + 1)
   a[1] = 1
   a[2] = 1
 
   fun fib(
     fr: Int = 3,
-    to: Int,
-    Q: Int
-  ): Int = a.also {
+    to: Int
+  ): Long = a.also {
     repeat(to - fr + 1) { i ->
       val n = i + fr
-      it[n] = ((it[n - 1].toLong() + it[n - 2].toLong()) % Q).toInt()
+      it[n] = ((it[n - 1] + it[n - 2]) % SEP)
     }
   }[to]
 
-  var pP = 0
-  var pQ = 0
-  repeat(T) {
+  var maxP = 2
+  repeat(i()) {
     val x = it + 1
     val p = i()
     val q = i()
@@ -84,14 +82,9 @@ fun main() {
     O.write(TAG)
     w(x, false)
     O.write(COL)
-    w(
-      (when {
-        q == pQ -> (if (pP >= p) a[p] else fib(pP + 1, p, q))
-        else -> fib(3, p, q)
-      }) % q
-    )
-    pP = p
-    pQ = q
+    w(((if (p <= maxP) a[p] else fib(maxP + 1, p)) % q).toInt())
+
+    if (p > maxP) maxP = p
   }
   O.flush()
 }
