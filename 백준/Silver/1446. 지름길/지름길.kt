@@ -1,9 +1,8 @@
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 private const val IBS = 1 shl 8
-private const val OBS = 1 shl 4
+private const val OBS = 1 shl 6
 private val O = BufferedOutputStream(System.out, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -52,75 +51,66 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-private const val SEP = 100_000
 fun main() {
   val N = i()
   val D = i()
+  val r = Array<Road?>(N) { null }
+  val dists = IntArray(D + 1) { it }
 
-  val roads = Array<Road?>(N) { null }
   var len = 0
   repeat(N) {
     val fr = i()
     val to = i()
     val dist = i()
     if (to > D || to - fr <= dist) return@repeat
-    val cur = Road(fr, to, dist)
     var i = len
+    var override = false
     while (i > 0) {
-      val prv = roads[i - 1]!!
-      if (cur < prv) roads[i--] = prv
+      val prv = getRoad(r, i - 1, len)!!
+      val prvFr = prv.fr
+      if (fr < prvFr) r[i--] = prv
+      else if (fr == prvFr && to == prv.to) {
+        if (dist >= prv.d) return@repeat
+        else {
+          i--
+          override = true
+          break
+        }
+      } else if (fr < prvFr) r[i--] = prv
       else break
     }
-    roads[i] = cur
-    len++
+    r[i] = Road(fr, to, dist)
+    if (!override) len++
   }
 
-  val dists = IntArray(D + 1) { it }
-  val q = PriorityQueue<Int>()
-  val stt = 0
-  q.add(stt)
+  var i = 0
+  var road = getRoad(r, i, len)
+  repeat(D) { cur ->
+    val nxt = cur + 1
+    dists[nxt] = minOf(dists[nxt], dists[cur] + 1)
+    if (road == null || road!!.fr != cur) return@repeat
 
-  var loopFr = 0
-  while (q.isNotEmpty()) {
-    val e = q.poll()
-    val pos = e / SEP
-    val dist = e % SEP
-    val lastDist = D - pos + dist
-    if (dists[pos] < dist) continue
-    if (dists[D] > lastDist) dists[D] = lastDist
-    for (ri in loopFr until len) {
-      val (fr, to, added) = roads[ri]!!
-      val unusable = fr < pos
-      if (pos > fr || unusable) continue
-      val nd = dist + added + fr - pos
-      if (dists[to] <= nd) continue
-      dists[to] = nd
-      q.add(encodePos(to, nd))
+    while (i < len) {
+      val (fr, to, d) = road!!
+      if (cur != fr) break
+      dists[to] = minOf(dists[to], dists[to - 1] + 1, dists[fr] + d)
+      if (i + 1 < len) road = getRoad(r, ++i, len)
+      else break
     }
-    loopFr++
   }
 
   w(dists[D])
   O.flush()
 }
 
-private fun encodePos(
-  pos: Int,
-  dist: Int
-) = pos * SEP + dist
-
 data class Road(
   val fr: Int,
   val to: Int,
-  val dist: Int
-) : Comparable<Road> {
+  val d: Int
+)
 
-  override fun compareTo(o: Road): Int {
-    val tfr = this.fr
-    val ofr = o.fr
-    return when {
-      tfr == ofr -> this.dist.compareTo(o.dist)
-      else -> tfr.compareTo(ofr)
-    }
-  }
-}
+private fun getRoad(
+  roads: Array<Road?>,
+  ri: Int,
+  len: Int
+): Road? = if (len > 0) roads[ri] else null
