@@ -58,21 +58,35 @@ fun main() {
   val a = IntArray(N) { 1 }
   val SUM = IntArray(N * N)
 
-  repeat(N) { i ->
-    repeat(N) { j ->
-      val rPlusC = i()
-      SUM[encodePos(i, j, N)] = rPlusC
-      if (i < 1 || j < 2) return@repeat
-      val rMinusC = SUM[encodePos(i - 1, j, N)] - SUM[encodePos(i - 1, j + 1, N)]
-      a[i] = (rPlusC - rMinusC) / 2
+  repeat(N) { r ->
+    repeat(N) { c ->
+      val sum = i()
+      SUM[encodePos(r, c, N)] = sum
+      if (r < 1 || c < 2) return@repeat
+      if (r == 1) {
+        if (c == 2) {
+          val zeroPlusOne = SUM[encodePos(r - 1, c - 1, N)]
+          a[1] = (sum - SUM[encodePos(r - 1, c, N)] + zeroPlusOne) / 2
+          a[0] = zeroPlusOne - a[1]
+        }
+
+        a[c] = sum - a[1]
+      }
     }
   }
-  a[0] = SUM[encodePos(0, 1, N)] - a[1]
-  val last = N - 1
-  a[last] = SUM[encodePos(last - 1, last, N)] - a[last - 1]
-  repeat(N) {
-    w(a[it])
+
+  if (N <= 2) {
+    w(1)
+    w(1)
+  } else {
+    a[0] = SUM[encodePos(0, 1, N)] - a[1]
+    val last = N - 1
+    a[last] = SUM[encodePos(last - 1, last, N)] - a[last - 1]
+    repeat(N) {
+      w(a[it])
+    }
   }
+
   O.flush()
 }
 
