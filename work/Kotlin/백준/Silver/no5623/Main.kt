@@ -3,7 +3,7 @@ package 백준.Silver.no5623
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 3_000
+private const val IBS = 1 shl 15
 private const val OBS = 1 shl 10
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
@@ -55,43 +55,41 @@ private fun w(
 
 fun main() {
   val N = i()
-  val a = IntArray(N) { 1 }
-  val SUM = IntArray(N * N)
-
-  repeat(N) { r ->
-    repeat(N) { c ->
-      val sum = i()
-      SUM[encodePos(r, c, N)] = sum
-      if (r < 1 || c < 2) return@repeat
-      if (r == 1) {
-        if (c == 2) {
-          val zeroPlusOne = SUM[encodePos(r - 1, c - 1, N)]
-          a[1] = (sum - SUM[encodePos(r - 1, c, N)] + zeroPlusOne) / 2
-          a[0] = zeroPlusOne - a[1]
-        }
-
-        a[c] = sum - a[1]
-      }
-    }
-  }
-
   if (N <= 2) {
     w(1)
     w(1)
-  } else {
-    a[0] = SUM[encodePos(0, 1, N)] - a[1]
-    val last = N - 1
-    a[last] = SUM[encodePos(last - 1, last, N)] - a[last - 1]
-    repeat(N) {
-      w(a[it])
-    }
+    O.flush()
+    return
   }
 
-  O.flush()
+  val a = IntArray(N) { 1 }
+  var r0c1 = 0
+  var r0c2 = 0
+  repeat(2) { r ->
+    repeat(N) { c ->
+      val sum = i()
+      when (r) {
+        0 -> when (c) {
+          0 -> {}
+          1 -> r0c1 = sum
+          2 -> r0c2 = sum
+        }
+        1 -> if (c >= 2) {
+          if (c == 2) {
+            a[1] = (sum - r0c2 + r0c1) / 2
+            a[0] = r0c1 - a[1]
+          }
+          a[c] = sum - a[1]
+          val end = c == N - 1
+          if (end) {
+            repeat(N) {
+              w(a[it])
+            }
+            O.flush()
+            return
+          }
+        }
+      }
+    }
+  }
 }
-
-fun encodePos(
-  r: Int,
-  c: Int,
-  CAP: Int
-): Int = r * CAP + c
