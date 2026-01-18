@@ -3,8 +3,8 @@ package 백준.Silver.no1065
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 3
-private const val OBS = 1 shl 3
+private const val IBS = 1 shl 6
+private const val OBS = 1 shl 8
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -55,42 +55,53 @@ private fun w(
   if (flush) O.flush()
 }
 
-private const val MAX_NUM = 999
-private const val MAX_LEN = 4
+private const val MAX_LEN = 10
+private const val DIGIT_CNT = 10
 private const val CNT_UNTIL_2ND_PLACE = 99
+private val DIFF_RANGE = intArrayOf(-4, -3, -2, -1, 0, 1, 2, 3, 4)
+
 fun main() {
-  val N = minOf(i(), MAX_NUM)
+  val N = i()
   if (N <= CNT_UNTIL_2ND_PLACE) {
     w(N)
     return
   }
 
+  var len = 0
   val NUM = IntArray(MAX_LEN).also {
     var x = N
-    var i = 0
     while (x > 0) {
-      it[i++] = x % 10
+      it[len++] = x % 10
       x /= 10
     }
   }
 
   var cnt = CNT_UNTIL_2ND_PLACE
-  val p3 = NUM[2]
-  val p2 = NUM[1]
-  val p1 = NUM[0]
-  loop@ for (d3 in 1..p3) {
-    for (d2 in 0..9) {
-      val diff1 = d3 - d2
-      if (d3 >= p3 && d2 > p2) break@loop
-      for (d1 in 0..9) {
-        val diff2 = d2 - d1
-        if (diff1 == diff2) {
-          cnt++
-          break
-        } else if (d3 == p3 && d2 == p2 && d1 == p1) break@loop
+  repeat(DIFF_RANGE.size) {
+    val delta = DIFF_RANGE[it]
+    repeat(DIGIT_CNT) { firstDgt ->
+      var di = 0
+      NUM[di++] = firstDgt
+      var prv = firstDgt
+      for (i in di until len) {
+        val dgt = prv + delta
+        if (dgt !in 1..9) break
+        NUM[i] = dgt
+        if (i == len - 1 && toNumber(len, NUM) > N) continue
+        if (i >= 2) cnt++
+        prv = dgt
       }
     }
   }
-
   w(cnt)
+}
+
+private fun toNumber(
+  lastIdx: Int,
+  NUM: IntArray
+): Int {
+  var v = 0
+  var i = lastIdx
+  while (i >= 0) v = v * 10 + NUM[i--]
+  return v
 }
