@@ -1,12 +1,12 @@
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 16
-private const val OBS = 1 shl 8
+private const val IBS = 1 shl 13
+private const val OBS = 1 shl 3
+private const val EOF = -1
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
-private const val EOF = -1
 private var Ii = 0
 private var Il = 0
 
@@ -52,26 +52,16 @@ fun main() {
   }
 
   var max = 1
-  var cnt = 1
+  val cnt = IntArray(MaxNum + 1)
+  var kind = 0
   var l = 0
-  var r = 1
-  val ch = IntArray(2)
-  ch[0] = a[l]
-  if (n > 1) ch[1] = a[r]
-
+  var r = 0
   while (r < n) {
-    val rv = a[r]
-    if (rv != ch[0] && rv != ch[1]) {
-      l = r - 1
-      ch[0] = a[l]
-      ch[1] = a[r]
-      while (l >= 0 && a[l] == ch[0]) l--
-      l++
-      cnt = r - l
-      continue
-    }
+    if (cnt[a[r]]++ == 0) kind++
+    while (kind > 2) if (--cnt[a[l++]] == 0) kind--
+    val len = r - l + 1
+    if (len > max) max = len
     r++
-    if (++cnt > max) max = cnt
   }
 
   w(max)
