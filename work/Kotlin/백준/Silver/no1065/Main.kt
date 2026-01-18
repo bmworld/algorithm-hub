@@ -56,6 +56,7 @@ private fun w(
 }
 
 private const val MAX_NUM = 999
+private const val MAX_LEN = 4
 private const val CNT_UNTIL_2ND_PLACE = 99
 fun main() {
   val N = minOf(i(), MAX_NUM)
@@ -64,10 +65,19 @@ fun main() {
     return
   }
 
+  val NUM = IntArray(MAX_LEN).also {
+    var x = N
+    var i = 0
+    while (x > 0) {
+      it[i++] = x % 10
+      x /= 10
+    }
+  }
+
   var cnt = CNT_UNTIL_2ND_PLACE
-  val p3 = N / 100
-  val p2 = N % 100 / 10
-  val p1 = N % 10
+  val p3 = NUM[2]
+  val p2 = NUM[1]
+  val p1 = NUM[0]
   loop@ for (d3 in 1..p3) {
     for (d2 in 0..9) {
       val diff1 = d3 - d2
@@ -84,5 +94,3 @@ fun main() {
 
   w(cnt)
 }
-
-//println("$d3 $d2 $d1   ($diff1, $diff2)")
