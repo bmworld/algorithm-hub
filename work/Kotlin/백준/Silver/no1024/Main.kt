@@ -63,16 +63,14 @@ fun main() {
   when {
     getMinSum(len) > N -> w(-1)
     else -> {
-      var sum: Int
+
       while (true) {
         val m = N / len
         val half = len shr 1
         val l = m - half + if (len % 2 == 0) 1 else 0
         val r = m + half
-        sum = getRangeSum(l, r)
-
         when {
-          sum == N -> {
+          getRangeSum(l, r) == N -> {
             repeat(r - l + 1) {
               w(l + it)
             }
