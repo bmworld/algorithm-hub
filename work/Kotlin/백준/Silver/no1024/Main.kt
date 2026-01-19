@@ -57,19 +57,20 @@ private fun w(
 private const val MAX_NUM = 1_000_000_000
 fun main() {
   val N = i()
-  var LEN = i()
-  if (N % 2 == 0 && LEN == 2) LEN++
+  var len = i()
+  if (N % 2 == 0 && len == 2) len++
 
   when {
-    getMinSum(LEN) > N -> w(-1)
+    getMinSum(len) > N -> w(-1)
     else -> {
       var sum: Int
       while (true) {
-        val m = N / LEN
-        val half = LEN shr 1
-        val l = m - half + if (LEN % 2 == 0) 1 else 0
+        val m = N / len
+        val half = len shr 1
+        val l = m - half + if (len % 2 == 0) 1 else 0
         val r = m + half
         sum = getRangeSum(l, r)
+
         when {
           sum == N -> {
             repeat(r - l + 1) {
@@ -77,7 +78,7 @@ fun main() {
             }
             break
           }
-          getMinSum(LEN + 1) <= N -> LEN++
+          len < 100 && getMinSum(len + 1) <= N -> len++
           else -> {
             w(-1)
             break
@@ -104,4 +105,4 @@ private fun getSeqSum(v: Int): Int {
   return (l * (l + 1) shr 1).toInt()
 }
 
-//        println("[L=$len] $l ~ $r ---- $sum  (mSum=${getMinSum(len + 1)})")
+//println("[L=$len] $l ~ $r ---- $sum  (mSum=${getMinSum(len + 1)})")
