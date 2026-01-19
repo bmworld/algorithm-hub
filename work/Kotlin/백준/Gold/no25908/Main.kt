@@ -39,7 +39,7 @@ private const val WS = 10
 
 private val WB = ByteArray(WS + 1).also { it[WS] = 32 }
 private fun w(
-  num: Int,
+  num: Int
 ) {
   var v = if (num >= 0) num
   else {
@@ -62,7 +62,7 @@ private const val D2 = 2
 private const val D3 = 3
 private const val D5 = 5
 private const val D7 = 7
-private val DVSRS = intArrayOf(D2, D3, D5, D7)
+private val DVSR = intArrayOf(D2, D3, D5, D7)
 
 fun main() {
   val stt = i()
@@ -71,20 +71,15 @@ fun main() {
   a[1] = ODD_W
 
   var total = if (stt <= 1) a[1] else 0
-
-  repeat(DVSRS.size) {
-    total += fillByPow(a, stt, end, DVSRS[it])
-  }
-
   repeat(end - stt + 1) { i ->
-    val num = stt + i
-    if (a[num] != EMPTY) return@repeat
+    val v = stt + i
+    if (a[v] != EMPTY) return@repeat
 
-    total += if (isDividable(num)) {
-      val w = getW(num)
-      a[num] = w
+    total += if (dividable(v)) {
+      val w = getW(v)
+      a[v] = w
       w
-    } else fillByPow(a, stt, end, num)
+    } else fillByPow(a, stt, end, v)
   }
 
   w(total)
@@ -95,44 +90,45 @@ private fun fillByPow(
   a: IntArray,
   min: Int,
   max: Int,
-  dvsr: Int
+  v: Int
 ): Int {
   var acc = 0
-  var num = dvsr
-  val w = getOneW(dvsr)
+  var x = v
+  val w = if (v % 2 == 0) EVEN_W else ODD_W
   var nw = w
-  while (num in 1..max) {
-    if (num >= min && a[num] == EMPTY) a[num] = (ODD_W + nw).also { acc += it }
+  while (x in 1..max) {
+    if (x >= min && a[x] == EMPTY) a[x] = (ODD_W + nw).also { acc += it }
     nw += w
-    num *= dvsr
+    x *= v
   }
-
   return acc
 }
 
-private fun getOneW(dvsr: Int) = if (dvsr % 2 == 0) EVEN_W else ODD_W
-
-fun isDividable(v: Int): Boolean =
+fun dividable(v: Int): Boolean =
   v % D2 == 0 ||
     v % D3 == 0 ||
     v % D5 == 0 ||
     v % D7 == 0
 
-private val DvsrCnts = IntArray(DVSRS.size)
-private fun getW(num: Int): Int {
-  if (num == 1) return ODD_W
-  var x = num
-  repeat(DVSRS.size) {
-    val d = DVSRS[it]
+private val DVSR_CNT = IntArray(DVSR.size)
+private fun getW(v: Int): Int {
+  if (v == 1) return ODD_W
+  var x = v
+  repeat(DVSR.size) {
+    val d = DVSR[it]
     var cnt = 1
     while (x % d == 0) {
       x /= d
       cnt++
     }
-    DvsrCnts[it] = cnt
+    DVSR_CNT[it] = cnt
   }
 
-  val oCnt = DvsrCnts[1] * DvsrCnts[2] * DvsrCnts[3]
-  val eCnt = (DvsrCnts[0] - 1) * oCnt
+  val oCnt = DVSR_CNT[1] * DVSR_CNT[2] * DVSR_CNT[3]
+  val eCnt = (DVSR_CNT[0] - 1) * oCnt
   return oCnt * ODD_W + eCnt * EVEN_W
 }
+
+//for (i in stt..end) {
+//  println("a[$i] = ${a[i]}")
+//}
