@@ -55,46 +55,84 @@ private fun w(
 }
 
 private const val EMPTY = Int.MIN_VALUE
-private const val EVEN_W = +1
+private const val EVEN_W = 1
 private const val ODD_W = -1
-private const val PRIME_W = -2
-fun main() {
-  val S = i()
-  val T = i()
-  if (S == 1 && T == 1) {
-    w(-1)
-    O.flush()
-    return
-  }
 
-  val a = IntArray(T + 1) { EMPTY }
+private const val D2 = 2
+private const val D3 = 3
+private const val D5 = 5
+private const val D7 = 7
+private val DVSRS = intArrayOf(D2, D3, D5, D7)
+
+fun main() {
+  val stt = i()
+  val end = i()
+  val a = IntArray(end + 1) { EMPTY }
   a[1] = ODD_W
 
-  var total = if (S <= 1) a[1] else 0
+  var total = if (stt <= 1) a[1] else 0
 
-  repeat(T - 1) { i ->
-    val v = i + 2
-    if (a[v] != EMPTY) return@repeat
-    val r = when {
-      v % 2 == 0 -> a[v / 2] + EVEN_W
-      v % 3 == 0 -> a[v / 3] + ODD_W
-      v % 5 == 0 -> a[v / 5] + ODD_W
-      v % 7 == 0 -> a[v / 7] + ODD_W
-      else -> {
-        var w = PRIME_W
-        val l = v.toLong()
-        var prmPow = l * l
-        while (prmPow <= T) {
-          a[prmPow.toInt()] = --w
-          prmPow *= v
-        }
+  repeat(DVSRS.size) {
+    total += fillByPow(a, stt, end, DVSRS[it])
+  }
 
-        PRIME_W
-      }
-    }
-    a[v] = r.also { if (v >= S) total += it }
+  repeat(end - stt + 1) { i ->
+    val num = stt + i
+    if (a[num] != EMPTY) return@repeat
+
+    total += if (isDividable(num)) {
+      val w = getW(num)
+      a[num] = w
+      w
+    } else fillByPow(a, stt, end, num)
   }
 
   w(total)
   O.flush()
+}
+
+private fun fillByPow(
+  a: IntArray,
+  min: Int,
+  max: Int,
+  dvsr: Int
+): Int {
+  var acc = 0
+  var num = dvsr
+  val w = getOneW(dvsr)
+  var nw = w
+  while (num in 1..max) {
+    if (num >= min && a[num] == EMPTY) a[num] = (ODD_W + nw).also { acc += it }
+    nw += w
+    num *= dvsr
+  }
+
+  return acc
+}
+
+private fun getOneW(dvsr: Int) = if (dvsr % 2 == 0) EVEN_W else ODD_W
+
+fun isDividable(v: Int): Boolean =
+  v % D2 == 0 ||
+    v % D3 == 0 ||
+    v % D5 == 0 ||
+    v % D7 == 0
+
+private val DvsrCnts = IntArray(DVSRS.size)
+private fun getW(num: Int): Int {
+  if (num == 1) return ODD_W
+  var x = num
+  repeat(DVSRS.size) {
+    val d = DVSRS[it]
+    var cnt = 1
+    while (x % d == 0) {
+      x /= d
+      cnt++
+    }
+    DvsrCnts[it] = cnt
+  }
+
+  val oCnt = DvsrCnts[1] * DvsrCnts[2] * DvsrCnts[3]
+  val eCnt = (DvsrCnts[0] - 1) * oCnt
+  return oCnt * ODD_W + eCnt * EVEN_W
 }
