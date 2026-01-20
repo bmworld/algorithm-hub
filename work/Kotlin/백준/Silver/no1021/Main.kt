@@ -75,8 +75,8 @@ fun main() {
 
 private fun pop(
   q: Long,
-  t: Int
-) = q xor (L shl t)
+  pos: Int
+) = q xor (L shl pos)
 
 private fun op(
   q: Long,
@@ -84,7 +84,7 @@ private fun op(
   to: Int
 ): Int {
   if (fr == to) return 0
-  val f = if (fr <= to) fr else to
+  val f = if (fr < to) fr else to
   val t = if (fr == f) to else fr
 
   val mask = ((L shl (t - f)) - 1) shl (f + 1)
@@ -104,8 +104,7 @@ private fun move(
   val end = (L shl pos).countLeadingZeroBits() == q.countLeadingZeroBits()
 
   val candidates = q and if (end) preMask else postMask
-  val next = candidates.countTrailingZeroBits()
-  return if (next == LONG_BIT_CNT) candidates.countTrailingZeroBits() else next
+  return candidates.countTrailingZeroBits()
 }
 
 //println("[op] l=$l, r=$r")
