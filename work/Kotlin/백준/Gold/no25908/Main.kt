@@ -54,81 +54,55 @@ private fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-private const val EMPTY = Int.MIN_VALUE
 private const val EVEN_W = 1
 private const val ODD_W = -1
-
-private const val D2 = 2
-private const val D3 = 3
-private const val D5 = 5
-private const val D7 = 7
-private val DVSR = intArrayOf(D2, D3, D5, D7)
 
 fun main() {
   val stt = i()
   val end = i()
-  val a = IntArray(end + 1) { EMPTY }
-  a[1] = ODD_W
-
-  var total = if (stt <= 1) a[1] else 0
+  var total = 0
   repeat(end - stt + 1) { i ->
-    val v = stt + i
-    if (a[v] != EMPTY) return@repeat
-
-    total += if (dividable(v)) {
-      val w = getW(v)
-      a[v] = w
-      w
-    } else fillByPow(a, stt, end, v)
+    total += getW(stt + i)
   }
 
   w(total)
   O.flush()
 }
 
-private fun fillByPow(
-  a: IntArray,
-  min: Int,
-  max: Int,
-  v: Int
-): Int {
-  var acc = 0
-  var x = v
-  val w = if (v % 2 == 0) EVEN_W else ODD_W
-  var nw = w
-  while (x in 1..max) {
-    if (x >= min && a[x] == EMPTY) a[x] = (ODD_W + nw).also { acc += it }
-    nw += w
-    x *= v
-  }
-  return acc
-}
+private fun getW(num: Int): Int {
+  if (num == 1) return ODD_W
+  var v = num
 
-fun dividable(v: Int): Boolean =
-  v % D2 == 0 ||
-    v % D3 == 0 ||
-    v % D5 == 0 ||
-    v % D7 == 0
+  var ePow = 0
+  var oCnt = 1
 
-private val DVSR_CNT = IntArray(DVSR.size)
-private fun getW(v: Int): Int {
-  if (v == 1) return ODD_W
-  var x = v
-  repeat(DVSR.size) {
-    val d = DVSR[it]
-    var cnt = 1
-    while (x % d == 0) {
-      x /= d
+  var dvsr = 2
+  while (v > 1 && dvsr <= v) {
+    var cnt = 0
+    while (v % dvsr == 0) {
+      v /= dvsr
       cnt++
     }
-    DVSR_CNT[it] = cnt
+
+    if (cnt > 0) {
+      if (dvsr % 2 == 0) ePow += cnt
+      else oCnt *= cnt + 1
+    }
+    dvsr++
   }
 
-  val oCnt = DVSR_CNT[1] * DVSR_CNT[2] * DVSR_CNT[3]
-  val eCnt = (DVSR_CNT[0] - 1) * oCnt
-  return oCnt * ODD_W + eCnt * EVEN_W
+  var eCnt = maxOf(1, oCnt) * ePow
+  val w = EVEN_W * eCnt + ODD_W * oCnt
+  return w
 }
 
-//for (i in stt..end) {
-//  println("a[$i] = ${a[i]}")
-//}
+//println("---- $v -> even=$eCnt ($ew), odd= $oCnt ($ow)")
+//println("dvsr=$dvsr ($cnt)")
+//println("num = ${num}, $w")
+
+// 점검 (짝수, 홀수):
+// 9: 0,3
+// 11: 0,2
+// 99: 0,6
+// 496584 (8*27*121*19): 72, 24
+// 62073 (27*121*19): 0, 24
