@@ -3,8 +3,8 @@ package 백준.Bronze.no1085
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 5
-private const val OBS = 1 shl 5
+private const val IBS = 1 shl 6
+private const val OBS = 1 shl 3
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -59,7 +59,13 @@ fun main() {
   val y = i()
   val w = i()
   val h = i()
+  val dx = w - x
+  val dy = h - y
 
-  w(minOf(x, y, w - x, h - y))
+  var min = if (x < y) x else y
+  if (min > dx) min = dx
+  if (min > dy) min = dy
+
+  w(min)
   O.flush()
 }
