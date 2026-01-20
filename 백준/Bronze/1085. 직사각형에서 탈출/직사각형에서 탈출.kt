@@ -57,7 +57,13 @@ fun main() {
   val y = i()
   val w = i()
   val h = i()
+  val dx = w - x
+  val dy = h - y
 
-  w(minOf(x, y, w - x, h - y))
+  var min = if (x < y) x else y
+  if (min > dx) min = dx
+  if (min > dy) min = dy
+
+  w(min)
   O.flush()
 }
