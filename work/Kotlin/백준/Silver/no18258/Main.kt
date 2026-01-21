@@ -3,8 +3,8 @@ package 백준.Silver.no18258
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 20
-private const val OBS = 1 shl 10
+private const val IBS = 1 shl 16
+private const val OBS = 1 shl 12
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -90,28 +90,12 @@ fun main() {
   repeat(N) {
     when (op()) {
       PUSH -> a[t++] = i()
-      POP -> w(if (isEmpty(h, t)) -1 else a[h++])
-      SIZE -> w(getSize(h, t))
-      EMPTY -> w(if (isEmpty(h, t)) 1 else 0)
-      FRONT -> w(if (isEmpty(h, t)) -1 else a[h])
-      BACK -> w(if (isEmpty(h, t)) -1 else a[t - 1])
+      POP -> w(if (t - h == 0) -1 else a[h++])
+      SIZE -> w(t - h)
+      EMPTY -> w(if (t - h == 0) 1 else 0)
+      FRONT -> w(if (t - h == 0) -1 else a[h])
+      BACK -> w(if (t - h == 0) -1 else a[t - 1])
     }
   }
   O.flush()
 }
-
-private fun isEmpty(
-  head: Int,
-  tail: Int
-) = getSize(head, tail) == 0
-
-private fun getSize(
-  head: Int,
-  tail: Int
-) = tail - head
-
-//repeat(t - h) {
-//  val i = h + it
-//  println("a[$i] = ${a[i]}")
-//}
-//println("--- IN a[$h] = ${a[h]}, a[$t] ${a[t]} ---- op= $op")
