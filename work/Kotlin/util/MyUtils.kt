@@ -3,17 +3,24 @@ package util
 import java.io.BufferedInputStream
 
 fun getStringArr(s: String): Array<String> {
-  return s.trim().lines().toTypedArray()
+  return s.trim()
+    .lines()
+    .toTypedArray()
 }
 
 fun getStringSet(s: String): LinkedHashSet<String> {
   val set = LinkedHashSet<String>()
-  s.trim().lines().forEach { set.add(it) }
+  s.trim()
+    .lines()
+    .forEach { set.add(it) }
   return set
 }
 
 fun getIntArr(s: String): IntArray {
-  return s.trim().split(" ").map { it.toInt() }.toIntArray()
+  return s.trim()
+    .split(" ")
+    .map { it.toInt() }
+    .toIntArray()
 }
 
 fun readInt(IN: BufferedInputStream): Int {
@@ -32,15 +39,10 @@ fun readInt(IN: BufferedInputStream): Int {
   return n * sign
 }
 
-fun readString(IN: BufferedInputStream): String {
-  val sb = StringBuilder()
-  var c = IN.read()
-  val isEnd = c != -1
-  while (c <= 32 && isEnd) c = IN.read()
-  while (c > 32) {
-    sb.append(c.toChar())
-    c = IN.read()
-  }
-
-  return sb.toString()
+/**
+ * 용도: 알고리즘 실행시간 측정
+ */
+fun measureTime(start: Long): String {
+  val end = System.nanoTime()
+  return String.format("[Elapsed] %.6f sec", (end - start) / 1_000_000_000.0)
 }
