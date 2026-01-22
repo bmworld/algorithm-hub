@@ -1,46 +1,54 @@
 package util
 
-import java.io.BufferedInputStream
-
-fun getStringArr(s: String): Array<String> {
-  return s.trim().lines().toTypedArray()
-}
-
-fun getStringSet(s: String): LinkedHashSet<String> {
-  val set = LinkedHashSet<String>()
-  s.trim().lines().forEach { set.add(it) }
-  return set
-}
-
 fun getIntArr(s: String): IntArray {
-  return s.trim().split(" ").map { it.toInt() }.toIntArray()
+  return s.trim()
+    .split(" ")
+    .map { it.toInt() }
+    .toIntArray()
 }
 
-fun readInt(IN: BufferedInputStream): Int {
-  var c = IN.read()
-  while (c <= 32) c = IN.read()
-  var sign = 1
-  if (c == '-'.code) { // 부호 처리
-    sign = -1
-    c = IN.read()
-  }
-  var n = 0
-  while (c in '0'.code..'9'.code) {
-    n = n * 10 + (c - '0'.code)
-    c = IN.read()
-  }
-  return n * sign
-}
+/**
+ * 용도: 알고리즘 실행시간 측정
+ */
+class Timer(
+  private val unit: Double = 1_000_000_000.0
+) {
 
-fun readString(IN: BufferedInputStream): String {
-  val sb = StringBuilder()
-  var c = IN.read()
-  val isEnd = c != -1
-  while (c <= 32 && isEnd) c = IN.read()
-  while (c > 32) {
-    sb.append(c.toChar())
-    c = IN.read()
+  private var sttAt: Long = 0L
+  private var endAt: Long = 0L
+  private var lastLapAt: Long = 0L
+  private var done: Boolean = false
+
+  init {
+    start()
   }
 
-  return sb.toString()
+  fun start() {
+    sttAt = System.nanoTime()
+    lastLapAt = sttAt
+    done = false
+    printTime("start")
+  }
+
+  fun lap() {
+    check(!done) { "[Timer] Already stopped" }
+    val now = System.nanoTime()
+    val t = (now - lastLapAt) / unit
+    lastLapAt = now
+    printTime("lap", t)
+  }
+
+  fun stop() {
+    check(!done) { "[Timer] Already stopped" }
+    endAt = System.nanoTime()
+    done = true
+    printTime("stop", (endAt - sttAt) / unit)
+  }
+
+  private fun printTime(
+    title: String,
+    time: Double = 0.0
+  ) {
+    println(String.format("[Timer] $title: %.7f sec", time))
+  }
 }
