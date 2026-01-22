@@ -3,8 +3,8 @@ package 백준.Bronze.no2581
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 12
-private const val OBS = 10
+private const val IBS = 1 shl 5
+private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -66,8 +66,8 @@ fun main() {
   val total = (N * (N + 1) - (M - 1) * M) / 2
   var sumOfNonPrimes = if (M <= 1) 1 else 0
   var v = 2
-  while (v * 2 <= N) {
-    for (d in v * 2..N step v) {
+  while (v * v <= N) {
+    for (d in v * v..N step v) {
       if (ch[d]) continue
       ch[d] = true
       if (d >= M) sumOfNonPrimes += d
