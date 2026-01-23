@@ -2,7 +2,7 @@ package 백준.Silver.no1312
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.math.BigInteger
+import java.math.RoundingMode
 
 private const val IBS = 1 shl 5
 private const val OBS = 1 shl 2
@@ -37,7 +37,6 @@ private fun i(): Int {
 }
 
 private const val WS = 10
-
 private val WB = ByteArray(WS)
 private fun w(
   num: Int
@@ -55,6 +54,7 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+private const val ZERO = 48
 fun main() {
 
   var A = i()
@@ -62,11 +62,11 @@ fun main() {
   val N = i()
 
   val r = if (A == B) 0 else {
-    A.toBigInteger()
-      .multiply(BigInteger.TEN.pow(N))
-      .divide(B.toBigInteger())
-      .remainder(BigInteger.TEN)
-      .toInt()
+    val da = A.toBigDecimal()
+    val db = B.toBigDecimal()
+    val str = da.divide(db, N, RoundingMode.FLOOR)
+      .toString()
+    str[str.length - 1].code - ZERO
   }
 
   w(r)
