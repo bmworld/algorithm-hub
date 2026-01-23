@@ -4,8 +4,8 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.math.RoundingMode
 
-private const val IBS = 1 shl 5
-private const val OBS = 1 shl 2
+private const val IBS = 1 shl 6
+private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -54,21 +54,51 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-private const val ZERO = 48
 fun main() {
 
-  var A = i()
-  var B = i()
+  var a = i()
+  var b = i()
   val N = i()
 
-  val r = if (A == B) 0 else {
-    val da = A.toBigDecimal()
-    val db = B.toBigDecimal()
-    val str = da.divide(db, N, RoundingMode.FLOOR)
-      .toString()
-    str[str.length - 1].code - ZERO
+  val r = if (a == b) 0 else {
+    var d = 2
+    while (d <= a && a > 1) {
+      if (a % d == 0 && b % d == 0) {
+        a /= d
+        b /= d
+      } else d++
+    }
+
+    var x = a % b
+    var dcm = 0
+    var i = 0
+    while (i < N) {
+
+      if (x == 0) {
+        dcm = 0
+        break
+      }
+
+      if (x < b) x *= 10
+      dcm = if (x / b > 0) x.also { x %= b } / b else 0
+      i++
+    }
+    dcm
   }
 
   w(r)
   O.flush()
+}
+
+fun test(
+  a: Int,
+  b: Int,
+  N: Int
+) {
+  val da = a.toBigDecimal()
+  val db = b.toBigDecimal()
+  val str = da.divide(db, N, RoundingMode.FLOOR)
+    .toString()
+  val r = str[str.length - 1].code - 48
+  println("[PREVIEW] r=$r, $str")
 }
