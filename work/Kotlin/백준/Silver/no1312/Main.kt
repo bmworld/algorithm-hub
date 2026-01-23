@@ -56,37 +56,19 @@ private fun w(
 
 fun main() {
 
-  var a = i()
-  var b = i()
+  val a = i()
+  val b = i()
   val N = i()
 
-  val r = if (a == b) 0 else {
-    var d = 2
-    while (d <= a && a > 1) {
-      if (a % d == 0 && b % d == 0) {
-        a /= d
-        b /= d
-      } else d++
-    }
-
-    var x = a % b
-    var dcm = 0
-    var i = 0
-    while (i < N) {
-
-      if (x == 0) {
-        dcm = 0
-        break
-      }
-
-      if (x < b) x *= 10
-      dcm = if (x / b > 0) x.also { x %= b } / b else 0
-      i++
-    }
-    dcm
+  var x = a % b
+  var dcm = 0
+  var lastPos = 0
+  while (x > 0 && lastPos++ < N) {
+    x *= 10
+    dcm = if (x < b) 0 else x.also { x %= b } / b
   }
 
-  w(r)
+  w(if (lastPos < N) 0 else dcm)
   O.flush()
 }
 
@@ -102,3 +84,5 @@ fun test(
   val r = str[str.length - 1].code - 48
   println("[PREVIEW] r=$r, $str")
 }
+
+//println("x=$x, pos=$lastPos dcm=$dcm")
