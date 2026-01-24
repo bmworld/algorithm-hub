@@ -3,8 +3,8 @@ package 백준.Silver.no1747
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 4
-private const val OBS = 1 shl 4
+private const val IBS = 1 shl 5
+private const val OBS = 1 shl 5
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -54,48 +54,69 @@ private fun w(
 }
 
 private const val MAX_LEN = 7
-private const val MAX_PRIME = 1_003_001
 fun main() {
   val N = i()
-  var min = N
-  val max = MAX_PRIME
-  val primes = BooleanArray(max + 1) { true }.also {
-    it[0] = false
-    it[1] = false
-    var d = 2
-    while (d * d <= max) {
-      for (v in d * d..max step d) it[v] = false
-      d++
-    }
-  }
-
   val NUM = IntArray(MAX_LEN)
-  var r = Int.MAX_VALUE
-  for (v in min..max) {
-    if (primes[v] && isPalindrome(v, NUM)) {
-      r = v
-      break
+  var found = false
+
+  fun dfs(
+    l: Int,
+    len: Int,
+  ) {
+    if (found) return
+    if (l > len / 2) {
+      val v = toNum(NUM, len)
+      if (v >= N && isPrime(v)) {
+        w(v)
+        found = true
+      }
+      return
+    }
+
+    val r = len - 1 - l
+    for (v in 0..9) {
+      if (l == 0 && v == 0
+        || len >= 2 && l == 0 && (v % 2 == 0 || v % 5 == 0)
+      ) continue
+      NUM[l] = v
+      NUM[r] = v
+      dfs(l + 1, len)
     }
   }
 
-
-  w(r)
+  for (len in getLen(N)..MAX_LEN) dfs(0, len)
   O.flush()
 }
 
-private fun isPalindrome(
+private fun toNum(
+  NUM: IntArray,
+  len: Int
+): Int {
+  var v = 0
+  repeat(len) {
+    v = v * 10 + NUM[it]
+  }
+  return v
+}
+
+private fun isPrime(v: Int): Boolean {
+  if (v == 1) return false
+  var d = 2
+  while (d * d <= v) {
+    if (v % d == 0) return false
+    d++
+  }
+  return true
+}
+
+private fun getLen(
   v: Int,
-  NUM: IntArray
-): Boolean {
+): Int {
   var len = 0
   var x = v
   while (x > 0) {
-    NUM[len++] = x % 10
     x /= 10
+    len++
   }
-
-  val first = NUM[len - 1]
-  if (len > 1 && (first % 2 == 0 || first % 5 == 0)) return false
-  for (l in 0 until len / 2) if (NUM[l] != NUM[len - 1 - l]) return false
-  return true
+  return len
 }
