@@ -1,6 +1,5 @@
 package 백준.Gold.no25908
 
-import util.Timer
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
@@ -37,8 +36,7 @@ fun i(): Int {
 }
 
 const val WS = 10
-
-val WB = ByteArray(WS + 1).also { it[WS] = 32 }
+val WB = ByteArray(WS)
 fun w(
   num: Int
 ) {
@@ -52,7 +50,7 @@ fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
+  O.write(WB, ++pos, WS - pos)
 }
 
 const val ODD_W = -1
@@ -69,39 +67,32 @@ fun main() {
     return
   }
 
-  var answer = 0
-  val primes = BooleanArray(end + 1) { true }.also {
-    it[0] = false
-    it[1] = false
+  val minDvsrs = IntArray(end + 1) { it }.also {
     var d = 2
     while (d * d <= end) {
-      for (v in d * d..end step d) it[v] = false
+      for (v in d * d..end step d) if (it[v] == v) it[v] = d
       d++
     }
   }
 
   val a = IntArray(end + 1) { EMPTY }
-  a[1] = ODD_W
-  a[2] = 0
-
+  var answer = 0
   repeat(end) { i ->
     val v = 1 + i
+    val d = minDvsrs[v]
     val r = when {
-      v > 2 && primes[v] -> PRIME_W
-      v.countOneBits() == 1 -> {
-        val w = a[v / 2]
-        if (w != EMPTY) w + 1 else v.countTrailingZeroBits() - 1
-      }
-      (v - 2) % 4 == 0 -> 0
-      v % 2 == 0 -> {
-        val (rmn, exp) = calcExponent(v, 2)
-        (exp - 1) * a[rmn] * ODD_W
-      }
+      v.countOneBits() == 1 -> v.countTrailingZeroBits() - 1
+      v % 4 == 2 -> 0
+      v > 1 && v == d -> PRIME_W
       else -> {
-
-        val d = getMinDivisor(v)
-        val (rmn, exp) = calcExponent(v, d)
-        (exp + 1) * a[rmn]
+        var exp = 0
+        var rmn = v
+        var base = if (v % 2 == 0) 2 else d
+        while (rmn > 1 && rmn % base == 0) {
+          exp++
+          rmn /= base
+        }
+        a[rmn] * if (v % 2 == 0) (exp - 1) * ODD_W else (exp + 1)
       }
     }
     a[v] = r
@@ -109,31 +100,7 @@ fun main() {
   }
 
   w(answer)
-
   O.flush()
-}
-
-fun calcExponent(
-  num: Int,
-  base: Int
-): Pair<Int, Int> {
-  var exp = 0
-  var x = num
-  while (x > 1 && x % base == 0) {
-    exp++
-    x /= base
-  }
-
-  return Pair(x, exp)
-}
-
-fun getMinDivisor(num: Int): Int {
-  var dvsr = 2
-  while (dvsr * dvsr <= num) {
-    if (num % dvsr == 0) return dvsr
-    dvsr++
-  }
-  return num
 }
 
 // ---------------------------------------------------------------------
@@ -145,7 +112,7 @@ fun test(
   end: Int
 ) {
 
-  val T = Timer()
+  //  val T = Timer()
 
   var total = 0
   repeat(end - stt + 1) { i ->
@@ -157,7 +124,7 @@ fun test(
   w(total)
   O.flush()
 
-  T.stop()
+  //  T.stop()
 }
 
 fun getW(
@@ -198,23 +165,7 @@ fun getW(
   }
 }
 
-fun getValidRemainder(
-  num: Int,
-  divisor: Int,
-  evenExponent: Int,
-  oddExponent: Int
-): Int {
-  var rmn = num shr evenExponent
-  if (divisor % 2 != 0) {
-    repeat(oddExponent) {
-      rmn = rmn / divisor
-    }
-  }
-  return rmn
-}
-
-//    println("-- a[$v] = ${a[v]}")
-//  println("(eExp=$eExp, oExp=$oExp, rmn= $rmn) -> $pw + $w * $delta")
+//     println("a[$v] = ${a[v]}, ${getW(null, v)}")
 
 // 점검 (짝수, 홀수):
 // 496584 (8*27*121*19): 72, 24
