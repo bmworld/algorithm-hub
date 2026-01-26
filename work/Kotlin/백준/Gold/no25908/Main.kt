@@ -1,18 +1,19 @@
 package 백준.Gold.no25908
 
+import util.Timer
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-private const val IBS = 1 shl 5
-private const val OBS = 1 shl 5
-private val O = BufferedOutputStream(System.`out`, OBS)
-private val I = BufferedInputStream(System.`in`)
-private val IB = ByteArray(IBS)
-private var Ii = 0
-private var Il = 0
-private const val EOF = -1
+const val IBS = 1 shl 5
+const val OBS = 1 shl 5
+val O = BufferedOutputStream(System.`out`, OBS)
+val I = BufferedInputStream(System.`in`)
+val IB = ByteArray(IBS)
+var Ii = 0
+var Il = 0
+const val EOF = -1
 
-private fun r(): Byte {
+fun r(): Byte {
   if (Ii == Il) {
     Il = I.read(IB, 0, IBS)
     if (Il == EOF) IB[0] = EOF.toByte()
@@ -21,8 +22,8 @@ private fun r(): Byte {
   return IB[Ii++]
 }
 
-private val NUM = 48..57
-private fun i(): Int {
+val NUM = 48..57
+fun i(): Int {
   var v = 0
   var s = 1
   var c: Byte
@@ -35,10 +36,10 @@ private fun i(): Int {
   return s * v
 }
 
-private const val WS = 10
+const val WS = 10
 
-private val WB = ByteArray(WS + 1).also { it[WS] = 32 }
-private fun w(
+val WB = ByteArray(WS + 1).also { it[WS] = 32 }
+fun w(
   num: Int
 ) {
   var v = if (num >= 0) num
@@ -54,10 +55,10 @@ private fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-private const val ODD_W = -1
-private const val EVEN_W = 1
-private const val PRIME_W = ODD_W * 2
-private const val EMPTY = Int.MIN_VALUE
+const val ODD_W = -1
+const val EVEN_W = 1
+const val PRIME_W = ODD_W * 2
+const val EMPTY = Int.MIN_VALUE
 
 fun main() {
   val stt = i()
@@ -69,71 +70,64 @@ fun main() {
   }
 
   var answer = 0
+  val primes = BooleanArray(end + 1) { true }.also {
+    it[0] = false
+    it[1] = false
+    var d = 2
+    while (d * d <= end) {
+      for (v in d * d..end step d) it[v] = false
+      d++
+    }
+  }
+
   val a = IntArray(end + 1) { EMPTY }
   a[1] = ODD_W
   a[2] = 0
 
-  repeat(end - stt + 1) { i ->
-    val v = stt + i
-    val w = a[v]
+  repeat(end) { i ->
+    val v = 1 + i
     val r = when {
-      w != EMPTY -> w
+      v > 2 && primes[v] -> PRIME_W
       v.countOneBits() == 1 -> {
         val w = a[v / 2]
         if (w != EMPTY) w + 1 else v.countTrailingZeroBits() - 1
       }
       (v - 2) % 4 == 0 -> 0
+      v % 2 == 0 -> {
+        val (rmn, exp) = calcExponent(v, 2)
+        (exp - 1) * a[rmn] * ODD_W
+      }
       else -> {
+
         val d = getMinDivisor(v)
-        if (d == v) PRIME_W else {
-          val eExp = getExponent(v, 2)
-          val oExp = if (d != 2) getExponent(v, d) else 1
-          var rmn = getValidRemainder(v, d, eExp, oExp)
-          val delta = if (d % 2 == 0) -1 else 1
-          val pw = getW(a, v / d)
-          val w = getW(a, rmn)
-          pw + w * delta
-        }
+        val (rmn, exp) = calcExponent(v, d)
+        (exp + 1) * a[rmn]
       }
     }
-
     a[v] = r
-    answer += r
+    if (v >= stt) answer += r
   }
 
   w(answer)
+
   O.flush()
 }
 
-private fun getValidRemainder(
-  num: Int,
-  divisor: Int,
-  evenExponent: Int,
-  oddExponent: Int
-): Int {
-  var rmn = num shr evenExponent
-  if (divisor % 2 != 0) {
-    repeat(oddExponent) {
-      rmn = rmn / divisor
-    }
-  }
-  return rmn
-}
-
-fun getExponent(
+fun calcExponent(
   num: Int,
   base: Int
-): Int {
+): Pair<Int, Int> {
   var exp = 0
   var x = num
   while (x > 1 && x % base == 0) {
     exp++
     x /= base
   }
-  return exp
+
+  return Pair(x, exp)
 }
 
-private fun getMinDivisor(num: Int): Int {
+fun getMinDivisor(num: Int): Int {
   var dvsr = 2
   while (dvsr * dvsr <= num) {
     if (num % dvsr == 0) return dvsr
@@ -142,13 +136,39 @@ private fun getMinDivisor(num: Int): Int {
   return num
 }
 
-private fun getW(
-  a: IntArray,
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+
+fun test(
+  stt: Int,
+  end: Int
+) {
+
+  val T = Timer()
+
+  var total = 0
+  repeat(end - stt + 1) { i ->
+    val v = stt + i
+    val w = getW(intArrayOf(), v)
+    total += w
+  }
+
+  w(total)
+  O.flush()
+
+  T.stop()
+}
+
+fun getW(
+  a: IntArray?,
   num: Int
 ): Int {
   if (num == 1) return ODD_W
-  val pw = a[num]
-  if (pw != EMPTY) return pw
+  if (a != null) {
+    val pw = a[num]
+    if (pw != EMPTY) return pw
+  }
 
   var v = num
 
@@ -174,8 +194,23 @@ private fun getW(
   val w = EVEN_W * eCnt + ODD_W * oCnt
 
   return w.also {
-    a[num] = it
+    if (a != null) a[num] = it
   }
+}
+
+fun getValidRemainder(
+  num: Int,
+  divisor: Int,
+  evenExponent: Int,
+  oddExponent: Int
+): Int {
+  var rmn = num shr evenExponent
+  if (divisor % 2 != 0) {
+    repeat(oddExponent) {
+      rmn = rmn / divisor
+    }
+  }
+  return rmn
 }
 
 //    println("-- a[$v] = ${a[v]}")
