@@ -55,52 +55,30 @@ fun w(
 
 const val ODD_W = -1
 const val EVEN_W = 1
-const val PRIME_W = ODD_W * 2
-const val EMPTY = Int.MIN_VALUE
 
 fun main() {
-  val stt = i()
-  val end = i()
-  if (end <= 1) {
-    w(ODD_W)
-    O.flush()
-    return
-  }
-
-  val minDvsrs = IntArray(end + 1) { it }.also {
-    var d = 2
-    while (d * d <= end) {
-      for (v in d * d..end step d) if (it[v] == v) it[v] = d
-      d++
-    }
-  }
-
-  val a = IntArray(end + 1) { EMPTY }
-  var answer = 0
-  repeat(end) { i ->
-    val v = 1 + i
-    val d = minDvsrs[v]
-    val r = when {
-      v.countOneBits() == 1 -> v.countTrailingZeroBits() - 1
-      v % 4 == 2 -> 0
-      v > 1 && v == d -> PRIME_W
-      else -> {
-        var exp = 0
-        var rmn = v
-        var base = if (v % 2 == 0) 2 else d
-        while (rmn > 1 && rmn % base == 0) {
-          exp++
-          rmn /= base
-        }
-        a[rmn] * if (v % 2 == 0) (exp - 1) * ODD_W else (exp + 1)
-      }
-    }
-    a[v] = r
-    if (v >= stt) answer += r
-  }
-
-  w(answer)
+  val m = i()
+  val M = i()
+  w(getSum(M) - getSum(m - 1))
   O.flush()
+}
+
+private fun getSum(
+  max: Int
+): Int {
+  var acc = 0
+  var fr = 1
+  while (fr <= max) {
+    val cnt = max / fr
+    var to = max / cnt
+    val distinctDvsrCnt = to - fr + 1
+    acc += when {
+      distinctDvsrCnt % 2 == 0 -> 0
+      else -> cnt * if (fr % 2 == 0) EVEN_W else ODD_W
+    }
+    fr = to + 1
+  }
+  return acc
 }
 
 // ---------------------------------------------------------------------
@@ -111,34 +89,21 @@ fun test(
   stt: Int,
   end: Int
 ) {
-
-  //  val T = Timer()
-
   var total = 0
   repeat(end - stt + 1) { i ->
     val v = stt + i
-    val w = getW(intArrayOf(), v)
+    val w = getW(v)
     total += w
   }
-
-  w(total)
-  O.flush()
-
-  //  T.stop()
+  println("[TEST] $total")
 }
 
 fun getW(
-  a: IntArray?,
   num: Int
 ): Int {
   if (num == 1) return ODD_W
-  if (a != null) {
-    val pw = a[num]
-    if (pw != EMPTY) return pw
-  }
 
   var v = num
-
   var ePow = 0
   var oCnt = 1
 
@@ -158,14 +123,8 @@ fun getW(
   }
 
   var eCnt = maxOf(1, oCnt) * ePow
-  val w = EVEN_W * eCnt + ODD_W * oCnt
-
-  return w.also {
-    if (a != null) a[num] = it
-  }
+  return EVEN_W * eCnt + ODD_W * oCnt
 }
-
-//     println("a[$v] = ${a[v]}, ${getW(null, v)}")
 
 // 점검 (짝수, 홀수):
 // 496584 (8*27*121*19): 72, 24
