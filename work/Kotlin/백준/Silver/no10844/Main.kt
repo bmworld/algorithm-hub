@@ -62,12 +62,6 @@ fun main() {
 
   var i = 1
 
-  fun swap() {
-    val t = num
-    num = tmp
-    tmp = t
-  }
-
   while (i < len) {
     repeat(NUM_LEN) { tmp[it] = 0 }
 
@@ -76,15 +70,13 @@ fun main() {
 
     repeat(NUM_LEN - 2) {
       val n = it + 1
-      val l = n - 1
-      val r = n + 1
-      val lv = num[l]
-      val rv = num[r]
-      val sum = lv + rv
+      val sum = num[n - 1] + num[n + 1]
       tmp[n] = if (sum >= MOD) sum - MOD else sum
     }
 
-    swap()
+    val t = num
+    num = tmp
+    tmp = t
     i++
   }
 
