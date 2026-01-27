@@ -53,42 +53,41 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-const val MOD = 1_000_000_000
 const val NUM_LEN = 10
-val RANGE = 0 until NUM_LEN
+const val MOD = 1_000_000_000
 fun main() {
   val len = i()
-  val o = IntArray(NUM_LEN) { if (it == 0) 0 else 1 }
-  val e = IntArray(NUM_LEN)
+  var num = IntArray(NUM_LEN) { if (it == 0) 0 else 1 }
+  val tmp = IntArray(NUM_LEN)
 
   var i = 1
   while (i < len) {
-    val prv = if (i % 2 == 0) e else o
-    val cur = if (prv == o) e else o
+    repeat(NUM_LEN) { tmp[it] = 0 }
 
     repeat(NUM_LEN) {
-      val v = prv[it]
-      if (v == 0) return@repeat
+      val v = num[it]
       val l = it - 1
       val r = it + 1
-      if (l in RANGE) cur[l] = (cur[l] + v) % MOD
-      if (r in RANGE) cur[r] = (cur[r] + v) % MOD
-      prv[it] = 0
+      if (it < 9) {
+        val rv = tmp[r] + v
+        tmp[r] = if (rv >= MOD) rv - MOD else rv
+      }
+
+      if (it > 0) {
+        val lv = tmp[l] + v
+        tmp[l] = if (lv >= MOD) lv - MOD else lv
+      }
     }
 
+    num = tmp.copyOf()
     i++
   }
 
   var cnt = 0
   repeat(NUM_LEN) {
-    cnt = (cnt + (if (len % 2 == 0) e else o)[it]) % MOD
+    val nc = cnt + num[it]
+    cnt = if (nc >= MOD) nc - MOD else nc
   }
   w(cnt)
   O.flush()
 }
-
-//
-//repeat(NUM_LEN) {
-//  println("-- cur[$it] = ${cur[it]}")
-//}
-//
