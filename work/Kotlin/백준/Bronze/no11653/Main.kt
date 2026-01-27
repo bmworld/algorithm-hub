@@ -3,8 +3,8 @@ package 백준.Bronze.no11653
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 8
-const val OBS = 1 shl 8
+const val IBS = 1 shl 3
+const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -56,17 +56,14 @@ fun w(
 fun main() {
   var N = i()
   var i = 2
+  while (N % i == 0) N /= i.also { w(it) }
+  i++
+
   while (i * i <= N) {
-    var cnt = 0
-    while (N > 1 && N % i == 0) {
-      N /= i
-      cnt++
-    }
-    repeat(cnt) {
-      w(i)
-    }
-    i++
+    while (N % i == 0) N /= i.also { w(it) }
+    i += 2
   }
+
   if (N > 1) w(N)
   O.flush()
 }
