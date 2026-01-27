@@ -2,7 +2,6 @@ package 백준.Bronze.no11653
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
 const val IBS = 8
 const val OBS = 1 shl 8
@@ -54,11 +53,8 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-const val SEP = 100
 fun main() {
   var N = i()
-  val q = PriorityQueue<Int>()
-
   var i = 2
   while (i * i <= N) {
     var cnt = 0
@@ -66,20 +62,11 @@ fun main() {
       N /= i
       cnt++
     }
-    if (cnt > 0) q.add(i * SEP + cnt)
+    repeat(cnt) {
+      w(i)
+    }
     i++
   }
-  if (N > 1) q.add(N * SEP + 1)
-
-
-  while (q.isNotEmpty()) {
-    val e = q.poll()
-    val v = e / SEP
-    val cnt = e % SEP
-    repeat(cnt) {
-      w(v)
-    }
-  }
-
+  if (N > 1) w(N)
   O.flush()
 }
