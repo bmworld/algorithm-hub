@@ -3,8 +3,8 @@ package 백준.Silver.no10844
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 3
-const val OBS = 1 shl 4
+const val IBS = 3
+const val OBS = 8
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -58,28 +58,33 @@ const val MOD = 1_000_000_000
 fun main() {
   val len = i()
   var num = IntArray(NUM_LEN) { if (it == 0) 0 else 1 }
-  val tmp = IntArray(NUM_LEN)
+  var tmp = IntArray(NUM_LEN)
 
   var i = 1
+
+  fun swap() {
+    val t = num
+    num = tmp
+    tmp = t
+  }
+
   while (i < len) {
     repeat(NUM_LEN) { tmp[it] = 0 }
 
-    repeat(NUM_LEN) {
-      val v = num[it]
-      val l = it - 1
-      val r = it + 1
-      if (it < 9) {
-        val rv = tmp[r] + v
-        tmp[r] = if (rv >= MOD) rv - MOD else rv
-      }
+    tmp[0] = num[1]
+    tmp[9] = num[8]
 
-      if (it > 0) {
-        val lv = tmp[l] + v
-        tmp[l] = if (lv >= MOD) lv - MOD else lv
-      }
+    repeat(NUM_LEN - 2) {
+      val n = it + 1
+      val l = n - 1
+      val r = n + 1
+      val lv = num[l]
+      val rv = num[r]
+      val sum = lv + rv
+      tmp[n] = if (sum >= MOD) sum - MOD else sum
     }
 
-    num = tmp.copyOf()
+    swap()
     i++
   }
 
