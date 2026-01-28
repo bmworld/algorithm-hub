@@ -54,56 +54,40 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-const val MAX_DAY = 15
 const val PaySEP = 10_000
 const val frSEP = 100
 const val ToSEP = frSEP * PaySEP
 fun main() {
 
-  var max = 0
   val N = i()
-  val dp = IntArray(MAX_DAY + 1)
+  val dp = IntArray(N + 1)
+  val toCnts = IntArray(N + 1)
   val q = PriorityQueue<Int>()
+
   repeat(N) {
     val fr = it + 1
     val to = fr - 1 + i()
     val pay = i()
     if (to > N) return@repeat
+    toCnts[to]++
     q.add(to * ToSEP + fr * PaySEP + pay)
-    if (max < pay) max = pay
   }
 
-  var maxTo = 0
-  while (q.isNotEmpty()) {
-    val e = q.poll()
-    val to = e / ToSEP
-    val fp = e % ToSEP
-    val fr = fp / PaySEP
-    val pay = fp % PaySEP
-
-    val prv = if (maxTo < fr) dp[to] else dp[maxTo]
-    val nxt = pay + if (maxTo < fr) dp[maxTo] else {
-      var day = fr - 1
-      var found = 0
-      while (day > 0) {
-        val v = dp[day--]
-        if (v > 0) {
-          found = v
-          break
-        }
-      }
-      found
+  repeat(N) {
+    val to = it + 1
+    val prv = dp[to - 1]
+    var max = prv
+    repeat(toCnts[to]) {
+      val e = q.poll()
+      val fp = e % ToSEP
+      val fr = fp / PaySEP
+      val pay = fp % PaySEP
+      val nxt = dp[fr - 1] + pay
+      max = maxOf(max, nxt)
     }
-
-
-    if (prv >= nxt) continue
-    dp[to] = nxt
-    maxTo = to
-    max = nxt
+    dp[to] = max
   }
 
-  w(max)
+  w(dp[N])
   O.flush()
 }
-
-//    println("------ $fr -> $to ($pay) ------ $prv vs $nxt")
