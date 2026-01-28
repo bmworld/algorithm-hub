@@ -69,6 +69,7 @@ fun main() {
   }
 
   fun dfs(
+    stt: Int,
     dep: Int,
     flag: Int,
   ) {
@@ -80,18 +81,15 @@ fun main() {
       return
     }
 
-    for (i in dep until C) {
+    for (i in stt until C) {
       val c = char[i]
       val mask = 1 shl (c - a)
-      val usedOrDESC = mask.countLeadingZeroBits() >= flag.countLeadingZeroBits()
-      if (usedOrDESC) continue
-
       pw[dep] = c
-      dfs(dep + 1, flag or mask)
+      dfs(i + 1, dep + 1, flag or mask)
     }
   }
 
-  dfs(0, 0)
+  dfs(0, 0, 0)
   O.flush()
 }
 
