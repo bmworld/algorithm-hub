@@ -4,8 +4,8 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import java.util.*
 
-const val IBS = 1 shl 7
-const val OBS = 1 shl 5
+const val IBS = 1 shl 6
+const val OBS = 1 shl 6
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -79,7 +79,7 @@ fun main() {
     val to = e / ToSEP
     val fp = e % ToSEP
     val fr = fp / PaySEP
-    val pay = fp % frSEP
+    val pay = fp % PaySEP
 
     val prv = if (maxTo < fr) dp[to] else dp[maxTo]
     val nxt = pay + if (maxTo < fr) dp[maxTo] else {
@@ -94,6 +94,7 @@ fun main() {
       }
       found
     }
+
 
     if (prv >= nxt) continue
     dp[to] = nxt
