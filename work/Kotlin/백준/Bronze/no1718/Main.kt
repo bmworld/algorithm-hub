@@ -32,7 +32,6 @@ fun char(buf: ByteArray): Int {
 }
 
 const val a = 97
-const val DELTA = a - 1
 const val MAX_LEN = 30_000
 const val ALPH_SIZE = 26
 
@@ -45,10 +44,11 @@ fun main() {
   var keyPos = 0
   repeat(txtLen) {
     val char = txt[it]
-    val i = keyPos.also { keyPos = (it + 1) % keyLen }
+    val i = keyPos++.also { if (it + 1 == keyLen) keyPos = 0 }
     if (char == 32.toByte()) return@repeat
-    val delta = key[i] - DELTA
-    txt[it] = ((char - a + ALPH_SIZE - delta) % ALPH_SIZE + a).toByte()
+    var encrypted = char - (key[i] - a + 1)
+    if (encrypted < a) encrypted += ALPH_SIZE
+    txt[it] = (encrypted).toByte()
   }
 
   O.write(txt, 0, txtLen)
