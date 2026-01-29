@@ -3,7 +3,7 @@ package 백준.Gold.no1394
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 20
+const val IBS = 1_000_000
 const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -41,47 +41,26 @@ fun w(
 
 fun read(map: IntArray): Int {
   var len = 0
-  var c: Byte
-  while (r().also { c = it } >= 10.toByte()) {
-    if (c == 10.toByte()) break
-    map[c.toInt()] = 1 + len++
-  }
-  return len
-}
-
-fun read(buf: ByteArray): Int {
-  var len = 0
-  var c: Byte
-  while (r().also { c = it } >= 10.toByte()) {
-    if (c == 10.toByte()) break
-    buf[len++.toInt()] = c
+  var b: Byte
+  while (r().also { b = it } >= 10.toByte()) {
+    if (b == 10.toByte()) break
+    map[b.toInt()] = 1 + len++
   }
   return len
 }
 
 const val CAP = 900_528
-const val PW_MAX = 1_000_000
 const val SIGNED_ASCII_MAX = 127
-const val EMPTY = 0
 
 fun main() {
-  val cands = IntArray(SIGNED_ASCII_MAX + 1) { EMPTY }
+  val cands = IntArray(SIGNED_ASCII_MAX + 1)
   val base = read(cands)
 
-  val pw = ByteArray(PW_MAX)
-  val pwLen = read(pw)
-
   var acc = 0
-  repeat(pwLen) { i ->
-    val char = pw[i].toInt()
+  var char: Int
+  while (r().also { char = it.toInt() } >= 10) {
+    if (char == 10) break
     val pos = cands[char]
-    // ---- optional ----
-    if (pos == EMPTY) {
-      w(0)
-      O.flush()
-      return
-    }
-    // ------------------
     val nxt = acc * base + pos
     acc = if (nxt >= CAP) nxt % CAP else nxt
   }
