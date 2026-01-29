@@ -7,7 +7,7 @@ fun getIntArr(s: String): IntArray {
     .toIntArray()
 }
 
-fun printChar(c: Byte): Char = (c).toInt()
+fun toChar(c: Byte): Char = (c).toInt()
   .toChar()
 
 /**
