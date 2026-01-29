@@ -3,8 +3,8 @@ package 백준.Gold.no1394
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 20
-const val OBS = 1 shl 3
+const val IBS = 1 shl 17
+const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -24,7 +24,7 @@ fun r(): Byte {
 const val WS = 10
 val WB = ByteArray(WS)
 fun w(
-  num: Long
+  num: Int
 ) {
   var v = if (num >= 0) num
   else {
@@ -54,44 +54,44 @@ fun read(buf: ByteArray): Int {
   var c: Byte
   while (r().also { c = it } >= 10.toByte()) {
     if (c == 10.toByte()) break
-    buf[len++] = c
+    buf[len++.toInt()] = c
   }
   return len
 }
 
-const val CAP = 900_528L
+const val CAP = 900_528
 const val PW_MAX = 1_000_000
 
 fun main() {
   val cands = HashMap<Byte, Int>()
-  val candLen = read(cands).toLong()
+  val candLen = read(cands)
 
   val pw = ByteArray(PW_MAX)
   val pwLen = read(pw)
 
-  var total = getSumOfGeoSeq(candLen, (pwLen - 1).toLong(), CAP)
-
+  var total = 0
+  var N = 1
   repeat(pwLen) { i ->
-    val char = pw[i]
-    val pos = (cands[char] ?: -1).toLong()
-    val exp = pwLen - (i + 1)
-    val cnt = when {
-      pos == -1L -> {
-        w(0)
-        O.flush()
-        return
-      }
-      i + 1 == pwLen -> pos + 1
-      pos > 0 -> pos * pow(candLen, exp.toLong(), CAP)
-      else -> 0
+    val pi = pwLen - i - 1
+    val char = pw[pi]
+    val pos = cands[char] ?: -1
+    if (pos == -1) {
+      w(0)
+      O.flush()
+      return
     }
+
+    val cnt = ((1 + pos) * N) % CAP
     total = (total + cnt) % CAP
+    N = (N * candLen) % CAP
   }
 
   w(total)
   O.flush()
 }
 
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
 fun getSumOfGeoSeq(
   base: Long,
   exp: Long,
@@ -125,7 +125,7 @@ fun pow(
 
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
-// println("[$i: ${toChar(char)}] pos=$pos cnt = $total")
+// println("[$N] ${toChar(char)} $pos, cnt = $cnt")
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
 //var viewer = ByteArray(pwLen)
