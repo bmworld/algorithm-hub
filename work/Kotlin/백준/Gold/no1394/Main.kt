@@ -24,7 +24,7 @@ fun r(): Byte {
 const val WS = 10
 val WB = ByteArray(WS)
 fun w(
-  num: Int
+  num: Long
 ) {
   var v = if (num >= 0) num
   else {
@@ -39,7 +39,17 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-fun readStr(buf: ByteArray): Int {
+fun read(map: HashMap<Byte, Int>): Int {
+  var len = 0
+  var c: Byte
+  while (r().also { c = it } >= 10.toByte()) {
+    if (c == 10.toByte()) break
+    map += c to len++
+  }
+  return len
+}
+
+fun read(buf: ByteArray): Int {
   var len = 0
   var c: Byte
   while (r().also { c = it } >= 10.toByte()) {
@@ -49,31 +59,30 @@ fun readStr(buf: ByteArray): Int {
   return len
 }
 
-const val CAP = 900_528
-const val CHAR_MAX = 100
+const val CAP = 900_528L
 const val PW_MAX = 1_000_000
 
 fun main() {
-  val cands = ByteArray(CHAR_MAX)
-  val candLen = readStr(cands)
+  val cands = HashMap<Byte, Int>()
+  val candLen = read(cands).toLong()
 
   val pw = ByteArray(PW_MAX)
-  val pwLen = readStr(pw)
+  val pwLen = read(pw)
 
-  var total = getSumOfGeoSeq(candLen, pwLen - 1, CAP)
+  var total = getSumOfGeoSeq(candLen, (pwLen - 1).toLong(), CAP)
 
   repeat(pwLen) { i ->
     val char = pw[i]
-    val pos = getPos(char, cands, candLen)
+    val pos = (cands[char] ?: -1).toLong()
     val exp = pwLen - (i + 1)
     val cnt = when {
-      pos == -1 -> {
+      pos == -1L -> {
         w(0)
         O.flush()
         return
       }
       i + 1 == pwLen -> pos + 1
-      pos > 0 -> pos * pow(candLen, exp, CAP)
+      pos > 0 -> pos * pow(candLen, exp.toLong(), CAP)
       else -> 0
     }
     total = (total + cnt) % CAP
@@ -83,37 +92,24 @@ fun main() {
   O.flush()
 }
 
-fun getPos(
-  char: Byte,
-  chars: ByteArray,
-  len: Int
-): Int {
-  var pos = -1
-  for (i in 0 until len) if (char == chars[i]) {
-    pos = i
-    break
-  }
-  return pos
-}
-
 fun getSumOfGeoSeq(
-  base: Int,
-  exp: Int,
-  CAP: Int = Int.MAX_VALUE
-): Int {
-  if (exp == 0) return 0
-  if (exp == 1) return base % CAP
+  base: Long,
+  exp: Long,
+  CAP: Long
+): Long {
+  if (exp == 0L) return 0
+  if (exp == 1L) return base % CAP
   return (when {
-    exp % 2 == 0 -> getSumOfGeoSeq(base, exp / 2) * (1 + pow(base, exp / 2))
-    else -> getSumOfGeoSeq(base, exp - 1) + pow(base, exp)
+    exp % 2 == 0L -> getSumOfGeoSeq(base, exp / 2, CAP) * (1 + pow(base, exp / 2, CAP))
+    else -> getSumOfGeoSeq(base, exp - 1, CAP) + pow(base, exp, CAP)
   }) % CAP
 }
 
 fun pow(
-  base: Int,
-  exp: Int,
-  CAP: Int = Int.MAX_VALUE
-): Int {
+  base: Long,
+  exp: Long,
+  CAP: Long
+): Long {
 
   var r = 1L
   var b = base.toLong()
@@ -124,7 +120,7 @@ fun pow(
     b = (b * b) % CAP
     e /= 2
   }
-  return r.toInt()
+  return r
 }
 
 // ---------------------------------------------------------------------
