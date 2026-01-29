@@ -3,7 +3,7 @@ package 백준.Gold.no1394
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 18
+const val IBS = 1 shl 20
 const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -62,31 +62,31 @@ fun read(buf: ByteArray): Int {
 const val CAP = 900_528
 const val PW_MAX = 1_000_000
 const val SIGNED_ASCII_MAX = 127
+const val EMPTY = 0
 
 fun main() {
-  val cands = IntArray(SIGNED_ASCII_MAX + 1)
-  val candLen = read(cands)
+  val cands = IntArray(SIGNED_ASCII_MAX + 1) { EMPTY }
+  val base = read(cands)
 
   val pw = ByteArray(PW_MAX)
   val pwLen = read(pw)
 
-  var total = 0
-  var N = 1
+  var acc = 0
   repeat(pwLen) { i ->
-    val pi = pwLen - i - 1
-    val pos = cands[pw[pi].toInt()]
-    if (pos == 0) {
+    val char = pw[i].toInt()
+    val pos = cands[char]
+    // ---- optional ----
+    if (pos == EMPTY) {
       w(0)
       O.flush()
       return
     }
-
-    val cnt = (pos * N) % CAP
-    total = (total + cnt) % CAP
-    N = (N * candLen) % CAP
+    // ------------------
+    val nxt = acc * base + pos
+    acc = if (nxt >= CAP) nxt % CAP else nxt
   }
 
-  w(total)
+  w(acc)
   O.flush()
 }
 
