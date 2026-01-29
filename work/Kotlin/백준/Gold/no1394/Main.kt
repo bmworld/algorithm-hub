@@ -66,11 +66,17 @@ fun main() {
     val char = pw[i]
     val pos = getPos(char, cands, candLen)
     val exp = pwLen - (i + 1)
-    total += when {
+    val cnt = when {
+      pos == -1 -> {
+        w(0)
+        O.flush()
+        return
+      }
       i + 1 == pwLen -> pos + 1
       pos > 0 -> pos * pow(candLen, exp, CAP)
       else -> 0
     }
+    total = (total + cnt) % CAP
   }
 
   w(total)
@@ -82,8 +88,8 @@ fun getPos(
   chars: ByteArray,
   len: Int
 ): Int {
-  var pos = len - 1
-  for (i in 0 until len - 1) if (char == chars[i]) {
+  var pos = -1
+  for (i in 0 until len) if (char == chars[i]) {
     pos = i
     break
   }
@@ -123,7 +129,7 @@ fun pow(
 
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
-//    println("[$i: ${toChar(char)}] pos=$pos cnt = $cnt")
+// println("[$i: ${toChar(char)}] pos=$pos cnt = $total")
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
 //var viewer = ByteArray(pwLen)
