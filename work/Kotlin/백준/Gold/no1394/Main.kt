@@ -3,7 +3,7 @@ package 백준.Gold.no1394
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 17
+const val IBS = 1 shl 18
 const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -39,12 +39,12 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-fun read(map: HashMap<Byte, Int>): Int {
+fun read(map: IntArray): Int {
   var len = 0
   var c: Byte
   while (r().also { c = it } >= 10.toByte()) {
     if (c == 10.toByte()) break
-    map += c to len++
+    map[c.toInt()] = 1 + len++
   }
   return len
 }
@@ -61,9 +61,10 @@ fun read(buf: ByteArray): Int {
 
 const val CAP = 900_528
 const val PW_MAX = 1_000_000
+const val SIGNED_ASCII_MAX = 127
 
 fun main() {
-  val cands = HashMap<Byte, Int>()
+  val cands = IntArray(SIGNED_ASCII_MAX + 1)
   val candLen = read(cands)
 
   val pw = ByteArray(PW_MAX)
@@ -73,15 +74,14 @@ fun main() {
   var N = 1
   repeat(pwLen) { i ->
     val pi = pwLen - i - 1
-    val char = pw[pi]
-    val pos = cands[char] ?: -1
-    if (pos == -1) {
+    val pos = cands[pw[pi].toInt()]
+    if (pos == 0) {
       w(0)
       O.flush()
       return
     }
 
-    val cnt = ((1 + pos) * N) % CAP
+    val cnt = (pos * N) % CAP
     total = (total + cnt) % CAP
     N = (N * candLen) % CAP
   }
