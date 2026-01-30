@@ -58,25 +58,22 @@ fun main() {
   val a = IntArray(N)
   val dp = IntArray(N)
   var max = 0
-  repeat(N) {
+  repeat(N) { i ->
     val v = i()
-    a[it] = v
+    a[i] = v
 
-    var i = it - 1
-    var acc = 0
-    while (i >= 0) {
-      if (a[i] < v) {
-        acc = dp[i]
-        break
+    var j = i - 1
+    var maxAcc = 0
+    while (j >= 0) {
+      if (a[j] < v) {
+        val acc = dp[j]
+        if (maxAcc < acc) maxAcc = acc
       }
-      i--
+      j--
     }
-
-    dp[it] = (acc + v).also { if (it > max) max = it }
+    dp[i] = (maxAcc + v).also { if (it > max) max = it }
   }
 
   w(max)
   O.flush()
 }
-
-//    println("--v = $v ---- dp[$it] = ${dp[it]} / max = $max")
