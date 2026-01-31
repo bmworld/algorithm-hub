@@ -2,6 +2,7 @@ package 백준.Platium.no14003
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.util.*
 
 const val IBS = 1 shl 18
 const val OBS = 1 shl 18
@@ -55,21 +56,88 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
+const val EMPTY = -1
 fun main() {
   val N = i()
   val lis = IntArray(N)
-  lis[0] = i()
-  var li = 0
-  repeat(N - 1) {
+  val orgn = IntArray(N)
+  var li = EMPTY
+  var lastPos = 0
+  repeat(N) { i ->
     val v = i()
-    if (v > lis[li]) lis[++li] = v
-    else updateLis(lis, v, 0, li)
+    orgn[i] = v
+
+    if (li == EMPTY || v > lis[li]) {
+      lis[++li] = v
+      lastPos = i
+    } else updateLis(lis, v, 0, li)
   }
 
-  val len = li + 1
-  w(len, true)
+  var cnt = li + 1
+  w(cnt, true)
 
-  repeat(len) {
+  val sorted = Arrays.copyOfRange(orgn, 0, lastPos + 1)
+
+  fun swap(
+    a: IntArray,
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+  }
+
+  fun `3way_qs`(
+    a: IntArray,
+    l: Int,
+    r: Int,
+  ): Pair<Int, Int> {
+    var pos = l
+    var pl = l
+    var pr = r
+    val piv = a[(l + r) shr 1]
+
+    while (pos <= pr) {
+      val v = a[pos]
+      when {
+        v < piv -> {
+          swap(a, pos, pl)
+          pl++
+          pos++
+        }
+        v > piv -> {
+          swap(a, pos, pr)
+          pr--
+        }
+        else -> pos++
+      }
+    }
+    return Pair(pl, pr)
+  }
+
+  fun qs(
+    a: IntArray,
+    l: Int,
+    r: Int,
+  ) {
+    if (l >= r) return
+    val (pl, pr) = `3way_qs`(a, l, r)
+    qs(a, l, pl - 1)
+    qs(a, pr + 1, r)
+  }
+
+  qs(sorted, 0, lastPos)
+
+  var limit = lis[li--]
+  val foundPos = binarySearch(sorted, limit)
+  var i = if (foundPos == EMPTY) lastPos - 1 else foundPos
+  while (i >= 0 && li >= 0) {
+    val v = sorted[i--]
+    if (limit > v) lis[li--] = v.also { limit = it }
+  }
+
+  repeat(cnt) {
     w(lis[it])
   }
 
@@ -94,3 +162,22 @@ fun updateLis(
   }
   lis[l] = v
 }
+
+fun binarySearch(
+  a: IntArray,
+  v: Int
+): Int {
+  var l = 0
+  var r = a.size - 1
+  while (l <= r) {
+    val m = (l + r) shr 1
+    val mv = a[m]
+    when {
+      mv == v -> return m
+      mv > m -> r = m - 1
+      else -> l = m + 1
+    }
+  }
+  return EMPTY
+}
+//    println("[${i + 1}] $v / limit=$limit")
