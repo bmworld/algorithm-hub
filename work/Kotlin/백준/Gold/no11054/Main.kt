@@ -53,49 +53,48 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+const val EMPTY = -1
 fun main() {
+  var max = 1
+
   val N = i()
-  val a = IntArray(N)
-  val ascDP = IntArray(N)
-  repeat(N) { i ->
-    val v = i()
-    a[i] = v
-    var j = i - 1
-    var maxCnt = 0
-    while (j >= 0) {
-      val t = a[j]
-      if (t < v) {
-        val acc = ascDP[j]
-        if (maxCnt < acc) maxCnt = acc
-        if (t == v - 1) break
-      }
-      j--
-    }
-    ascDP[i] = 1 + maxCnt
+  val last = N - 1
+  val a = IntArray(N) { i() }
+  val lLis = IntArray(N)
+  var li = EMPTY
+  val lis = IntArray(N)
+  repeat(N) { l ->
+    val lv = a[l]
+    if (li == EMPTY || lv > lLis[li]) lLis[++li] = lv
+    else updateLis(lLis, lv, 0, li)
+    lis[l] = (li + 1).also { if (it > max) max = it }
   }
 
-  var max = 0
-  val descDP = IntArray(N)
-  repeat(N) {
-    var i = N - 1 - it
-    val v = a[i]
-    var j = i + 1
-    var maxCnt = 0
-    while (j < N) {
-      val t = a[j]
-      if (t < v) {
-        val acc = descDP[j]
-        if (maxCnt < acc) maxCnt = acc
-        if (t == v - 1) break
-      }
-      j++
-    }
-    descDP[i] = (1 + maxCnt).also {
-      val total = ascDP[i] + it - 1
-      if (total > max) max = total
-    }
+  val rLis = IntArray(N)
+  var ri = EMPTY
+  repeat(N) { l ->
+    val r = last - l
+    val rv = a[r]
+    if (ri == EMPTY || rv > rLis[ri]) rLis[++ri] = rv
+    else updateLis(rLis, rv, 0, ri)
+    lis[r] = (lis[r] + ri).also { total -> if (total > max) max = total }
+
   }
 
   w(max)
   O.flush()
+}
+
+fun updateLis(
+  lis: IntArray,
+  v: Int,
+  stt: Int,
+  end: Int
+) {
+  for (i in stt..end) {
+    if (v <= lis[i]) {
+      lis[i] = v
+      break
+    }
+  }
 }
