@@ -78,7 +78,6 @@ fun main() {
     if (ri == EMPTY || rv > rLis[ri]) rLis[++ri] = rv
     else updateLis(rLis, rv, 0, ri)
     lis[r] = (lis[r] + ri).also { total -> if (total > max) max = total }
-
   }
 
   w(max)
@@ -91,10 +90,15 @@ fun updateLis(
   stt: Int,
   end: Int
 ) {
-  for (i in stt..end) {
-    if (v <= lis[i]) {
-      lis[i] = v
-      break
+  var l = stt
+  var r = end
+  while (l < r) {
+    val m = (l + r) shr 1
+    var mv = lis[m]
+    when {
+      mv < v -> l = m + 1
+      else -> r = m
     }
   }
+  lis[l] = v
 }
