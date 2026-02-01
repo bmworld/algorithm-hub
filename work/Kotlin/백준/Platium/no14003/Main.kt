@@ -2,10 +2,9 @@ package 백준.Platium.no14003
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.util.*
 
-const val IBS = 1 shl 18
-const val OBS = 1 shl 18
+const val IBS = 1 shl 15
+const val OBS = 1 shl 15
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -57,84 +56,57 @@ fun w(
 }
 
 const val EMPTY = -1
+const val MIN = Int.MIN_VALUE
+const val MAX = Int.MAX_VALUE
 fun main() {
   val N = i()
   val lis = IntArray(N)
-  val orgn = IntArray(N)
+  val a = IntArray(N)
   var li = EMPTY
-  var lastPos = 0
+  val tracer = IntArray(N)
+  val midPos = IntArray(N)
+  var mi = 0
+
   repeat(N) { i ->
     val v = i()
-    orgn[i] = v
-
-    if (li == EMPTY || v > lis[li]) {
-      lis[++li] = v
-      lastPos = i
-    } else updateLis(lis, v, 0, li)
-  }
-
-  var cnt = li + 1
-  w(cnt, true)
-
-  val sorted = Arrays.copyOfRange(orgn, 0, lastPos + 1)
-
-  fun swap(
-    a: IntArray,
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun `3way_qs`(
-    a: IntArray,
-    l: Int,
-    r: Int,
-  ): Pair<Int, Int> {
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1]
-
-    while (pos <= pr) {
-      val v = a[pos]
-      when {
-        v < piv -> {
-          swap(a, pos, pl)
-          pl++
-          pos++
-        }
-        v > piv -> {
-          swap(a, pos, pr)
-          pr--
-        }
-        else -> pos++
+    a[i] = v
+    tracer[i] = insert(lis, v, 0, li).also {
+      if (it > li) {
+        li = it
+        midPos[mi++] = i
       }
     }
-    return Pair(pl, pr)
   }
 
-  fun qs(
-    a: IntArray,
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-    val (pl, pr) = `3way_qs`(a, l, r)
-    qs(a, l, pl - 1)
-    qs(a, pr + 1, r)
-  }
+  val cnt = li + 1
+  w(cnt, true)
 
-  qs(sorted, 0, lastPos)
+  var fr = midPos[--mi]
+  var to = fr
+  var nxtFr = to
+  var limit = MAX
+  var traced = MIN
+  var tracedIdx = tracer[to]
+  while (fr >= 0 && fr >= to) {
+    val v = a[fr]
+    if (tracer[fr] != tracedIdx) {
+      fr--
+      continue
+    }
 
-  var limit = lis[li--]
-  val foundPos = binarySearch(sorted, limit)
-  var i = if (foundPos == EMPTY) lastPos - 1 else foundPos
-  while (i >= 0 && li >= 0) {
-    val v = sorted[i--]
-    if (limit > v) lis[li--] = v.also { limit = it }
+    if (v < limit && v > traced) {
+      traced = v
+      nxtFr = fr
+    }
+
+    if (fr == to) {
+      lis[li--] = traced
+      fr = nxtFr
+      to = if (mi > 0) midPos[--mi] else EMPTY
+      limit = traced
+      traced = MIN
+      tracedIdx--
+    } else fr--
   }
 
   repeat(cnt) {
@@ -144,40 +116,74 @@ fun main() {
   O.flush()
 }
 
-fun updateLis(
+fun insert(
   lis: IntArray,
   v: Int,
   stt: Int,
-  end: Int
-) {
+  end: Int,
+): Int {
+
   var l = stt
   var r = end
-  while (l < r) {
-    val m = (l + r) shr 1
-    var mv = lis[m]
-    when {
-      mv < v -> l = m + 1
-      else -> r = m
+
+  if (end < 0 || v > lis[end]) l = end + 1
+  else {
+    while (l < r) {
+      val m = (l + r) shr 1
+      var mv = lis[m]
+      when {
+        mv < v -> l = m + 1
+        else -> r = m
+      }
     }
   }
-  lis[l] = v
+
+  return l.also { lis[it] = v }
 }
 
-fun binarySearch(
-  a: IntArray,
-  v: Int
-): Int {
-  var l = 0
-  var r = a.size - 1
-  while (l <= r) {
-    val m = (l + r) shr 1
-    val mv = a[m]
-    when {
-      mv == v -> return m
-      mv > m -> r = m - 1
-      else -> l = m + 1
-    }
-  }
-  return EMPTY
-}
-//    println("[${i + 1}] $v / limit=$limit")
+//println("--- $fr -> $to / $traced vs $v")
+//println("selected = ${tracer[nxtFr]} (idx=$nxtFr)")
+
+//repeat(N) {
+//  println("--- tracer[$it] = ${tracer[it]}")
+//}
+//repeat(mi) {
+//  println("midPos = ${midPos[it]}")
+//}
+
+/**
+ *
+ * --- IN
+18
+22448907 166821549 -83447507 548458133 -35744170 -148118802 642912516 -500883862 -988050853 723862044 -724439865 319238538 -50345820 -751794198 -631599996 -476656461 -643499516 -133603860
+
+--- OUT
+5
+-988050853 -751794198 -631599996 -476656461 -133603860
+
+--- IN
+45
+-664087968 556858983 861230103 407638927 635072576 -341706136 333083618 61385743 -887588018 -181148234 -971649277 -13854244 413163559 -417677486 -8219921 -523330250 40345353 698637398 -672304152 -569308564 -939676071 270523181 -502069821 -24512649 518918609 242717808 646652986 717340628 -176611508 605238332 985438874 -379719218 644844815 -666926334 -428319596 -974037906 -692942420 554103995 959078808 -187313575 569432338 280915504 834414226 -681427240 41115783
+
+---OUT
+11
+-664087968 -341706136 -181148234 -13854244 -8219921 40345353 270523181 518918609 554103995 569432338 834414226
+
+--- IN
+42
+547610954 -599209725 -448887194 86719718 789641334
+924273149 -144630028 606157741 -323552542 711508452
+-749170304 639555717 484089500 -190385175 186161042
+-906612695 970986145 967423762 -827029388 246503929
+847031324 946562978 550118347 -980276663 -685326576
+88352876 -218064096 -716725641 -925691708 713406603
+502518134 -434903109 -412243339 953953886 -646703882
+-694645309 167992215 522202765 -128154427 978221315
+622098657 581576684
+
+--- OUT
+10
+-599209725 -448887194 -323552542 -190385175 186161042
+246503929 550118347 713406603 953953886 978221315
+
+ */
