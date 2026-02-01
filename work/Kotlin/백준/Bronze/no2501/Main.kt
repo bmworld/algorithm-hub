@@ -2,6 +2,7 @@ package 백준.Bronze.no2501
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.util.*
 
 const val IBS = 5
 const val OBS = 5
@@ -36,12 +37,10 @@ fun i(): Int {
 }
 
 const val WS = 10
-val WB = ByteArray(WS + 1)
+val WB = ByteArray(WS)
 fun w(
-  num: Int,
-  end: Boolean = false
+  num: Int
 ) {
-  WB[WS] = if (end) 10 else 32
   var v = if (num >= 0) num
   else {
     O.write(45)
@@ -52,7 +51,7 @@ fun w(
     WB[pos--] = (v % 10 + 48).toByte()
     v /= 10
   } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
+  O.write(WB, ++pos, WS - pos)
 }
 
 fun main() {
@@ -64,19 +63,31 @@ fun main() {
     return
   }
 
-  var cnt = 1
+  val q = PriorityQueue<Int>()
+  q.add(1)
+  q.add(N)
+  var cnt = 2
   var d = 2
-  while (d <= N) {
+  while (d * d <= N) {
     if (N % d == 0) {
-      if (++cnt == K) {
-        w(d)
-        O.flush()
-        return
+      q.add(d)
+      cnt++
+      (N / d).also {
+        if (it != d) {
+          q.add(it)
+          cnt++
+        }
       }
     }
     d++
   }
 
-  w(0)
+  w(
+    if (cnt >= K) {
+      repeat(K - 1) { q.poll() }
+      q.poll()
+    } else 0
+  )
+
   O.flush()
 }
