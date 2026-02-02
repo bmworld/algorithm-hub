@@ -53,8 +53,6 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-const val MAX_CNT = 40
-
 fun main() {
   val N = i()
   val S = i()
@@ -65,13 +63,14 @@ fun main() {
       if (v > MAX) MAX = v
     }
   }
-  val HALF = MAX * MAX_CNT
+  val HALF = MAX * N
   val lSum = LongArray(HALF * 2 + 1)
   val rSum = LongArray(HALF * 2 + 1)
   lSum[HALF] = 1
   rSum[HALF] = 1
 
-  var lSumMax = 0
+  var lSumMin = Int.MAX_VALUE
+  var lSumMax = Int.MIN_VALUE
   fun dfs(
     l: Int,
     r: Int,
@@ -83,7 +82,11 @@ fun main() {
       val v = a[i]
       val nxt = v + acc
       cnter[HALF + nxt]++
-      if (cnter == lSum && lSumMax < nxt) lSumMax = nxt
+      if (cnter == lSum) {
+        if (lSumMax < nxt) lSumMax = nxt
+        if (lSumMin > nxt) lSumMin = nxt
+      }
+
       dfs(i + 1, r, nxt, cnter)
     }
   }
@@ -93,13 +96,16 @@ fun main() {
   dfs(m + 1, N - 1, 0, rSum)
 
   var cnt = 0L
-  repeat(HALF + lSumMax + 1) { i ->
-    val cnt1 = lSum[i]
+  var usedZero = false
+  repeat(lSumMax - lSumMin + 1) { i ->
+    var sum1 = lSumMin + i
+    if (sum1 == 0) usedZero = true
+    val cnt1 = lSum[HALF + sum1]
     if (cnt1 == 0L) return@repeat
-    val sum1 = i - HALF
-    val sum2 = S - sum1
-    val cnt2 = rSum[HALF + sum2]
-    if (cnt2 > 0) cnt += cnt1 * cnt2
+    cnt += cnt1 * rSum[HALF + S - sum1]
+  }
+  if (!usedZero) {
+    cnt += lSum[HALF] * rSum[HALF + S]
   }
 
   w(cnt + if (S == 0) -1 else 0)
