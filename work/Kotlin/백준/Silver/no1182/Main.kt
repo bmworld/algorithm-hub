@@ -3,8 +3,8 @@ package 백준.Silver.no1182
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 180
-private const val OBS = 1 shl 8
+private const val IBS = 1 shl 8
+private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -53,77 +53,46 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+const val INIT_CNT = 1
 fun main() {
   val N = i()
   val S = i()
   val a = IntArray(N) { i() }
+  val m1 = HashMap<Int, Int>()
+  val m2 = HashMap<Int, Int>()
+  m1[0] = INIT_CNT
+  m2[0] = INIT_CNT
 
-  fun swap(
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun `3way_qs`(
-    a: IntArray,
+  fun dfs(
     l: Int,
     r: Int,
-  ): Pair<Int, Int> {
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1]
-
-    while (pos <= pr) {
-      val v = a[pos]
-      when {
-        if (S >= 0) v < piv else v > piv -> {
-          swap(pos, pl)
-          pl++
-          pos++
-        }
-
-        if (S >= 0) v > piv else v < piv -> {
-          swap(pos, pr)
-          pr--
-        }
-
-        else -> pos++
-      }
+    acc: Int,
+    cnter: HashMap<Int, Int>,
+  ) {
+    repeat(r - l + 1) {
+      val i = l + it
+      val v = a[i]
+      val sum = v + acc
+      cnter[sum] = (cnter[sum] ?: 0) + INIT_CNT
+      dfs(i + 1, r, sum, cnter)
     }
-    return Pair(pl, pr)
   }
 
-  fun qs(
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-    val (pl, pr) = `3way_qs`(a, l, r)
-    qs(l, pl - 1)
-    qs(pr + 1, r)
-  }
-
-  qs(0, N - 1)
+  val m = N / 2
+  dfs(0, m, 0, m1)
+  dfs(m + 1, N - 1, 0, m2)
 
   var cnt = 0
-  fun dfs(
-    stt: Int,
-    acc: Int,
-    dep: Int,
-  ) {
-    repeat(N - stt) {
-      val i = stt + it
-      val nxt = acc + a[i]
-      if (nxt == S) cnt++
-      if (S >= 0 && nxt <= S || S < 0 && nxt >= S) dfs(i + 1, nxt, dep + 1)
+  for (e1 in m1) {
+    val sum1 = e1.key
+    val cnt1 = e1.value
+    for (e2 in m2) {
+      val sum2 = e2.key
+      val cnt2 = e2.value
+      if (sum1 + sum2 == S) cnt += cnt1 * cnt2
     }
   }
 
-  dfs(0, 0, 0)
   w(cnt)
   O.flush()
 }
