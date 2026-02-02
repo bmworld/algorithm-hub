@@ -3,7 +3,7 @@ package 백준.Gold.no1208
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 9
+private const val IBS = 1 shl 12
 private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
@@ -53,45 +53,60 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+const val MAX_CNT = 40
+
 fun main() {
   val N = i()
   val S = i()
-  var cnt = 0L
-  val a = IntArray(N) { i() }
-  val m1 = HashMap<Int, Long>()
-  val m2 = HashMap<Int, Long>()
-  m1[0] = 1
-  m2[0] = 1
+  var MAX = 0
+  val a = IntArray(N) {
+    i().also {
+      val v = abs(it)
+      if (v > MAX) MAX = v
+    }
+  }
+  val HALF = MAX * MAX_CNT
+  val lSum = LongArray(HALF * 2 + 1)
+  val rSum = LongArray(HALF * 2 + 1)
+  lSum[HALF] = 1
+  rSum[HALF] = 1
 
+  var lSumMax = 0
   fun dfs(
     l: Int,
     r: Int,
     acc: Int,
-    cnter: HashMap<Int, Long>,
+    cnter: LongArray,
   ) {
     repeat(r - l + 1) {
       val i = l + it
       val v = a[i]
-      val sum = v + acc
-      cnter[sum] = (cnter[sum] ?: 0) + 1
-      dfs(i + 1, r, sum, cnter)
+      val nxt = v + acc
+      cnter[HALF + nxt]++
+      if (cnter == lSum && lSumMax < nxt) lSumMax = nxt
+      dfs(i + 1, r, nxt, cnter)
     }
   }
 
   val m = N / 2
-  dfs(0, m, 0, m1)
-  dfs(m + 1, N - 1, 0, m2)
+  dfs(0, m, 0, lSum)
+  dfs(m + 1, N - 1, 0, rSum)
 
-  for (e1 in m1) {
-    val sum1 = e1.key
-    val cnt1 = e1.value
-    val cnt2 = m2[S - sum1] ?: 0
+  var cnt = 0L
+  repeat(HALF + lSumMax + 1) { i ->
+    val cnt1 = lSum[i]
+    if (cnt1 == 0L) return@repeat
+    val sum1 = i - HALF
+    val sum2 = S - sum1
+    val cnt2 = rSum[HALF + sum2]
     if (cnt2 > 0) cnt += cnt1 * cnt2
   }
 
   w(cnt + if (S == 0) -1 else 0)
   O.flush()
 }
+
+fun abs(v: Int): Int = if (v > 0) v else -v
 
 /*
 IN
@@ -101,3 +116,6 @@ IN
 OUT
 1099511627775
  */
+
+//println("a[$i] = ${a[i]}, nxt=$nxt ---> ${nxt + HALF}")
+//println("[$i] $sum1 (c1=${cnt1}) ------- $sum2 (c2=$cnt2)")
