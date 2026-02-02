@@ -53,15 +53,15 @@ private fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-const val INIT_CNT = 1
 fun main() {
   val N = i()
   val S = i()
+  var cnt = 0
   val a = IntArray(N) { i() }
   val m1 = HashMap<Int, Int>()
   val m2 = HashMap<Int, Int>()
-  m1[0] = INIT_CNT
-  m2[0] = INIT_CNT
+  m1[0] = 1
+  m2[0] = 1
 
   fun dfs(
     l: Int,
@@ -73,7 +73,7 @@ fun main() {
       val i = l + it
       val v = a[i]
       val sum = v + acc
-      cnter[sum] = (cnter[sum] ?: 0) + INIT_CNT
+      cnter[sum] = (cnter[sum] ?: 0) + 1
       dfs(i + 1, r, sum, cnter)
     }
   }
@@ -82,17 +82,13 @@ fun main() {
   dfs(0, m, 0, m1)
   dfs(m + 1, N - 1, 0, m2)
 
-  var cnt = 0
   for (e1 in m1) {
     val sum1 = e1.key
     val cnt1 = e1.value
-    for (e2 in m2) {
-      val sum2 = e2.key
-      val cnt2 = e2.value
-      if (sum1 + sum2 == S) cnt += cnt1 * cnt2
-    }
+    val cnt2 = m2[S - sum1] ?: 0
+    if (cnt2 > 0) cnt += cnt1 * cnt2
   }
 
-  w(cnt)
+  w(cnt + if (S == 0) -1 else 0)
   O.flush()
 }
