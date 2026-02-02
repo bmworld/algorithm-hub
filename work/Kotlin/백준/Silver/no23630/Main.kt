@@ -3,7 +3,7 @@ package 백준.Silver.no23630
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 22
+const val IBS = 1 shl 21
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -57,12 +57,12 @@ const val BIT_MAX_LEN = 20
 fun main() {
   val N = i()
   val CNT = IntArray(BIT_MAX_LEN)
-  repeat(N) { i ->
+  repeat(N) {
     var v = i()
     while (v > 0) {
-      val pos = v.countTrailingZeroBits()
-      CNT[pos]++
-      v = pop(v, pos)
+      val lsb = v and -v
+      CNT[lsb.countTrailingZeroBits()]++
+      v = v xor lsb
     }
   }
 
@@ -74,5 +74,3 @@ fun main() {
   w(max)
   O.flush()
 }
-
-fun pop(v: Int, pos: Int): Int = v xor (1 shl pos)
