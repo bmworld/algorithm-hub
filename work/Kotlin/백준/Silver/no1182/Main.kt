@@ -3,8 +3,8 @@ package 백준.Silver.no1182
 import java.io.BufferedOutputStream
 import java.io.DataInputStream
 
-private const val IBS = 1 shl 12
-private const val OBS = 1 shl 8
+private const val IBS = 1 shl 8
+private const val OBS = 1 shl 4
 private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = DataInputStream(System.`in`)
 private val IB = ByteArray(IBS)
@@ -54,24 +54,41 @@ private fun w(
 }
 
 fun main() {
-  var cnt = 0
   val N = i()
   val S = i()
+  var cnt = 0
   val a = IntArray(N) { i() }
+  val m1 = HashMap<Int, Int>()
+  val m2 = HashMap<Int, Int>()
+  m1[0] = 1
+  m2[0] = 1
 
   fun dfs(
-    stt: Int,
+    l: Int,
+    r: Int,
     acc: Int,
+    cnter: HashMap<Int, Int>,
   ) {
-    repeat(N - stt) {
-      val i = stt + it
-      val next = acc + a[i]
-      if (next == S) cnt++
-      dfs(i + 1, next)
+    repeat(r - l + 1) {
+      val i = l + it
+      val v = a[i]
+      val sum = v + acc
+      cnter[sum] = (cnter[sum] ?: 0) + 1
+      dfs(i + 1, r, sum, cnter)
     }
   }
 
-  dfs(0, 0)
-  w(cnt)
+  val m = N / 2
+  dfs(0, m, 0, m1)
+  dfs(m + 1, N - 1, 0, m2)
+
+  for (e1 in m1) {
+    val sum1 = e1.key
+    val cnt1 = e1.value
+    val cnt2 = m2[S - sum1] ?: 0
+    if (cnt2 > 0) cnt += cnt1 * cnt2
+  }
+
+  w(cnt + if (S == 0) -1 else 0)
   O.flush()
 }

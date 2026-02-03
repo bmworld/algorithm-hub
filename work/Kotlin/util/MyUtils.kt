@@ -26,7 +26,7 @@ class Timer(
     start()
   }
 
-  fun start() {
+  private fun start() {
     sttAt = System.nanoTime()
     lastLapAt = sttAt
     done = false
