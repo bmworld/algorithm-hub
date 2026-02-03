@@ -1,12 +1,12 @@
 package 백준.Gold.no1208
 
+import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.io.DataInputStream
 
-const val IBS = 1 shl 12
+const val IBS = 2_800
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
-val I = DataInputStream(System.`in`)
+val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
 var Il = 0
@@ -56,7 +56,6 @@ fun w(
 fun main() {
   val N = i()
   val S = i()
-  val HALF = N shr 1
   var MAX_V = 0
   val a = IntArray(N) {
     i().also {
@@ -65,48 +64,48 @@ fun main() {
     }
   }
 
-  val ls = generateSums(a, 0, HALF)
+  val HALF = N shr 1
   val offset = MAX_V * (N - HALF)
   val endRange = (offset shl 1) + 1
-  val rSCnt = generateSumCnts(a, HALF + 1, N - 1, offset, endRange)
-
-  var cnt = 0L
-  for (sum in ls) {
-    val rmn = offset + S - sum
-    if (rmn in 0 until endRange) cnt += rSCnt[rmn]
-  }
-
+  val rSumCnt = calcSumCnts(a, HALF + 1, N - 1, endRange, offset)
+  var cnt = getCnt(HALF, offset, S, endRange, rSumCnt, a)
   w(cnt + if (S == 0) -1 else 0)
   O.flush()
 }
 
-fun generateSums(arr: IntArray, stt: Int, end: Int): IntArray {
-  val sums = IntArray(1 shl (end - stt + 1))
-  sums[0] = 0
+fun getCnt(HALF: Int, offset: Int, Goal: Int, endRange: Int,
+  rightSumCounts: LongArray, arr: IntArray): Long {
+  var cnt = 0L
+
+  val rmnByZero = offset + Goal - 0
+  if (rmnByZero in 0 until endRange) cnt += rightSumCounts[rmnByZero]
 
   var seq = 1
-  var i = stt
-  while (i <= end) {
-    val v = arr[i++]
-    for (j in 0 until seq) sums[seq + j] = sums[j] + v
+  val leftSum = IntArray(1 shl (HALF + 1))
+  repeat(HALF + 1) { i ->
+    val v = arr[i]
+    repeat(seq) { j ->
+      val sum = leftSum[j] + v
+      leftSum[seq + j] = sum
+      val rmn = offset + Goal - sum
+      if (rmn in 0 until endRange) cnt += rightSumCounts[rmn]
+    }
     seq = seq shl 1
   }
-
-  return sums
+  return cnt
 }
 
-fun generateSumCnts(arr: IntArray, stt: Int, end: Int, offset: Int, size: Int): LongArray {
+fun calcSumCnts(arr: IntArray, stt: Int, end: Int, size: Int, offset: Int): LongArray {
   val sums = IntArray(1 shl (end - stt + 1))
-  val cnts = LongArray(size)
-
-  sums[0] = 0
-  cnts[offset] = 1
+  val cnts = LongArray(size).also {
+    it[offset] = 1
+  }
 
   var seq = 1
-  var i = stt
-  while (i <= end) {
-    val v = arr[i++]
-    for (j in 0 until seq) {
+  repeat(end - stt + 1) {
+    val i = stt + it
+    val v = arr[i]
+    repeat(seq) { j ->
       val sum = sums[j] + v
       sums[seq + j] = sum
       cnts[offset + sum]++
