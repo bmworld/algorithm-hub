@@ -57,21 +57,37 @@ fun main() {
   val N = i()
   val S = i()
   val HALF = N shr 1
-  var MAX_V = 0
-  val a = IntArray(N) {
-    i().also {
-      val v = abs(it)
-      if (v > MAX_V) MAX_V = v
-    }
-  }
+  val a = IntArray(N) { i() }
 
   val ls = generateSums(a, 0, HALF)
-  val HALF_V = MAX_V * N
-  val rSCnt = generateSumCnts(a, HALF + 1, N - 1, (HALF_V shl 1) + 1, HALF_V)
+  val rs = generateSums(a, HALF + 1, N - 1)
+
+  val L = ls.size
+  quickSort(ls, 0, L - 1, true)
+  val R = rs.size
+  quickSort(rs, 0, R - 1, false)
 
   var cnt = 0L
-  repeat(ls.size) { li ->
-    cnt += rSCnt[HALF_V + S - ls[li]]
+  var l = 0
+  var r = 0
+  while (l < L && r < R) {
+    val lSum = ls[l]
+    val rSum = rs[r]
+    val sum = lSum + rSum
+    when {
+      sum == S -> {
+        var lCnt = 1L
+        while (l + 1 < L && lSum == ls[++l]) lCnt++
+        var rCnt = 1L
+        while (r + 1 < R && rSum == rs[++r]) rCnt++
+        cnt += lCnt * rCnt
+
+
+        if (l == L - 1 && r == R - 1) break
+      }
+      sum < S -> l++
+      else -> r++
+    }
   }
 
   w(cnt + if (S == 0) -1 else 0)
@@ -94,27 +110,59 @@ fun generateSums(arr: IntArray, stt: Int, end: Int): IntArray {
   return sums
 }
 
-fun generateSumCnts(arr: IntArray, stt: Int, end: Int, size: Int, HALF_V: Int): LongArray {
-  val sums = IntArray(1 shl (end - stt + 1))
-  val sumCnt = LongArray(size)
-  sumCnt[HALF_V] = 1
-  var seq = 0
-  sums[seq++] = 0
-  var i = stt
-  while (i <= end) {
-    val v = arr[i++]
-    repeat(seq) { j ->
-      val sum = sums[j] + v
-      sums[seq + j] = sum
-      sumCnt[HALF_V + sum]++
-    }
-    seq = seq shl 1
-  }
 
-  return sumCnt
+fun quickSort(
+  a: IntArray,
+  l: Int,
+  r: Int,
+  asc: Boolean = true,
+) {
+  if (l >= r) return
+  val (pl, pr) = threeWayPartition(a, l, r, asc)
+  quickSort(a, l, pl - 1, asc)
+  quickSort(a, pr + 1, r, asc)
 }
 
-fun abs(v: Int): Int = if (v > 0) v else -v
+fun threeWayPartition(
+  a: IntArray,
+  l: Int,
+  r: Int,
+  asc: Boolean = true
+): Pair<Int, Int> {
+  var pos = l
+  var pl = l
+  var pr = r
+  val piv = a[(l + r) shr 1]
+
+  while (pos <= pr) {
+    val v = a[pos]
+    when {
+      if (asc) v < piv else v > piv -> {
+        swap(a, pos, pl)
+        pl++
+        pos++
+      }
+
+      if (asc) v > piv else v < piv -> {
+        swap(a, pos, pr)
+        pr--
+      }
+
+      else -> pos++
+    }
+  }
+  return Pair(pl, pr)
+}
+
+fun swap(
+  a: IntArray,
+  i: Int,
+  j: Int,
+) {
+  val tmp = a[i]
+  a[i] = a[j]
+  a[j] = tmp
+}
 
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
@@ -143,3 +191,5 @@ IN
 //println("a[$i] = ${a[i]}, nxt=$nxt ---> ${nxt + HALF}")
 //println("[$i] $sum1 (c1=${cnt1}) ------- $sum2 (c2=$cnt2)")
 //println("$li sum= $sum1 ---> $sum2(${rSCnt[sum2]})")
+//        println(">>> $l (<$L), $r(<$R) -> $cnt")
+//    println("---- $l (<$L), $r(<$R) = $lSum + $rSum == $sum")
