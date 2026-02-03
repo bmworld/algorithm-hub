@@ -35,10 +35,10 @@ fun i(): Int {
   return s * v
 }
 
-const val WS = 10
+const val WS = 20
 val WB = ByteArray(WS)
 fun w(
-  num: Int
+  num: Long
 ) {
   var v = if (num >= 0) num
   else {
@@ -56,22 +56,17 @@ fun w(
 fun main() {
   val N = i()
   val a = IntArray(N) { i() }
-  var cnt = 0
+  val cnter = LongArray(N)
+  cnter[N - 1] = 1
 
-  fun dfs(dep: Int, i: Int) {
-    if (i >= N) return
-    val v = a[i]
-    if (dep > 0 && a[i - 1] >= v) return
-    cnt++
-    dfs(dep + 1, i + 1)
-  }
-
-  repeat(N) { i ->
-    dfs(0, i)
+  var cnt = 1L
+  repeat(N - 1) {
+    var i = N - it - 2
+    val sum = 1 + if (a[i] < a[i + 1]) cnter[i + 1] else 0
+    cnter[i] = sum
+    cnt += sum
   }
 
   w(cnt)
   O.flush()
 }
-
-//    println("stt=$i [$dep] $v")
