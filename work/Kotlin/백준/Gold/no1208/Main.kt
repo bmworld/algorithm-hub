@@ -53,27 +53,32 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-
-var MAX_V = 100_000
-var MAX_CNT = 40
-var OFFSET = MAX_V * MAX_CNT
-
 fun main() {
   val N = i()
   val S = i()
-  val a = IntArray(N) { i() }
+  var MAX_V = 0
+  val a = IntArray(N) {
+    i().also {
+      val v = abs(it)
+      if (v > MAX_V) MAX_V = v
+    }
+  }
+
   val HALF = (N shr 1) + if (N % 2 == 0) -1 else 0
-  val rSumCnt = calcSumCnts(a, HALF + 1, N - 1)
-  w(getCnt(HALF, S, rSumCnt, a) + if (S == 0) -1 else 0)
+  val offset = MAX_V * (N - HALF)
+  val endRange = (offset shl 1) + 1
+  val rSumCnt = calcSumCnts(a, HALF + 1, N - 1, endRange, offset)
+  var cnt = getCnt(HALF, offset, S, endRange, rSumCnt, a)
+  w(cnt + if (S == 0) -1 else 0)
   O.flush()
 }
 
-fun getCnt(HALF: Int, Goal: Int,
+fun getCnt(HALF: Int, offset: Int, Goal: Int, endRange: Int,
   rightSumCounts: LongArray, arr: IntArray): Long {
   var cnt = 0L
 
-  val rmnByZero = OFFSET + Goal - 0
-  cnt += rightSumCounts[rmnByZero]
+  val rmnByZero = offset + Goal - 0
+  if (rmnByZero in 0 until endRange) cnt += rightSumCounts[rmnByZero]
 
   var seq = 1
   val leftSum = IntArray(1 shl (HALF + 1))
@@ -82,18 +87,18 @@ fun getCnt(HALF: Int, Goal: Int,
     repeat(seq) { j ->
       val sum = leftSum[j] + v
       leftSum[seq + j] = sum
-      val rmn = OFFSET + Goal - sum
-      cnt += rightSumCounts[rmn]
+      val rmn = offset + Goal - sum
+      if (rmn in 0 until endRange) cnt += rightSumCounts[rmn]
     }
     seq = seq shl 1
   }
   return cnt
 }
 
-fun calcSumCnts(arr: IntArray, stt: Int, end: Int): LongArray {
+fun calcSumCnts(arr: IntArray, stt: Int, end: Int, size: Int, offset: Int): LongArray {
   val sums = IntArray(1 shl (end - stt + 1))
-  val cnts = LongArray((OFFSET shl 1) + 1).also {
-    it[OFFSET] = 1
+  val cnts = LongArray(size).also {
+    it[offset] = 1
   }
 
   var seq = 1
@@ -103,93 +108,20 @@ fun calcSumCnts(arr: IntArray, stt: Int, end: Int): LongArray {
     repeat(seq) { j ->
       val sum = sums[j] + v
       sums[seq + j] = sum
-      cnts[OFFSET + sum]++
+      cnts[offset + sum]++
     }
     seq = seq shl 1
   }
   return cnts
 }
 
-// ---------------------------------------------------------------------
-// ---------------------------------------------------------------------
-// ---------------------------------------------------------------------
-//fun quickSort(
-//  a: IntArray,
-//  l: Int,
-//  r: Int,
-//) {
-//  if (l >= r) return
-//  val (pl, pr) = threeWayPartition(a, l, r)
-//  quickSort(a, l, pl - 1)
-//  quickSort(a, pr + 1, r)
-//}
-//
-//fun threeWayPartition(
-//  a: IntArray,
-//  l: Int,
-//  r: Int
-//): Pair<Int, Int> {
-//  var pos = l
-//  var pl = l
-//  var pr = r
-//  val piv = a[(l + r) shr 1]
-//
-//  while (pos <= pr) {
-//    val v = a[pos]
-//    when {
-//      v < piv -> {
-//        swap(a, pos, pl)
-//        pl++
-//        pos++
-//      }
-//
-//      v > piv -> {
-//        swap(a, pos, pr)
-//        pr--
-//      }
-//
-//      else -> pos++
-//    }
-//  }
-//  return Pair(pl, pr)
-//}
-//
-//fun swap(
-//  a: IntArray,
-//  i: Int,
-//  j: Int,
-//) {
-//  val tmp = a[i]
-//  a[i] = a[j]
-//  a[j] = tmp
-//}
-
-// ---------------------------------------------------------------------
-// ---------------------------------------------------------------------
-fun printArr(sums: LongArray) {
-  repeat(sums.size) {
-    println("--sums[$it] = ${sums[it]}")
-  }
-}
+fun abs(v: Int): Int = if (v > 0) v else -v
 
 /*
 IN
 40 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-
 OUT
 1099511627775
-
-IN
-20 0
-0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
-
-
  */
-
-//println("a[$i] = ${a[i]}, nxt=$nxt ---> ${nxt + HALF}")
-//println("[$i] $sum1 (c1=${cnt1}) ------- $sum2 (c2=$cnt2)")
-//println("$li sum= $sum1 ---> $sum2(${rSCnt[sum2]})")
-//        println(">>> $l (<$L), $r(<$R) -> $cnt")
-//    println("---- $l (<$L), $r(<$R) = $lSum + $rSum == $sum")
