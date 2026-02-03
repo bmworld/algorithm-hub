@@ -61,16 +61,15 @@ fun main() {
 
   val ls = generateSums(a, 0, HALF)
   val rs = generateSums(a, HALF + 1, N - 1)
-
   val L = ls.size
-  quickSort(ls, 0, L - 1, true)
   val R = rs.size
-  quickSort(rs, 0, R - 1, false)
+  quickSort(ls, 0, L - 1)
+  quickSort(rs, 0, R - 1)
 
   var cnt = 0L
   var l = 0
-  var r = 0
-  while (l < L && r < R) {
+  var r = R - 1
+  while (l < L && r >= 0) {
     val lSum = ls[l]
     val rSum = rs[r]
     val sum = lSum + rSum
@@ -79,14 +78,14 @@ fun main() {
         var lCnt = 1L
         while (l + 1 < L && lSum == ls[++l]) lCnt++
         var rCnt = 1L
-        while (r + 1 < R && rSum == rs[++r]) rCnt++
+        while (r - 1 >= 0 && rSum == rs[--r]) rCnt++
         cnt += lCnt * rCnt
 
 
-        if (l == L - 1 && r == R - 1) break
+        if (l == L - 1 && r == 0) break
       }
       sum < S -> l++
-      else -> r++
+      else -> r--
     }
   }
 
@@ -106,7 +105,6 @@ fun generateSums(arr: IntArray, stt: Int, end: Int): IntArray {
     }
     seq = seq shl 1
   }
-
   return sums
 }
 
@@ -115,19 +113,17 @@ fun quickSort(
   a: IntArray,
   l: Int,
   r: Int,
-  asc: Boolean = true,
 ) {
   if (l >= r) return
-  val (pl, pr) = threeWayPartition(a, l, r, asc)
-  quickSort(a, l, pl - 1, asc)
-  quickSort(a, pr + 1, r, asc)
+  val (pl, pr) = threeWayPartition(a, l, r)
+  quickSort(a, l, pl - 1)
+  quickSort(a, pr + 1, r)
 }
 
 fun threeWayPartition(
   a: IntArray,
   l: Int,
-  r: Int,
-  asc: Boolean = true
+  r: Int
 ): Pair<Int, Int> {
   var pos = l
   var pl = l
@@ -137,13 +133,13 @@ fun threeWayPartition(
   while (pos <= pr) {
     val v = a[pos]
     when {
-      if (asc) v < piv else v > piv -> {
+      v < piv -> {
         swap(a, pos, pl)
         pl++
         pos++
       }
 
-      if (asc) v > piv else v < piv -> {
+      v > piv -> {
         swap(a, pos, pr)
         pr--
       }
