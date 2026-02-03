@@ -57,36 +57,23 @@ fun main() {
   val N = i()
   val S = i()
   val HALF = N shr 1
-  val a = IntArray(N) { i() }
+  var MAX_V = 0
+  val a = IntArray(N) {
+    i().also {
+      val v = abs(it)
+      if (v > MAX_V) MAX_V = v
+    }
+  }
 
   val ls = generateSums(a, 0, HALF)
-  val rs = generateSums(a, HALF + 1, N - 1)
-  val L = ls.size
-  val R = rs.size
-  quickSort(ls, 0, L - 1)
-  quickSort(rs, 0, R - 1)
+  val offset = MAX_V * (N - HALF)
+  val endRange = (offset shl 1) + 1
+  val rSCnt = generateSumCnts(a, HALF + 1, N - 1, offset, endRange)
 
   var cnt = 0L
-  var l = 0
-  var r = R - 1
-  while (l < L && r >= 0) {
-    val lSum = ls[l]
-    val rSum = rs[r]
-    val sum = lSum + rSum
-    when {
-      sum == S -> {
-        var lCnt = 1L
-        while (l + 1 < L && lSum == ls[++l]) lCnt++
-        var rCnt = 1L
-        while (r - 1 >= 0 && rSum == rs[--r]) rCnt++
-        cnt += lCnt * rCnt
-
-
-        if (l == L - 1 && r == 0) break
-      }
-      sum < S -> l++
-      else -> r--
-    }
+  for (sum in ls) {
+    val rmn = offset + S - sum
+    if (rmn in 0 until endRange) cnt += rSCnt[rmn]
   }
 
   w(cnt + if (S == 0) -1 else 0)
@@ -95,70 +82,95 @@ fun main() {
 
 fun generateSums(arr: IntArray, stt: Int, end: Int): IntArray {
   val sums = IntArray(1 shl (end - stt + 1))
-  var seq = 0
-  sums[seq++] = 0
+  sums[0] = 0
+
+  var seq = 1
   var i = stt
   while (i <= end) {
     val v = arr[i++]
-    repeat(seq) { j ->
-      sums[seq + j] = sums[j] + v
-    }
+    for (j in 0 until seq) sums[seq + j] = sums[j] + v
     seq = seq shl 1
   }
+
   return sums
 }
 
+fun generateSumCnts(arr: IntArray, stt: Int, end: Int, offset: Int, size: Int): LongArray {
+  val sums = IntArray(1 shl (end - stt + 1))
+  val cnts = LongArray(size)
 
-fun quickSort(
-  a: IntArray,
-  l: Int,
-  r: Int,
-) {
-  if (l >= r) return
-  val (pl, pr) = threeWayPartition(a, l, r)
-  quickSort(a, l, pl - 1)
-  quickSort(a, pr + 1, r)
-}
+  sums[0] = 0
+  cnts[offset] = 1
 
-fun threeWayPartition(
-  a: IntArray,
-  l: Int,
-  r: Int
-): Pair<Int, Int> {
-  var pos = l
-  var pl = l
-  var pr = r
-  val piv = a[(l + r) shr 1]
-
-  while (pos <= pr) {
-    val v = a[pos]
-    when {
-      v < piv -> {
-        swap(a, pos, pl)
-        pl++
-        pos++
-      }
-
-      v > piv -> {
-        swap(a, pos, pr)
-        pr--
-      }
-
-      else -> pos++
+  var seq = 1
+  var i = stt
+  while (i <= end) {
+    val v = arr[i++]
+    for (j in 0 until seq) {
+      val sum = sums[j] + v
+      sums[seq + j] = sum
+      cnts[offset + sum]++
     }
+    seq = seq shl 1
   }
-  return Pair(pl, pr)
+  return cnts
 }
 
-fun swap(
-  a: IntArray,
-  i: Int,
-  j: Int,
-) {
-  val tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
-}
+fun abs(v: Int): Int = if (v > 0) v else -v
+
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+// ---------------------------------------------------------------------
+//fun quickSort(
+//  a: IntArray,
+//  l: Int,
+//  r: Int,
+//) {
+//  if (l >= r) return
+//  val (pl, pr) = threeWayPartition(a, l, r)
+//  quickSort(a, l, pl - 1)
+//  quickSort(a, pr + 1, r)
+//}
+//
+//fun threeWayPartition(
+//  a: IntArray,
+//  l: Int,
+//  r: Int
+//): Pair<Int, Int> {
+//  var pos = l
+//  var pl = l
+//  var pr = r
+//  val piv = a[(l + r) shr 1]
+//
+//  while (pos <= pr) {
+//    val v = a[pos]
+//    when {
+//      v < piv -> {
+//        swap(a, pos, pl)
+//        pl++
+//        pos++
+//      }
+//
+//      v > piv -> {
+//        swap(a, pos, pr)
+//        pr--
+//      }
+//
+//      else -> pos++
+//    }
+//  }
+//  return Pair(pl, pr)
+//}
+//
+//fun swap(
+//  a: IntArray,
+//  i: Int,
+//  j: Int,
+//) {
+//  val tmp = a[i]
+//  a[i] = a[j]
+//  a[j] = tmp
+//}
 
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
