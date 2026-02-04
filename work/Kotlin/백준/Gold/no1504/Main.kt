@@ -3,7 +3,7 @@ package 백준.Gold.no1504
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 16
+const val IBS = 1 shl 20
 const val OBS = 1 shl 3
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -76,16 +76,21 @@ fun main() {
   val v1 = i()
   val v2 = i()
 
-  val d1 = getDist(stt, v1, heap, graph, end)
-  var d2 = getDist(v1, v2, heap, graph, end)
-  if (stt == v1 || v2 == end) d2 = minOf(d2, getDist(stt, end, heap, graph, end))
-  val d3 = getDist(v2, end, heap, graph, end)
+  val sttToEnd = getDist(stt, end, heap, graph, end)
+  var v1ToEnd = getDist(v1, end, heap, graph, end)
+  val v2ToEnd = getDist(v2, end, heap, graph, end)
 
-  w(getSumOfDists(d1, d2, d3))
+  val case1 = getSumOfDists(sttToEnd[v1], v1ToEnd[v2], v2ToEnd[end])
+  val case2 = getSumOfDists(sttToEnd[v2], v2ToEnd[v1], v1ToEnd[end])
+
+  w(when {
+    case1 == NOT_FOUND || case2 == NOT_FOUND -> maxOf(case1, case2)
+    else -> minOf(case1, case2)
+  })
   O.flush()
 }
 
-fun getSumOfDists(d1: Long, d2: Long = 0, d3: Long = 0): Long =
+fun getSumOfDists(d1: Long, d2: Long, d3: Long): Long =
   if (d1 == INF || d2 == INF || d3 == INF) NOT_FOUND else d1 + d2 + d3
 
 fun getDist(
@@ -94,36 +99,30 @@ fun getDist(
   heap: HEAP,
   graph: Array<MutableList<Long>>,
   size: Int,
-): Long {
-  if (stt == end) return 0
+): LongArray {
   heap.clear()
 
   val dist = LongArray(size + 1) { INF }
-
   dist[stt] = 0
-  heap.push(stt.toLong())
+  if (stt != end) heap.push(stt.toLong())
+
   bfs@ while (heap.isNotEmpty()) {
     val e = heap.pop()
     val acc = e / SEP
     val fr = (e % SEP).toInt()
-    if (fr == end) break@bfs
     if (dist[fr] < acc) continue
     for (ne in graph[fr]) {
       val w = ne / SEP
       val to = (ne % SEP).toInt()
       val nw = acc + w
-      if (dist[to] > nw) {
+      if (dist[to] == INF || dist[to] > nw) {
         dist[to] = nw
         heap.push(nw * SEP + to)
       }
     }
   }
 
-  println("---- $stt->$end")
-  for (i in stt..end) {
-    println("--- dist[$i] = ${dist[i]}")
-  }
-  return dist[end]
+  return dist
 }
 
 class HEAP(size: Int) {
@@ -174,6 +173,17 @@ class HEAP(size: Int) {
 }
 
 /**
+# 주요 제약사항: "한번 이동했던 간선도 다시 이동할 수 있다. 하지만 반드시 최단 경로로 이동해야 함" ***
+[ 필수 경유 X -> 전체 최단거리 O] 기반 다익스트라 사용
+- v1, v2는 시작점/도착점을 지난 이후에 등장할 수 있어 '도착 시 종료' 다익스트라는 오답일 수 있음 (조건 불충족)
+- BFS 및 부분 다익스트라 접근을 폐기하고 "모든 노드까지의 최단거리"를 계산해야 함
+- 이동경로 3가지의 다익스트라 계산: dist(1→end), dist(v1→end), dist(v2→end)
+최단거리배열에서 다익스트라 시작점에서 중간지점을 선택하는 방식 (e.g. sttToEnd[v1])
+- 이후 가능한 두 경로의 거리 합 비교
+[ 1 → v1 → v2 → N ]
+[ 1 → v2 → v1 → N ]
+
+ *
 // ---------------------------------------------------------------------
 IN
 2 0
@@ -201,7 +211,7 @@ IN
 1 3 4
 2 3
 OUT
-16 ------???? (10 아님???)
+16
 // ---------------------------------------------------------------------
 IN
 3 2
@@ -311,7 +321,9 @@ OUT
 12
  */
 
-//      println("d= $d1, $d2, $d3")
-//println("IN: $fr -> $to ($w)")
-//for (fr in 1 .. end) for (to in graph[fr]) println("[NODE] $fr -> $to ")
-//println("- dist[$fr]= ${dist[fr]}  ->dist[$to]  ${dist[to]}  vs $nw")
+//
+//for (i in stt..end) {
+//  println("--- [$stt->$end] dist[$i] = ${dist[i]}")
+//}
+//println("-- case1: $d1 + $d2 + $d3 = $case1 ")
+//println("-- case2: $c2d1 + $c2d2 + $c2d3 = $case2 ")
