@@ -56,7 +56,6 @@ fun w(
 const val NL: Byte = 10
 const val L: Byte = 40
 const val R: Byte = 41
-const val MAX_LEN = 100_000
 fun main() {
   var cnt = 0L
 
