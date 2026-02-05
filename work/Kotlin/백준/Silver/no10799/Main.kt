@@ -3,7 +3,7 @@ package 백준.Silver.no10799
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 100_000
+const val IBS = 1 shl 16
 const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -56,30 +56,25 @@ fun w(
 const val NL: Byte = 10
 const val L: Byte = 40
 const val R: Byte = 41
-const val LAZER: Byte = 124
 const val MAX_LEN = 100_000
 fun main() {
-  var total = 0L
+  var cnt = 0L
 
-  val a = ByteArray(MAX_LEN)
-  var i = 0
-
-  var b: Byte = 0
-  while (r().also { b = it } >= NL) {
-    when (b) {
-      L -> a[i++] = b
+  var plates = 0
+  var prv: Byte = 0
+  var cur: Byte = 0
+  while (r().also { cur = it } >= NL) {
+    when (cur) {
+      L -> plates++
       R -> {
-        if (a[i - 1] == L) a[i - 1] = LAZER
-        else {
-          var cnt = 0
-          while (i > 0 && a[--i] != L) cnt++
-          total += cnt.also { repeat(it) { a[i++] = LAZER } } + 1
-        }
+        plates--
+        cnt += if (prv == L) plates else 1
       }
       else -> break
     }
+    prv = cur
   }
 
-  w(total)
+  w(cnt)
   O.flush()
 }
