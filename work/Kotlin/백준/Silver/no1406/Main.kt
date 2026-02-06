@@ -3,7 +3,7 @@ package 백준.Silver.no1406
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 600_000
+const val IBS = 300_000
 const val OBS = 1 shl 12
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -39,78 +39,76 @@ const val L: Byte = 76
 const val D: Byte = 68
 const val B: Byte = 66
 const val P: Byte = 80
-val UPPER_CASE = 65..90
 val LOWER_CASE = 97..122
 fun getChar(): Byte {
   var b: Byte
   var char: Byte = 0
-  while (r().also { b = it } in UPPER_CASE || b in LOWER_CASE) char = b
+  while (r().also { b = it } >= 65) char = b
   return char
 }
 
-const val EMPTY: Byte = 0
+const val EMPTY = -1
 const val MAX_LEN = 600_000
 fun main() {
-  val str = Array<Node>(MAX_LEN + 1) { Node() }
-  var EOL = str[0].also { it.char = 47 }
-  var initI = 1
+  var str = ByteArray(MAX_LEN + 1)
+  val prv = IntArray(MAX_LEN + 1) { EMPTY }
+  val nxt = IntArray(MAX_LEN + 1) { EMPTY }
+  var len = 0
+  val EOL = len++
+  str[EOL] = 47
 
-  var i = initI
   var c: Byte
   while (r().also { c = it } in LOWER_CASE) {
-    val prv = if (i > initI) str[i - 1] else null
-    add(str, i++, c, prv, EOL)
+    str[len] = c
+    if (len > 1) prv[len] = (len - 1).also { nxt[it] = len }
+    len++
   }
 
-  val stt = str[initI]
-  var head: Node = if (stt.char == null) EOL else stt
-  var cur: Node = EOL
+  prv[EOL] = (len - 1).also { nxt[it] = EOL }
+  var cur = EOL
 
   repeat(i()) {
-    when (getChar()) {
-      L -> cur.prv.also { if (it != null) cur = it }
-      D -> cur.nxt.also { if (it != null) cur = it }
+    val op = getChar()
+    when (op) {
+      L -> prv[cur].also { if (it != EMPTY) cur = it }
+      D -> nxt[cur].also { if (it != EMPTY) cur = it }
       B -> {
-        val p = cur.prv
-        if (p == null) return@repeat
-        p.prv.also {
-          cur.prv = it
-          if (it == null) head = cur else it.nxt = cur
+        val p = prv[cur]
+        if (p != EMPTY) {
+          val pp = prv[p]
+          prv[cur] = if (pp != EMPTY) {
+            nxt[pp] = cur
+            pp
+          } else EMPTY
         }
       }
-      P -> add(str, i++, getChar(), cur.prv, cur).also {
-        if (cur == head) head = it
+      P -> {
+        str[len] = getChar()
+        nxt[len] = cur
+        prv[cur].also {
+          if (it != EMPTY) {
+            nxt[it] = len
+            prv[len] = it
+          }
+        }
+        prv[cur] = len
+        len++
       }
     }
   }
 
-  while (head != EOL) {
-    O.write(head.char!!.toInt())
-    if (head.nxt == null) break
-    else head = head.nxt!!
+  var out = ByteArray(len)
+  var traced = EOL
+  var j = len - 1
+  while (prv[traced] != EMPTY) {
+    val p = prv[traced]
+    out[j--] = str[p]
+    traced = p
   }
 
+  val offset = j + 1
+  O.write(out, offset, len - offset)
   O.flush()
 }
 
-fun add(str: Array<Node>, pos: Int, char: Byte, prv: Node? = null, nxt: Node? = null): Node {
-  val node = Node(char, prv, nxt).also {
-    if (prv != null) prv.nxt = it
-    if (nxt != null) nxt.prv = it
-  }
-  str[pos] = node
-  return node
-}
-
-class Node(var char: Byte? = null,
-  var prv: Node? = null,
-  var nxt: Node? = null
-)
-
-//repeat(i) {
-//  println("toChar(str[it]) = ${toChar(str[it].char ?: 32)}")
-//}
-//println(
-//"prv=${toChar(cur.prv?.char ?: 32)}, " +
-//"cur = ${toChar(cur.char ?: 32)}," +
-//" nxt=${toChar(cur.nxt?.char ?: 32)}")
+//    println("------ [${toChar(op)}] cur = $cur (prv=${prv[cur]}, nxt=${nxt[cur]})")
