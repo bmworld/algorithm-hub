@@ -66,7 +66,7 @@ fun main() {
     tree[p] += c * SEP + w
   }
 
-  var dimaeter = 0
+  var diameter = 0
   fun dfs(p: Int): Int {
 
     val cs = tree[p]
@@ -85,13 +85,13 @@ fun main() {
         top1 = w
       } else if (w > top2) top2 = w
     }
-    dimaeter = maxOf(dimaeter, top1 + top2)
+    diameter = maxOf(diameter, top1 + top2)
     return top1
   }
 
   dfs(root)
 
-  w(dimaeter)
+  w(diameter)
   O.flush()
 }
 
