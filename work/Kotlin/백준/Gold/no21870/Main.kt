@@ -3,7 +3,7 @@ package 백준.Gold.no21870
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 20
+const val IBS = 1 shl 16
 const val OBS = 1 shl 8
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -61,38 +61,34 @@ fun main() {
     a[it] = i()
   }
 
-  var beatuiful = 0
-  fun divideConquer(fr: Int, to: Int) {
-    if (fr == to) {
-      beatuiful += a[to]
-      return
-    }
+  fun divideConquer(l: Int, r: Int): Int {
+    if (l == r) return a[r]
 
-    val half = (to - fr + 1) shr 1
+    val half = (r - l + 1) shr 1
+    val m = l + half - 1
+    var lGcd = a[l]
+    for (i in l + 1..m) lGcd = getGcd(lGcd, a[i])
+    lGcd += divideConquer(m + 1, r)
 
-    val frMid = fr + half - 1
-    var frGcd = a[fr]
-    for (i in fr + 1..frMid) frGcd = getGcd(frGcd, a[i])
+    var rGcd = a[m + 1]
+    for (i in m + 2..r) rGcd = getGcd(rGcd, a[i])
+    rGcd += divideConquer(l, m)
 
-    val toMid = to - half + 1
-    var toGcd = a[toMid]
-    for (i in toMid + 1..to) toGcd = getGcd(toGcd, a[i])
-
-    if (frGcd >= toGcd) {
-      beatuiful += frGcd
-      divideConquer(frMid + 1, to)
-    } else {
-      beatuiful += toGcd
-      divideConquer(fr, toMid - 1)
-    }
+    return maxOf(lGcd, rGcd)
   }
 
-  divideConquer(0, N - 1)
-  w(beatuiful)
+  w(divideConquer(0, N - 1))
   O.flush()
 }
 
 fun getGcd(a: Int, b: Int): Int = if (b == 0) a else getGcd(b, a % b)
 
-//println(
-//      "[$fr ~ $to ($half)] frGcd= $frGcd ($fr ~ $frMid) vs toGcd = $toGcd ($toMid ~ $to)")
+//println( "[$fr ~ $to ($half)] frGcd= $frGcd ($fr ~ $mid) vs toGcd = $toGcd (${mid + 1} ~ $to)")
+
+/**
+IN
+6
+6 6 6 5 10 15
+OUT
+31
+ */
