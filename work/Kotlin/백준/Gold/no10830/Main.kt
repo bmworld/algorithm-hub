@@ -59,28 +59,35 @@ fun w(
 const val CAP = 1_000
 fun main() {
   val N = i().toInt()
-  var B = i() - 1
+  var B = i() + 1
+  var a = IntArray(N * N) { i().toInt() }
   fun pos(r: Int, c: Int): Int = r * N + c
 
-  var a = IntArray(N * N) { i().toInt() }
-  var b = a.copyOf()
-  var tmp = IntArray(N * N)
-
-  while (B-- > 0) {
-    val copied = b
+  fun mutlr(a: IntArray, b: IntArray): IntArray {
+    var mutiplied = IntArray(N * N)
     repeat(N) { r ->
       repeat(N) { c ->
         var sum = 0
         repeat(N) { i -> sum += (a[pos(r, i)] * b[pos(i, c)]) % CAP }
-        tmp[pos(r, c)] = sum % CAP
+        mutiplied[pos(r, c)] = sum % CAP
       }
     }
-    b = tmp
-    tmp = copied
+    return mutiplied
   }
+
+  fun pow(a: IntArray, exp: Long): IntArray {
+    return if (exp <= 1L) a
+    else if (exp % 2 == 0L) {
+      pow(mutlr(a, a), exp / 2)
+    } else {
+      mutlr(a, pow(a, exp - 1))
+    }
+  }
+
+  val ans = pow(a, B)
   repeat(N) { r ->
     repeat(N) { c ->
-      w(b[pos(r, c)], c + 1 == N)
+      w(ans[pos(r, c)], c + 1 == N)
     }
   }
   O.flush()
@@ -89,7 +96,7 @@ fun main() {
 // ======================================================================
 fun printArr(arr: IntArray, uniqueKey: Long) {
   val N = sqrt(arr.size.toDouble()).toInt()
-  println("--------- [$uniqueKey]]")
+  println("--------- [$uniqueKey]")
   repeat(N) { r ->
     repeat(N) { c ->
       println("a[pos($r, $c)] = ${arr[r * N + c]}")
