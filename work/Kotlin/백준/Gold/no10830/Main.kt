@@ -68,7 +68,7 @@ fun main() {
     repeat(N) { r ->
       repeat(N) { c ->
         var sum = 0
-        repeat(N) { i -> sum += (a[pos(r, i)] * b[pos(i, c)]) % CAP }
+        repeat(N) { i -> sum += a[pos(r, i)] * b[pos(i, c)] }
         mutiplied[pos(r, c)] = sum % CAP
       }
     }
@@ -77,12 +77,10 @@ fun main() {
 
   fun pow(a: IntArray, exp: Long): IntArray {
     return if (exp <= 1L) a
-    else if (exp % 2 == 0L) {
-      val sqrd = mutlr(a, a)
-      pow(sqrd, exp / 2)
-    } else {
-      val even = pow(a, exp - 1)
-      mutlr(a, even)
+    else {
+      val half = pow(a, exp / 2)
+      val sqrd = mutlr(half, half)
+      if (exp % 2 != 0L) mutlr(sqrd, a) else sqrd
     }
   }
 
@@ -96,9 +94,9 @@ fun main() {
 }
 
 // ======================================================================
-fun printArr(arr: IntArray, uniqueKey: Long) {
+fun printArr(arr: IntArray, identifier: Long) {
   val N = sqrt(arr.size.toDouble()).toInt()
-  println("--------- [$uniqueKey]")
+  println("--------- [$identifier]")
   repeat(N) { r ->
     repeat(N) { c ->
       println("a[pos($r, $c)] = ${arr[r * N + c]}")
