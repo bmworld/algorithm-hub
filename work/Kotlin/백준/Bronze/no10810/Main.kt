@@ -3,8 +3,8 @@ package 백준.Bronze.no10810
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 7
-const val OBS = 300
+const val IBS = 1 shl 9
+const val OBS = 1 shl 9
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -60,12 +60,14 @@ fun main() {
     val fr = i()
     val to = i()
     val v = i()
-    for (i in fr..to) a[i] = v
+    repeat(to - fr + 1) {
+      val pos = fr + it
+      a[pos] = v
+    }
   }
 
   repeat(N) {
-    val pos = it + 1
-    w(a[pos])
+    w(a[it + 1])
   }
   O.flush()
 }
