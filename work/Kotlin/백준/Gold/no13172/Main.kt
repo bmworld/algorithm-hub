@@ -69,7 +69,7 @@ fun main() {
     return v
   }
 
-  fun divideConquer(base: Int, exp: Int): Long {
+  fun inv(base: Int, exp: Int): Long {
     val half = pow(base, exp / 2)
     val sqrd = (half * half) % MOD
     return (sqrd * if (exp % 2 != 0) base else 1) % MOD
@@ -79,12 +79,10 @@ fun main() {
   repeat(i()) {
     val n = i()
     val s = i()
-    val inverseN = divideConquer(n, MOD - 2)
-
-    var q = s * inverseN
+    var q = s * inv(n, MOD - 2)
     if (q >= MOD) q %= MOD
     var ns = sigma + q
-    if (ns >= MOD) ns %= MOD
+    if (ns >= MOD) ns -= MOD
     sigma = ns
   }
 
