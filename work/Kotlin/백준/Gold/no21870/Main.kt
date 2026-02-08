@@ -62,26 +62,37 @@ fun main() {
   }
 
   var beatuiful = 0
-  fun dc(fr: Int, to: Int) {
+  fun divideConquer(fr: Int, to: Int) {
     if (fr == to) {
       beatuiful += a[to]
       return
     }
 
     val half = (to - fr + 1) shr 1
-    val mid = fr + half - 1
-    var gcd = a[fr]
-    for (i in fr + 1..mid) gcd = getGcd(gcd, a[i])
-    beatuiful += gcd
-    dc(mid + 1, to)
+
+    val frMid = fr + half - 1
+    var frGcd = a[fr]
+    for (i in fr + 1..frMid) frGcd = getGcd(frGcd, a[i])
+
+    val toMid = to - half + 1
+    var toGcd = a[toMid]
+    for (i in toMid + 1..to) toGcd = getGcd(toGcd, a[i])
+
+    if (frGcd >= toGcd) {
+      beatuiful += frGcd
+      divideConquer(frMid + 1, to)
+    } else {
+      beatuiful += toGcd
+      divideConquer(fr, toMid - 1)
+    }
   }
 
-  dc(0, N - 1)
+  divideConquer(0, N - 1)
   w(beatuiful)
   O.flush()
 }
 
 fun getGcd(a: Int, b: Int): Int = if (b == 0) a else getGcd(b, a % b)
 
-//println("$fr, $mid ($half), gcd=$gcd -> ${mid + 1}, $to")
-//println("--- $fr, $to")
+//println(
+//      "[$fr ~ $to ($half)] frGcd= $frGcd ($fr ~ $frMid) vs toGcd = $toGcd ($toMid ~ $to)")
