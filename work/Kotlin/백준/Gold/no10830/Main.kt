@@ -4,8 +4,8 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 import kotlin.math.sqrt
 
-const val IBS = 1 shl 10
-const val OBS = 1 shl 10
+const val IBS = 1 shl 12
+const val OBS = 1 shl 12
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -59,8 +59,8 @@ fun w(
 const val CAP = 1_000
 fun main() {
   val N = i().toInt()
-  var B = i() + 1
-  var a = IntArray(N * N) { i().toInt() }
+  var B = i()
+  var a = IntArray(N * N) { i().toInt() % CAP }
   fun pos(r: Int, c: Int): Int = r * N + c
 
   fun mutlr(a: IntArray, b: IntArray): IntArray {
@@ -78,9 +78,11 @@ fun main() {
   fun pow(a: IntArray, exp: Long): IntArray {
     return if (exp <= 1L) a
     else if (exp % 2 == 0L) {
-      pow(mutlr(a, a), exp / 2)
+      val sqrd = mutlr(a, a)
+      pow(sqrd, exp / 2)
     } else {
-      mutlr(a, pow(a, exp - 1))
+      val even = pow(a, exp - 1)
+      mutlr(a, even)
     }
   }
 
