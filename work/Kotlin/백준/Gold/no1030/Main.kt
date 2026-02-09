@@ -58,7 +58,7 @@ const val WH: Byte = 48
 const val BK: Byte = 49
 
 fun main() {
-  val GOAL = i()
+  val S = i()
   val N = i()
   val K = i()
   val r1 = i()
@@ -74,41 +74,47 @@ fun main() {
   }
 
   fun pos(r: Int, c: Int): Int = (r - r1) * CAP + (c - c1)
-  fun inRange(r: Int, c: Int) = r in r1..r2 && c in c1..c2
-
+  fun inRange(rowFr: Int, rowTo: Int, colFr: Int, colTo: Int): Boolean =
+    rowFr <= r2 && rowTo >= r1 && colFr <= c2 && colTo >= c1
 
   val kStt = (N - K) shr 1
   val kEnd = N - 1 - kStt
-
-  fun useBK(ri: Int, ci: Int, color: Byte): Boolean =
+  fun useBK(color: Byte, ri: Int, ci: Int): Boolean =
     color == BK || ri in kStt..kEnd && ci in kStt..kEnd
 
-  fun rcsv(dep: Int, size: Int, r: Int, c: Int, color: Byte) {
-    if (dep > GOAL) return
-
-    repeat(N) { ri ->
-      repeat(N) { ci ->
-        var tr = r + ri
-        var tc = c + ci
-        if (inRange(tr, tc) && (useBK(ri, ci, color))) canvas[pos(tr, tc)] = BK
-      }
+  fun rcsv(size: Int, r: Int, c: Int, color: Byte) {
+    if (size == 1) {
+      if (color == BK) canvas[pos(r, c)] = color
+      return
     }
 
-    val nxtSize = size * N
+    var ns = size / N
     repeat(N) { ri ->
       repeat(N) { ci ->
-        var nr = r + ri * size
-        var nc = c + ci * size
-        rcsv(dep + 1, nxtSize, nr, nc, if (useBK(ri, ci, color)) BK else WH)
+        var nrFr = r + ri * ns
+        var nrTo = nrFr + ns - 1
+        var ncFr = c + ci * ns
+        var ncTo = ncFr + ns - 1
+
+        if (inRange(nrFr, nrTo, ncFr, ncTo))
+          rcsv(ns, nrFr, ncFr, if (useBK(color, ri, ci)) BK else WH)
       }
     }
   }
 
-  rcsv(1, N, 0, 0, WH)
+  rcsv(pow(N, S), 0, 0, WH)
   O.write(canvas)
   O.flush()
 }
 
-//println("--next [$dep][size=$size] $r, $c -> $nr, $nc ($color)")
-//        println("[painted] [$dep][size=$size] $r, $c -> $tr, $tc ($color)")
-//println("[BK RANGE] ($N - $K / 2) in $kStt .. $kEnd ")
+fun pow(base: Int, exp: Int): Int {
+  var v = 1
+  var b = base
+  var e = exp
+  while (e > 0) {
+    if (e % 2 == 1) v = v * b
+    b *= b
+    e /= 2
+  }
+  return v
+}
