@@ -59,26 +59,13 @@ fun main() {
   }
 
   var cnt = 0
-  var i = 0
-  repeat(docLen) {
-    val b = doc[it]
-    if (b == word[i]) {
-      if (++i == wordLen) {
-        cnt++
-        i = 0
-      }
-    } else {
-      var found = false
-      search@ while (i > 0) {
-        if (b == word[--i]) {
-          found = true
-          var wi = i - 1
-          var di = it - 1
-          while (i > 0 && wi >= 0 && di >= 0) if (word[wi--] != doc[di--]) continue@search
-          break@search
-        }
-      }
-      if (found) i++
+  var di = 0
+  search@ while (di <= docLen - wordLen) {
+    if (doc[di++] == word[0]) {
+      var wi = 1
+      while (wi < wordLen) if (doc[di - 1 + wi] != word[wi++]) continue@search
+      cnt++
+      di += wordLen - 1
     }
   }
 
