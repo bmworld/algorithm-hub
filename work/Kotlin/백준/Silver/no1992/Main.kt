@@ -55,10 +55,6 @@ fun main() {
   var len = 0
   fun pos(r: Int, c: Int): Int = r * N + c
 
-  fun w(color: Byte) {
-    if (color != MIXED) zip[len++] = color
-  }
-
   fun merge() {
     val target = len - QUAD
     zip[target - 1] = zip[target]
@@ -66,7 +62,9 @@ fun main() {
   }
 
   fun rcs(size: Int, r: Int, c: Int): Byte {
-    if (size == 1) return map[pos(r, c)].also { w(it) }
+    if (size == 1) return map[pos(r, c)].also {
+      zip[len++] = it
+    }
 
     zip[len++] = OPEN
     val half = size shr 1
