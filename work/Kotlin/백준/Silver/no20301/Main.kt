@@ -69,8 +69,8 @@ fun main() {
   var reverse = false
   var cycle = 0
   repeat(N) {
-    val delta = if (reverse) -dist else dist
-    var np = move(pos + delta, len)
+    val delta = if (reverse) -(dist + 1) else dist
+    val np = wrap(pos + delta, len)
 
     w(a.removeAt(np))
 
@@ -79,13 +79,13 @@ fun main() {
       0
     }
 
-    if (reverse) np--
-    pos = move(np, --len)
+    pos = np
+    len--
   }
   O.flush()
 }
 
-fun move(pos: Int, len: Int): Int {
+fun wrap(pos: Int, len: Int): Int {
   if (len == 0) return pos
   var x = pos
   when {
