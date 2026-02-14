@@ -67,13 +67,14 @@ fun main() {
   }
   val strLen = a.length
 
-  val ch = HashSet<String>()
-  ch.add(EMPTY)
+  val ch = HashMap<String, Boolean>()
   var cnt = 0
 
-
   fun dfs(i: Int, str: String) {
-    if (isUnique(ch, str)) cnt++
+    if (ch[str] == null) {
+      ch[str] = true
+      cnt++
+    }
     val ni = i + 1
     if (ni < strLen) dfs(ni, str + a[ni])
   }
@@ -84,10 +85,4 @@ fun main() {
 
   w(cnt)
   O.flush()
-}
-
-fun isUnique(ch: HashSet<String>, str: String): Boolean {
-  val bool = !ch.contains(str)
-  if (bool) ch.add(str)
-  return bool
 }
