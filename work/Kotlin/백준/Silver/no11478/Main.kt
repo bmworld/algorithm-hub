@@ -55,23 +55,31 @@ fun w(
 
 const val MAX_LEN = 1000
 const val NL: Byte = 10
+const val EMPTY = ""
 
 fun main() {
   var b: Byte
-  var a = ""
+
+  var a = EMPTY
   while (r().also { b = it } >= NL) {
     if (b == NL) break
     a += b.toInt().toChar().toString()
   }
+  val strLen = a.length
 
   val ch = HashSet<String>()
+  ch.add(EMPTY)
   var cnt = 0
-  val strLen = a.length
-  for (len in 1..strLen) {
-    repeat(strLen - len + 1) { l ->
-      val str = a.substring(l, l + len)
-      if (isUnique(ch, str)) cnt++
-    }
+
+
+  fun dfs(i: Int, str: String) {
+    if (isUnique(ch, str)) cnt++
+    val ni = i + 1
+    if (ni < strLen) dfs(ni, str + a[ni])
+  }
+
+  repeat(strLen) {
+    dfs(it, a[it].toString())
   }
 
   w(cnt)
