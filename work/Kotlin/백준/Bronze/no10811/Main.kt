@@ -3,8 +3,8 @@ package 백준.Bronze.no10811
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
-const val OBS = 1 shl 7
+const val IBS = 1 shl 8
+const val OBS = 292
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -64,19 +64,14 @@ fun main() {
     repeat(len / 2) {
       val l = fr + it
       val r = fr + len - 1 - it
-      swap(a, l, r)
+      val tmp = a[l]
+      a[l] = a[r]
+      a[r] = tmp
     }
   }
 
   repeat(N) {
     w(a[it])
   }
-
   O.flush()
-}
-
-fun swap(a: IntArray, l: Int, r: Int) {
-  val tmp = a[l]
-  a[l] = a[r]
-  a[r] = tmp
 }
