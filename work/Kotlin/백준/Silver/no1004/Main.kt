@@ -3,7 +3,7 @@ package 백준.Silver.no1004
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 15
+const val IBS = 1 shl 10
 const val OBS = 1 shl 6
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -54,6 +54,7 @@ fun w(
 }
 
 fun main() {
+
   repeat(i()) {
     var cnt = 0
     val x1 = i()
@@ -67,7 +68,7 @@ fun main() {
       val rr = r * r
       val d1 = sqr(x1 - cx) + sqr(y1 - cy)
       val d2 = sqr(x2 - cx) + sqr(y2 - cy)
-      if (d1 <= rr || d2 <= rr) cnt++
+      if (rr in d1 until d2 || rr in d2 until d1) cnt++
     }
     w(cnt)
   }
@@ -75,3 +76,33 @@ fun main() {
 }
 
 fun sqr(v: Int): Int = v * v
+
+/**
+IN
+1
+225 -122 -157 865
+20
+954 -85 403
+990 -25 648
+-399 503 732
+-344 -457 114
+-657 434 997
+-122 -598 604
+315 371 347
+965 142 137
+78 147 935
+-535 111 798
+-172 386 215
+312 230 245
+-803 -593 720
+373 -955 662
+764 935 289
+337 -337 725
+644 -228 167
+-393 -667 356
+789 148 742
+168 177 721
+
+OUT
+7
+ */
