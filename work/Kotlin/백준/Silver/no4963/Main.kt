@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 15
-const val OBS = 1 shl 6
+const val OBS = 1 shl 8
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -54,11 +54,11 @@ fun w(
 }
 
 const val MAX_SIZE = 2_500
-val dr = intArrayOf(-1, -1, -1, 0, 0, 0, 1, 1, 1)
-val dc = intArrayOf(-1, 0, 1, -1, 0, 1, -1, 0, 1)
+val dr = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
+val dc = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
 
 fun main() {
-  
+
   val land = BooleanArray(MAX_SIZE)
   fun pos(r: Int, c: Int, CAP: Int): Int = r * CAP + c
 
@@ -84,8 +84,7 @@ fun main() {
     var cnt = 0
     repeat(h) { r ->
       repeat(w) { c ->
-        val isLand = land[pos(r, c, w)]
-        if (!isLand) return@repeat
+        if (!land[pos(r, c, w)]) return@repeat
         cnt++
         mark(r, c, w, h)
       }
