@@ -64,16 +64,15 @@ fun main() {
     dists[it + 1] = dists[it] + i()
   }
 
-  var total = INF
-  var min = INF
-  repeat(N) {
+  var min = i().toLong()
+  var total = (dists[end] - dists[0]) * min
+  repeat(N - 1) {
+    val i = it + 1
     val cost = i().toLong()
     if (cost >= min) return@repeat
-    val rmnDist = dists[end] - dists[it]
+    val rmnDist = dists[end] - dists[i]
 
-    if (total == INF) total = cost * rmnDist
-    else total -= (min - cost) * rmnDist
-
+    total -= (min - cost) * rmnDist
     min = cost
   }
 
