@@ -3,8 +3,8 @@ package 백준.Bronze.no1924
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 3
-const val OBS = 1 shl 2
+const val IBS = 1 shl 5
+const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -35,16 +35,6 @@ fun i(): Int {
   return s * v
 }
 
-val DOW = arrayListOf<ByteArray>(
-  byteArrayOf(77, 79, 78),
-  byteArrayOf(84, 85, 69),
-  byteArrayOf(87, 69, 68),
-  byteArrayOf(84, 72, 85),
-  byteArrayOf(70, 82, 73),
-  byteArrayOf(83, 65, 84),
-  byteArrayOf(83, 85, 78)
-)
-
 fun main() {
   val M = i()
   val D = i()
@@ -60,6 +50,15 @@ fun main() {
     }
   }
 
-  O.write(DOW[days % 7])
+  O.write(when (days % 7) {
+    0 -> byteArrayOf(77, 79, 78)
+    1 -> byteArrayOf(84, 85, 69)
+    2 -> byteArrayOf(87, 69, 68)
+    3 -> byteArrayOf(84, 72, 85)
+    4 -> byteArrayOf(70, 82, 73)
+    5 -> byteArrayOf(83, 65, 84)
+    else -> byteArrayOf(83, 85, 78)
+  })
+
   O.flush()
 }
