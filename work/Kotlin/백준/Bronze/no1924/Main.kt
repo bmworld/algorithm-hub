@@ -38,18 +38,7 @@ fun i(): Int {
 fun main() {
   val M = i()
   val D = i()
-
-  var days = D - 1
-  repeat(M - 1) {
-    val month = it + 1
-    days += when (month) {
-      1, 3, 5, 7, 8, 10, 12 -> 31
-      2 -> 28
-      4, 6, 9, 11 -> 30
-      else -> throw Exception()
-    }
-  }
-
+  var days = intArrayOf(0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334)[M - 1] + D - 1
   O.write(when (days % 7) {
     0 -> byteArrayOf(77, 79, 78)
     1 -> byteArrayOf(84, 85, 69)
@@ -59,6 +48,5 @@ fun main() {
     5 -> byteArrayOf(83, 65, 84)
     else -> byteArrayOf(83, 85, 78)
   })
-
   O.flush()
 }
