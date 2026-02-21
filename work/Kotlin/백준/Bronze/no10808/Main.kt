@@ -63,6 +63,6 @@ fun main() {
     if (b == EOL) break
     ALPHABET[b - a]++
   }
-  for (cnt in ALPHABET) w(cnt)
+  repeat(ALPA_CNT) { w(ALPHABET[it]) }
   O.flush()
 }
