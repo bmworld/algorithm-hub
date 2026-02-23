@@ -24,29 +24,27 @@ fun r(): Byte {
 const val NL: Byte = 10
 const val ZERO: Byte = 48
 const val ONE: Byte = 49
-const val MAX_LEN = 333_334
 const val OCT_TO_BIN_SIZE = 3
 val DELTA = intArrayOf(4, 2, 1)
 fun main() {
   var b: Byte
-  val BIN = ByteArray(MAX_LEN * 3) { ZERO }
-  var len = 0
-  var offset = 2
+  val BUF = ByteArray(3)
+  var firstDigit = true
   while (r().also { b = it } >= NL) {
     if (b == NL) break
     var digit: Int = b - ZERO
-    repeat(OCT_TO_BIN_SIZE) { j ->
-      val i = len + j
-      val delta = DELTA[j]
+    var offset = if (firstDigit) 2 else 0
+    repeat(OCT_TO_BIN_SIZE) { i ->
+      val delta = DELTA[i]
       if (digit >= delta) {
-        BIN[i] = ONE
+        BUF[i] = ONE
         digit -= delta
-        if (len == 0) offset = minOf(offset, i)
-      }
+        if (firstDigit) offset = minOf(offset, i)
+      } else BUF[i] = ZERO
     }
-    len += OCT_TO_BIN_SIZE
+    O.write(BUF, offset, OCT_TO_BIN_SIZE - offset)
+    firstDigit = false
   }
 
-  O.write(BIN, offset, len - offset)
   O.flush()
 }
