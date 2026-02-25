@@ -3,8 +3,8 @@ package 백준.Gold.no14502
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
-const val OBS = 1 shl 2
+const val IBS = 1 shl 8
+const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -88,18 +88,21 @@ fun main() {
   }
 
   var max = 0
+
   val q = IntArray(SIZE)
+  val infected = IntArray(SIZE)
+
   fun dfs(dep: Int, stt: Int) {
     if (dep == MAX_USABLE_WALL_CNT) {
       var safeZone = sCnt - MAX_USABLE_WALL_CNT
 
-      val map = map.copyOf()
       var qh = 0
       var qt = 0
       repeat(vCnt) {
         q[qt++] = virusPos[it]
       }
 
+      var iCnt = 0
       bfs@ while (qh < qt) {
         val vPos = q[qh++]
         val r = vPos / SEP
@@ -111,10 +114,15 @@ fun main() {
 
           if (nr in 0 until ROW && nc in 0 until COL && map[nPos] == EMPTY) {
             map[nPos] = VIRUS
+            infected[iCnt++] = nPos
             if (--safeZone <= max) break@bfs
             else q[qt++] = nr * SEP + nc
           }
         }
+      }
+
+      repeat(iCnt) {
+        map[infected[it]] = EMPTY
       }
 
       if (safeZone > max) max = safeZone
