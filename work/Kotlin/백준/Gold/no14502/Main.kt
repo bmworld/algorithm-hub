@@ -56,13 +56,10 @@ fun w(
 const val EMPTY = 0
 const val WALL = 1
 const val VIRUS = 2
-const val SEP = 10
 
 const val MAX_VIRUS_CNT = 10
 const val MAX_USABLE_WALL_CNT = 3
 
-val qr = intArrayOf(0, 1, 0, -1)
-val qc = intArrayOf(1, 0, -1, 0)
 val er = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
 val ec = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
 
@@ -73,26 +70,27 @@ fun main() {
   val CAP = COL
   val SIZE = ROW * COL
 
+  fun encodePos(r: Int, c: Int): Int = r * CAP + c
   val map = IntArray(SIZE)
-  fun pos(r: Int, c: Int): Int = r * CAP + c
-
   val virusPos = IntArray(MAX_VIRUS_CNT)
   var vCnt = 0
-  val safePos = IntArray(SIZE)
   var sCnt = 0
+
   repeat(ROW) { r ->
     repeat(COL) { c ->
       val v = i()
+      val pos = encodePos(r, c)
+      map[pos] = v
       when (v) {
-        EMPTY -> safePos[sCnt++] = r * SEP + c
-        VIRUS -> virusPos[vCnt++] = r * SEP + c
+        EMPTY -> sCnt++
+        VIRUS -> virusPos[vCnt++] = pos
       }
-      map[pos(r, c)] = v
     }
   }
 
   var max = 0
   val q = IntArray(SIZE)
+  val quadDelta = intArrayOf(-1, 1, -CAP, CAP)
 
   fun dfs(dep: Int, stt: Int) {
     if (dep == MAX_USABLE_WALL_CNT) {
@@ -105,18 +103,14 @@ fun main() {
 
       val tmp = map.copyOf()
       bfs@ while (qh < qt) {
-        val vPos = q[qh++]
-        val r = vPos / SEP
-        val c = vPos % SEP
+        val pos = q[qh++]
         for (i in 0..3) {
-          val nr = r + qr[i]
-          val nc = c + qc[i]
-          val nPos = pos(nr, nc)
-          if (nr in 0 until ROW && nc in 0 until COL && tmp[nPos] == EMPTY) {
-            tmp[nPos] = VIRUS
-            if (--safeZone <= max) break@bfs
-            else q[qt++] = nr * SEP + nc
-          }
+          val d = quadDelta[i]
+          val nPos = pos + d
+          if (pos % CAP == 0 && d == -1 || (pos + 1) % CAP == 0 && d == 1 || nPos !in 0 until SIZE || tmp[nPos] != EMPTY) continue
+          tmp[nPos] = VIRUS
+          if (--safeZone <= max) break@bfs
+          else q[qt++] = nPos
         }
       }
 
@@ -124,24 +118,23 @@ fun main() {
       return
     }
 
-    for (i in stt..sCnt - MAX_USABLE_WALL_CNT + dep) {
-      val rc = safePos[i]
-      val r = rc / SEP
-      val c = rc % SEP
-      val pos = pos(r, c)
+    for (pos in stt..SIZE - MAX_USABLE_WALL_CNT + dep) {
+      if (map[pos] != EMPTY) continue
+      val r = pos / CAP
+      val c = pos % CAP
       var usable = false
       for (j in 0 until er.size) {
         val nr = r + er[j]
         val nc = c + ec[j]
         val outOfRange = !(nr in 0 until ROW && nc in 0 until COL)
-        if (outOfRange || map[pos(nr, nc)] != EMPTY) {
+        if (outOfRange || map[encodePos(nr, nc)] != EMPTY) {
           usable = true
           break
         }
       }
       if (usable) {
         map[pos] = WALL
-        dfs(dep + 1, i + 1)
+        dfs(dep + 1, pos + 1)
         map[pos] = EMPTY
       }
     }
