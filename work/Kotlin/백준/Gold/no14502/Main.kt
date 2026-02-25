@@ -3,7 +3,7 @@ package 백준.Gold.no14502
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 8
+const val IBS = 1 shl 10
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -72,15 +72,17 @@ fun main() {
 
   val SIZE = ROW * COL
   val map = IntArray(SIZE)
-  val safePos = IntArray(SIZE)
-  var sCnt = 0
+
+  var eCnt = 0
   val virusPos = IntArray(MAX_VIRUS_CNT)
   var vCnt = 0
+  val safePos = IntArray(SIZE)
+  var sCnt = 0
   repeat(ROW) { r ->
     repeat(COL) { c ->
       val v = i()
       when (v) {
-        EMPTY -> safePos[sCnt++] = r * SEP + c
+        EMPTY -> eCnt++
         VIRUS -> virusPos[vCnt++] = r * SEP + c
       }
       map[pos(r, c)] = v
@@ -88,47 +90,49 @@ fun main() {
   }
 
   var max = 0
-
   val q = IntArray(SIZE)
   val infected = IntArray(SIZE)
+  fun searchSafeZone(init: Boolean): Int {
+    var cnt = eCnt - MAX_USABLE_WALL_CNT
+    var qh = 0
+    var qt = 0
+    repeat(vCnt) {
+      q[qt++] = virusPos[it]
+    }
+    var iCnt = 0
+    bfs@ while (qh < qt) {
+      val vPos = q[qh++]
+      val r = vPos / SEP
+      val c = vPos % SEP
+      for (i in 0..3) {
+        val nr = r + dr[i]
+        val nc = c + dc[i]
+        val nPos = pos(nr, nc)
+
+        if (nr in 0 until ROW && nc in 0 until COL && map[nPos] == EMPTY) {
+          map[nPos] = VIRUS
+          infected[iCnt++] = nPos
+          if (init) safePos[sCnt++] = nr * SEP + nc
+          else if (--cnt <= max) break@bfs
+
+          q[qt++] = nr * SEP + nc
+        }
+      }
+    }
+
+    repeat(iCnt) {
+      map[infected[it]] = EMPTY
+    }
+    return cnt
+  }
+
+  searchSafeZone(true)
 
   fun dfs(dep: Int, stt: Int) {
     if (dep == MAX_USABLE_WALL_CNT) {
-      var safeZone = sCnt - MAX_USABLE_WALL_CNT
-
-      var qh = 0
-      var qt = 0
-      repeat(vCnt) {
-        q[qt++] = virusPos[it]
-      }
-
-      var iCnt = 0
-      bfs@ while (qh < qt) {
-        val vPos = q[qh++]
-        val r = vPos / SEP
-        val c = vPos % SEP
-        for (i in 0..3) {
-          val nr = r + dr[i]
-          val nc = c + dc[i]
-          val nPos = pos(nr, nc)
-
-          if (nr in 0 until ROW && nc in 0 until COL && map[nPos] == EMPTY) {
-            map[nPos] = VIRUS
-            infected[iCnt++] = nPos
-            if (--safeZone <= max) break@bfs
-            else q[qt++] = nr * SEP + nc
-          }
-        }
-      }
-
-      repeat(iCnt) {
-        map[infected[it]] = EMPTY
-      }
-
-      if (safeZone > max) max = safeZone
+      searchSafeZone(false).also { if (it > max) max = it }
       return
     }
-
     for (i in stt until sCnt) {
       val rc = safePos[i]
       val pos = pos(rc / SEP, rc % SEP)
