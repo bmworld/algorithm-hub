@@ -3,7 +3,7 @@ package 백준.Gold.no14502
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
+const val IBS = 1 shl 8
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -58,11 +58,11 @@ const val WALL = 1
 const val VIRUS = 2
 const val SEP = 10
 
+const val MAX_VIRUS_CNT = 10
+const val MAX_USABLE_WALL_CNT = 3
+
 val qr = intArrayOf(0, 1, 0, -1)
 val qc = intArrayOf(1, 0, -1, 0)
-const val MAX_USABLE_WALL_CNT = 3
-const val MAX_VIRUS_CNT = 10
-
 val er = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
 val ec = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
 
@@ -75,8 +75,6 @@ fun main() {
 
   val map = IntArray(SIZE)
   fun pos(r: Int, c: Int): Int = r * CAP + c
-  fun inMap(r: Int, c: Int): Boolean = r in 0 until ROW && c in 0 until COL
-
 
   val virusPos = IntArray(MAX_VIRUS_CNT)
   var vCnt = 0
@@ -95,8 +93,6 @@ fun main() {
 
   var max = 0
   val q = IntArray(SIZE)
-  val infected = IntArray(SIZE)
-
 
   fun dfs(dep: Int, stt: Int) {
     if (dep == MAX_USABLE_WALL_CNT) {
@@ -108,7 +104,6 @@ fun main() {
       }
 
       val tmp = map.copyOf()
-      var iCnt = 0
       bfs@ while (qh < qt) {
         val vPos = q[qh++]
         val r = vPos / SEP
@@ -117,16 +112,13 @@ fun main() {
           val nr = r + qr[i]
           val nc = c + qc[i]
           val nPos = pos(nr, nc)
-
-          if (inMap(nr, nc) && tmp[nPos] == EMPTY) {
+          if (nr in 0 until ROW && nc in 0 until COL && tmp[nPos] == EMPTY) {
             tmp[nPos] = VIRUS
-            infected[iCnt++] = nPos
             if (--safeZone <= max) break@bfs
             else q[qt++] = nr * SEP + nc
           }
         }
       }
-
 
       if (safeZone > max) max = safeZone
       return
@@ -137,17 +129,16 @@ fun main() {
       val r = rc / SEP
       val c = rc % SEP
       val pos = pos(r, c)
-
       var usable = false
       for (j in 0 until er.size) {
         val nr = r + er[j]
         val nc = c + ec[j]
-        if (!inMap(nr, nc) || map[pos(nr, nc)] != EMPTY) {
+        val outOfRange = !(nr in 0 until ROW && nc in 0 until COL)
+        if (outOfRange || map[pos(nr, nc)] != EMPTY) {
           usable = true
           break
         }
       }
-
       if (usable) {
         map[pos] = WALL
         dfs(dep + 1, i + 1)
@@ -160,3 +151,13 @@ fun main() {
   w(max)
   O.flush()
 }
+
+/**
+IN
+3 3
+0 0 0
+0 0 0
+2 2 0
+OUT
+4
+ */
