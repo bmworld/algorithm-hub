@@ -58,22 +58,26 @@ const val WALL = 1
 const val VIRUS = 2
 const val SEP = 10
 
-val dr = intArrayOf(0, 1, 0, -1)
-val dc = intArrayOf(1, 0, -1, 0)
+val qr = intArrayOf(0, 1, 0, -1)
+val qc = intArrayOf(1, 0, -1, 0)
 const val MAX_USABLE_WALL_CNT = 3
 const val MAX_VIRUS_CNT = 10
+
+val er = intArrayOf(-1, -1, -1, 0, 0, 1, 1, 1)
+val ec = intArrayOf(-1, 0, 1, -1, 1, -1, 0, 1)
 
 fun main() {
 
   val ROW = i()
   val COL = i()
   val CAP = COL
-  fun pos(r: Int, c: Int): Int = r * CAP + c
-
   val SIZE = ROW * COL
-  val map = IntArray(SIZE)
 
-  var eCnt = 0
+  val map = IntArray(SIZE)
+  fun pos(r: Int, c: Int): Int = r * CAP + c
+  fun inMap(r: Int, c: Int): Boolean = r in 0 until ROW && c in 0 until COL
+
+
   val virusPos = IntArray(MAX_VIRUS_CNT)
   var vCnt = 0
   val safePos = IntArray(SIZE)
@@ -82,7 +86,7 @@ fun main() {
     repeat(COL) { c ->
       val v = i()
       when (v) {
-        EMPTY -> eCnt++
+        EMPTY -> safePos[sCnt++] = r * SEP + c
         VIRUS -> virusPos[vCnt++] = r * SEP + c
       }
       map[pos(r, c)] = v
@@ -92,53 +96,63 @@ fun main() {
   var max = 0
   val q = IntArray(SIZE)
   val infected = IntArray(SIZE)
-  fun searchSafeZone(init: Boolean): Int {
-    var cnt = eCnt - MAX_USABLE_WALL_CNT
-    var qh = 0
-    var qt = 0
-    repeat(vCnt) {
-      q[qt++] = virusPos[it]
-    }
-    var iCnt = 0
-    bfs@ while (qh < qt) {
-      val vPos = q[qh++]
-      val r = vPos / SEP
-      val c = vPos % SEP
-      for (i in 0..3) {
-        val nr = r + dr[i]
-        val nc = c + dc[i]
-        val nPos = pos(nr, nc)
 
-        if (nr in 0 until ROW && nc in 0 until COL && map[nPos] == EMPTY) {
-          map[nPos] = VIRUS
-          infected[iCnt++] = nPos
-          if (init) safePos[sCnt++] = nr * SEP + nc
-          else if (--cnt <= max) break@bfs
-
-          q[qt++] = nr * SEP + nc
-        }
-      }
-    }
-
-    repeat(iCnt) {
-      map[infected[it]] = EMPTY
-    }
-    return cnt
-  }
-
-  searchSafeZone(true)
 
   fun dfs(dep: Int, stt: Int) {
     if (dep == MAX_USABLE_WALL_CNT) {
-      searchSafeZone(false).also { if (it > max) max = it }
+      var safeZone = sCnt - MAX_USABLE_WALL_CNT
+      var qh = 0
+      var qt = 0
+      repeat(vCnt) {
+        q[qt++] = virusPos[it]
+      }
+
+      val tmp = map.copyOf()
+      var iCnt = 0
+      bfs@ while (qh < qt) {
+        val vPos = q[qh++]
+        val r = vPos / SEP
+        val c = vPos % SEP
+        for (i in 0..3) {
+          val nr = r + qr[i]
+          val nc = c + qc[i]
+          val nPos = pos(nr, nc)
+
+          if (inMap(nr, nc) && tmp[nPos] == EMPTY) {
+            tmp[nPos] = VIRUS
+            infected[iCnt++] = nPos
+            if (--safeZone <= max) break@bfs
+            else q[qt++] = nr * SEP + nc
+          }
+        }
+      }
+
+
+      if (safeZone > max) max = safeZone
       return
     }
-    for (i in stt until sCnt) {
+
+    for (i in stt..sCnt - MAX_USABLE_WALL_CNT + dep) {
       val rc = safePos[i]
-      val pos = pos(rc / SEP, rc % SEP)
-      map[pos] = WALL
-      dfs(dep + 1, i + 1)
-      map[pos] = EMPTY
+      val r = rc / SEP
+      val c = rc % SEP
+      val pos = pos(r, c)
+
+      var usable = false
+      for (j in 0 until er.size) {
+        val nr = r + er[j]
+        val nc = c + ec[j]
+        if (!inMap(nr, nc) || map[pos(nr, nc)] != EMPTY) {
+          usable = true
+          break
+        }
+      }
+
+      if (usable) {
+        map[pos] = WALL
+        dfs(dep + 1, i + 1)
+        map[pos] = EMPTY
+      }
     }
   }
 
@@ -146,6 +160,3 @@ fun main() {
   w(max)
   O.flush()
 }
-
-//println("[$pos] = $stt")
-//println("--- $r, $c -> $nr, $nc")
