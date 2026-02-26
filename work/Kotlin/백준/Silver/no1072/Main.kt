@@ -64,9 +64,31 @@ fun main() {
     prv >= 99 -> -1
     else -> {
       val nxt = prv + 1
-      val base = 100 - nxt
-      (X * nxt - Y * 100) / base
+      val D = 100 - nxt
+      (X * nxt - Y * 100 + (D - 1)) / D
     }
   })
   O.flush()
 }
+
+/**
+IN
+1 0
+OUT
+1
+
+IN
+3 2
+OUT
+1
+
+IN
+7 4
+OUT
+1
+
+IN
+1000000000 980000000
+OUT
+1000000000
+ */
