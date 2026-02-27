@@ -55,14 +55,21 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-val CHANGES = intArrayOf(25, 10, 5, 1)
 fun main() {
   repeat(i()) {
     var cent = i()
-    repeat(4) {
-      val c = CHANGES[it]
-      w(if (cent >= c) cent / c.also { cent %= it } else 0, it + 1 == 3)
-    }
+    w(if (cent >= 25) {
+      cent / 25.also { cent %= it }
+    } else 0)
+    w(if (cent >= 10) {
+      cent / 10.also { cent %= it }
+    } else 0)
+    w(if (cent >= 5) {
+      cent / 5.also { cent %= it }
+    } else 0)
+    w(if (cent >= 1) {
+      cent / 1.also { cent %= it }
+    } else 0, true)
   }
   O.flush()
 }
