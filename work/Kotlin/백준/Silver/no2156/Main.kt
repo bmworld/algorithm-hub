@@ -35,7 +35,7 @@ fun i(): Int {
   return s * v
 }
 
-const val WS = 20
+const val WS = 10
 val WB = ByteArray(WS)
 fun w(
   num: Int
@@ -55,17 +55,17 @@ fun w(
 
 fun main() {
   val N = i()
-  val cups = IntArray(N)
-  var max = 0
+  val SIZE = N + 3
+  val cups = IntArray(SIZE)
+  val dp = IntArray(SIZE)
 
   repeat(N) {
+    val i = it + 3
     val v = i()
-    cups[it] = v
-    if (it < 2) max += v
-    else max = maxOf(max, max - cups[it - 2] + v, max - cups[it - 1] + v)
-    println("[$it] $max")
+    cups[i] = v
+    dp[i] = maxOf(dp[i - 1], dp[i - 2] + v, dp[i - 3] + cups[i - 1] + v)
   }
 
-  w(max)
+  w(dp[SIZE - 1])
   O.flush()
 }
