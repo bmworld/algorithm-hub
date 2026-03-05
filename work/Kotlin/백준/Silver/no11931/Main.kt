@@ -53,7 +53,7 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-const val HALF = 1_000_000_000
+const val HALF = 1_000_000
 fun main() {
 
   val N = i()
