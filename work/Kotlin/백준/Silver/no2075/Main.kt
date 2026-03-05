@@ -53,9 +53,9 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-const val SEP = 1_000L
-const val MIN = -1_000_000_000
-const val MAX = 1_000_000_000
+const val SEP = 10_000L
+const val MIN = Int.MIN_VALUE
+const val HALF = 1_000_000_000
 fun main() {
 
   val N = i()
@@ -64,11 +64,10 @@ fun main() {
 
   val a = IntArray(N * N) { i() }
   val cnds = LongArray(N).also {
-    repeat(N) { i ->
-      it[i] = (a[pos(N - 1, i)] + MAX) * SEP + (N - 1)
+    repeat(N) { c ->
+      it[c] = (a[pos(N - 1, c)] + HALF) * SEP + (N - 1)
     }
   }
-
 
   repeat(N - 1) {
     var max = MIN
@@ -76,19 +75,19 @@ fun main() {
     var r = -1
     repeat(N) { col ->
       val e = cnds[col]
-      val v = e / SEP - MAX
+      val v = e / SEP - HALF
       if (v > max) {
         max = v.toInt()
         r = (e % SEP).toInt()
         c = col
       }
     }
-    cnds[c] = (a[pos(r - 1, c)] + MAX) * SEP + (r - 1)
+    cnds[c] = (a[pos(r - 1, c)] + HALF) * SEP + (r - 1)
   }
 
   var ans = MIN
   repeat(N) {
-    val v = (cnds[it] / SEP - MAX).toInt()
+    val v = (cnds[it] / SEP - HALF).toInt()
     ans = maxOf(ans, v)
   }
   w(ans)
