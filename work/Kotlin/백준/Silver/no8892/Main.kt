@@ -3,7 +3,7 @@ package 백준.Silver.no8892
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 13
+const val IBS = 1 shl 16
 const val OBS = 1 shl 8
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -37,52 +37,17 @@ fun i(): Int {
 
 const val NL: Byte = 10
 const val IMPOSSIBLE = 48
-const val MAX_COMB_CNT = 2
-const val MAX_WORD_CNT = 100
 const val MAX_WORD_LEN = 10_000
 
 fun main() {
   var b: Byte
   val reader = ByteArray(MAX_WORD_LEN)
   val WORDS = mutableListOf<ByteArray>()
-  val USED = BooleanArray(MAX_WORD_CNT)
-
-  var found = false
-  fun dfs(dep: Int, end: Int, pos: Int) {
-    if (found) return
-    if (dep == MAX_COMB_CNT) {
-      var valid = true
-      for (l in 0 until pos / 2) {
-        val r = pos - 1 - l
-        if (reader[l] != reader[r]) {
-          valid = false
-          break
-        }
-      }
-
-      if (valid) {
-        O.write(reader, 0, pos)
-        found = true
-      }
-      return
-    }
-
-    for (i in 0..end) {
-      if (USED[i]) continue
-      val w = WORDS[i]
-      val len = w.size
-      System.arraycopy(w, 0, reader, pos, len)
-      USED[i] = true
-      dfs(dep + 1, end, pos + len)
-      USED[i] = false
-    }
-  }
 
   repeat(i()) {
     val cnt = i()
     repeat(cnt) {
       var len = 0
-      found = false
       while (r().also { b = it } >= NL) {
         if (b == NL) break
         reader[len++] = b
@@ -90,7 +55,35 @@ fun main() {
       WORDS += reader.copyOfRange(0, len)
     }
 
-    dfs(0, cnt - 1, 0)
+    var found = false
+    search@ for (i in 0 until cnt) {
+      for (j in 0 until cnt) {
+        if (i == j) continue
+        var isPalindrome = true
+
+        val a = WORDS[i]
+        val b = WORDS[j]
+        val aLen = a.size
+        val bLen = b.size
+        val len = aLen + bLen
+        for (li in 0 until len / 2) {
+          val l = if (li < aLen) a[li] else b[li - aLen]
+          val ri = len - 1 - li
+          val r = if (ri < aLen) a[ri] else b[ri - aLen]
+          if (l != r) {
+            isPalindrome = false
+            break
+          }
+        }
+        if (isPalindrome) {
+          found = true
+          O.write(a)
+          O.write(b)
+          break@search
+        }
+      }
+    }
+
     if (!found) O.write(IMPOSSIBLE)
     O.write(10)
     WORDS.clear()
