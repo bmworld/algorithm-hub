@@ -56,11 +56,9 @@ fun main() {
     }
 
     var found = false
-    search@ for (i in 0 until cnt) {
-      for (j in 0 until cnt) {
+    dep1@ for (i in 0 until cnt) {
+      dep2@ for (j in 0 until cnt) {
         if (i == j) continue
-        var isPalindrome = true
-
         val a = WORDS[i]
         val b = WORDS[j]
         val aLen = a.size
@@ -70,17 +68,13 @@ fun main() {
           val l = if (li < aLen) a[li] else b[li - aLen]
           val ri = len - 1 - li
           val r = if (ri < aLen) a[ri] else b[ri - aLen]
-          if (l != r) {
-            isPalindrome = false
-            break
-          }
+          if (l != r) continue@dep2
         }
-        if (isPalindrome) {
-          found = true
-          O.write(a)
-          O.write(b)
-          break@search
-        }
+
+        O.write(a)
+        O.write(b)
+        found = true
+        break@dep1
       }
     }
 
