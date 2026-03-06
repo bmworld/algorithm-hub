@@ -3,8 +3,8 @@ package 백준.Silver.no1213
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 6
-const val OBS = 1 shl 6
+const val IBS = 1 shl 5
+const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -29,43 +29,42 @@ val IMPOSSIBLE = "I'm Sorry Hansoo".toByteArray()
 
 fun main() {
   var b: Byte
-
   val ALPH = IntArray(ALPHBET_CNT)
-
+  var len = 0
   var min = ALPHBET_CNT - 1
   var max = 0
-  var len = 0
   while (r().also { b = it } >= NL) {
     if (b == NL) break
     val i = b - A
     ALPH[i]++
+    len++
     if (i > max) max = i
     if (i < min) min = i
-    len++
   }
 
   val ans = ByteArray(len) { EMPTY }
-  var rmn = len
   var l = 0
   for (i in min..max) {
     val char = (i + A).toByte()
     var cnt = ALPH[i]
-    if (cnt % 2 == 1 && ans[len / 2] != EMPTY) break
+    if (cnt % 2 == 1 && ans[len / 2] != EMPTY) {
+      O.write(IMPOSSIBLE)
+      O.flush()
+      return
+    }
 
     while (cnt > 0) {
       if (cnt == 1) {
         ans[len / 2] = char
-        rmn--
         cnt--
       } else {
         ans[l] = char
         ans[len - 1 - l++] = char
-        rmn -= 2
         cnt -= 2
       }
     }
   }
 
-  O.write(if (rmn == 0) ans else IMPOSSIBLE)
+  O.write(ans)
   O.flush()
 }
