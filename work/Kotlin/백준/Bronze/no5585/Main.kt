@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 15
-const val OBS = 1 shl 8
+const val OBS = 1 shl 10
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -54,10 +54,14 @@ fun main() {
       in 48..57 -> CNT[2]++
       SPACE -> CNT[3]++
       NL -> {
-        repeat(CNT.size) {
-          w(CNT[it], it + 1 == CNT.size)
-          CNT[it] = 0
-        }
+        w(CNT[0])
+        w(CNT[1])
+        w(CNT[2])
+        w(CNT[3], true)
+        CNT[0] = 0
+        CNT[1] = 0
+        CNT[2] = 0
+        CNT[3] = 0
       }
       else -> break
     }
