@@ -52,7 +52,9 @@ fun main() {
 
   val ans = ByteArray(ALPH_CNT)
   var len = 0
-  for (pos in 0 until ALPH_CNT) if (CNT[pos] >= VALID_CNT) ans[len++] = (pos + a).toByte()
+  repeat(ALPH_CNT) { pos ->
+    if (CNT[pos] >= VALID_CNT) ans[len++] = (pos + a).toByte()
+  }
 
   if (len == 0) O.write(INVALID)
   else O.write(ans, 0, len)
