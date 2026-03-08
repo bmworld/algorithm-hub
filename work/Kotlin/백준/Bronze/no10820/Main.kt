@@ -1,4 +1,4 @@
-package 백준.Bronze.no5585
+package 백준.Bronze.no10820
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
