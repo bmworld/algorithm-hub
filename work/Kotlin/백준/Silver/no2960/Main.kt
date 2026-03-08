@@ -56,26 +56,21 @@ fun w(
 fun main() {
   val N = i()
   val K = i()
-  if (N == 1) {
-    w(1)
-    O.flush()
-    return
-  }
-
+  var ans = 1
   var d = 2
   var order = 0
   val ch = BooleanArray(N + 1)
-  while (d < N) {
+  l@ while (d <= N) {
     for (v in d..N step d) if (!ch[v]) {
       ch[v] = true
-      order = (order + 1).also {
-        if (it == K) {
-          w(v)
-          O.flush()
-          return
-        }
+      if (++order == K) {
+        ans = v
+        break@l
       }
     }
     d++
   }
+
+  w(ans)
+  O.flush()
 }
