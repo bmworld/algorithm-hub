@@ -1,11 +1,8 @@
 package 백준.Bronze.no1100
 
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 7
-const val OBS = 1 shl 2
-val O = BufferedOutputStream(System.`out`, OBS)
+const val IBS = 72
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -21,49 +18,17 @@ fun r(): Byte {
   return IB[Ii++]
 }
 
-val NUM = 48..57
-fun i(): Int {
-  var v = 0
-  var s = 1
-  var c: Byte
-  while (r().also { c = it } in NUM || c == 45.toByte()) {
-    when (c) {
-      in NUM -> v = v * 10 + c - 48
-      else -> s = -1
-    }
-  }
-  return s * v
-}
-
-const val WS = 10
-val WB = ByteArray(WS)
-fun w(
-  num: Int,
-) {
-  var v = if (num >= 0) num
-  else {
-    O.write(45)
-    -num
-  }
-  var pos = WS - 1
-  do {
-    WB[pos--] = (v % 10 + 48).toByte()
-    v /= 10
-  } while (v > 0)
-  O.write(WB, ++pos, WS - pos)
-}
-
 const val SIZE = 8
 const val PIECE = 70.toByte()
 fun main() {
   var ans = 0
   repeat(SIZE) { r ->
+    val evenR = r % 2 == 0
     repeat(SIZE) { c ->
-      if (r() == PIECE && (r % 2 == 0 && c % 2 == 0 || r % 2 == 1 && c % 2 == 1)) ans++
+      val evenC = c % 2 == 0
+      if (r() == PIECE && (evenR && evenC || !evenR && !evenC)) ans++
     }
     r()
   }
-
-  w(ans)
-  O.flush()
+  print(ans)
 }
