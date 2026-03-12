@@ -56,14 +56,42 @@ fun w(
 fun main() {
   val fr = i()
   val to = i()
-  var ACC = IntArray(to + 1)
-  var odr = 1
-  var num = 1
-  var limit = num * (num + 1) / 2
-  while (odr <= to) {
-    ACC[odr] = ACC[odr++ - 1] + num
-    if (limit < odr) num = (num + 1).also { limit = it * (it + 1) / 2 }
-  }
-  w(ACC[to] - ACC[fr - 1])
+
+  val n1 = getNum(fr)
+  val n2 = getNum(to)
+
+  w(if (n1 == n2) (to - fr + 1) * n2 else {
+    var sum = 0
+    var n = n1
+    while (n <= n2) {
+      sum += when (n) {
+        n1 -> n * (((n * (n + 1)) shr 1) - (fr - 1))
+        n2 -> n * (to - (((n - 1) * n) shr 1))
+        else -> n * n
+      }
+      n++
+    }
+
+    sum
+  })
   O.flush()
+}
+
+fun getNum(pos: Int): Int {
+  var l = 1
+  var r = 45
+
+  while (l <= r) {
+    val m = (l + r) shr 1
+    val cur = (m * (m + 1)) shr 1
+    val prv = ((m - 1) * m) shr 1
+
+    when {
+      pos > prv && pos <= cur -> return m
+      pos > cur -> l = m + 1
+      else -> r = m - 1
+    }
+  }
+
+  return -1
 }
