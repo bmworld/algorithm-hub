@@ -2,7 +2,7 @@ package 백준.Silver.no3986
 
 import java.io.BufferedInputStream
 
-const val IBS = 1 shl 20
+const val IBS = 1 shl 16
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -34,52 +34,20 @@ fun i(): Int {
 
 const val A: Byte = 65
 const val B: Byte = 66
-const val EOL: Byte = 10
-const val EMPTY: Byte = -1
-const val STACK_LIMIT = 4
+const val EMPTY = 1
+const val MAX_LEN = 100_000
 fun main() {
+  var b: Byte
 
   var ans = 0
-  val stack = ByteArray(STACK_LIMIT)
-
+  val stack = ByteArray(MAX_LEN + 1)
   repeat(i()) {
-    var prv: Byte = EMPTY
-    var cur: Byte
-
-    var stacked = 0
-    var aCnt = 0
-    var bCnt = 0
-    while (r().also { cur = it; if (prv == EMPTY) prv = it } >= EOL) {
-      val changed = cur != prv
-      var merged = false
-      if (changed && stacked < STACK_LIMIT) {
-        when (prv) {
-          A -> {
-            if (aCnt % 2 != 0) stack[stacked++] = prv
-            aCnt = 0
-          }
-          B -> {
-            if (bCnt % 2 != 0) stack[stacked++] = prv
-            bCnt = 0
-          }
-        }
-
-        if (stacked > 0 && stack[stacked - 1] == cur) {
-          stacked--
-          merged = true
-        }
-      }
-
-
-      when (cur) {
-        A -> if (!merged) aCnt++
-        B -> if (!merged) bCnt++
-        EOL -> break
-      }
-      prv = cur
+    var pos = EMPTY
+    while (r().also { b = it } >= A) {
+      if (b == stack[pos - 1]) pos--
+      else stack[pos++] = b
     }
-
-    if (stacked == 0) ans++
+    if (pos == EMPTY) ans++
   }
 
   print(ans)
@@ -98,7 +66,7 @@ OUT
 0
 
 IN
-5
+6
 AA
 AABB
 ABBA
@@ -107,8 +75,4 @@ BBBABBABBB
 BABABBAABAABBBABAB
 OUT
 6
-
  */
-
-// BABABBAABAABBBABAB
-//AAAAAAAAAABAAABAB
