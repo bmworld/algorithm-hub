@@ -32,37 +32,83 @@ fun i(): Int {
   return s * v
 }
 
+const val A: Byte = 65
+const val B: Byte = 66
 const val EOL: Byte = 10
 const val EMPTY: Byte = -1
+const val STACK_LIMIT = 4
 fun main() {
 
   var ans = 0
-
-  val ch = HashMap<Int, Boolean>()
+  val stack = ByteArray(STACK_LIMIT)
 
   repeat(i()) {
     var prv: Byte = EMPTY
     var cur: Byte
 
-    var cnt = 0
+    var stacked = 0
+    var aCnt = 0
+    var bCnt = 0
     while (r().also { cur = it; if (prv == EMPTY) prv = it } >= EOL) {
-      if (cur != prv) {
-        if (ch[cnt] == true) ch.remove(cnt)
-        else ch[cnt] = true
-        cnt = 0
+      val changed = cur != prv
+      var merged = false
+      if (changed && stacked < STACK_LIMIT) {
+        when (prv) {
+          A -> {
+            if (aCnt % 2 != 0) stack[stacked++] = prv
+            aCnt = 0
+          }
+          B -> {
+            if (bCnt % 2 != 0) stack[stacked++] = prv
+            bCnt = 0
+          }
+        }
+
+        if (stacked > 0 && stack[stacked - 1] == cur) {
+          stacked--
+          merged = true
+        }
       }
+
 
       when (cur) {
+        A -> if (!merged) aCnt++
+        B -> if (!merged) bCnt++
         EOL -> break
-        else -> cnt++
       }
-
       prv = cur
     }
 
-    if (ch.isEmpty()) ans++
-    else ch.clear()
+    if (stacked == 0) ans++
   }
 
   print(ans)
 }
+
+/**
+
+IN
+5
+ABA
+ABAB
+BBBBAAB
+BBBAAABBA
+BABBAABBBBBBBAABBB
+OUT
+0
+
+IN
+5
+AA
+AABB
+ABBA
+BAABBB
+BBBABBABBB
+BABABBAABAABBBABAB
+OUT
+6
+
+ */
+
+// BABABBAABAABBBABAB
+//AAAAAAAAAABAAABAB
