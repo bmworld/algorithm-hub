@@ -40,7 +40,7 @@ fun main() {
   var N = i()
   val F = i()
 
-  if (N % F == 0) {
+  if (100 % F == 0) {
     O.write(48)
     O.write(48)
   } else {
@@ -66,3 +66,11 @@ fun main() {
 
   O.flush()
 }
+
+/**
+IN
+946715769
+81
+OUT
+69
+ */
