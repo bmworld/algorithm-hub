@@ -48,7 +48,7 @@ fun main() {
     N /= 100
     N *= 100
 
-    var v = 1
+    var v = 0
     while (v < 100) {
       if ((N + v) % F == 0) break
       v++
