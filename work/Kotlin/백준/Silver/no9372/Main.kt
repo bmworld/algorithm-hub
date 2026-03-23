@@ -1,8 +1,11 @@
 package 백준.Silver.no9372
 
 import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
+const val IBS = 1 shl 12
+const val OBS = 1 shl 7
+val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -33,6 +36,25 @@ fun i(): Int {
 }
 
 
+const val WS = 10
+val WB = ByteArray(WS + 1).also { it[WS] = 10 }
+fun w(
+  num: Int
+) {
+  var v = if (num >= 0) num
+  else {
+    O.write(45)
+    -num
+  }
+  var pos = WS - 1
+  do {
+    WB[pos--] = (v % 10 + 48).toByte()
+    v /= 10
+  } while (v > 0)
+  O.write(WB, ++pos, WS - pos + 1)
+}
+
+
 fun main() {
   fun findRoot(v: Int, tree: IntArray): Int {
     val r = tree[v]
@@ -40,15 +62,6 @@ fun main() {
       val nr = findRoot(r, tree)
       tree[v] = nr
       nr
-    }
-  }
-
-  fun merge(a: Int, b: Int, tree: IntArray) {
-    val ar = findRoot(a, tree)
-    val br = findRoot(b, tree)
-    when {
-      ar < br -> tree[br] = ar
-      ar > br -> tree[ar] = br
     }
   }
 
@@ -60,14 +73,18 @@ fun main() {
     repeat(i()) {
       val a = i()
       val b = i()
-      val ra = findRoot(a, tree)
-      val rb = findRoot(b, tree)
-      if (ra != rb) {
-        merge(ra, rb, tree)
+      val r1 = findRoot(a, tree)
+      val r2 = findRoot(b, tree)
+      if (r1 != r2) {
+        when {
+          r1 < r2 -> tree[r2] = r1
+          r1 > r2 -> tree[r1] = r2
+        }
         cnt++
       }
     }
-
-    println(cnt)
+    w(cnt)
   }
+
+  O.flush()
 }
