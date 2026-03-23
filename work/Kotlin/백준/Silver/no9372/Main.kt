@@ -3,7 +3,7 @@ package 백준.Silver.no9372
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 12
+const val IBS = 1 shl 16
 const val OBS = 1 shl 7
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -78,7 +78,7 @@ fun main() {
       if (r1 != r2) {
         when {
           r1 < r2 -> tree[r2] = r1
-          r1 > r2 -> tree[r1] = r2
+          else -> tree[r1] = r2
         }
         cnt++
       }
