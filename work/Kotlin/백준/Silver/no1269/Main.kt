@@ -3,7 +3,7 @@ package 백준.Silver.no1269
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 15
+const val IBS = 1 shl 12
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -67,12 +67,9 @@ fun main() {
   repeat(B) {
     val v = i()
     val cnt = map[v]
-    when (cnt) {
-      null -> map[v] = 1
-      else -> {
-        total -= cnt + 1
-        map[v] = 0
-      }
+    if (cnt != null) {
+      total -= cnt + 1
+      map[v] = 0
     }
   }
 
