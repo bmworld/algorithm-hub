@@ -57,20 +57,14 @@ fun main() {
   val A = i()
   val B = i()
 
-  val map = HashMap<Int, Int>()
+  val a = HashSet<Int>()
   repeat(A) {
-    val v = i()
-    map[v] = (map[v] ?: 0) + 1
+    a.add(i())
   }
 
   var total = A + B
   repeat(B) {
-    val v = i()
-    val cnt = map[v]
-    if (cnt != null) {
-      total -= cnt + 1
-      map[v] = 0
-    }
+    if (a.contains(i())) total -= 2
   }
 
   w(total)
