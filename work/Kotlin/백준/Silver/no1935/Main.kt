@@ -57,7 +57,8 @@ fun main() {
           ADD -> prv + nxt
           SUB -> prv - nxt
           MUL -> prv * nxt
-          else -> prv / nxt
+          DIV -> prv / nxt
+          else -> throw IllegalArgumentException("Not Supported.")
         }
       }
     }
