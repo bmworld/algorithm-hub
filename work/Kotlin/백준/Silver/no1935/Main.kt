@@ -21,38 +21,29 @@ fun r(): Byte {
 val NUM = 48..57
 fun i(): Int {
   var v = 0
-  var s = 1
   var b: Byte
-  while (r().also { b = it } in NUM || b == 45.toByte()) {
-    when (b) {
-      in NUM -> v = v * 10 + b - 48
-      else -> s = -1
-    }
-  }
-  return s * v
+  while (r().also { b = it } in NUM) v = v * 10 + b - 48
+  return v
 }
 
-fun main() {
-  val MUL: Byte = 42
-  val ADD: Byte = 43
-  val SUB: Byte = 45
-  val DIV: Byte = 47
-  val A: Byte = 65
-  val Z: Byte = 90
-  val OPERAND = A..Z
+const val Z: Byte = 90
+const val A: Byte = 65
+val OPERAND = A..Z
+const val MAX_OP_SIZE = 10_000
+const val MUL: Byte = 42
+const val ADD: Byte = 43
+const val SUB: Byte = 45
+const val DIV: Byte = 47
 
+fun main() {
   val OP_KINDS = i()
-  val postfix = ByteArray(10_000)
+  val postfix = ByteArray(MAX_OP_SIZE)
   var pi = 0
   var b: Byte
-  var OP_CNT = 0
-  while (r().also { b = it } >= MUL) {
-    postfix[pi++] = b
-    if (b in OPERAND) OP_CNT++
-  }
+  while (r().also { b = it } >= MUL) postfix[pi++] = b
 
   val mapper = DoubleArray(OP_KINDS) { i().toDouble() }
-  val stack = DoubleArray(OP_CNT)
+  val stack = DoubleArray(pi)
   var si = 0
   repeat(pi) {
     val b = postfix[it]
