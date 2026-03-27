@@ -1,7 +1,6 @@
 package 백준.Silver.no1935
 
 import java.io.BufferedInputStream
-import java.util.*
 
 const val IBS = 1 shl 7
 val I = BufferedInputStream(System.`in`)
@@ -42,31 +41,36 @@ fun main() {
   val Z: Byte = 90
   val OPERAND = A..Z
 
-  val OP_CNT = i()
+  val OP_KINDS = i()
   val postfix = ByteArray(10_000)
   var pi = 0
   var b: Byte
-  while (r().also { b = it } >= MUL) postfix[pi++] = b
+  var OP_CNT = 0
+  while (r().also { b = it } >= MUL) {
+    postfix[pi++] = b
+    if (b in OPERAND) OP_CNT++
+  }
 
-  val mapper = DoubleArray(OP_CNT) { i().toDouble() }
-  val stack = Stack<Double>()
+  val mapper = DoubleArray(OP_KINDS) { i().toDouble() }
+  val stack = DoubleArray(OP_CNT)
+  var si = 0
   repeat(pi) {
     val b = postfix[it]
     when (b) {
-      in OPERAND -> stack.add(mapper[b - A])
+      in OPERAND -> stack[si++] = mapper[b - A]
       else -> {
-        val nxt = stack.pop()
-        val prv = stack.pop()
-        val r = when (b) {
+        val nxt = stack[--si]
+        val prv = stack[--si]
+
+        stack[si++] = when (b) {
           ADD -> prv + nxt
           SUB -> prv - nxt
           MUL -> prv * nxt
           else -> prv / nxt
         }
-        stack.add(r)
       }
     }
   }
 
-  print("%.2f".format(stack.pop()))
+  print("%.2f".format(stack[0]))
 }
