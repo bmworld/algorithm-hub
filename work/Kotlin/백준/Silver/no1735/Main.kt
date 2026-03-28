@@ -1,11 +1,8 @@
 package 백준.Silver.no1735
 
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 
-const val IBS = 20
-const val OBS = 10
-val O = BufferedOutputStream(System.`out`, OBS)
+const val IBS = 1 shl 5
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -35,26 +32,6 @@ fun i(): Int {
   return s * v
 }
 
-
-const val WS = 10
-val WB = ByteArray(WS + 1).also { it[WS] = 32 }
-fun w(
-  num: Int
-) {
-  var v = if (num >= 0) num
-  else {
-    O.write(45)
-    -num
-  }
-  var pos = WS - 1
-  do {
-    WB[pos--] = (v % 10 + 48).toByte()
-    v /= 10
-  } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
-}
-
-
 fun main() {
   val a1 = i()
   val b1 = i()
@@ -64,9 +41,8 @@ fun main() {
   val a = a1 * b2 + a2 * b1
   val b = b1 * b2
   val gcd = getGCD(a, b)
-  w(a / gcd)
-  w(b / gcd)
-  O.flush()
+  println(a / gcd)
+  print(b / gcd)
 }
 
 tailrec fun getGCD(a: Int, b: Int): Int = if (b == 0) a else getGCD(b, a % b)
