@@ -52,12 +52,14 @@ fun main() {
   val N = i()
   val scores = IntArray(N)
   val names = Array<String>(N) { "" }
+
+  var totalNameLen = 0
   repeat(N) {
     val n = n()
     val k = i()
     val e = i()
     val m = i()
-    names[it] = n
+    names[it] = n.also { totalNameLen += it.length + 1 }
     scores[it] = k * SEP1 + e * SEP2 + m
   }
 
@@ -119,23 +121,9 @@ fun main() {
 
   qs(0, N - 1)
 
+  val out = StringBuilder(totalNameLen)
   repeat(N) {
-    println(names[it])
+    out.appendLine(names[it])
   }
+  print(out)
 }
-
-/**
-# IN
-5
-C 22 100 100
-B 22 22 1
-A 100 1 1
-D 22 100 33
-d 22 100 33
-# OUT
-A
-B
-C
-D
-d
- */
