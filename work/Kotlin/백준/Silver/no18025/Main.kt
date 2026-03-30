@@ -2,7 +2,7 @@ package 백준.Silver.no18025
 
 import java.io.BufferedInputStream
 
-const val IBS = 1 shl 20
+const val IBS = 1 shl 18
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -50,40 +50,74 @@ const val SEP1 = 1_000 * SEP2
 
 fun main() {
   val N = i()
-  val a = IntArray(N)
+  val scores = IntArray(N)
   val names = Array<String>(N) { "" }
-
-
   repeat(N) {
-    val n1 = n()
-    val k1 = i()
-    val e1 = i()
-    val m1 = i()
-    val v = k1 * SEP1 + e1 * SEP2 + m1
+    val n = n()
+    val k = i()
+    val e = i()
+    val m = i()
+    names[it] = n
+    scores[it] = k * SEP1 + e * SEP2 + m
+  }
 
-    var i = it
-    for (j in it - 1 downTo 0) {
-      val v2 = a[j]
-      val k2 = v2 / SEP1
-      if (k1 < k2) break
-      else if (k1 == k2) {
-        val em = v2 % SEP1
-        val e2 = em / SEP2
-        if (e1 > e2) break
-        else if (e1 == e2) {
-          val m2 = em % SEP2
-          if (m1 < m2) break
-          else if (m1 == m2 && n1 >= names[j]) break
-        }
+  fun comp(kor: Int, eng: Int, math: Int, name: String, i: Int): Boolean {
+    val kem = scores[i]
+    val k = kem / SEP1
+    if (kor < k) return true
+    else if (kor == k) {
+      val em = kem % SEP1
+      val e = em / SEP2
+      if (eng > e) return true
+      else if (eng == e) {
+        val m = em % SEP2
+        if (math < m) return true
+        else if (math == m && name >= names[i]) return true
       }
-      a[j + 1] = a[j]
-      names[j + 1] = names[j]
-      i = j
     }
 
-    a[i] = v
-    names[i] = n1
+    return false
   }
+
+
+  fun swap(i: Int, j: Int) {
+    val v = scores[i]
+    scores[i] = scores[j]
+    scores[j] = v
+
+    val n = names[i]
+    names[i] = names[j]
+    names[j] = n
+  }
+
+  fun sort(l: Int, r: Int): Int {
+    val m = (l + r) shr 1
+    val n = names[m]
+    val kem = scores[m]
+    val kor = kem / SEP1
+    val em = kem % SEP1
+    val eng = em / SEP2
+    val math = em % SEP2
+
+    swap(m, r)
+
+    var pos = l
+    for (i in l until r)
+      if (comp(kor, eng, math, n, i)) swap(pos++, i)
+
+    if (!comp(kor, eng, math, n, pos)) swap(pos, r)
+    return pos
+  }
+
+
+  fun qs(l: Int, r: Int) {
+    if (l >= r) return
+    val m = sort(l, r)
+    qs(l, m - 1)
+    qs(m + 1, r)
+  }
+
+  qs(0, N - 1)
 
   repeat(N) {
     println(names[it])
@@ -91,35 +125,6 @@ fun main() {
 }
 
 /**
-# IN
-12
-Junkyu 50 60 100
-Sangkeun 80 60 50
-Sunyoung 80 70 100
-Soong 50 60 90
-Haebin 50 60 100
-Kangsoo 60 80 100
-Donghyuk 80 60 100
-Sei 70 70 70
-Wonseob 70 70 90
-Sanghyun 70 70 80
-nsj 80 80 80
-Taewhan 50 60 90
-
-# OUT
-Donghyuk
-Sangkeun
-Sunyoung
-nsj
-Wonseob
-Sanghyun
-Sei
-Kangsoo
-Haebin
-Junkyu
-Soong
-Taewhan
-
 # IN
 5
 C 22 100 100
