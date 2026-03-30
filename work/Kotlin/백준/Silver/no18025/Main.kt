@@ -1,12 +1,9 @@
 package 백준.Silver.no18025
 
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 20
-const val OBS = 1 shl 16
 val I = BufferedInputStream(System.`in`)
-val O = BufferedOutputStream(System.`out`, OBS)
 val IB = ByteArray(IBS)
 var Ii = 0
 var Il = 0
@@ -53,43 +50,44 @@ const val SEP1 = 1_000 * SEP2
 
 fun main() {
   val N = i()
-  val a = Array<Pair<String, Int>>(N) { Pair("", 0) }
+  val a = IntArray(N)
+  val names = Array<String>(N) { "" }
+
 
   repeat(N) {
     val n1 = n()
     val k1 = i()
     val e1 = i()
     val m1 = i()
-    val cur = Pair(n1, k1 * SEP1 + e1 * SEP2 + m1)
+    val v = k1 * SEP1 + e1 * SEP2 + m1
 
     var i = it
     for (j in it - 1 downTo 0) {
-      val (n2, e) = a[j]
-      val k2 = e / SEP1
+      val v2 = a[j]
+      val k2 = v2 / SEP1
       if (k1 < k2) break
       else if (k1 == k2) {
-        val em = e % SEP1
+        val em = v2 % SEP1
         val e2 = em / SEP2
         if (e1 > e2) break
         else if (e1 == e2) {
           val m2 = em % SEP2
           if (m1 < m2) break
-          else if (m1 == m2 && n1 >= n2) break
+          else if (m1 == m2 && n1 >= names[j]) break
         }
       }
       a[j + 1] = a[j]
+      names[j + 1] = names[j]
       i = j
     }
 
-    a[i] = cur
+    a[i] = v
+    names[i] = n1
   }
 
   repeat(N) {
-    O.write(a[it].first.toByteArray())
-    O.write(10)
+    println(names[it])
   }
-
-  O.flush()
 }
 
 /**
