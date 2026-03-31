@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 10
-const val OBS = 1 shl 18
+const val OBS = 1 shl 17
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -55,30 +55,25 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-
 const val MAX = 12
 const val NL = 10
 const val GOAL = 6
 fun main() {
   val cnds = IntArray(MAX)
-  val ch = BooleanArray(MAX)
-
+  val ch = IntArray(MAX)
 
   fun dfs(dep: Int, stt: Int, end: Int) {
     if (dep == GOAL) {
-      var cnt = 0
-      repeat(end + 1) {
-        if (ch[it]) w(cnds[it], ++cnt == GOAL)
+      repeat(GOAL) {
+        w(ch[it], it + 1 == GOAL)
       }
       return
     }
 
     for (i in stt..end - (GOAL - 1) + dep) {
-      ch[i] = true
+      ch[dep] = cnds[i]
       dfs(dep + 1, i + 1, end)
-      ch[i] = false
     }
-
   }
 
   var cnt = 0
@@ -89,7 +84,6 @@ fun main() {
 
     dfs(0, 0, cnt - 1)
     O.write(NL)
-
     cnt = 0
   }
 
