@@ -1,11 +1,8 @@
 package 백준.Bronze.no24267
 
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 5
-const val OBS = 1 shl 5
-val O = BufferedOutputStream(System.`out`, OBS)
+const val IBS = 6
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -35,30 +32,8 @@ fun i(): Long {
   return s * v
 }
 
-const val WS = 20
-val WB = ByteArray(WS + 1).also { it[WS] = 10 }
-fun w(
-  num: Long,
-) {
-  var v = num
-  var pos = WS - 1
-  do {
-    WB[pos--] = (v % 10 + 48).toByte()
-    v /= 10
-  } while (v > 0)
-  O.write(WB, ++pos, WS - pos + 1)
-}
-
 fun main() {
   val N = i()
-  if (N < 3) {
-    w(0)
-    w(4)
-  } else {
-    val cnt = N * (N - 1) * (N - 2) / 6
-    w(cnt)
-    w(3)
-  }
-
-  O.flush()
+  println(if (N < 3) 0 else N * (N - 1) * (N - 2) / 6)
+  print(3)
 }
