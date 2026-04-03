@@ -3,8 +3,8 @@ package 백준.Silver.no10610
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 17
-const val OBS = 1 shl 17
+const val IBS = 100_000
+const val OBS = 100_000
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -38,14 +38,9 @@ fun i(): Int {
 const val ZERO: Byte = 48
 const val DIGITS = 10
 fun main() {
-
-  var digitCnt = 0
   val COUNTER = IntArray(DIGITS)
   var b: Byte
-  while (r().also { b = it } >= ZERO) {
-    COUNTER[b - ZERO]++
-    digitCnt++
-  }
+  while (r().also { b = it } >= ZERO) COUNTER[b - ZERO]++
 
   if (COUNTER[0] == 0 ||
     (COUNTER[8] + COUNTER[5] + COUNTER[2]) % 3
@@ -54,29 +49,11 @@ fun main() {
     O.write('-'.code)
     O.write(ZERO + 1)
   } else {
-    val ANS = ByteArray(digitCnt)
-    var i = 0
     repeat(DIGITS) {
       val digit = DIGITS - (1 + it)
       val cnt = COUNTER[digit]
-      repeat(cnt) {
-        ANS[i++] = (digit + ZERO).toByte()
-      }
+      if (cnt > 0) O.write(ByteArray(cnt) { (digit + ZERO).toByte() })
     }
-    O.write(ANS)
   }
-
   O.flush()
 }
-
-/*
-IN
-143007
-OUT
-743100
-
-IN
-2171073
-OUT
-7732110
- */
