@@ -55,9 +55,6 @@ fun main() {
     O.write(ZERO + 1)
   } else {
     val ANS = ByteArray(digitCnt)
-    COUNTER[0]--
-    ANS[digitCnt - 1] = ZERO
-
     var i = 0
     repeat(DIGITS) {
       val digit = DIGITS - (1 + it)
