@@ -3,8 +3,8 @@ package 백준.Silver.no2740
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 16
-const val OBS = 1 shl 16
+const val IBS = 1 shl 14
+const val OBS = 1 shl 14
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -64,7 +64,7 @@ fun main() {
   val M2 = i()
   val K = i()
 
-  val b = IntArray(N * M) { i() }
+  val b = IntArray(M * K) { i() }
 
   repeat(N) { n ->
     repeat(K) { k ->
