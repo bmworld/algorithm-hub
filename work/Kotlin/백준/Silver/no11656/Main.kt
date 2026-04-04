@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1_000
-const val OBS = 1 shl 19
+const val OBS = 1 shl 14
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -37,71 +37,58 @@ fun i(): Int {
 
 const val a: Byte = 97
 const val z: Byte = 122
-const val SEP = 10_000
-fun main() {
-  var S = ByteArray(1_000)
-  var len = 0
-  var b: Byte
-  while (r().also { b = it } >= a) S[len++] = b
+const val ALPHABETS = 26
+const val MAX_LEN = 1_000
 
-  val heap = MaxHeap(len)
-  repeat(len) {
-    val encodedChar = (S[it] - z) * -1
-    heap.push(encodedChar * SEP + it)
+fun main() {
+  var S = ByteArray(MAX_LEN)
+  var SLen = 0
+
+  var b: Byte
+  val charPoses = Array(ALPHABETS) { mutableListOf<Int>() }
+  while (r().also { b = it } >= a) {
+    charPoses[b - a] += SLen
+    S[SLen++] = b
   }
 
-  while (heap.isNotEmpty()) {
-    val idx = heap.pop() % SEP
-    O.write(S, idx, len - idx)
-    O.write(10)
+  repeat(ALPHABETS) { char ->
+    val poses = charPoses[char]
+    val len = poses.size
+    if (len == 0) return@repeat
+
+    val ranks = IntArray(len)
+    repeat(len) { i ->
+      val p1 = poses[i]
+      var rank = 0
+      loop@ for (j in 0 until len) {
+        if (i == j) continue
+        val p2 = poses[j]
+        val maxDelta = SLen - 1 - maxOf(p1, p2)
+        for (delta in 1..maxDelta) {
+          val c1 = S[p1 + delta]
+          val c2 = S[p2 + delta]
+          if (c1 == c2) continue
+          if (c1 > c2) rank++
+          continue@loop
+        }
+
+        if (p1 < p2) rank++
+      }
+      ranks[rank] = p1
+    }
+
+    repeat(len) {
+      val pos = ranks[it]
+      O.write(S, pos, SLen - pos)
+      O.write(10)
+    }
   }
 
   O.flush()
 }
 
+//println("-- S[$p1] = ${toChar(S[p1])} -> $rank")
 
-class MaxHeap(size: Int) {
-
-  var len = 0
-  val root = 1
-  val heap = IntArray(size + 1)
-
-  fun isNotEmpty() = len > 0
-
-  fun push(v: Int) {
-    var ci = ++len
-    heap[len] = v
-    while (ci > root) {
-      val pi = ci shr 1
-      val p = heap[pi]
-      val c = heap[ci]
-      if (p < c) {
-        heap[pi] = c
-        heap[ci] = p
-        ci = pi
-      } else break
-    }
-  }
-
-  fun pop(): Int {
-    if (len == 0) return 0
-    val v = heap[root]
-    val x = heap[len--]
-
-    var pi = root
-    var ci = root shl 1
-    while (ci <= len) {
-      val ri = ci + 1
-      if (ri <= len && heap[ri] > heap[ci]) ci++
-      if (heap[ci] <= x) break
-      heap[pi] = heap[ci]
-      pi = ci
-      ci = pi shl 1
-    }
-    heap[pi] = x
-    return v
-  }
-}
 /**
 IN
 ohho

@@ -7,8 +7,8 @@ fun getIntArr(s: String): IntArray {
     .toIntArray()
 }
 
-fun toChar(c: Byte): Char = (c).toInt()
-  .toChar()
+fun toChar(c: Byte): Char = toChar(c.toInt())
+fun toChar(c: Int): Char = c.toChar()
 
 /**
  * 용도: 알고리즘 실행시간 측정
