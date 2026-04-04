@@ -102,3 +102,23 @@ class MaxHeap(size: Int) {
     return v
   }
 }
+/**
+IN
+ohho
+
+OUT
+hho
+ho
+o
+ohho
+
+IN
+dijjq
+
+OUT
+dijjq
+ijjq
+jjq
+jq
+q
+ */
