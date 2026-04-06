@@ -54,22 +54,66 @@ fun w(
 }
 
 fun main() {
-  val N = i()
+  var N = i()
   val M = i()
   var validCnt = 0
-  val arr = IntArray(N)
+  val a = IntArray(N)
   repeat(N) {
     val v = i()
-    if (v < M) arr[validCnt++] = v
+    if (v < M) a[validCnt++] = v
+  }
+  N = validCnt
+
+  fun swap(
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
   }
 
+  fun sort(
+    l: Int,
+    r: Int,
+  ): Int {
+    val m = (l + r) shr 1
+    val mv = a[m]
+    swap(m, r)
+
+    var pos = l
+    for (i in l until r) if (a[i] < mv) swap(pos++, i)
+    if (mv < a[pos]) swap(pos, r)
+    return pos
+  }
+
+  fun qs(
+    l: Int,
+    r: Int,
+  ) {
+    if (l >= r) return
+    val m = sort(l, r)
+    qs(l, m - 1)
+    qs(m + 1, r)
+  }
+
+  qs(0, N - 1)
+
   var ans = 0
-  loop@ for (i in 0 until validCnt - 1)
-    for (j in i + 1 until validCnt)
-      if (arr[i] + arr[j] == M) {
+  var l = 0
+  var r = N - 1
+  while (l < r) {
+    val sum = a[l] + a[r]
+    when {
+      sum > M -> r--
+      sum < M -> l++
+      else -> {
         ans++
-        continue@loop
+        l++
+        r--
       }
+    }
+  }
 
   w(ans)
   O.flush()
