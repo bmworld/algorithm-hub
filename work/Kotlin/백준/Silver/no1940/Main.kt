@@ -3,7 +3,7 @@ package 백준.Silver.no1940
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 16
+const val IBS = 1 shl 18
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -56,12 +56,20 @@ fun w(
 fun main() {
   val N = i()
   val M = i()
-  val arr = IntArray(N) { i() }
+  var validCnt = 0
+  val arr = IntArray(N)
+  repeat(N) {
+    val v = i()
+    if (v < M) arr[validCnt++] = v
+  }
 
   var ans = 0
-  for (i in 0 until N - 1)
-    for (j in i + 1 until N)
-      if (arr[i] + arr[j] == M) ans++
+  loop@ for (i in 0 until validCnt - 1)
+    for (j in i + 1 until validCnt)
+      if (arr[i] + arr[j] == M) {
+        ans++
+        continue@loop
+      }
 
   w(ans)
   O.flush()
