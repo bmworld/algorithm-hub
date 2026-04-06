@@ -54,21 +54,14 @@ fun w(
 }
 
 fun main() {
-  val GOAL = 2
   val N = i()
   val M = i()
   val arr = IntArray(N) { i() }
 
   var ans = 0
-  fun dfs(dep: Int, stt: Int, sum: Int) {
-    if (dep == GOAL) {
-      if (sum == M) ans++
-      return
-    }
-    for (i in stt..N - GOAL + dep) dfs(dep + 1, i + 1, sum + arr[i])
-  }
-
-  dfs(0, 0, 0)
+  for (i in 0 until N - 1)
+    for (j in i + 1 until N)
+      if (arr[i] + arr[j] == M) ans++
 
   w(ans)
   O.flush()
