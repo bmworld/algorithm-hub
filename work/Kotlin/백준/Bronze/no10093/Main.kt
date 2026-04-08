@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 6
-const val OBS = 1 shl 20
+const val OBS = 1 shl 21
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -39,7 +39,7 @@ const val WS = 20
 val WB = ByteArray(WS + 1)
 fun w(
   num: Long,
-  end: Boolean
+  end: Boolean = false
 ) {
   WB[WS] = if (end) 10 else 32
   var v = if (num >= 0) num
@@ -63,13 +63,10 @@ fun main() {
     A = B
     B = tmp
   }
-  
+
   val cnt = B - A - 1
   w(maxOf(cnt, 0), true)
   var v = A + 1
-  while (v < B) {
-    w(v, v + 1 == B)
-    v++
-  }
+  while (v < B) w(v++)
   O.flush()
 }
