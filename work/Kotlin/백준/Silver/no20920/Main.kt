@@ -48,49 +48,24 @@ fun main() {
   val N = i()
   val M = i()
   val map = HashMap<String, Int>()
-  var total = 0
-  var maxCnt = 0
-  var OBS = 0
   repeat(N) {
     val s = s()
     val len = s.length
     if (len < M) return@repeat
-    val cnt = 1 + map.getOrDefault(s, 0).also { if (it == 0) total++ }
-    map[s] = cnt
-    if (cnt > maxCnt) maxCnt = cnt
-    OBS += len + 1
+    map[s] = 1 + map.getOrDefault(s, 0)
   }
 
-  val note = Array(maxCnt + 1) { mutableListOf<String>() }
-  for ((w, cnt) in map) note[cnt] += w
-
-  val ranks = Array<String>(total) { "" }
-  repeat(maxCnt) {
-    val cnt = maxCnt - it
-    if (cnt == 0) return@repeat
-    val strs = note[cnt]
-
-    val len = strs.size
-    for (i in 0 until len) {
-      var rank = 0
-      val w1 = strs[i]
-      val l1 = w1.length
-      for (j in 0 until len) {
-        if (i == j) continue
-        val w2 = strs[j]
-        val l2 = w2.length
-        if (l1 > l2) continue
-        if (l1 == l2 && w1 < w2) continue
-        rank++
-      }
-      ranks[rank] = w1
-    }
-
-    repeat(len) {
-      O.write(ranks[it])
-      O.write(10)
+  val sorted = map.entries.sortedWith { a, b ->
+    when {
+      a.value != b.value -> b.value - a.value
+      a.key.length != b.key.length -> b.key.length - a.key.length
+      else -> a.key.compareTo(b.key)
     }
   }
 
+  for (x in sorted) {
+    O.write(x.key)
+    O.write(10)
+  }
   O.flush()
 }
