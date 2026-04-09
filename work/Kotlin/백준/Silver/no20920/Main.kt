@@ -1,10 +1,8 @@
 package 백준.Silver.no20920
 
-import java.io.*
+import java.io.BufferedInputStream
 
 const val IBS = 1 shl 20
-const val OBS = 1 shl 20
-val O = BufferedWriter(OutputStreamWriter(System.out), OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -48,11 +46,13 @@ fun main() {
   val N = i()
   val M = i()
   val map = HashMap<String, Int>()
+  var totalLen = 0
   repeat(N) {
     val s = s()
     val len = s.length
     if (len < M) return@repeat
     map[s] = 1 + map.getOrDefault(s, 0)
+    totalLen += len + 1
   }
 
   val sorted = map.entries.sortedWith { a, b ->
@@ -63,9 +63,7 @@ fun main() {
     }
   }
 
-  for (x in sorted) {
-    O.write(x.key)
-    O.write(10)
-  }
-  O.flush()
+  val O = StringBuilder(totalLen)
+  for (x in sorted) O.appendLine(x.key)
+  print(O)
 }
