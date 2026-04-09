@@ -1,8 +1,10 @@
 package 백준.Silver.no20920
 
-import java.io.BufferedInputStream
+import java.io.*
 
 const val IBS = 1 shl 20
+const val OBS = 1 shl 20
+val O = BufferedWriter(OutputStreamWriter(System.out), OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -45,7 +47,7 @@ fun s(): String {
 fun main() {
   val N = i()
   val M = i()
-  val ch = HashMap<String, Int>()
+  val map = HashMap<String, Int>()
   var total = 0
   var maxCnt = 0
   var OBS = 0
@@ -53,15 +55,14 @@ fun main() {
     val s = s()
     val len = s.length
     if (len < M) return@repeat
-    val cnt = 1 + ch.getOrDefault(s, 0).also { if (it == 0) total++ }
-    ch[s] = cnt
+    val cnt = 1 + map.getOrDefault(s, 0).also { if (it == 0) total++ }
+    map[s] = cnt
     if (cnt > maxCnt) maxCnt = cnt
     OBS += len + 1
   }
 
-  val OUT = StringBuilder(OBS)
   val note = Array(maxCnt + 1) { mutableListOf<String>() }
-  for ((w, cnt) in ch) note[cnt] += w
+  for ((w, cnt) in map) note[cnt] += w
 
   val ranks = Array<String>(total) { "" }
   repeat(maxCnt) {
@@ -86,9 +87,10 @@ fun main() {
     }
 
     repeat(len) {
-      OUT.appendLine(ranks[it])
+      O.write(ranks[it])
+      O.write(10)
     }
   }
 
-  print(OUT)
+  O.flush()
 }
