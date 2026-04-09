@@ -45,34 +45,50 @@ fun s(): String {
 fun main() {
   val N = i()
   val M = i()
-  val words = LinkedHashMap<String, Int>()
+  val ch = HashMap<String, Int>()
   var total = 0
+  var maxCnt = 0
+  var OBS = 0
   repeat(N) {
     val s = s()
-    if (s.length < M) return@repeat
-    words[s] = 1 + words.getOrDefault(s, 0).also { if (it == 0) total++ }
+    val len = s.length
+    if (len < M) return@repeat
+    val cnt = 1 + ch.getOrDefault(s, 0).also { if (it == 0) total++ }
+    ch[s] = cnt
+    if (cnt > maxCnt) maxCnt = cnt
+    OBS += len + 1
   }
 
-  val OB = StringBuilder(total)
-  var OBS = 0
+  val OUT = StringBuilder(OBS)
+  val note = Array(maxCnt + 1) { mutableListOf<String>() }
+  for ((w, cnt) in ch) note[cnt] += w
+
   val ranks = Array<String>(total) { "" }
-  for ((w1, c1) in words) {
-    var rank = 0
-    val l1 = w1.length
-    for ((w2, c2) in words) {
-      if (w1 == w2) continue
-      if (c1 > c2) continue
-      if (c1 == c2) {
+  repeat(maxCnt) {
+    val cnt = maxCnt - it
+    if (cnt == 0) return@repeat
+    val strs = note[cnt]
+
+    val len = strs.size
+    for (i in 0 until len) {
+      var rank = 0
+      val w1 = strs[i]
+      val l1 = w1.length
+      for (j in 0 until len) {
+        if (i == j) continue
+        val w2 = strs[j]
         val l2 = w2.length
         if (l1 > l2) continue
         if (l1 == l2 && w1 < w2) continue
+        rank++
       }
-      rank++
+      ranks[rank] = w1
     }
-    ranks[rank] = w1
-    OBS += l1
+
+    repeat(len) {
+      OUT.appendLine(ranks[it])
+    }
   }
 
-  for (word in ranks) OB.appendLine(word)
-  print(OB)
+  print(OUT)
 }
