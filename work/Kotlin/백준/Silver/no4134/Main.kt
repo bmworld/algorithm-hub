@@ -56,20 +56,27 @@ fun w(
 fun main() {
   repeat(i().toInt()) {
     var v = i()
-    while (true) {
-      if (isPrime(v)) {
-        w(v)
-        break
-      } else v++
+    if (v <= 2) w(2)
+    else {
+      while (true) {
+        if (isPrime(v)) {
+          w(v)
+          break
+        } else if (v % 2 == 0L) v++
+        else v += 2
+      }
     }
   }
   O.flush()
 }
 
-
 fun isPrime(v: Long): Boolean {
   var d = 2
   if (v < d) return false
-  while (d * d <= v) if (v % d++ == 0L) return false
+  while (d * d <= v) {
+    if (v % d == 0L) return false
+    if (d == 2) d++
+    else d += 2
+  }
   return true
 }
