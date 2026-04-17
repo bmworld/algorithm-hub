@@ -1,8 +1,11 @@
 package 백준.Silver.no25192
 
 import java.io.BufferedInputStream
+import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 20
+const val OBS = 10
+val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
 var Ii = 0
@@ -32,32 +35,47 @@ fun i(): Int {
   return s * v
 }
 
+const val WS = 10
+val WB = ByteArray(WS)
+fun w(
+  num: Int
+) {
+  var v = if (num >= 0) num
+  else {
+    O.write(45)
+    -num
+  }
+  var pos = WS - 1
+  do {
+    WB[pos--] = (v % 10 + 48).toByte()
+    v /= 10
+  } while (v > 0)
+  O.write(WB, ++pos, WS - pos)
+}
+
 val reader = StringBuilder(20)
 fun s(): String {
   var b: Byte
-  while (r().also { b = it } >= ZERO) reader.append(b.toInt().toChar())
-
+  while (r().also { b = it } >= 48) reader.append(b.toInt().toChar())
   val str = reader.toString()
   reader.setLength(0)
   return str
 }
 
-const val NL: Byte = 10
-const val ZERO: Byte = 48
 fun main() {
-
-  val ch = HashMap<String, Boolean>()
   var ans = 0
+  val set = HashSet<String>()
   repeat(i()) {
     val str = s()
     when {
-      str == "ENTER" -> ch.clear()
-      ch[str] == null -> {
-        ch[str] = true
-        ans++
+      str == "ENTER" -> {
+        ans += set.size
+        set.clear()
       }
+      else -> set.add(str)
     }
   }
 
-  print(ans)
+  w(ans + set.size)
+  O.flush()
 }
