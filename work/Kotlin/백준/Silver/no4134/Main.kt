@@ -92,27 +92,27 @@ fun modPow(base: Long, exp: Long, mod: Long): Long {
   var b = base % mod
   var e = exp
   while (e > 0) {
-    if (e % 2 == 1L) r = multiply(r, b, mod)
-    b = multiply(b, b, mod)
+    if (e % 2 == 1L) r = (r * b) % mod
+    b = (b * b) % mod
     e /= 2
   }
 
   return r
 }
 
-fun multiply(n1: Long, n2: Long, mod: Long): Long {
-  var r = 0L
-
-  var n = n1 % mod
-  var times = n2 % mod
-  while (times > 0) {
-    if (times % 2 == 1L) r = (r + n) % mod
-    n = (2 * n) % mod
-    times /= 2
-  }
-
-  return r
-}
+//fun multiply(n1: Long, n2: Long, mod: Long): Long {
+//  var r = 0L
+//
+//  var n = n1 % mod
+//  var times = n2 % mod
+//  while (times > 0) {
+//    if (times % 2 == 1L) r = (r + n) % mod
+//    n = (2 * n) % mod
+//    times /= 2
+//  }
+//
+//  return r
+//}
 
 /**
  * # Prime Validators
