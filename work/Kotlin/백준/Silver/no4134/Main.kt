@@ -53,37 +53,54 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-val primeValidators = longArrayOf(2, 7, 61)
+val primeWitnesses = longArrayOf(2, 7, 61)
+
 fun main() {
   repeat(i().toInt()) {
     var v = i()
-    loop@ while (true) {
-      for (prime in primeValidators) {
-        if (v == prime) break@loop
-        val isPrime = isPrimeByMillerRabin(prime, v)
-        if (!isPrime) {
-          v += if (v % 2 == 0L) 1 else 2
-          continue@loop
-        }
-      }
-      break
+    if (v <= 2) {
+      w(2)
+      return@repeat
     }
+
+    if (v % 2L == 0L) v++
+    while (!isPrime(v)) v += 2
 
     w(v)
   }
   O.flush()
 }
 
-fun isPrimeByMillerRabin(base: Long, num: Long): Boolean {
-  if (num % base == 0L) return false
-
-  var exp = num - 1
-  while (true) {
-    val r = modPow(base, exp, num)
-    if (r == num - 1) return true
-    if (exp % 2 == 1L) return (r == 1L || r == num - 1)
-    exp /= 2
+fun isPrime(num: Long): Boolean {
+  if (num < 2) return false
+  if (num <= 3) return true
+  if (num % 2 == 0L) return false
+  for (prime in primeWitnesses) {
+    if (prime == num) return true
+    if (!checkByMillerRabin(prime, num)) return false
   }
+
+  return true
+}
+
+fun checkByMillerRabin(base: Long, num: Long): Boolean { // n-1 = d * 2^s
+
+  var d = num - 1
+  var s = 0
+  while (d % 2 == 0L) {
+    d /= 2
+    s++
+  }
+
+  var r = modPow(base, d, num)
+  if (r == 1L || r == num - 1) return true
+
+  repeat(s - 1) {
+    r = modMul(r, r, num)
+    if (r == num - 1) return true
+  }
+
+  return false
 }
 
 fun modPow(base: Long, exp: Long, mod: Long): Long {
@@ -92,27 +109,28 @@ fun modPow(base: Long, exp: Long, mod: Long): Long {
   var b = base % mod
   var e = exp
   while (e > 0) {
-    if (e % 2 == 1L) r = (r * b) % mod
-    b = (b * b) % mod
-    e /= 2
+    if ((e and 1L) == 1L) r = modMul(r, b, mod)
+    b = modMul(b, b, mod)
+    e = e shr 1
   }
 
   return r
 }
 
-//fun multiply(n1: Long, n2: Long, mod: Long): Long {
-//  var r = 0L
-//
-//  var n = n1 % mod
-//  var times = n2 % mod
-//  while (times > 0) {
-//    if (times % 2 == 1L) r = (r + n) % mod
-//    n = (2 * n) % mod
-//    times /= 2
-//  }
-//
-//  return r
-//}
+fun modMul(n1: Long, n2: Long, mod: Long): Long {
+  var r = 0L
+
+  var a = n1 % mod
+  var b = n2
+
+  while (b > 0) {
+    if ((b and 1L) == 1L) r = (r + a) % mod
+    a = (a shl 1) % mod
+    b = b shr 1
+  }
+
+  return r
+}
 
 /**
  * # Prime Validators
@@ -131,4 +149,31 @@ fun modPow(base: Long, exp: Long, mod: Long): Long {
  * -> +1 (mod p) 만족하는 x는 1
  * 6^2 = 36 ≡ 1
  * -> +1 (mod p) 만족하는 x는 6
+ */
+
+/**
+IN
+10
+0
+1
+2
+3
+4
+14
+20
+100
+3999999999
+4000000000
+
+OUT
+2
+2
+2
+3
+5
+17
+23
+101
+4000000007
+4000000007
  */
