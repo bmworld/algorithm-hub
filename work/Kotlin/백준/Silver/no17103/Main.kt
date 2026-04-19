@@ -3,8 +3,8 @@ package 백준.Silver.no17103
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
-const val OBS = 1 shl 10
+const val IBS = 1 shl 12
+const val OBS = 1 shl 8
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -54,28 +54,19 @@ fun w(
 }
 
 
-const val MAX_CASE = 100
+const val MAX = 1_000_000
 
 fun main() {
-  val cnds = IntArray(MAX_CASE)
-  val case = i()
-  var max = 0
-  repeat(case) {
-    val N = i() // 2 < N <= 1_000_000
-    cnds[it] = N
-    if (N > max) max = N
-  }
-
-  val primes = BooleanArray(max + 1) { it > 1 }.also {
+  val primes = BooleanArray(MAX + 1) { it > 1 }.also {
     var d = 2
-    while (d <= max / d) {
-      for (i in d * d..max step d) it[i] = false
+    while (d <= MAX / d) {
+      for (i in d * d..MAX step d) it[i] = false
       d += if (d == 2) 1 else 2
     }
   }
 
-  repeat(case) {
-    val N = cnds[it]
+  repeat(i()) {
+    val N = i()
     var cnt = 0
     if (primes[2] && primes[N - 2]) cnt++
     for (n in 3..N / 2 step 2) if (primes[n] && primes[N - n]) cnt++
