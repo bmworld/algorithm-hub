@@ -73,64 +73,69 @@ fun main() {
 
 fun isPrime(num: Long): Boolean {
   if (num < 2) return false
-  if (num <= 3) return true
   if (num % 2 == 0L) return false
-  for (prime in primeWitnesses) {
-    if (prime == num) return true
-    if (!checkByMillerRabin(prime, num)) return false
-  }
-
-  return true
+  return checkByMillerRabin(num)
 }
 
-fun checkByMillerRabin(base: Long, num: Long): Boolean { // n-1 = d * 2^s
+fun checkByMillerRabin(n: Long): Boolean { // n-1 = d (odd) * 2^s
 
-  var d = num - 1
+  var d = n - 1
   var s = 0
   while (d % 2 == 0L) {
     d /= 2
     s++
   }
 
-  var r = modPow(base, d, num)
-  if (r == 1L || r == num - 1) return true
+  for (prime in primeWitnesses) {
+    if (prime >= n) continue
+    if (prime % n == 0L) return true
+    if (!checkByPrimeWitness(prime, d, s, n)) return false
+  }
+
+  return true
+}
+
+fun checkByPrimeWitness(primeWitness: Long, d: Long, s: Int, n: Long): Boolean {
+  var r = modPow(primeWitness, d, n)
+  val mod = n.toULong()
+  if (r == 1UL || r == mod - 1UL) return true
 
   repeat(s - 1) {
-    r = modMul(r, r, num)
-    if (r == num - 1) return true
+    r = (r * r) % mod
+    if (r == mod - 1UL) return true
   }
 
   return false
 }
 
-fun modPow(base: Long, exp: Long, mod: Long): Long {
-  var r = 1L
-
-  var b = base % mod
-  var e = exp
-  while (e > 0) {
-    if ((e and 1L) == 1L) r = modMul(r, b, mod)
-    b = modMul(b, b, mod)
+fun modPow(base: Long, exp: Long, n: Long): ULong {
+  var r = 1UL
+  val mod = n.toULong()
+  var b = (base % n).toULong()
+  var e = exp.toULong()
+  while (e > 0UL) {
+    if ((e and 1UL) == 1UL) r = (r * b) % mod
+    b = (b * b) % mod
     e = e shr 1
   }
 
   return r
 }
 
-fun modMul(n1: Long, n2: Long, mod: Long): Long {
-  var r = 0L
-
-  var a = n1 % mod
-  var b = n2
-
-  while (b > 0) {
-    if ((b and 1L) == 1L) r = (r + a) % mod
-    a = (a shl 1) % mod
-    b = b shr 1
-  }
-
-  return r
-}
+//fun modMul(n1: Long, n2: Long, mod: Long): Long {
+//  var r = 0L
+//
+//  var a = n1 % mod
+//  var b = n2
+//
+//  while (b > 0) {
+//    if ((b and 1L) == 1L) r = (r + a) % mod
+//    a = (a shl 1) % mod
+//    b = b shr 1
+//  }
+//
+//  return r
+//}
 
 /**
  * # Prime Validators
@@ -152,28 +157,32 @@ fun modMul(n1: Long, n2: Long, mod: Long): Long {
  */
 
 /**
-IN
-10
+[IN]
+12
 0
 1
 2
 3
 4
+7
 14
 20
 100
+322
 3999999999
 4000000000
 
-OUT
+[OUT]
 2
 2
 2
 3
 5
+7
 17
 23
 101
+331
 4000000007
 4000000007
  */
