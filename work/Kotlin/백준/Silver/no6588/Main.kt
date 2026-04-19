@@ -74,14 +74,14 @@ fun main() {
   val primes = BooleanArray(max + 1) { it > 1 }.also {
     var d = 2
     while (d <= max / d) {
-      for (i in d * 2..max step d) it[i] = false
+      for (i in d * d..max step d) it[i] = false
       d += if (d == 2) 1 else 2
     }
   }
 
   repeat(cndCnt) {
     val N = cnds[it]
-    for (v1 in 3..N / 2) {
+    for (v1 in 3..N / 2 step 2) {
       val v2 = N - v1
       if (primes[v1] && primes[v2]) {
         w(N)
