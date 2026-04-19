@@ -3,8 +3,8 @@ package 백준.Silver.no6588
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 20
-const val OBS = 1 shl 20
+const val IBS = 1 shl 18
+const val OBS = 1 shl 15
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -55,70 +55,62 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-const val MIN = 3
+const val CNDS_MAX_CNT = 100_000
 val EQ = "= ".toByteArray()
 val PLUS = "+ ".toByteArray()
-val IMPOSSIBLE = "Goldbach's conjecture is wrong.".toByteArray()
+val IMPOSSIBLE = "Goldbach's conjecture is wrong.\n".toByteArray()
 
 fun main() {
-
+  val cnds = IntArray(CNDS_MAX_CNT)
+  var cndCnt = 0
+  var max = 0
   loop@ while (true) {
     val N = i() // 6 <= N <= 1_000_000
     if (N == 0) break
+    cnds[cndCnt++] = N
+    if (N > max) max = N
+  }
 
-    var v1 = MIN
-    var v2 = N - v1
-    if (v1 % 2L == 0L) {
-      v1++
-      v2--
+  val primes = BooleanArray(max + 1) { it > 1 }.also {
+    var d = 2
+    while (d <= max / d) {
+      for (i in d * 2..max step d) it[i] = false
+      d += if (d == 2) 1 else 2
     }
+  }
 
-    while (!isPrime(v1) || !isPrime(v2)) {
-      v1 += 2
-      v2 -= 2
-      if (v1 > v2) {
-        O.write(IMPOSSIBLE)
-        continue@loop
+  repeat(cndCnt) {
+    val N = cnds[it]
+    for (v1 in 3..N / 2) {
+      val v2 = N - v1
+      if (primes[v1] && primes[v2]) {
+        w(N)
+        O.write(EQ)
+        w(v1)
+        O.write(PLUS)
+        w(v2, true)
+        return@repeat
       }
     }
-
-    w(N)
-    O.write(EQ)
-    w(v1)
-    O.write(PLUS)
-    w(v2, true)
+    O.write(IMPOSSIBLE)
   }
+
   O.flush()
-}
-
-
-fun isPrime(n: Int): Boolean {
-  if (n < 2) return false
-  if (n <= 3) return true
-  if (n % 2 == 0 || n % 3 == 0) return false
-
-  var d = 5
-  while (d * d <= n) {
-    if (n % d == 0 || n % (d + 2) == 0) return false
-    d += 6
-  }
-
-  return true
 }
 
 /**
 [IN]
-5
 36
 1034
 16
 258
 3874
+0
 
 [OUT]
-17 19
-487 547
-5 11
-127 131
-1901 1973
+36 = 5 + 31
+1034 = 3 + 1031
+16 = 3 + 13
+258 = 7 + 251
+3874 = 11 + 3863
  */
