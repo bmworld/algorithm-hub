@@ -22,8 +22,8 @@ fun r(): Byte {
 }
 
 val NUM = 48..57
-fun i(): Long {
-  var v = 0L
+fun i(): Int {
+  var v = 0
   var s = 1
   var b: Byte
   while (r().also { b = it } in NUM || b == 45.toByte()) {
@@ -35,10 +35,10 @@ fun i(): Long {
   return s * v
 }
 
-const val WS = 20
+const val WS = 10
 val WB = ByteArray(WS + 1)
 fun w(
-  num: Long,
+  num: Int,
   end: Boolean = false
 ) {
   WB[WS] = if (end) 10 else 32
@@ -55,11 +55,9 @@ fun w(
   O.write(WB, ++pos, WS - pos + 1)
 }
 
-val primeWitnesses = longArrayOf(2, 7, 61)
-
 fun main() {
 
-  repeat(i().toInt()) {
+  repeat(i()) {
     val N = i()
     var v1 = N / 2
     var v2 = N - v1
@@ -81,75 +79,20 @@ fun main() {
   O.flush()
 }
 
-fun isPrime(num: Long): Boolean {
-  if (num < 2) return false
-  if (num % 2 == 0L) return false
-  return checkByMillerRabin(num)
-}
 
-fun checkByMillerRabin(n: Long): Boolean { // n-1 = d (odd) * 2^s
+fun isPrime(n: Int): Boolean {
+  if (n < 2) return false
+  if (n <= 3) return true
+  if (n % 2 == 0 || n % 3 == 0) return false
 
-  var d = n - 1
-  var s = 0
-  while (d % 2 == 0L) {
-    d /= 2
-    s++
-  }
-
-  for (prime in primeWitnesses) {
-    if (prime >= n) continue
-    if (prime % n == 0L) return true
-    if (!checkByPrimeWitness(prime, d, s, n)) return false
+  var d = 5
+  while (d * d <= n) {
+    if (n % d == 0 || n % (d + 2) == 0) return false
+    d += 6
   }
 
   return true
 }
-
-fun checkByPrimeWitness(primeWitness: Long, d: Long, s: Int, n: Long): Boolean {
-  var r = modPow(primeWitness, d, n)
-  val mod = n.toULong()
-  if (r == 1UL || r == mod - 1UL) return true
-
-  repeat(s - 1) {
-    r = (r * r) % mod
-    if (r == mod - 1UL) return true
-  }
-
-  return false
-}
-
-fun modPow(base: Long, exp: Long, n: Long): ULong {
-  var r = 1UL
-  val mod = n.toULong()
-  var b = (base % n).toULong()
-  var e = exp.toULong()
-  while (e > 0UL) {
-    if ((e and 1UL) == 1UL) r = (r * b) % mod
-    b = (b * b) % mod
-    e = e shr 1
-  }
-
-  return r
-}
-
-/**
- * # Prime Validators
- * Int : [2, 7, 61]
- * Long: [2, 3, 5, 7, 11, 13, 17, 19, 23, 29, 31]
- *
- *
- * # 소수 mod 세계에서
- * -> x^2 ≡ 1 (mod p)
- * 👉 x = ±1 (mod p)
- *    · (+1)^2 = 1
- *    · (-1)^2 = 1
- * 👉 여기서 x = -1 (mod p) 만족하는 x 는 `p-1` 이다.
- * e.g.) mod 7
- * 1^2 = 1
- * -> +1 (mod p) 만족하는 x는 1
- * 6^2 = 36 ≡ 1
- * -> +1 (mod p) 만족하는 x는 6
- */
 
 /**
 [IN]
@@ -160,12 +103,10 @@ fun modPow(base: Long, exp: Long, n: Long): ULong {
 258
 3874
 
-
 [OUT]
 17 19
 487 547
 5 11
 127 131
 1901 1973
-
  */
