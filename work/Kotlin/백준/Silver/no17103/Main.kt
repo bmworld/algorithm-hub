@@ -77,9 +77,28 @@ fun main() {
   repeat(case) {
     val N = cnds[it]
     var cnt = 0
+    if (primes[2] && primes[N - 2]) cnt++
     for (n in 3..N / 2 step 2) if (primes[n] && primes[N - n]) cnt++
     w(cnt)
   }
 
   O.flush()
 }
+
+/**
+[IN]
+6
+4
+6
+8
+10
+12
+100
+[OUT]
+1
+1
+1
+2
+1
+6
+ */
