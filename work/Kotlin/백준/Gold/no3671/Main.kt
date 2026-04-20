@@ -72,16 +72,16 @@ fun main() {
     else -> primes[v]
   }
 
+  val ans = HashSet<Int>()
   val a = IntArray(MAX_LEN)
   val used = BooleanArray(MAX_LEN)
-  var ans = 0
   fun dfs(dep: Int, len: Int, v: Int) {
     for (i in 0 until len) if (!used[i]) {
       val nv = v * 10 + a[i]
       if (nv == 0) continue
 
       used[i] = true
-      if (isPrime(nv)) ans++
+      if (isPrime(nv)) ans.add(nv)
 
       dfs(dep + 1, len, nv)
       used[i] = false
@@ -89,12 +89,12 @@ fun main() {
   }
 
   repeat(i()) {
-    ans = 0
+    ans.clear()
     var len = 0
     var b: Byte
     while (r().also { b = it } in NUM) a[len++] = b - 48
     dfs(0, len, 0)
-    w(ans)
+    w(ans.size)
   }
 
   O.flush()
