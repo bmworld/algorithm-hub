@@ -57,45 +57,41 @@ fun w(
 const val MAX = 7_368_787
 fun main() {
   val K = i()
-  var ans = 2
-  if (K > 1) {
-    val primes = BooleanArray(MAX + 1) { it > 1 }.also {
-      var d = 2
-      while (d <= MAX / d) {
-        for (i in d * d..MAX step d) it[i] = false
-        d += if (d == 2) 1 else 2
-      }
-    }
 
-    var order = 1
-    for (i in 3..MAX step 2) {
-      if (primes[i]) {
-        if (++order == K) {
-          ans = i
+  w(when (K) {
+    1 -> 2
+    2 -> 3
+    else -> {
+      val primes = BooleanArray(MAX + 1) { it > 1 }.also {
+        var d = 3
+        while (d <= MAX / d) {
+          for (i in d * d..MAX step d * 2) it[i] = false
+          d += 2
+        }
+      }
+
+      var ans = 0
+      var order = 3
+      for (n in 5..MAX step 6) {
+        if (primes[n]) if (order++ == K) {
+          ans = n
+          break
+        }
+        if (primes[n + 2]) if (order++ == K) {
+          ans = n + 2
           break
         }
       }
-    }
-  }
 
-  w(ans)
+      ans
+    }
+  })
   O.flush()
 }
 
 /**
 [IN]
-6
-4
-6
-8
-10
-12
-100
+500000
 [OUT]
-1
-1
-1
-2
-1
-6
+7368787
  */
