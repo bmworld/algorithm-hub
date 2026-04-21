@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 4
-const val OBS = 1 shl 10
+const val OBS = 1 shl 9
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -37,23 +37,10 @@ fun main() {
     val p = i()
     val a = i()
     if (a == 0 || p == 0) break
-    O.write(if (isFakePrime(a, p)) YES else NO)
+    O.write(if (!isPrimeBy6k(p) && modPow(a, p, p) == a) YES else NO)
   }
   O.flush()
 }
-
-fun isFakePrime(a: Int, p: Int): Boolean { // 2 < p ≤ 1,000,000,000, 1 < a < p
-
-  var d = p - 1
-  var s = 0
-  while (d % 2 == 0) {
-    d /= 2
-    s++
-  }
-
-  return !isPrimeBy6k(p) && modPow(a, p, p) == a.toLong()
-}
-
 
 fun isPrimeBy6k(n: Int): Boolean {
   if (n < 2) return false
@@ -69,7 +56,7 @@ fun isPrimeBy6k(n: Int): Boolean {
   return true
 }
 
-fun modPow(base: Int, exp: Int, p: Int): Long {
+fun modPow(base: Int, exp: Int, p: Int): Int {
   var r = 1L
   val mod = p
   var b = (base % p).toLong()
@@ -80,27 +67,26 @@ fun modPow(base: Int, exp: Int, p: Int): Long {
     e = e shr 1
   }
 
-  return r
+  return r.toInt()
 }
 
-//val primeWitnesses = longArrayOf(2, 7, 61)
-//fun millerRabin(d: Long, s: Int, p: Long): Boolean { // p-1 = d (odd) * 2^s
+//val primeWitnesses = intArrayOf(2, 7, 61)
+//fun millerRabin(d: Int, s: Int, p: Int): Boolean { // p-1 = d (odd) * 2^s
 //  for (prime in primeWitnesses) {
 //    if (prime >= p) continue
-//    if (prime % p == 0L) return true
+//    if (prime % p == 0) return true
 //    if (!checkByPrimeWitness(prime, d, s, p)) return false
 //  }
 //  return true
 //}
 //
-//fun checkByPrimeWitness(primeWitness: Long, d: Long, s: Int, p: Long): Boolean {
+//fun checkByPrimeWitness(primeWitness: Int, d: Int, s: Int, p: Int): Boolean {
 //  var r = modPow(primeWitness, d, p)
-//  val mod = p.toULong()
-//  if (r == 1UL || r == mod - 1UL) return true
+//  if (r == 1L || r == p - 1L) return true
 //
 //  repeat(s - 1) {
-//    r = (r * r) % mod
-//    if (r == mod - 1UL) return true
+//    r = (r * r) % p
+//    if (r == p - 1L) return true
 //  }
 //
 //  return false
@@ -136,5 +122,3 @@ yes
 yes
 yes
  */
-
-//   println("[$a, $p] isPrime = ${isPrime}, ${fermat(a, p)}")
