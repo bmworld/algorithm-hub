@@ -58,10 +58,8 @@ fun isFakePrime(a: Long, p: Long): Boolean {
     else -> millerRabin(d, s, p)
   }
 
-  return !isPrime && fermat(a, p)
+  return !isPrime && modPow(a, p, p) == a.toULong()
 }
-
-fun fermat(a: Long, p: Long): Boolean = modPow(a, p, p) == a.toULong()
 
 fun millerRabin(d: Long, s: Int, p: Long): Boolean { // p-1 = d (odd) * 2^s
   for (prime in primeWitnesses) {
