@@ -3,8 +3,8 @@ package 백준.Gold.no1990
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 5
-const val OBS = 1 shl 18
+const val IBS = 20
+const val OBS = 6_000
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -45,10 +45,8 @@ fun main() {
   }
 
   val NUM = ByteArray(maxLen)
-
   fun dfs(l: Int, len: Int) {
     if (l == (len + 1) / 2) {
-
       val v = getNum(len, NUM)
       if (v in fr..to && isPrime(v)) {
         O.write(NUM, 0, len)
@@ -60,7 +58,9 @@ fun main() {
 
     val r = len - (l + 1)
     for (n in 0..9) {
-      if (l == 0 && (n == 0 || n % 2 == 0)) continue
+      if (l == 0 && (n == 0 || n % 2 == 0)
+        || len % 2 == 0 && len != 2
+      ) continue
       NUM[l] = (n + ZERO).toByte().also { if (l != r) NUM[r] = it }
       dfs(l + 1, len)
     }
