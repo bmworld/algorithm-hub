@@ -4,7 +4,7 @@ import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
 const val IBS = 1 shl 4
-const val OBS = 1 shl 12
+const val OBS = 1 shl 10
 val O = BufferedOutputStream(System.out, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -22,8 +22,8 @@ fun r(): Byte {
 }
 
 val NUM = 48..57
-fun i(): Long {
-  var v = 0L
+fun i(): Int {
+  var v = 0
   var b: Byte
   while (r().also { b = it } in NUM) v = v * 10 + b - 48
   return v
@@ -31,65 +31,51 @@ fun i(): Long {
 
 val NO = "no\n".toByteArray()
 val YES = "yes\n".toByteArray()
-val primeWitnesses = longArrayOf(2, 7, 61)
 
 fun main() {
   while (true) {
     val p = i()
     val a = i()
-    if (a == 0L || p == 0L) break
+    if (a == 0 || p == 0) break
     O.write(if (isFakePrime(a, p)) YES else NO)
   }
   O.flush()
 }
 
-fun isFakePrime(a: Long, p: Long): Boolean {
+fun isFakePrime(a: Int, p: Int): Boolean { // 2 < p ≤ 1,000,000,000, 1 < a < p
 
   var d = p - 1
   var s = 0
-  while (d % 2 == 0L) {
+  while (d % 2 == 0) {
     d /= 2
     s++
   }
 
-  var isPrime = when {
-    p < 2 || p % 2 == 0L -> false
-    p == 3L -> true
-    else -> millerRabin(d, s, p)
-  }
-
-  return !isPrime && modPow(a, p, p) == a.toULong()
+  return !isPrimeBy6k(p) && modPow(a, p, p) == a.toLong()
 }
 
-fun millerRabin(d: Long, s: Int, p: Long): Boolean { // p-1 = d (odd) * 2^s
-  for (prime in primeWitnesses) {
-    if (prime >= p) continue
-    if (prime % p == 0L) return true
-    if (!checkByPrimeWitness(prime, d, s, p)) return false
+
+fun isPrimeBy6k(n: Int): Boolean {
+  if (n < 2) return false
+  if (n <= 3) return true
+  if (n % 2 == 0 || n % 3 == 0) return false
+
+  var d = 5
+  while (d * d <= n) {
+    if (n % d == 0 || n % (d + 2) == 0) return false
+    d += 6
   }
+
   return true
 }
 
-fun checkByPrimeWitness(primeWitness: Long, d: Long, s: Int, p: Long): Boolean {
-  var r = modPow(primeWitness, d, p)
-  val mod = p.toULong()
-  if (r == 1UL || r == mod - 1UL) return true
-
-  repeat(s - 1) {
-    r = (r * r) % mod
-    if (r == mod - 1UL) return true
-  }
-
-  return false
-}
-
-fun modPow(base: Long, exp: Long, p: Long): ULong {
-  var r = 1UL
-  val mod = p.toULong()
-  var b = (base % p).toULong()
-  var e = exp.toULong()
-  while (e > 0UL) {
-    if ((e and 1UL) == 1UL) r = (r * b) % mod
+fun modPow(base: Int, exp: Int, p: Int): Long {
+  var r = 1L
+  val mod = p
+  var b = (base % p).toLong()
+  var e = exp.toLong()
+  while (e > 0L) {
+    if ((e and 1L) == 1L) r = (r * b) % mod
     b = (b * b) % mod
     e = e shr 1
   }
@@ -97,7 +83,28 @@ fun modPow(base: Long, exp: Long, p: Long): ULong {
   return r
 }
 
-//fun getGCD(a: Long, b: Long): Long = if (b == 0L) a else getGCD(b, a % b)
+//val primeWitnesses = longArrayOf(2, 7, 61)
+//fun millerRabin(d: Long, s: Int, p: Long): Boolean { // p-1 = d (odd) * 2^s
+//  for (prime in primeWitnesses) {
+//    if (prime >= p) continue
+//    if (prime % p == 0L) return true
+//    if (!checkByPrimeWitness(prime, d, s, p)) return false
+//  }
+//  return true
+//}
+//
+//fun checkByPrimeWitness(primeWitness: Long, d: Long, s: Int, p: Long): Boolean {
+//  var r = modPow(primeWitness, d, p)
+//  val mod = p.toULong()
+//  if (r == 1UL || r == mod - 1UL) return true
+//
+//  repeat(s - 1) {
+//    r = (r * r) % mod
+//    if (r == mod - 1UL) return true
+//  }
+//
+//  return false
+//}
 
 /**
 [IN]
