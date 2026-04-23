@@ -50,20 +50,18 @@ fun w(
 
 fun main() {
   val N = i()
-  var ans = 0
-  var l = 1
-  var r = 1
-  var sum = 1
-  while (r <= N) {
-    when {
-      sum < N -> sum += ++r
-      sum > N -> sum -= l++
-      else -> {
-        ans++
-        sum += ++r
-        sum -= l++
-      }
-    }
+  var ans = 1
+
+  var seq = 2
+  while (true) {
+    val m = N / seq
+    val k = seq / 2
+    val isEven = seq % 2 == 0
+    val min = m - if (isEven) k - 1 else k
+    if (min < 1) break
+    val sum = if (isEven) (2 * m + 1) * k else 2 * m * k + m
+    if (sum == N) ans++
+    seq++
   }
 
   w(ans)
