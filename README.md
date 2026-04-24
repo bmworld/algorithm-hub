@@ -24,8 +24,8 @@
 - 포트폴리오 및 코드 리뷰를 위한 체계적인 기록
 
 <!-- TOTAL_PROBLEM_STATS_START -->
-## 🚀 문제 집계 (2026-04-23 12:04 KST)
-- Baekjoon: 486 문제
+## 🚀 문제 집계 (2026-04-24 21:39 KST)
+- Baekjoon: 487 문제
 - Programmers: 0 문제
-- Total: 486 문제
+- Total: 487 문제
 <!-- TOTAL_PROBLEM_STATS_END -->
