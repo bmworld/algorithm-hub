@@ -3,8 +3,8 @@ package 백준.Silver.no1120
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 7
-const val OBS = 1 shl 4
+const val IBS = 1 shl 10
+const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
 val IB = ByteArray(IBS)
@@ -70,8 +70,9 @@ fun main() {
     var diff = 0
     for (ai in 0 until ALen) {
       val bi = ai + fr
-      if (A[ai] == B[bi]) continue
-      if (minDiff <= ++diff) break
+      if (A[ai] != B[bi]) {
+        if (++diff >= minDiff) break
+      }
     }
     if (minDiff > diff) minDiff = diff
   }
