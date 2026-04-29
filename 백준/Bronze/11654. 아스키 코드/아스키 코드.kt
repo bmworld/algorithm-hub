@@ -1,1 +1,0 @@
-fun main() = print(System.`in`.read())
