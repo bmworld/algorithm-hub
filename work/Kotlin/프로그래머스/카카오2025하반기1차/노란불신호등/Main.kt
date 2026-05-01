@@ -14,6 +14,7 @@ class Solution {
     var minR = arr[minI][POS_R]
     var minC = minG + minY + minR
     var lcm = minC
+    var minRatio = minY / minC
 
     val signalCnt = arr.size
     for (i in 1 until signalCnt) {
@@ -22,7 +23,7 @@ class Solution {
       val Y = sig[POS_Y]
       val R = sig[POS_R]
       val C = R + Y + G
-      if (Y < minY && C < minC) {
+      if (Y / C < minRatio) {
         minI = i
         minG = G
         minY = Y
