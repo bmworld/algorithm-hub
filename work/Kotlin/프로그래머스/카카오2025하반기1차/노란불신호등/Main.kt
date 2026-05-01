@@ -35,10 +35,9 @@ class Solution {
 
     var time = minG + 1
     while (time <= lcm) {
-      for (t in time until time + minY) {
-        var yCnt = 1
-        repeat(signalCnt) { i ->
-          if (i == minI) return@repeat
+      timeLoop@ for (t in time until time + minY) {
+        validator@ for (i in 0 until signalCnt) {
+          if (i == minI) continue@validator
           val sig = arr[i]
           val G = sig[POS_G]
           val Y = sig[POS_Y]
@@ -46,9 +45,10 @@ class Solution {
           val C = R + Y + G
           val pos = (t - 1) % C
 
-          if (pos in G until G + Y) yCnt++
+          val isY = pos !in G until G + Y
+          if (isY) continue@timeLoop
         }
-        if (yCnt == signalCnt) return t
+        return t
       }
 
       time += minC
