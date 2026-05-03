@@ -1,4 +1,4 @@
-package 프로그래머스.입문.배열의평균값
+package 프로그래머스.입문.Day4.배열의평균값
 
 class Solution {
 

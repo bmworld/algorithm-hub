@@ -1,4 +1,4 @@
-package 프로그래머스.입문.중앙값구하기
+package 프로그래머스.입문.Day3.중앙값구하기
 
 class Solution {
 

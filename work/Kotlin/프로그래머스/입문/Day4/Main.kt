@@ -1,4 +1,4 @@
-package 프로그래머스.입문.피자나눠먹기1
+package 프로그래머스.입문.Day4.피자나눠먹기1
 
 const val SLICES = 7
 

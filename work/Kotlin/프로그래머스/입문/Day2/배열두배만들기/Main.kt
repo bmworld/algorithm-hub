@@ -1,4 +1,4 @@
-package 프로그래머스.입문.배열두배만들기
+package 프로그래머스.입문.Day2.배열두배만들기
 
 class Solution {
 

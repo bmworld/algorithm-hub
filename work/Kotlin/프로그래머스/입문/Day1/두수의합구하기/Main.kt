@@ -1,4 +1,4 @@
-package 프로그래머스.입문.두수의합구하기
+package 프로그래머스.입문.Day1.두수의합구하기
 
 class Solution {
 

@@ -1,4 +1,4 @@
-package 프로그래머스.입문.최빈값구하기
+package 프로그래머스.입문.Day3.최빈값구하기
 
 class Solution {
 

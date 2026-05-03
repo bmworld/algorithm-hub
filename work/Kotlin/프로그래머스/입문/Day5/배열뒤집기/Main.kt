@@ -1,4 +1,4 @@
-package 프로그래머스.입문.배열뒤집기
+package 프로그래머스.입문.Day5.배열뒤집기
 
 class Solution {
 

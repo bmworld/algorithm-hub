@@ -1,4 +1,4 @@
-package 프로그래머스.입문.나이출력
+package 프로그래머스.입문.Day5.나이출력
 
 class Solution {
 

@@ -1,4 +1,4 @@
-package 프로그래머스.입문.분수의덧셈
+package 프로그래머스.입문.Day2.분수의덧셈
 
 class Solution {
 

@@ -1,4 +1,4 @@
-package 프로그래머스.입문.아이스아메리카노
+package 프로그래머스.입문.Day5.아이스아메리카노
 
 class Solution {
 

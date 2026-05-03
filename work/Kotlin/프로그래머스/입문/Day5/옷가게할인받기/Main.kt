@@ -1,4 +1,4 @@
-package 프로그래머스.입문.옷가게할인받기
+package 프로그래머스.입문.Day5.옷가게할인받기
 
 class Solution {
 

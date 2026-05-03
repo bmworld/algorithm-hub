@@ -1,4 +1,4 @@
-package 프로그래머스.입문.짝수는싫어요
+package 프로그래머스.입문.Day3.짝수는싫어요
 
 class Solution {
 
