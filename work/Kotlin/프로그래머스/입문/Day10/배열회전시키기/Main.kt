@@ -4,7 +4,7 @@ class Solution {
 
   fun solution(a: IntArray, dir: String): IntArray {
     val len = a.size
-    var ans = IntArray(len)
+    val ans = IntArray(len)
     val movedCnt = len - 1
     val end = len - 1
     when (dir) {
