@@ -8,26 +8,27 @@ class Solution {
   val MINUS = 45
   val ZERO = 48
   val NUM = ZERO..ZERO + 9
-  fun solution(s: String): Int {
+  fun solution(str: String): Int {
     var ans = 0
 
-    var op = EMPTY
+    var s = 1
     var prv = EMPTY
     var cur = 0
 
-    for (i in 0..s.length) {
-      if (i == s.length) ans += op(prv, cur, op) else {
-        val c = s[i].code
+    for (i in 0..str.length) {
+      if (i == str.length) ans += prv + s * cur else {
+        val c = str[i].code
         when (c) {
           PLUS, MINUS -> {
-            op = c
+            if (c == MINUS) s = -1
             prv = cur
             cur = 0
           }
-          SPACE -> if (s[i - 1].code >= ZERO && prv != EMPTY) {
-            ans += op(prv, cur, op)
+          SPACE -> if (str[i - 1].code >= ZERO && prv != EMPTY) {
+            ans += prv + s * cur
             prv = ans
             cur = 0
+            s = 1
           }
           in NUM -> cur = cur * 10 + c - ZERO
         }
@@ -50,3 +51,30 @@ fun main() {
   check(s.solution("190 - 100") == 90)
   check(s.solution("1 - 100 + 99 + 72") == 72)
 }
+
+/**
+ * AS IS
+ * 테스트 1 〉	통과 (0.03ms, 60.5MB)
+ * 테스트 2 〉	통과 (0.03ms, 60.6MB)
+ * 테스트 3 〉	통과 (0.03ms, 61.5MB)
+ * 테스트 4 〉	통과 (0.03ms, 61MB)
+ * 테스트 5 〉	통과 (0.03ms, 60.8MB)
+ * 테스트 6 〉	통과 (0.04ms, 63.1MB)
+ * 테스트 7 〉	통과 (0.03ms, 62.5MB)
+ * 테스트 8 〉	통과 (0.02ms, 60.9MB)
+ * 테스트 9 〉	통과 (0.02ms, 62.2MB)
+ * 테스트 10 〉	통과 (0.03ms, 62.1MB)
+ *
+ * TO BE
+ * 테스트 1 〉	통과 (0.02ms, 64.6MB)
+ * 테스트 2 〉	통과 (0.03ms, 61.7MB)
+ * 테스트 3 〉	통과 (0.03ms, 60.6MB)
+ * 테스트 4 〉	통과 (0.03ms, 60.9MB)
+ * 테스트 5 〉	통과 (0.03ms, 61MB)
+ * 테스트 6 〉	통과 (0.02ms, 61.7MB)
+ * 테스트 7 〉	통과 (0.02ms, 61.9MB)
+ * 테스트 8 〉	통과 (0.02ms, 63MB)
+ * 테스트 9 〉	통과 (0.02ms, 62.8MB)
+ * 테스트 10 〉	통과 (0.02ms, 61.3MB)
+ *
+ */
