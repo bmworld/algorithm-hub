@@ -1,4 +1,4 @@
-package 프로그래머스.입문.Day15.숫자찾기
+package 프로그래머스.입문.Day17.숫자찾기
 
 class Solution {
 

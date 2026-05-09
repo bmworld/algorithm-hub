@@ -1,4 +1,4 @@
-package 프로그래머스.입문.Day15.n의배수고르기
+package 프로그래머스.입문.Day17.n의배수고르기
 
 class Solution {
 
