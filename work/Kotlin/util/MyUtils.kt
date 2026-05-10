@@ -57,8 +57,14 @@ class Timer(
 }
 
 
-fun validate(actual: Array<String>, expect: Array<String>) {
-  repeat(expect.size) {
-    check(actual[it] == expect[it])
-  }
+fun validate(actual: IntArray, expect: IntArray) {
+  check(actual.contentEquals(expect))
+}
+
+fun <T> validate(actual: Array<T>, expect: Array<T>) {
+  check(actual.contentEquals(expect))
+}
+
+fun <T> validate(actual: T, expect: T) {
+  check(actual == expect)
 }
