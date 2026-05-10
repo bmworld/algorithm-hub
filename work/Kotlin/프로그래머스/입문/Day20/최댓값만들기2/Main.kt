@@ -9,25 +9,34 @@ class Solution {
     var M1 = 0
     var M2 = 0
 
+    var pos = 0
+    var neg = 0
     for (x in a) {
       if (x < 0) {
+        neg++
         if (x < m1) {
           m2 = m1
           m1 = x
         } else if (x < m2) m2 = x
       } else {
+        pos++
         if (x > M1) {
           M2 = M1
           M1 = x
         } else if (x > M2) M2 = x
       }
     }
-    return maxOf(m1 * m2, M1 * M2)
+    return if (pos == 1 && neg == 1) m1 * M1 else maxOf(m1 * m2, M1 * M2)
   }
 }
 
 fun main() {
   val s = Solution()
+  check(s.solution(intArrayOf(0, 0)) == 0)
+  check(s.solution(intArrayOf(-1, 0)) == 0)
+  check(s.solution(intArrayOf(-1, 1)) == -1)
+  check(s.solution(intArrayOf(-2, -1, 1)) == 2)
+  check(s.solution(intArrayOf(-2, -1, -3)) == 6)
   check(s.solution(intArrayOf(1, 2, -3, 4, -5)) == 15)
   check(s.solution(intArrayOf(0, -31, 24, 10, 1, 9)) == 240)
   check(s.solution(intArrayOf(10, 20, 30, 5, 5, 20, 5)) == 600)
