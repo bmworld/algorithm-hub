@@ -1,5 +1,7 @@
 package 프로그래머스.입문.Day19.잘라서배열로저장하기
 
+import util.validate
+
 
 class Solution {
 
@@ -23,10 +25,4 @@ fun main() {
   validate(s.solution("abc1Addfggg4556b", 6), arrayOf<String>("abc1Ad", "dfggg4", "556b"))
   validate(s.solution("abcdef123", 3), arrayOf<String>("abc", "def", "123"))
   validate(s.solution("abcdef1", 3), arrayOf<String>("abc", "def", "1"))
-}
-
-private fun validate(actual: Array<String>, expect: Array<String>) {
-  repeat(expect.size) {
-    check(actual[it] == expect[it])
-  }
 }

@@ -55,3 +55,10 @@ class Timer(
     println(String.format("[Timer] $title: %.7f sec", time))
   }
 }
+
+
+fun validate(actual: Array<String>, expect: Array<String>) {
+  repeat(expect.size) {
+    check(actual[it] == expect[it])
+  }
+}
