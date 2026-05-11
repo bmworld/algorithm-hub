@@ -18,17 +18,12 @@ class Solution {
         val dk = dots[k]
         val dl = dots[l]
 
-        val biggerBI = di[1] > dj[1]
-        val dy1 = (if (biggerBI) di[1] - dj[1] else dj[1] - di[1]).toDouble()
-        val dx1 = (if (biggerBI) di[0] - dj[0] else dj[0] - di[0]).toDouble()
+        val dy1 = (di[1] - dj[1])
+        val dx1 = (di[0] - dj[0])
+        val dy2 = dk[1] - dl[1]
+        val dx2 = dk[0] - dl[0]
 
-        val biggerDK = dk[1] > dl[1]
-        val dy2 = (if (biggerDK) dk[1] - dl[1] else dk[1] - dl[1]).toDouble()
-        val dx2 = (if (biggerDK) dk[0] - dl[0] else dk[0] - dl[0]).toDouble()
-
-        val d1 = dy1 / dx1
-        val d2 = dy2 / dx2
-        if (d1 == d2) return POSSIBLE
+        if (dx1 * dy2 == dx2 * dy1) return POSSIBLE
       }
     return IMPOSSIBLE
   }
