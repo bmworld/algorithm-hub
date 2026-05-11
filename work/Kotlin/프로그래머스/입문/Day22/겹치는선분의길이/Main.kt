@@ -71,7 +71,7 @@ fun main() {
 }
 
 /**
- * AS IS
+ * ME
  * 테스트 1 〉	통과 (10.48ms, 65.7MB)
  * 테스트 2 〉	통과 (10.73ms, 65.3MB)
  * 테스트 3 〉	통과 (10.43ms, 65.5MB)
@@ -82,4 +82,33 @@ fun main() {
  * 테스트 8 〉	통과 (10.09ms, 65.4MB)
  * 테스트 9 〉	통과 (10.10ms, 65.6MB)
  * 테스트 10 〉	통과 (9.89ms, 66MB)
+ *
+ *
+ * // ------------ RIVAL
+ * class Solution {
+ *     fun solution(lines: Array<IntArray>): Int {
+ *         val table = ShortArray(200)
+ *         val max = 2.toShort()
+ *         lines.map { it.sorted() }.forEach { (a, b) ->
+ *             val start = a.coerceAtMost(b)
+ *             val end = a.coerceAtLeast(b)
+ *             (start + 99 until end + 99).forEach {
+ *                 if (table[it] != max)
+ *                     table[it]++
+ *             }
+ *         }
+ *         return table.count { it == max }
+ *     }
+ * }
+ *
+ * 테스트 1 〉	통과 (15.15ms, 66.1MB)
+ * 테스트 2 〉	통과 (17.36ms, 65MB)
+ * 테스트 3 〉	통과 (15.90ms, 65.5MB)
+ * 테스트 4 〉	통과 (15.61ms, 65.1MB)
+ * 테스트 5 〉	통과 (18.25ms, 65.8MB)
+ * 테스트 6 〉	통과 (18.11ms, 66.3MB)
+ * 테스트 7 〉	통과 (19.16ms, 65.2MB)
+ * 테스트 8 〉	실패 (런타임 에러)
+ * 테스트 9 〉	통과 (17.08ms, 65.5MB)
+ * 테스트 10 〉	통과 (11.70ms, 64.2MB)
  */
