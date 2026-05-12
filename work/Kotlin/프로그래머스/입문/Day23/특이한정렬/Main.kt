@@ -58,7 +58,7 @@ fun main() {
 //println("--AT: a[$it] = ${a[it]}")
 
 /**
- * V1
+ * ME
  * 테스트 1 〉	통과 (0.17ms, 62.2MB)
  * 테스트 2 〉	통과 (0.17ms, 62.4MB)
  * 테스트 3 〉	통과 (0.11ms, 62.8MB)
@@ -66,4 +66,22 @@ fun main() {
  * 테스트 5 〉	통과 (0.02ms, 61.1MB)
  * 테스트 6 〉	통과 (0.02ms, 61.9MB)
  * 테스트 7 〉	통과 (0.01ms, 62.1MB)
+ *
+ *
+ * RIVAL
+ * import kotlin.math.abs
+ *
+ * class Solution {
+ *     fun solution(numList: IntArray, n: Int): IntArray {
+ *         return numList.sortedWith { a, b ->
+ *             if (abs(a - n) == abs(b - n)) b.compareTo(a) else abs(a - n).compareTo(abs(b - n))
+ *         }.toIntArray()
+ *     }
+ * }
+ * 테스트 2 〉	통과 (15.27ms, 66.7MB)
+ * 테스트 3 〉	통과 (14.95ms, 66MB)
+ * 테스트 4 〉	통과 (14.98ms, 67.2MB)
+ * 테스트 5 〉	통과 (13.42ms, 66.5MB)
+ * 테스트 6 〉	통과 (16.38ms, 66.7MB)
+ * 테스트 7 〉	통과 (13.58ms, 66.5MB)
  */
