@@ -2,36 +2,31 @@ package 프로그래머스.입문.Day24.이진수더하기
 
 import util.validate
 
-
 class Solution {
 
   val BASE = 2
   val ZERO = 48
-  val ONE = 49
   fun solution(b1: String, b2: String): String {
-
-    val maxLen = maxOf(b1.length, b2.length)
-    val ansLen = maxLen + 1
+    val ansLen = maxOf(b1.length, b2.length) + 1
     val a = CharArray(ansLen) { ZERO.toChar() }
-    var caret = 0
-    repeat(maxLen) {
-      val d1 = getDigit(b1, it)
-      val d2 = getDigit(b2, it)
-      val sum = d1 + d2 + caret
-      a[ansLen - (it + 1)] = (sum % BASE + ZERO).toChar()
-      caret = sum / BASE
+
+    var carry = 0
+    var i = b1.lastIndex
+    var j = b2.lastIndex
+    var pos = ansLen - 1
+    while (i >= 0 || j >= 0 || carry > 0) {
+      val d1 = if (i < 0) 0 else b1[i--].code - ZERO
+      val d2 = if (j < 0) 0 else b2[j--].code - ZERO
+      val sum = d1 + d2 + carry
+      a[pos--] = (sum % BASE + ZERO).toChar()
+
+      carry = sum / BASE
     }
-
-    if (caret > 0) a[0] = ONE.toChar()
-    return a.concatToString(if (caret > 0) 0 else 1, ansLen)
-  }
-
-  fun getDigit(s: String, i: Int): Int {
-    val pos = s.length - (i + 1)
-    return if (pos < 0) 0 else s[pos].code - ZERO
+    return a.concatToString(++pos, ansLen)
   }
 }
 
+//      println("[$pos] $d1 + $d2 + $carry = $sum ---> ${a[pos]}")
 /**
  * ```
  * ME:
@@ -44,6 +39,17 @@ class Solution {
  * 테스트 7 〉	통과 (12.41ms, 64.2MB)
  * 테스트 8 〉	통과 (9.33ms, 64MB)
  * 테스트 9 〉	통과 (5.35ms, 62.8MB)
+ *
+ * 개선:
+ * 테스트 1 〉	통과 (8.23ms, 63.5MB)
+ * 테스트 2 〉	통과 (5.07ms, 64.1MB)
+ * 테스트 3 〉	통과 (7.32ms, 63.7MB)
+ * 테스트 4 〉	통과 (5.58ms, 63MB)
+ * 테스트 5 〉	통과 (6.05ms, 63.4MB)
+ * 테스트 6 〉	통과 (4.92ms, 64.3MB)
+ * 테스트 7 〉	통과 (5.07ms, 62.4MB)
+ * 테스트 8 〉	통과 (5.03ms, 64.3MB)
+ * 테스트 9 〉	통과 (5.07ms, 63.4MB)
  * ```
  * ```
  * RIVAL:
