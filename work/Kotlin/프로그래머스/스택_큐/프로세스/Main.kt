@@ -6,7 +6,7 @@ class Solution {
 
   val maxP = 9
   fun solution(a: IntArray, location: Int): Int {
-    val cnts = IntArray(maxP)
+    val cnts = IntArray(maxP + 1)
     val len = a.size
 
     var higher = 0
@@ -18,7 +18,7 @@ class Solution {
           higherEnd = i
         } else if (it == higher) higherEnd = i
       }
-      cnts[maxP - p]++
+      cnts[p]++
     }
 
     var ans = 0
@@ -32,7 +32,7 @@ class Solution {
 
 
     for (p in higher - 1 downTo 1) {
-      if (cnts[maxP - p] == 0) continue
+      if (cnts[p] == 0) continue
 
       val end = higherEnd
       var i = nxt(end, len)
