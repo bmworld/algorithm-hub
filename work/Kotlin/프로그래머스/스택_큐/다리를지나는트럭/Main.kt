@@ -4,37 +4,37 @@ import util.validate
 
 class Solution {
 
+  val MAX = 10_000
   fun solution(L: Int, W: Int, a: IntArray): Int {
     val size = a.size
-    val times = IntArray(size)
-    val rooms = IntArray(size)
+    val wByTime = IntArray(L * W + 1 + 1)
 
-    var t = L
+    var ans = L
     var w = 0
+    var i = 0
     var l = 0
-    for (r in 0 until size) {
-      w += a[r]
-      println("[fr] [$l -> $r] v=${a[r]}")
+    var r = l
+    var truck = a[i]
 
-      val room = if (w <= W) 0 else {
-        var rmn = L - (t - times[l] + 1)
-        println("1 rmn = ${rmn}")
-        while (w > W || l < r && t - times[l] + 1 >= L) {
-          rmn += 1 + rooms[l]
-          w -= a[l++]
+    while (true) {
+      if (r - l >= L) w -= wByTime[l++]
+      else r++
+      println("[$l, $r] => w=$w, cur=$i")
+
+      if (w + truck <= W) {
+        w += truck.also { wByTime[r] = it }
+        println("[+] r=$r, truck = $truck, w=$w next = $i")
+        if (++i < size) truck = a[i]
+        else {
+          ans = r + L
+          break
         }
-        println("2 rmn = ${rmn}, $l, $r")
-        rmn - 1
       }
 
-      t += 1 + room.also { if (r > 0) rooms[r - 1] = it }
-      times[r] = t
-
-      println("[to] [$l -> $r] room=$room, w=$w, t=$t\n")
     }
 
 
-    return t
+    return ans.also { println("ans = ${it}") }
   }
 }
 
@@ -65,11 +65,9 @@ fun main() {
 //
 //  validate(s.solution(4, 3, intArrayOf(2, 1, 1, 1)), 10)
 //  validate(s.solution(2, 3, intArrayOf(1, 2, 1, 1)), 6)
-//  validate(s.solution(5, 5, intArrayOf(5, 1, 1, 1, 1)), 14)
 //  validate(s.solution(3, 6, intArrayOf(1, 2, 3, 1, 1)), 8)
-  validate(s.solution(3, 4, intArrayOf(2, 2, 2, 2, 2, 2)), 11)
-  validate(s.solution(4, 5, intArrayOf(1, 4, 1, 1, 1)), 11)
+//  validate(s.solution(3, 4, intArrayOf(2, 2, 2, 2, 2, 2)), 11)
+//  validate(s.solution(4, 5, intArrayOf(1, 4, 1, 1, 1)), 11)
+  validate(s.solution(5, 5, intArrayOf(5, 1, 1, 1, 1)), 14)
 
 }
-//      println("[$l ~ $r] rooms[$r]=${rooms[r]} -> t = $t")
-//      println("[$l ~ $r] $w vs $W")
