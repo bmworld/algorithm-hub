@@ -6,7 +6,7 @@ class Solution {
 
   fun solution(L: Int, W: Int, a: IntArray): Int {
     val size = a.size
-    val wByTime = IntArray(L * W + 2)
+    val inBridge = IntArray(L)
 
     var ans = L
     var w = 0
@@ -14,26 +14,30 @@ class Solution {
     var l = 0
     var r = l
     var truck = a[i]
-
+    var pos = 0
 
     while (true) {
       if (r - l < L) r++ else {
         r++
-        w -= wByTime[++l]
+        w -= inBridge[pos]
       }
 
       if (w + truck <= W) {
-        w += truck.also { wByTime[r] = it }
+        w += truck.also { inBridge[pos] = it }
         if (++i < size) truck = a[i]
         else {
           ans = r + L
           break
         }
       }
+
+      pos = next(pos, L)
     }
 
     return ans
   }
+
+  fun next(i: Int, len: Int): Int = if (i + 1 < len) i + 1 else 0
 }
 
 //         println("[-] l=${l}")
