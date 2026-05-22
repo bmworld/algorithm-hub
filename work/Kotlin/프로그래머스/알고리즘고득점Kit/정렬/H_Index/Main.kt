@@ -12,10 +12,9 @@ class Solution {
     var ans = 0
     for (i in 0 until len) {
       val cnt = len - i
-      val ctt = a[i]
-      val h = if (cnt >= ctt) minOf(cnt, ctt) else 0
-      if (h > ans) ans = h
-      else break
+      val h = a[i]
+      if (cnt < h) break
+      ans = h
     }
 
     return ans
@@ -69,6 +68,10 @@ class Solution {
 fun main() {
   val s = Solution()
   validate(
+    s.solution(intArrayOf(1, 1, 1, 1, 2)), 1
+  )
+
+  validate(
     s.solution(intArrayOf(1, 1, 1)), 1
   )
 
@@ -80,21 +83,21 @@ fun main() {
     s.solution(intArrayOf(3, 3, 3)), 3
   )
 
-//  validate(
-//    s.solution(intArrayOf(3, 0, 6, 1, 5)), 3
-//  )
-//  validate(
-//    s.solution(intArrayOf(1, 5, 4, 4, 0)), 1
-//  )
-//
-//
-//  validate(
-//    s.solution(intArrayOf(5, 4, 4, 1, 9)), 4
-//  )
-//
-//  validate(
-//    s.solution(intArrayOf(3, 3)), 0
-//  )
+  validate(
+    s.solution(intArrayOf(3, 0, 6, 1, 5)), 3
+  )
+  validate(
+    s.solution(intArrayOf(1, 5, 4, 4, 0)), 1
+  )
+
+
+  validate(
+    s.solution(intArrayOf(5, 4, 4, 1, 9)), 4
+  )
+
+  validate(
+    s.solution(intArrayOf(3, 3)), 0
+  )
 }
 
 //    println("[$fr -> $to]")
