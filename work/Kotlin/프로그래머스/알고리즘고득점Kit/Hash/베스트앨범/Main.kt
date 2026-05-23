@@ -1,4 +1,4 @@
-package 프로그래머스.알고리즘고득점Kit.해시.베스트앨범
+package 프로그래머스.알고리즘고득점Kit.Hash.베스트앨범
 
 import util.validate
 

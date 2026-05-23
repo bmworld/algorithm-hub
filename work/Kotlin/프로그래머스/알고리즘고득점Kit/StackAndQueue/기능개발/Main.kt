@@ -1,4 +1,4 @@
-package 프로그래머스.알고리즘고득점Kit.스택_큐.기능개발
+package 프로그래머스.알고리즘고득점Kit.StackAndQueue.기능개발
 
 import util.validate
 

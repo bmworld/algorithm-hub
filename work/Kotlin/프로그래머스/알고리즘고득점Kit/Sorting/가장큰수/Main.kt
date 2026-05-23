@@ -1,4 +1,4 @@
-package 프로그래머스.알고리즘고득점Kit.정렬.가장큰수
+package 프로그래머스.알고리즘고득점Kit.Sorting.가장큰수
 
 import util.validate
 
