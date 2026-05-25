@@ -12,35 +12,48 @@ class Solution {
 
   fun solution(jobs: Array<IntArray>): Int {
     val len = jobs.size
-    threewayQuickSort(jobs, 0, len - 1)
-    val h = HEAP(len)
 
-    var accTime = 0
-    var end = jobs[0][rIdx]
-
-    fun execute(nextEnd: Int? = null) {
-      while (h.isNotEmpty()) {
-        val lsi = h.pop()
-        val l = (lsi / SEP1).toInt()
-        val si = lsi % SEP1
-        val s = (si / SEP2).toInt()
-        end += l
-        accTime += end - s
-      }
-
-      if (nextEnd != null) end = maxOf(end, nextEnd)
-    }
+    val q = HEAP(len)
+    val req = HashMap<Int, MutableList<Long>>()
 
     for (i in 0 until len) {
       val job = jobs[i]
-      val reqTime = job[rIdx]
-      val tknTime = job[tIdx]
-      if (reqTime > end) execute(reqTime)
-      h.push(encode(tknTime, reqTime, i))
-    }
-    execute()
+      val time = job[rIdx]
+      var arr = req[time]
+      val e = encode(job[tIdx], time, i)
 
-    return accTime / len
+      if (arr == null) {
+        arr = mutableListOf(e)
+      } else arr.add(e)
+
+      req[time] = arr
+
+    }
+
+    var acc = 0
+    var now = 0
+    var end = 0
+
+    while (req.isNotEmpty() || q.isNotEmpty()) {
+
+      val arr = req[now]
+      if (arr != null) {
+        for (e in arr) q.push(e)
+        req.remove(now)
+      }
+
+      if (end <= now && q.isNotEmpty()) {
+        val lsi = q.pop()
+        val l = (lsi / SEP1).toInt()
+        val si = lsi % SEP1
+        val s = (si / SEP2).toInt()
+        end = now + l
+        acc += end - s
+      }
+
+      now++
+    }
+    return acc / len
   }
 
 
@@ -90,71 +103,70 @@ class Solution {
       return v
     }
   }
-
-
-  fun swap(
-    a: Array<IntArray>,
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun threewayQuickSort(
-    a: Array<IntArray>,
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1][rIdx]
-
-    while (pos <= pr) {
-      val x = a[pos][rIdx]
-      when {
-        x < piv -> swap(a, pos++, pl++)
-        x > piv -> swap(a, pos, pr--)
-        else -> pos++
-      }
-    }
-    threewayQuickSort(a, l, pl - 1)
-    threewayQuickSort(a, pr + 1, r)
-  }
 }
 
 /**
  * ```
  * ME:
- * 테스트 1 〉	실패 (1.09ms, 64MB)
- * 테스트 2 〉	실패 (1.44ms, 63.6MB)
- * 테스트 3 〉	실패 (0.98ms, 63.8MB)
- * 테스트 4 〉	실패 (1.13ms, 64.1MB)
- * 테스트 5 〉	실패 (0.95ms, 63.6MB)
- * 테스트 6 〉	실패 (0.39ms, 64.1MB)
- * 테스트 7 〉	실패 (1.02ms, 63.7MB)
- * 테스트 8 〉	실패 (0.81ms, 62.9MB)
- * 테스트 9 〉	실패 (0.73ms, 61.8MB)
- * 테스트 10 〉	실패 (1.54ms, 63.2MB)
- * 테스트 11 〉	통과 (0.52ms, 63.3MB)
- * 테스트 12 〉	실패 (0.34ms, 62.2MB)
- * 테스트 13 〉	통과 (1.70ms, 62.3MB)
- * 테스트 14 〉	통과 (0.52ms, 62.6MB)
- * 테스트 15 〉	실패 (0.52ms, 62.7MB)
- * 테스트 16 〉	통과 (0.38ms, 63.1MB)
- * 테스트 17 〉	통과 (0.48ms, 62.5MB)
- * 테스트 18 〉	통과 (0.35ms, 62.6MB)
- * 테스트 19 〉	통과 (0.38ms, 63.9MB)
- * 테스트 20 〉	통과 (0.28ms, 63.6MB)
+ * 테스트 1 〉	통과 (13.63ms, 67.9MB)
+ * 테스트 2 〉	통과 (14.99ms, 68.2MB)
+ * 테스트 3 〉	통과 (16.85ms, 66.6MB)
+ * 테스트 4 〉	통과 (15.90ms, 65.7MB)
+ * 테스트 5 〉	통과 (13.74ms, 67.6MB)
+ * 테스트 6 〉	통과 (5.96ms, 64MB)
+ * 테스트 7 〉	통과 (15.78ms, 66.8MB)
+ * 테스트 8 〉	통과 (11.01ms, 66.9MB)
+ * 테스트 9 〉	통과 (6.89ms, 64.3MB)
+ * 테스트 10 〉	통과 (16.30ms, 68.6MB)
+ * 테스트 11 〉	통과 (3.71ms, 65.2MB)
+ * 테스트 12 〉	통과 (3.71ms, 65.2MB)
+ * 테스트 13 〉	통과 (3.53ms, 65.7MB)
+ * 테스트 14 〉	통과 (3.63ms, 64.1MB)
+ * 테스트 15 〉	통과 (3.56ms, 65.6MB)
+ * 테스트 16 〉	통과 (3.69ms, 64.1MB)
+ * 테스트 17 〉	통과 (4.34ms, 63.9MB)
+ * 테스트 18 〉	통과 (4.72ms, 63MB)
+ * 테스트 19 〉	통과 (3.62ms, 64.5MB)
+ * 테스트 20 〉	통과 (3.46ms, 62.6MB)
  * ```
  *
  *
  * ```
  * RIVAL:
+ * import java.util.*
+ *
+ * class Solution {
+ *     fun solution(jobs: Array<IntArray>): Int {
+ *         var jobList = jobs.map { it[0] to it[1]}.sortedBy { it.first }
+ *         var sortedTime: PriorityQueue<Pair<Int, Int>> = PriorityQueue(compareBy { it.second })
+ *         var current = 0
+ *         var sum = 0
+ *         while (!jobList.isEmpty() || !sortedTime.isEmpty()) {
+ *             val c = jobList.takeWhile { it.first <= current }
+ *             sortedTime.addAll(c)
+ *             jobList = jobList.drop(c.size)
+ *             if (sortedTime.isEmpty()) {
+ *                 current = jobList.first().first
+ *             } else {
+ *                 val j = sortedTime.poll()
+ *                 current += j.second
+ *                 sum += current - j.first
+ *             }
+ *         }
+ *
+ *         return sum / jobs.size
+ *     }
+ * }
+ * 테스트 1 〉	통과 (15.36ms, 69.1MB)
+ * 테스트 2 〉	통과 (14.95ms, 68.7MB)
+ * 테스트 3 〉	통과 (15.53ms, 68MB)
+ * 테스트 4 〉	통과 (15.22ms, 68.3MB)
+ * 테스트 5 〉	통과 (16.29ms, 67.7MB)
+ * 테스트 6 〉	통과 (12.79ms, 66.6MB)
+ * 테스트 7 〉	통과 (17.33ms, 67.6MB)
+ * 테스트 8 〉	통과 (14.53ms, 68.3MB)
+ * 테스트 9 〉	통과 (13.09ms, 67MB)
+ * 테스트 10 〉	통과 (15.10ms, 69.5MB)
  * ```
  */
 fun main() {
@@ -181,11 +193,10 @@ fun main() {
       intArrayOf(0, 10),
       intArrayOf(0, 10),
       intArrayOf(1, 1),
-    )), 16)
+    )), 13)
 
 
 }
 
-//      println("[done] end($end) | acc($accTime)")
-//       println("[$i] taken=$tknTime / req($reqTime) vs end ($end) | acc = $accTime")
-//println("avg = $avg = $accTime / $len")
+//println("[${now}] arr = ${arr}, ${req.size}")
+//println("[$lsi] end $end / acc = $end")
