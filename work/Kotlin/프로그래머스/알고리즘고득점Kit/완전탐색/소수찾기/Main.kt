@@ -12,17 +12,9 @@ class Solution {
     repeat(len) { limit *= 10 }
 
     val used = BooleanArray(len)
-    val NUM = IntArray(len)
     val ch = BooleanArray(limit)
-    fun getN(last: Int, dep: Int): Int {
-      var x = last
-      repeat(dep) {
-        x = x * 10 + NUM[dep - (it + 1)]
-      }
-      return x
-    }
 
-    fun dfs(dep: Int) {
+    fun dfs(dep: Int, cur: Int) {
       if (dep >= len) return
 
       for (i in 0 until len) {
@@ -30,16 +22,15 @@ class Solution {
         val digit = numbers[i].code - ZERO
         if (dep == 0 && digit == 0) continue
         used[i] = true
-        NUM[dep] = digit
-        var n = getN(digit, dep)
-        if (!ch[n] && isPrime(n)) ans++
-        ch[n] = true
-        dfs(dep + 1)
+        var nxt = cur * 10 + digit
+        if (!ch[nxt] && isPrime(nxt)) ans++
+        ch[nxt] = true
+        dfs(dep + 1, nxt)
         used[i] = false
       }
     }
 
-    dfs(0)
+    dfs(0, 0)
     return ans
   }
 
@@ -59,7 +50,7 @@ class Solution {
 
 /**
  * ```
- * ME:
+ * ME: v1
  * 테스트 1 〉	통과 (0.17ms, 60.5MB)
  * 테스트 2 〉	통과 (0.88ms, 64.6MB)
  * 테스트 3 〉	통과 (0.11ms, 63.6MB)
@@ -72,6 +63,21 @@ class Solution {
  * 테스트 10 〉	통과 (0.90ms, 63.4MB)
  * 테스트 11 〉	통과 (0.23ms, 65.9MB)
  * 테스트 12 〉	통과 (0.20ms, 63.2MB)
+ *
+ * ME: v2
+ * 테스트 1 〉	통과 (0.12ms, 63.4MB)
+ * 테스트 2 〉	통과 (0.82ms, 65.4MB)
+ * 테스트 3 〉	통과 (0.14ms, 64MB)
+ * 테스트 4 〉	통과 (0.60ms, 66.1MB)
+ * 테스트 5 〉	통과 (4.16ms, 70.6MB)
+ * 테스트 6 〉	통과 (0.10ms, 65.9MB)
+ * 테스트 7 〉	통과 (0.17ms, 62.6MB)
+ * 테스트 8 〉	통과 (5.23ms, 72.9MB)
+ * 테스트 9 〉	통과 (0.11ms, 64MB)
+ * 테스트 10 〉	통과 (1.16ms, 64.8MB)
+ * 테스트 11 〉	통과 (0.22ms, 63.1MB)
+ * 테스트 12 〉	통과 (0.24ms, 65.5MB)
+ *
  * ```
  *
  *
