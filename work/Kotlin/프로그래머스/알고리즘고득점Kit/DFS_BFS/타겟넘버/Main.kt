@@ -9,13 +9,13 @@ class Solution {
     var sum = 0
     for (x in a) sum += x
 
-    fun dfs(dep: Int, i: Int, sum: Int) {
+    fun dfs(i: Int, sum: Int) {
       if (sum == target) ans++
       if (sum < target) return
-      for (j in i until a.size) dfs(dep + 1, j + 1, sum - a[j] * 2)
+      for (j in i until a.size) dfs(j + 1, sum - a[j] * 2)
     }
 
-    dfs(0, 0, sum)
+    dfs(0, sum)
     return ans
   }
 }
