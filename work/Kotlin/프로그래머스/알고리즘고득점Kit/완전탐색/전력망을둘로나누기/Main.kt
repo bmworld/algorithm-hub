@@ -5,55 +5,30 @@ import util.validate
 class Solution {
 
   fun solution(n: Int, wires: Array<IntArray>): Int {
-    val cap = n
-    fun pos(r: Int, c: Int, cap: Int = n): Int = r * cap + c
-    val wired = BooleanArray(cap * cap)
-    val ch = BooleanArray(cap * cap)
     val graph = Array(n) { mutableListOf<Int>() }
-
 
     for (wire in wires) {
       val a = --wire[0]
       val b = --wire[1]
       graph[a] += b
       graph[b] += a
-      wired[pos(a, b)] = true
-      wired[pos(b, a)] = true
     }
 
     var ans = n
 
-    fun dfs(a: Int): Int {
+    fun dfs(a: Int, b: Int): Int {
       var cnt = 1
-      for (b in graph[a]) {
-        if (!wired[pos(a, b)]) continue
-        wired[pos(a, b)] = false
-        wired[pos(b, a)] = false
-        cnt += dfs(b)
-        wired[pos(a, b)] = true
-        wired[pos(b, a)] = true
+      for (nxt in graph[b]) {
+        if (nxt == a) continue
+        val childCnt = dfs(b, nxt)
+        val diff = abs(n - 2 * childCnt)
+        ans = minOf(ans, diff)
+        cnt += childCnt
       }
       return cnt
     }
 
-
-    for (wire in wires) {
-      val a = wire[0]
-      val b = wire[1]
-
-      if (ch[pos(a, b)]) continue
-      ch[pos(a, b)] = true
-      ch[pos(b, a)] = true
-      wired[pos(a, b)] = false
-      wired[pos(b, a)] = false
-      val cnt = dfs(b)
-      wired[pos(a, b)] = true
-      wired[pos(b, a)] = true
-
-      val diff = abs(n - 2 * cnt)
-      if (diff == 0) return 0
-      else ans = minOf(ans, diff)
-    }
+    dfs(-1, 0)
 
     return ans
   }
@@ -120,6 +95,20 @@ class Solution {
  * 테스트 11 〉	통과 (0.89ms, 59.5MB)
  * 테스트 12 〉	통과 (0.77ms, 59.4MB)
  * 테스트 13 〉	통과 (0.90ms, 59.8MB)
+ * v5:
+ * 테스트 1 〉	통과 (0.38ms, 58.9MB)
+ * 테스트 2 〉	통과 (0.33ms, 59.6MB)
+ * 테스트 3 〉	통과 (0.32ms, 59.7MB)
+ * 테스트 4 〉	통과 (0.33ms, 59.7MB)
+ * 테스트 5 〉	통과 (0.33ms, 59.3MB)
+ * 테스트 6 〉	통과 (0.23ms, 59.2MB)
+ * 테스트 7 〉	통과 (0.20ms, 59.3MB)
+ * 테스트 8 〉	통과 (0.25ms, 59.2MB)
+ * 테스트 9 〉	통과 (0.22ms, 58.8MB)
+ * 테스트 10 〉	통과 (0.28ms, 59.4MB)
+ * 테스트 11 〉	통과 (0.33ms, 59.6MB)
+ * 테스트 12 〉	통과 (0.36ms, 59.7MB)
+ * 테스트 13 〉	통과 (0.32ms, 59.1MB)
  * ```
  *
  *
