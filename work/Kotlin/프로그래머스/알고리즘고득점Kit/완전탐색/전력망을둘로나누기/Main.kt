@@ -5,62 +5,50 @@ import util.validate
 class Solution {
 
   fun solution(n: Int, wires: Array<IntArray>): Int {
+    val graph = Array(n + 1) { mutableListOf<Int>() }
 
     var maxCnt = -1
-    var target = -1
-
-    val graph = Array(n + 1) { mutableListOf<Int>() }
 
     for (wire in wires) {
       val a = wire[0]
       val b = wire[1]
-
       val aa = graph[a]
       aa += b
       val bb = graph[b]
       bb += a
 
-      val aLen = aa.size
-      if (aLen > maxCnt) {
-        maxCnt = aLen
-        target = a
-      }
-
-      val bLen = bb.size
-      if (bLen > maxCnt) {
-        maxCnt = bLen
-        target = b
-      }
+      maxCnt = maxOf(maxCnt, aa.size, bb.size)
     }
 
     var ans: Int = n
-    val cnds = graph[target]
 
     val q = IntArray(n)
+    for (target in 1..n) {
+      val cnds = graph[target]
+      if (cnds.size != maxCnt) continue
+      l@ for (cnd in cnds) {
+        var cnt = 1
+        val used = BooleanArray(n + 1)
+        var qh = 0
+        var qt = 0
+        q[qt++] = cnd
+        used[cnd] = true
+        used[target] = true
 
-    l@ for (cnd in cnds) {
-      var cnt = 1
-      val used = BooleanArray(n + 1)
-      var qh = 0
-      var qt = 0
-      q[qt++] = cnd
-      used[cnd] = true
-      used[target] = true
-
-      while (qh < qt) {
-        val parent = q[qh++]
-        for (child in graph[parent]) {
-          if (child == target && parent != cnd) break@l
-          if (used[child]) continue
-          used[child] = true
-          q[qt++] = child
-          cnt++
+        while (qh < qt) {
+          val parent = q[qh++]
+          for (child in graph[parent]) {
+            if (child == target && parent != cnd) break@l
+            if (used[child]) continue
+            used[child] = true
+            q[qt++] = child
+            cnt++
+          }
         }
+
+        ans = minOf(ans, abs(n - 2 * cnt))
       }
-
-      ans = minOf(ans, abs(n - 2 * cnt))
     }
-
 
     return ans
   }
