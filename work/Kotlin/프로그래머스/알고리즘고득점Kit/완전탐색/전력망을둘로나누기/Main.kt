@@ -5,43 +5,50 @@ import util.validate
 class Solution {
 
   fun solution(n: Int, wires: Array<IntArray>): Int {
-    val graph = Array(n + 1) { mutableListOf<Int>() }
+    val cap = n
+    fun pos(r: Int, c: Int, cap: Int = n): Int = r * cap + c
+    val wired = BooleanArray(cap * cap)
+    val ch = BooleanArray(cap * cap)
+    val graph = Array(n) { mutableListOf<Int>() }
+
+
     for (wire in wires) {
-      val a = wire[0]
-      val b = wire[1]
+      val a = --wire[0]
+      val b = --wire[1]
       graph[a] += b
       graph[b] += a
+      wired[pos(a, b)] = true
+      wired[pos(b, a)] = true
     }
 
     var ans = n
 
-    val q = IntArray(n)
+    fun dfs(a: Int): Int {
+      var cnt = 1
+      for (b in graph[a]) {
+        if (!wired[pos(a, b)]) continue
+        wired[pos(a, b)] = false
+        wired[pos(b, a)] = false
+        cnt += dfs(b)
+        wired[pos(a, b)] = true
+        wired[pos(b, a)] = true
+      }
+      return cnt
+    }
+
+
     for (wire in wires) {
       val a = wire[0]
       val b = wire[1]
-      graph[a] -= b
-      graph[b] -= a
 
-      var cnt = n - 1
-      val used = BooleanArray(n + 1)
-      var qh = 0
-      var qt = 0
-      q[qt++] = b
-      used[b] = true
-
-      bfs@ while (qh < qt) {
-        val parent = q[qh++]
-        for (child in graph[parent]) {
-          if (child == a && parent != b) break@bfs
-          if (used[child]) continue
-          used[child] = true
-          q[qt++] = child
-          cnt--
-        }
-      }
-
-      graph[a] += b
-      graph[b] += a
+      if (ch[pos(a, b)]) continue
+      ch[pos(a, b)] = true
+      ch[pos(b, a)] = true
+      wired[pos(a, b)] = false
+      wired[pos(b, a)] = false
+      val cnt = dfs(b)
+      wired[pos(a, b)] = true
+      wired[pos(b, a)] = true
 
       val diff = abs(n - 2 * cnt)
       if (diff == 0) return 0
@@ -56,7 +63,8 @@ class Solution {
 
 /**
  * ```
- * ME: v1
+ * [ME]
+ * v1:
  * 테스트 1 〉	통과 (1.78ms, 59.7MB)
  * 테스트 2 〉	통과 (1.93ms, 60.3MB)
  * 테스트 3 〉	통과 (1.41ms, 59.2MB)
@@ -70,7 +78,7 @@ class Solution {
  * 테스트 11 〉	통과 (1.61ms, 60.1MB)
  * 테스트 12 〉	통과 (1.59ms, 59.7MB)
  * 테스트 13 〉	통과 (1.37ms, 59.2MB)
- * ME: v2
+ * v2:
  * 테스트 1 〉	통과 (1.63ms, 59.7MB)
  * 테스트 2 〉	통과 (0.99ms, 60MB)
  * 테스트 3 〉	통과 (0.62ms, 59.5MB)
@@ -84,7 +92,7 @@ class Solution {
  * 테스트 11 〉	통과 (1.06ms, 59.5MB)
  * 테스트 12 〉	통과 (0.85ms, 59.3MB)
  * 테스트 13 〉	통과 (0.89ms, 59.5MB)
- * Me: v3
+ * v3:
  * 테스트 1 〉	통과 (2.34ms, 58.7MB)
  * 테스트 2 〉	통과 (0.97ms, 59.4MB)
  * 테스트 3 〉	통과 (0.47ms, 60.1MB)
@@ -98,11 +106,25 @@ class Solution {
  * 테스트 11 〉	통과 (1.91ms, 59.9MB)
  * 테스트 12 〉	통과 (0.87ms, 59.1MB)
  * 테스트 13 〉	통과 (0.88ms, 60MB)
+ * v4:
+ * 테스트 1 〉	통과 (1.12ms, 59.6MB)
+ * 테스트 2 〉	통과 (0.99ms, 59.7MB)
+ * 테스트 3 〉	통과 (0.64ms, 59.3MB)
+ * 테스트 4 〉	통과 (0.36ms, 59.3MB)
+ * 테스트 5 〉	통과 (0.53ms, 59.3MB)
+ * 테스트 6 〉	통과 (0.06ms, 59.2MB)
+ * 테스트 7 〉	통과 (0.05ms, 58.9MB)
+ * 테스트 8 〉	통과 (1.85ms, 59.7MB)
+ * 테스트 9 〉	통과 (0.23ms, 59.3MB)
+ * 테스트 10 〉	통과 (0.92ms, 59.6MB)
+ * 테스트 11 〉	통과 (0.89ms, 59.5MB)
+ * 테스트 12 〉	통과 (0.77ms, 59.4MB)
+ * 테스트 13 〉	통과 (0.90ms, 59.8MB)
  * ```
  *
  *
  * ```
- * RIVAL:
+ * [RIVAL]
  * import kotlin.math.min
  * import kotlin.math.abs
  * class Solution {
@@ -209,3 +231,6 @@ fun main() {
     ), 0
   )
 }
+
+//      println("${a + 1} <-> ${b + 1} -> $cnt")
+//        println("[${a + 1}] -> ${b + 1}")
