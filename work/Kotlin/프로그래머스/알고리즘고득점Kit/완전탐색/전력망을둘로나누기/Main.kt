@@ -7,37 +7,36 @@ class Solution {
   fun solution(n: Int, wires: Array<IntArray>): Int {
     val graph = Array(n + 1) { mutableListOf<Int>() }
 
-    var maxCnt = -1
-
     for (wire in wires) {
       val a = wire[0]
       val b = wire[1]
-      val aa = graph[a]
-      aa += b
-      val bb = graph[b]
-      bb += a
-
-      maxCnt = maxOf(maxCnt, aa.size, bb.size)
+      graph[a] += b
+      graph[b] += a
     }
 
     var ans: Int = n
 
     val q = IntArray(n)
-    for (x in 1..n) {
-      val cnds = graph[x]
-      l@ for (cnd in cnds) {
+    val ch = Array(n + 1) { BooleanArray(n + 1) }
+    for (a in 1..n) {
+      val cnds = graph[a]
+      l@ for (b in cnds) {
+        if (ch[a][b] || ch[b][a]) continue
+        ch[a][b] = true
+        ch[b][a] = true
+
         var cnt = 1
         val used = BooleanArray(n + 1)
         var qh = 0
         var qt = 0
-        q[qt++] = cnd
-        used[cnd] = true
-        used[x] = true
+        q[qt++] = b
+        used[b] = true
+        used[a] = true
 
         while (qh < qt) {
           val parent = q[qh++]
           for (child in graph[parent]) {
-            if (child == x && parent != cnd) break@l
+            if (child == a && parent != b) break@l
             if (used[child]) continue
             used[child] = true
             q[qt++] = child
@@ -71,6 +70,20 @@ class Solution {
  * 테스트 11 〉	통과 (1.61ms, 60.1MB)
  * 테스트 12 〉	통과 (1.59ms, 59.7MB)
  * 테스트 13 〉	통과 (1.37ms, 59.2MB)
+ * ME: v2
+ * 테스트 1 〉	통과 (1.63ms, 59.7MB)
+ * 테스트 2 〉	통과 (0.99ms, 60MB)
+ * 테스트 3 〉	통과 (0.62ms, 59.5MB)
+ * 테스트 4 〉	통과 (0.35ms, 59.7MB)
+ * 테스트 5 〉	통과 (0.37ms, 59.2MB)
+ * 테스트 6 〉	통과 (0.06ms, 59.4MB)
+ * 테스트 7 〉	통과 (0.06ms, 59.4MB)
+ * 테스트 8 〉	통과 (0.14ms, 59.4MB)
+ * 테스트 9 〉	통과 (0.27ms, 58.6MB)
+ * 테스트 10 〉	통과 (0.81ms, 59.9MB)
+ * 테스트 11 〉	통과 (1.06ms, 59.5MB)
+ * 테스트 12 〉	통과 (0.85ms, 59.3MB)
+ * 테스트 13 〉	통과 (0.89ms, 59.5MB)
  * ```
  *
  *
@@ -146,7 +159,24 @@ fun main() {
       intArrayOf(6, 7),
     )
   ), 1)
-}
 
-//println("[$cnd] $cnt -> diff = $diff")
-//    println("--- target = $target ($maxCnt)")
+  validate(
+
+    s.solution(
+      12,
+      arrayOf(
+        intArrayOf(1, 2),
+        intArrayOf(1, 3),
+        intArrayOf(1, 4),
+        intArrayOf(1, 5),
+        intArrayOf(5, 6),
+        intArrayOf(6, 7),
+        intArrayOf(7, 8),
+        intArrayOf(8, 9),
+        intArrayOf(9, 10),
+        intArrayOf(10, 11),
+        intArrayOf(11, 12),
+      )
+    ), 0
+  )
+}
