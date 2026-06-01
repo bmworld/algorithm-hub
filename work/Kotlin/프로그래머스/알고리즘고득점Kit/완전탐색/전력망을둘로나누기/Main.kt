@@ -23,9 +23,8 @@ class Solution {
     var ans: Int = n
 
     val q = IntArray(n)
-    for (target in 1..n) {
-      val cnds = graph[target]
-      if (cnds.size != maxCnt) continue
+    for (x in 1..n) {
+      val cnds = graph[x]
       l@ for (cnd in cnds) {
         var cnt = 1
         val used = BooleanArray(n + 1)
@@ -33,12 +32,12 @@ class Solution {
         var qt = 0
         q[qt++] = cnd
         used[cnd] = true
-        used[target] = true
+        used[x] = true
 
         while (qh < qt) {
           val parent = q[qh++]
           for (child in graph[parent]) {
-            if (child == target && parent != cnd) break@l
+            if (child == x && parent != cnd) break@l
             if (used[child]) continue
             used[child] = true
             q[qt++] = child
@@ -59,24 +58,59 @@ class Solution {
 /**
  * ```
  * ME: v1
- * 테스트 1 〉	통과 (0.14ms, 59.4MB)
- * 테스트 2 〉	실패 (0.14ms, 60.4MB)
- * 테스트 3 〉	통과 (0.13ms, 60.3MB)
- * 테스트 4 〉	통과 (0.15ms, 60MB)
- * 테스트 5 〉	통과 (0.20ms, 59.9MB)
- * 테스트 6 〉	통과 (0.05ms, 58.6MB)
- * 테스트 7 〉	통과 (0.05ms, 59MB)
- * 테스트 8 〉	실패 (0.07ms, 59.2MB)
- * 테스트 9 〉	실패 (0.06ms, 59.1MB)
- * 테스트 10 〉	실패 (0.19ms, 59.1MB)
- * 테스트 11 〉	실패 (0.23ms, 59.7MB)
- * 테스트 12 〉	실패 (0.13ms, 59.3MB)
- * 테스트 13 〉	실패 (0.19ms, 60MB)
+ * 테스트 1 〉	통과 (1.78ms, 59.7MB)
+ * 테스트 2 〉	통과 (1.93ms, 60.3MB)
+ * 테스트 3 〉	통과 (1.41ms, 59.2MB)
+ * 테스트 4 〉	통과 (1.41ms, 59MB)
+ * 테스트 5 〉	통과 (1.54ms, 60.1MB)
+ * 테스트 6 〉	통과 (0.06ms, 59.2MB)
+ * 테스트 7 〉	통과 (0.06ms, 59.3MB)
+ * 테스트 8 〉	통과 (0.23ms, 58.7MB)
+ * 테스트 9 〉	통과 (0.23ms, 59.1MB)
+ * 테스트 10 〉	통과 (1.51ms, 59.9MB)
+ * 테스트 11 〉	통과 (1.61ms, 60.1MB)
+ * 테스트 12 〉	통과 (1.59ms, 59.7MB)
+ * 테스트 13 〉	통과 (1.37ms, 59.2MB)
  * ```
  *
  *
  * ```
  * RIVAL:
+ * import kotlin.math.abs
+ *
+ * class Solution {
+ *     fun getDisconnectTower(wire: IntArray, wires: Array<IntArray>, compareNum: Int): Int {
+ *         var answer = 0
+ *         wires.forEach {
+ *             if (!wire.contentEquals(it) && (compareNum == it[0] || compareNum == it[1]))
+ *                 answer += 1 + getDisconnectTower(it, wires, if (compareNum == it[0]) it[1] else it[0])
+ *         }
+ *         return answer
+ *     }
+ *     fun solution(n: Int, wires: Array<IntArray>): Int {
+ *         var bestNumOfTower: Int = -1
+ *         wires.forEach {
+ *             val value = 1 + getDisconnectTower(it, wires, it[0])
+ *             if (abs(value - n/2) < abs(bestNumOfTower - n/2))
+ *                 bestNumOfTower = value
+ *             if (bestNumOfTower == n/2)
+ *                 return if (n % 2 == 0) 0 else 1
+ *         }
+ *         return abs(n-bestNumOfTower - bestNumOfTower)
+ *     }
+ * }
+ * 테스트 1 〉	통과 (0.50ms, 59.4MB)
+ * 테스트 2 〉	통과 (3.50ms, 59.4MB)
+ * 테스트 3 〉	통과 (7.28ms, 59.6MB)
+ * 테스트 4 〉	통과 (4.52ms, 59.2MB)
+ * 테스트 5 〉	통과 (5.20ms, 59.6MB)
+ * 테스트 6 〉	통과 (0.04ms, 59.1MB)
+ * 테스트 7 〉	통과 (0.04ms, 59.2MB)
+ * 테스트 8 〉	통과 (0.38ms, 58.6MB)
+ * 테스트 9 〉	통과 (0.35ms, 59.2MB)
+ * 테스트 10 〉	통과 (2.82ms, 59.4MB)
+ * 테스트 11 〉	통과 (3.22ms, 59.7MB)
+ * 테스트 12 〉	통과 (3.13ms, 59.4MB)
  * ```
  */
 fun main() {
