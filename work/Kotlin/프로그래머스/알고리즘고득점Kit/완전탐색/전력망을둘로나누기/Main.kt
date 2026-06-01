@@ -6,7 +6,6 @@ class Solution {
 
   fun solution(n: Int, wires: Array<IntArray>): Int {
     val graph = Array(n + 1) { mutableListOf<Int>() }
-
     for (wire in wires) {
       val a = wire[0]
       val b = wire[1]
@@ -14,38 +13,39 @@ class Solution {
       graph[b] += a
     }
 
-    var ans: Int = n
+    var ans = n
 
     val q = IntArray(n)
-    val ch = Array(n + 1) { BooleanArray(n + 1) }
-    for (a in 1..n) {
-      val cnds = graph[a]
-      l@ for (b in cnds) {
-        if (ch[a][b] || ch[b][a]) continue
-        ch[a][b] = true
-        ch[b][a] = true
+    for (wire in wires) {
+      val a = wire[0]
+      val b = wire[1]
+      graph[a] -= b
+      graph[b] -= a
 
-        var cnt = 1
-        val used = BooleanArray(n + 1)
-        var qh = 0
-        var qt = 0
-        q[qt++] = b
-        used[b] = true
-        used[a] = true
+      var cnt = n - 1
+      val used = BooleanArray(n + 1)
+      var qh = 0
+      var qt = 0
+      q[qt++] = b
+      used[b] = true
 
-        while (qh < qt) {
-          val parent = q[qh++]
-          for (child in graph[parent]) {
-            if (child == a && parent != b) break@l
-            if (used[child]) continue
-            used[child] = true
-            q[qt++] = child
-            cnt++
-          }
+      bfs@ while (qh < qt) {
+        val parent = q[qh++]
+        for (child in graph[parent]) {
+          if (child == a && parent != b) break@bfs
+          if (used[child]) continue
+          used[child] = true
+          q[qt++] = child
+          cnt--
         }
-
-        ans = minOf(ans, abs(n - 2 * cnt))
       }
+
+      graph[a] += b
+      graph[b] += a
+
+      val diff = abs(n - 2 * cnt)
+      if (diff == 0) return 0
+      else ans = minOf(ans, diff)
     }
 
     return ans
@@ -84,46 +84,75 @@ class Solution {
  * 테스트 11 〉	통과 (1.06ms, 59.5MB)
  * 테스트 12 〉	통과 (0.85ms, 59.3MB)
  * 테스트 13 〉	통과 (0.89ms, 59.5MB)
+ * Me: v3
+ * 테스트 1 〉	통과 (2.34ms, 58.7MB)
+ * 테스트 2 〉	통과 (0.97ms, 59.4MB)
+ * 테스트 3 〉	통과 (0.47ms, 60.1MB)
+ * 테스트 4 〉	통과 (0.28ms, 58.9MB)
+ * 테스트 5 〉	통과 (0.42ms, 59.1MB)
+ * 테스트 6 〉	통과 (0.06ms, 59.7MB)
+ * 테스트 7 〉	통과 (0.07ms, 59.5MB)
+ * 테스트 8 〉	통과 (0.14ms, 58.7MB)
+ * 테스트 9 〉	통과 (0.16ms, 58.9MB)
+ * 테스트 10 〉	통과 (0.86ms, 59.3MB)
+ * 테스트 11 〉	통과 (1.91ms, 59.9MB)
+ * 테스트 12 〉	통과 (0.87ms, 59.1MB)
+ * 테스트 13 〉	통과 (0.88ms, 60MB)
  * ```
  *
  *
  * ```
  * RIVAL:
+ * import kotlin.math.min
  * import kotlin.math.abs
- *
  * class Solution {
- *     fun getDisconnectTower(wire: IntArray, wires: Array<IntArray>, compareNum: Int): Int {
- *         var answer = 0
- *         wires.forEach {
- *             if (!wire.contentEquals(it) && (compareNum == it[0] || compareNum == it[1]))
- *                 answer += 1 + getDisconnectTower(it, wires, if (compareNum == it[0]) it[1] else it[0])
+ *     var answer: Int = Int.MAX_VALUE
+ *     var vstd = Array(0) {IntArray(0)}
+ *     var P = Array(0) {BooleanArray(0)}
+ *     fun dfs(idx: Int, n: Int, wires: Array<IntArray>): Int {
+ *         var ret = 1
+ *         for (i in 0 until n) {
+ *             if (P[idx][i]) {
+ *                 P[idx][i] = false
+ *                 P[i][idx] = false
+ *                 ret += dfs(i, n, wires)
+ *                 P[idx][i] = true
+ *                 P[i][idx] = true
+ *             }
  *         }
+ *         answer = min(answer, abs(n - ret - ret))
+ *         return ret
+ *     }
+ *
+ *     fun solution(n: Int, wires: Array<IntArray>): Int {
+ *         vstd = Array(n) {IntArray(n)}
+ *         P = Array(n) {BooleanArray(n)}
+ *
+ *         repeat(wires.size) {
+ *             val a = wires[it][0] - 1
+ *             val b = wires[it][1] - 1
+ *
+ *             P[a][b] = true
+ *             P[b][a] = true
+ *         }
+ *
+ *         dfs(0, n, wires)
+ *
+ *
+ *
  *         return answer
  *     }
- *     fun solution(n: Int, wires: Array<IntArray>): Int {
- *         var bestNumOfTower: Int = -1
- *         wires.forEach {
- *             val value = 1 + getDisconnectTower(it, wires, it[0])
- *             if (abs(value - n/2) < abs(bestNumOfTower - n/2))
- *                 bestNumOfTower = value
- *             if (bestNumOfTower == n/2)
- *                 return if (n % 2 == 0) 0 else 1
- *         }
- *         return abs(n-bestNumOfTower - bestNumOfTower)
- *     }
  * }
- * 테스트 1 〉	통과 (0.50ms, 59.4MB)
- * 테스트 2 〉	통과 (3.50ms, 59.4MB)
- * 테스트 3 〉	통과 (7.28ms, 59.6MB)
- * 테스트 4 〉	통과 (4.52ms, 59.2MB)
- * 테스트 5 〉	통과 (5.20ms, 59.6MB)
- * 테스트 6 〉	통과 (0.04ms, 59.1MB)
- * 테스트 7 〉	통과 (0.04ms, 59.2MB)
- * 테스트 8 〉	통과 (0.38ms, 58.6MB)
- * 테스트 9 〉	통과 (0.35ms, 59.2MB)
- * 테스트 10 〉	통과 (2.82ms, 59.4MB)
- * 테스트 11 〉	통과 (3.22ms, 59.7MB)
- * 테스트 12 〉	통과 (3.13ms, 59.4MB)
+ * 테스트 1 〉	통과 (0.16ms, 59.3MB)
+ * 테스트 2 〉	통과 (0.21ms, 59.3MB)
+ * 테스트 3 〉	통과 (0.14ms, 58.7MB)
+ * 테스트 4 〉	통과 (0.15ms, 59.3MB)
+ * 테스트 5 〉	통과 (0.16ms, 59.4MB)
+ * 테스트 6 〉	통과 (0.02ms, 59.1MB)
+ * 테스트 7 〉	통과 (0.02ms, 59MB)
+ * 테스트 8 〉	통과 (0.03ms, 59.5MB)
+ * 테스트 9 〉	통과 (0.03ms, 59.2MB)
+ * 테스트 10 〉	통과 (0.22ms, 59.8MB)
  * ```
  */
 fun main() {
