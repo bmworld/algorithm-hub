@@ -4,15 +4,14 @@ import util.validate
 
 class Solution {
 
-  val INIT = 0
   fun solution(num: String, k: Int): String {
     val len = num.length - k
     val ans = CharArray(len)
 
     var removable = k
-    var i = INIT
+    var i = 0
     for (d in num) {
-      while (i > INIT && d > ans[i - 1] && removable > 0) {
+      while (removable > 0 && i > 0 && d > ans[i - 1]) {
         removable--
         i--
       }
@@ -27,33 +26,18 @@ class Solution {
 /**
  * ```
  * [ME]
- * v1:
- * 테스트 1 〉	통과 (4.41ms, 58.8MB)
- * 테스트 2 〉	통과 (5.17ms, 59.1MB)
- * 테스트 3 〉	통과 (4.53ms, 58.9MB)
- * 테스트 4 〉	통과 (5.78ms, 60.7MB)
- * 테스트 5 〉	통과 (4.58ms, 60MB)
- * 테스트 6 〉	통과 (17.27ms, 61.2MB)
- * 테스트 7 〉	통과 (18.96ms, 60.4MB)
- * 테스트 8 〉	통과 (70.46ms, 60MB)
- * 테스트 9 〉	통과 (13.04ms, 63.2MB)
- * 테스트 10 〉	통과 (2654.08ms, 64.1MB)
- * 테스트 11 〉	통과 (4.71ms, 60MB)
- * 테스트 12 〉	통과 (4.00ms, 59.9MB)
- *
- * v2:
- * 테스트 1 〉	통과 (3.99ms, 59.9MB)
- * 테스트 2 〉	통과 (4.10ms, 60.1MB)
- * 테스트 3 〉	통과 (4.02ms, 60.1MB)
- * 테스트 4 〉	통과 (4.11ms, 59.7MB)
- * 테스트 5 〉	통과 (4.12ms, 59.7MB)
- * 테스트 6 〉	통과 (4.98ms, 60.3MB)
- * 테스트 7 〉	통과 (6.88ms, 61.4MB)
- * 테스트 8 〉	통과 (7.55ms, 61.5MB)
- * 테스트 9 〉	통과 (10.56ms, 65.1MB)
- * 테스트 10 〉	통과 (18.25ms, 65.3MB)
- * 테스트 11 〉	통과 (4.86ms, 59.4MB)
- * 테스트 12 〉	통과 (4.09ms, 60.4MB)
+ * 테스트 1 〉	통과 (5.17ms, 59.3MB)
+ * 테스트 2 〉	통과 (6.46ms, 60.3MB)
+ * 테스트 3 〉	통과 (4.29ms, 59.8MB)
+ * 테스트 4 〉	통과 (4.59ms, 59.1MB)
+ * 테스트 5 〉	통과 (4.10ms, 58.7MB)
+ * 테스트 6 〉	통과 (6.15ms, 61.8MB)
+ * 테스트 7 〉	통과 (6.22ms, 59.8MB)
+ * 테스트 8 〉	통과 (7.50ms, 61MB)
+ * 테스트 9 〉	통과 (8.57ms, 64.5MB)
+ * 테스트 10 〉	통과 (15.98ms, 64.7MB)
+ * 테스트 11 〉	통과 (4.05ms, 60.9MB)
+ * 테스트 12 〉	통과 (4.23ms, 59.9MB)
  * ```
  *
  *
@@ -89,25 +73,24 @@ class Solution {
  *
  *
  * }
- * 테스트 1 〉	통과 (0.33ms, 57.9MB)
- * 테스트 2 〉	통과 (0.39ms, 57.6MB)
- * 테스트 3 〉	통과 (0.41ms, 59.1MB)
- * 테스트 4 〉	통과 (0.91ms, 58.2MB)
- * 테스트 5 〉	통과 (1.10ms, 59.6MB)
- * 테스트 6 〉	통과 (4.84ms, 58.1MB)
- * 테스트 7 〉	통과 (9.90ms, 59MB)
- * 테스트 8 〉	통과 (14.51ms, 61MB)
+ * 테스트 1 〉	통과 (0.36ms, 58.2MB)
+ * 테스트 2 〉	통과 (0.40ms, 58.2MB)
+ * 테스트 3 〉	통과 (0.40ms, 58.3MB)
+ * 테스트 4 〉	통과 (2.37ms, 58.1MB)
+ * 테스트 5 〉	통과 (0.99ms, 58.8MB)
+ * 테스트 6 〉	통과 (3.75ms, 59.7MB)
+ * 테스트 7 〉	통과 (10.43ms, 58.8MB)
+ * 테스트 8 〉	통과 (12.74ms, 60MB)
+ * 테스트 9 〉	통과 (25.51ms, 67.5MB)
+ * 테스트 10 〉	통과 (51.20ms, 66.6MB)
  * ```
  */
 fun main() {
   val s = Solution()
-//  validate(s.solution("1924", 2), "94")
-//  validate(s.solution("1231234", 3), "3234")
-//  validate(s.solution("4177252841", 4), "775841")
-//  validate(s.solution("71", 0), "71")
+  validate(s.solution("1924", 2), "94")
+  validate(s.solution("1231234", 3), "3234")
+  validate(s.solution("4177252841", 4), "775841")
+  validate(s.solution("71", 0), "71")
   validate(s.solution("17", 1), "7")
   validate(s.solution("71", 1), "7")
 }
-
-//          println("$number[$i] j=$j -> cnts[$d] = ${cnts[d]}")
-//      println("[$d] => $i")
