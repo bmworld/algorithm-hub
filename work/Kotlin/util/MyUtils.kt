@@ -61,6 +61,10 @@ fun validate(actual: IntArray, expect: IntArray) {
   check(actual.contentEquals(expect)) { "actual=$actual, expect=$expect" }
 }
 
+fun validate(actual: LongArray, expect: LongArray) {
+  check(actual.contentEquals(expect)) { "actual=$actual, expect=$expect" }
+}
+
 fun <T> validate(actual: Array<T>, expect: Array<T>) {
   check(actual.contentEquals(expect)) { "actual=$actual, expect=$expect" }
 }
@@ -77,6 +81,7 @@ fun validate(actual: Array<IntArray>, expect: Array<IntArray>) {
     }
   }
 }
+
 
 fun <T> validate(actual: T, expect: T) {
   check(actual == expect) { "actual=$actual, expect=$expect" }
