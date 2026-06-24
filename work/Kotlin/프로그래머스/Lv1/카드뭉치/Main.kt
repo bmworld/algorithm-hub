@@ -8,41 +8,14 @@ class Solution {
     var i1 = 0
     var i2 = 0
 
-    var switched = false
-    var cur = c1
-
-    fun move() {
-      if (cur == c1) i1++ else i2++
-    }
-
-    fun swap() {
-      cur = if (cur == c1) c2 else c1
-    }
-
     for (x in goal) {
-      if (x == getCard(cur, c1, i1, c2, i2)) {
-        switched = false
-        move()
-        continue
-      }
-
-      swap()
-
-      if (x == getCard(cur, c1, i1, c2, i2)) {
-        switched = true
-        move()
-        continue
-      }
-
-      return "No"
+      if (i1 < c1.size && x == c1[i1]) i1++
+      else if (i2 < c2.size && x == c2[i2]) i2++
+      else return "No"
     }
 
     return "Yes"
   }
-
-  fun getCard(cur: Array<String>, c1: Array<String>,
-    i1: Int, c2: Array<String>, i2: Int): String =
-    if (cur == c1 && i1 < c1.size) c1[i1] else if (cur == c2 && i2 < c2.size) c2[i2] else ""
 }
 
 /**
