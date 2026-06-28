@@ -53,7 +53,7 @@ class Solution {
   }
 
   fun validate(stt: Int, act: String, exp: CharArray, prv: CharArray?): Boolean {
-    if (prv != null && prv[0] == act[stt]) return false
+    if (prv == exp) return false
 
     for (i in 1 until exp.size) {
       val ai = stt + i
