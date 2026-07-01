@@ -12,14 +12,10 @@ class Solution {
     val stack = IntArray(ingredient.size)
     var i = 0
     for (x in ingredient) {
-      when (x) {
-        BREAD -> if (i >= 3 && stack[i - 1] == MEAT && stack[i - 2] == VEGETABLE && stack[i - 3] == BREAD) {
-          ans++
-          i -= 3
-        } else stack[i++] = x
-        VEGETABLE -> if (i >= 1 && stack[i - 1] == BREAD) stack[i++] = x
-        MEAT -> if (i >= 2 && stack[i - 1] == VEGETABLE) stack[i++] = x
-      }
+      if (x == BREAD && i >= 3 && stack[i - 1] == MEAT && stack[i - 2] == VEGETABLE && stack[i - 3] == BREAD) {
+        ans++
+        i -= 3
+      } else stack[i++] = x
     }
     return ans
   }
@@ -28,29 +24,45 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.01ms, 59.9MB)
- * 테스트 2 〉	통과 (0.01ms, 58.3MB)
- * 테스트 3 〉	실패 (6.10ms, 70.9MB)
- * 테스트 4 〉	실패 (11.42ms, 83MB)
- * 테스트 5 〉	실패 (11.29ms, 88.5MB)
- * 테스트 6 〉	실패 (8.46ms, 75.4MB)
- * 테스트 7 〉	실패 (8.26ms, 79.8MB)
- * 테스트 8 〉	실패 (9.74ms, 76.6MB)
- * 테스트 9 〉	실패 (5.88ms, 71.2MB)
- * 테스트 10 〉	실패 (0.34ms, 59.6MB)
- * 테스트 11 〉	실패 (5.00ms, 68.7MB)
- * 테스트 12 〉	실패 (12.55ms, 93.8MB)
- * 테스트 13 〉	통과 (0.01ms, 58.2MB)
- * 테스트 14 〉	통과 (0.01ms, 60.5MB)
- * 테스트 15 〉	통과 (0.01ms, 58.5MB)
- * 테스트 16 〉	통과 (0.01ms, 57.9MB)
- * 테스트 17 〉	통과 (0.01ms, 58.6MB)
- * 테스트 18 〉	통과 (0.01ms, 59.4MB)
+ * 테스트 1 〉	통과 (0.01ms, 58.7MB)
+ * 테스트 2 〉	통과 (0.01ms, 58MB)
+ * 테스트 3 〉	통과 (4.69ms, 69.6MB)
+ * 테스트 4 〉	통과 (6.49ms, 81.5MB)
+ * 테스트 5 〉	통과 (8.16ms, 88.2MB)
+ * 테스트 6 〉	통과 (5.41ms, 74.4MB)
+ * 테스트 7 〉	통과 (6.02ms, 79.8MB)
+ * 테스트 8 〉	통과 (5.15ms, 75.7MB)
+ * 테스트 9 〉	통과 (4.33ms, 71MB)
+ * 테스트 10 〉	통과 (0.23ms, 59.6MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * class Solution {
+ *     fun solution(ingredient: IntArray): Int {
+ *         var answer: Int = 0
+ *         val sb = StringBuilder()
+ *         for(item in ingredient) {
+ *             sb.append('0'+item)
+ *             if(sb.length >= 4 && sb.substring(sb.length-4) == "1231") {
+ *                 sb.setLength(sb.length-4)
+ *                 answer++
+ *             }
+ *         }
+ *         return answer
+ *     }
+ * }
+ * 테스트 1 〉	통과 (0.03ms, 59.5MB)
+ * 테스트 2 〉	통과 (0.03ms, 59.6MB)
+ * 테스트 3 〉	통과 (13.50ms, 84.1MB)
+ * 테스트 4 〉	통과 (21.61ms, 104MB)
+ * 테스트 5 〉	통과 (30.67ms, 132MB)
+ * 테스트 6 〉	통과 (19.58ms, 93.3MB)
+ * 테스트 7 〉	통과 (25.01ms, 98.6MB)
+ * 테스트 8 〉	통과 (17.83ms, 94.4MB)
+ * 테스트 9 〉	통과 (14.99ms, 87.6MB)
+ * 테스트 10 〉	통과 (1.32ms, 59.8MB)
  * ```
  */
 fun main() {
