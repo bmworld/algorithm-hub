@@ -10,15 +10,8 @@ class Solution {
   fun solution(board: Array<IntArray>, moves: IntArray): Int {
     val h = board.size
     val w = board[0].size
-    val CAP = w
-    fun pos(r: Int, c: Int): Int = r * CAP + c
-    val a = IntArray(w * h)
     val top = IntArray(w) { INIT }
-    for (r in 0 until h) for (c in 0 until w) {
-      val x = board[r][c]
-      a[pos(r, c)] = x
-      if (x != EMPTY && top[c] == INIT) top[c] = r
-    }
+    for (r in 0 until h) for (c in 0 until w) if (board[r][c] != EMPTY && top[c] == INIT) top[c] = r
 
     val basket = IntArray(moves.size)
     var bi = 0
@@ -28,8 +21,7 @@ class Solution {
       val r = top[c]
       if (r < h) {
         top[c]++
-
-        val cur = a[pos(r, c)]
+        val cur = board[r][c]
 
         if (bi > 0 && basket[bi - 1] == cur) {
           bi--
@@ -45,11 +37,18 @@ class Solution {
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (0.02ms, 59.5MB)
  * 테스트 2 〉	통과 (0.02ms, 57.6MB)
  * 테스트 3 〉	통과 (0.02ms, 59MB)
  * 테스트 4 〉	통과 (0.12ms, 59.2MB)
  * 테스트 5 〉	통과 (0.02ms, 58.6MB)
+ * v2: board 1차원배열 제거 (굳이 없어도 됨)
+ * 테스트 1 〉	통과 (0.02ms, 57.9MB)
+ * 테스트 2 〉	통과 (0.02ms, 57.9MB)
+ * 테스트 3 〉	통과 (0.02ms, 57.6MB)
+ * 테스트 4 〉	통과 (0.07ms, 58MB)
+ * 테스트 5 〉	통과 (0.02ms, 59.6MB)
  * ```
  *
  *
