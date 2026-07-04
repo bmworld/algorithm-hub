@@ -14,20 +14,20 @@ class Solution {
 
       val c1 = char[0]
       val c2 = char[1]
-      scores[when {
-        c1 == 'R' || c2 == 'R' -> {
+      scores[when (c1) {
+        'R', 'T' -> {
           if (c1 == 'R') score *= -1
           0
         }
-        c1 == 'C' || c2 == 'C' -> {
+        'C', 'F' -> {
           if (c1 == 'C') score *= -1
           1
         }
-        c1 == 'J' || c2 == 'J' -> {
+        'J', 'M' -> {
           if (c1 == 'J') score *= -1
           2
         }
-        c1 == 'A' || c2 == 'A' -> {
+        'A', 'N' -> {
           if (c1 == 'A') score *= -1
           3
         }
