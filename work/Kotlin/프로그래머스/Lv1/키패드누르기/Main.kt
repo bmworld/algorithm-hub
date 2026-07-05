@@ -10,8 +10,8 @@ class Solution {
     val CAP = 3
     fun pos(r: Int, c: Int): Int = r * CAP + c
 
-    var right = pos(3, 0)
-    var left = pos(3, 2)
+    var left = pos(3, 0)
+    var right = pos(3, 2)
     val ans = CharArray(numbers.size) { L }
 
     fun moveR(i: Int, nxt: Int) {
@@ -19,28 +19,32 @@ class Solution {
       right = nxt
     }
 
+    fun moveL(nxt: Int) {
+      left = nxt
+    }
+
+    val isRight = hand == "right"
+
     for (i in 0 until numbers.size) {
       var key = numbers[i]
       if (key == 0) key = 11
 
       val r = (key - 1) / 3
       val c = (key + 2) % 3
-
       val nxt = pos(r, c)
 
-
       when (key) {
-        1, 4, 7 -> left = nxt
+        1, 4, 7 -> moveL(nxt)
         3, 6, 9 -> moveR(i, nxt)
         else -> {
           val ld = abs(left / CAP - r) + abs(left % CAP - c)
           val rd = abs(right / CAP - r) + abs(right % CAP - c)
 
           when {
-            ld < rd -> left = nxt
+            ld < rd -> moveL(nxt)
             ld > rd -> moveR(i, nxt)
-            hand == "right" -> moveR(i, nxt)
-            else -> left = nxt
+            isRight -> moveR(i, nxt)
+            else -> moveL(nxt)
           }
         }
       }
