@@ -28,7 +28,7 @@ class Solution {
       val code = x.code
 
       when (code) {
-        in uppercase -> append(toLowerCase(code))
+        in uppercase -> append(code + distFromLowerCase)
         DOT -> if (len == 0 || prv == DOT) continue else append(code)
         in lowercase, in isNum, '-'.code, '_'.code -> append(code)
         else -> continue
@@ -43,10 +43,8 @@ class Solution {
 
     while (len < MIN_LEN) append(tmp[len - 1].code)
 
-    return String(CharArray(len) { tmp[it] })
+    return String(tmp, 0, len)
   }
-
-  fun toLowerCase(upperCaseCode: Int): Int = upperCaseCode + distFromLowerCase
 }
 
 /**
