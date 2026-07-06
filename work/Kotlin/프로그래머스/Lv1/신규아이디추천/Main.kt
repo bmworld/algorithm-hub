@@ -9,7 +9,6 @@ class Solution {
   val ALPHABETS = 26
   val distFromLowerCase = 32
 
-  val SPACE = 32
   val DOT = 46
   val isNum = 48..57
   private val A = 65
@@ -42,12 +41,7 @@ class Solution {
     if (len == 0) append(a)
     else if (tmp[len - 1].code == DOT) len--
 
-    if (len in 1 until MIN_LEN) {
-      val c = tmp[len - 1].code
-      repeat(MIN_LEN - len) {
-        append(c)
-      }
-    }
+    while (len < MIN_LEN) append(tmp[len - 1].code)
 
     return String(CharArray(len) { tmp[it] })
   }
