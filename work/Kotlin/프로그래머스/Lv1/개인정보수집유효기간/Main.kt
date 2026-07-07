@@ -1,11 +1,11 @@
 package 프로그래머스.Lv1.개인정보수집유효기간
 
 import util.validate
-import java.time.LocalDate
 
 class Solution {
 
-  val LAST_DAY_OF_MONTH = 28
+  val LAST_MONTH = 12
+  val LAST_DAY = 28
   val DATE_LEN = 10
   private val A = 65
   private val ZERO = 48
@@ -17,28 +17,22 @@ class Solution {
     for (str in terms) {
       var period = 0
       for (i in 2 until str.length) period = period * 10 + str[i].code - ZERO
-      exp[getTerm(str[0].code)] = period
+      exp[getTerm(str[0].code)] = period * LAST_DAY
     }
 
     var len = 0
     var tmp = IntArray(privacies.size)
     for (i in privacies.indices) {
       val str = privacies[i]
-      var expDate = toDate(str)
-      val dd = expDate.dayOfMonth
-      val ndd = if (dd == 1) LAST_DAY_OF_MONTH else dd - 1
-      val nMM = exp[getTerm(str[11].code)] - if (dd == 1) 1L else 0L
-      expDate = expDate.plusMonths(nMM)
-      expDate = expDate.withDayOfMonth(ndd)
-
-      if (today.isAfter(expDate)) tmp[len++] = i + 1
+      var expDate = toDate(str) + exp[getTerm(str[11].code)] - 1
+      if (today > expDate) tmp[len++] = i + 1
     }
 
     return IntArray(len) { tmp[it] }
   }
 
   fun getTerm(code: Int): Int = code - A
-  fun toDate(strDate: String): LocalDate {
+  fun toDate(strDate: String): Int {
     var yyyy = 0
     var MM = 0
     var dd = 0
@@ -51,13 +45,14 @@ class Solution {
       }
     }
 
-    return LocalDate.of(yyyy, MM, dd)
+    return yyyy * LAST_MONTH * LAST_DAY + MM * LAST_DAY + dd
   }
 }
 
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (0.34ms, 59.1MB)
  * 테스트 2 〉	통과 (2.43ms, 59.6MB)
  * 테스트 3 〉	통과 (2.75ms, 59.1MB)
@@ -68,6 +63,18 @@ class Solution {
  * 테스트 8 〉	통과 (2.58ms, 59.4MB)
  * 테스트 9 〉	통과 (2.73ms, 58.6MB)
  * 테스트 10 〉	통과 (2.52ms, 58.7MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.02ms, 58.8MB)
+ * 테스트 2 〉	통과 (0.03ms, 58.4MB)
+ * 테스트 3 〉	통과 (0.02ms, 59.1MB)
+ * 테스트 4 〉	통과 (0.02ms, 59.9MB)
+ * 테스트 5 〉	통과 (0.02ms, 59.3MB)
+ * 테스트 6 〉	통과 (0.04ms, 60.1MB)
+ * 테스트 7 〉	통과 (0.03ms, 58.7MB)
+ * 테스트 8 〉	통과 (0.03ms, 58.5MB)
+ * 테스트 9 〉	통과 (0.06ms, 58.9MB)
+ * 테스트 10 〉	통과 (0.04ms, 58.2MB)
+ *
  * ```
  *
  *
@@ -116,5 +123,3 @@ fun main() {
   )
 
 }
-
-//println("[$i][type=${exp[getType(str[11].code)]}] $expDate")
