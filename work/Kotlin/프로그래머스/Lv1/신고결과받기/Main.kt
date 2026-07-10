@@ -11,7 +11,6 @@ class Solution {
     for (i in 0 until N) idMapper[id_list[i]] = i
 
     val history = Array(N) { mutableSetOf<Int>() }
-    val reportCnt = IntArray(N)
 
     for (str in report) {
       val s = str.split(SEP)
@@ -19,12 +18,11 @@ class Solution {
       val defendant = idMapper[s[1]]!!
 
       history[defendant] += plaintiff
-      reportCnt[defendant] = history[defendant].size
     }
 
     val mailingCnt = IntArray(N)
     for (defendant in 0 until N)
-      if (reportCnt[defendant] >= k)
+      if (history[defendant].size >= k)
         for (plaintiff in history[defendant]) mailingCnt[plaintiff]++
 
     return mailingCnt
@@ -34,6 +32,7 @@ class Solution {
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (4.85ms, 60.3MB)
  * 테스트 2 〉	통과 (4.65ms, 61.2MB)
  * 테스트 3 〉	통과 (106.87ms, 166MB)
@@ -44,6 +43,17 @@ class Solution {
  * 테스트 8 〉	통과 (12.49ms, 78.8MB)
  * 테스트 9 〉	통과 (54.13ms, 123MB)
  * 테스트 10 〉	통과 (53.33ms, 123MB)
+ * v2:
+ * 테스트 1 〉	통과 (4.93ms, 60.6MB)
+ * 테스트 2 〉	통과 (5.12ms, 61MB)
+ * 테스트 3 〉	통과 (85.93ms, 167MB)
+ * 테스트 4 〉	통과 (4.91ms, 59.9MB)
+ * 테스트 5 〉	통과 (5.12ms, 59MB)
+ * 테스트 6 〉	통과 (7.96ms, 62.4MB)
+ * 테스트 7 〉	통과 (8.98ms, 65.7MB)
+ * 테스트 8 〉	통과 (14.33ms, 76.1MB)
+ * 테스트 9 〉	통과 (58.06ms, 124MB)
+ * 테스트 10 〉	통과 (45.45ms, 123MB)
  * ```
  *
  *
