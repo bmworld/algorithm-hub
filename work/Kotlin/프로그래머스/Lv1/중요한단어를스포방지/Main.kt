@@ -8,7 +8,8 @@ class Solution {
   fun solution(message: String, spoiler_ranges: Array<IntArray>): Int {
     val N = message.length
     val spoilerRange = BooleanArray(N)
-    for (r in spoiler_ranges) for (i in r[0]..r[1]) spoilerRange[i] = true
+    for (r in spoiler_ranges)
+      for (i in r[0]..r[1]) spoilerRange[i] = true
 
     val tmp = CharArray(N)
 
@@ -33,12 +34,8 @@ class Solution {
     }
 
     var ans = 0
-    for (w in spoilerWords) {
-      if (!publicWords.contains(w)) {
-        publicWords += w
-        ans++
-      }
-    }
+    for (w in spoilerWords)
+      if (w !in publicWords) ans++
 
     return ans
   }
@@ -47,16 +44,16 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.05ms, 58.5MB)
- * 테스트 2 〉	통과 (0.05ms, 59.4MB)
- * 테스트 3 〉	통과 (0.05ms, 58.3MB)
- * 테스트 4 〉	통과 (0.06ms, 59.3MB)
- * 테스트 5 〉	통과 (0.24ms, 57.8MB)
- * 테스트 6 〉	통과 (0.26ms, 57.8MB)
- * 테스트 7 〉	통과 (0.14ms, 58.6MB)
- * 테스트 8 〉	통과 (0.07ms, 60.1MB)
- * 테스트 9 〉	통과 (0.16ms, 58.7MB)
- * 테스트 10 〉	통과 (0.05ms, 59MB)
+ * 테스트 1 〉	통과 (0.05ms, 57.6MB)
+ * 테스트 2 〉	통과 (0.05ms, 59.5MB)
+ * 테스트 3 〉	통과 (0.06ms, 58.1MB)
+ * 테스트 4 〉	통과 (0.06ms, 59.2MB)
+ * 테스트 5 〉	통과 (0.21ms, 58.5MB)
+ * 테스트 6 〉	통과 (0.24ms, 59.3MB)
+ * 테스트 7 〉	통과 (0.14ms, 58.3MB)
+ * 테스트 8 〉	통과 (0.07ms, 59.4MB)
+ * 테스트 9 〉	통과 (0.12ms, 58.3MB)
+ * 테스트 10 〉	통과 (0.08ms, 59.9MB)
  * ```
  *
  *
