@@ -7,8 +7,7 @@ class Solution {
   fun solution(k: Int, tangerine: IntArray): Int {
     val map = HashMap<Int, Int>()
     var maxCnt = 0
-    for (x in tangerine)
-      map[x] = ((map[x] ?: 0) + 1).also { if (it > maxCnt) maxCnt = it }
+    for (x in tangerine) map[x] = ((map[x] ?: 0) + 1).also { if (it > maxCnt) maxCnt = it }
 
     var ans = 0
     var picked = 0
@@ -16,13 +15,16 @@ class Solution {
     val cnts = IntArray(maxCnt + 1)
     for (x in map) cnts[x.value]++
 
-    l@ for (cnt in maxCnt downTo 1) {
-      var times = cnts[cnt]
-      while (times-- > 0) {
-        picked += cnt
-        ans++
-        if (picked >= k) break@l
-      }
+    for (cnt in maxCnt downTo 1) {
+      var t = cnts[cnt]
+      if (t == 0) continue
+      val cap = cnt * t
+      val rmn = k - picked
+      if (cap > rmn) t = (rmn + cnt - 1) / cnt
+
+      picked += cnt * t
+      ans += t
+      if (picked >= k) break
     }
 
     return ans
@@ -54,6 +56,18 @@ class Solution {
  * 테스트 8 〉	통과 (9.78ms, 68.3MB)
  * 테스트 9 〉	통과 (10.21ms, 67.1MB)
  * 테스트 10 〉	통과 (10.12ms, 69.2MB)
+ * v3:
+ * 테스트 1 〉	통과 (10.57ms, 67.8MB)
+ * 테스트 2 〉	통과 (9.49ms, 67.4MB)
+ * 테스트 3 〉	통과 (10.00ms, 68.5MB)
+ * 테스트 4 〉	통과 (10.85ms, 69.3MB)
+ * 테스트 5 〉	통과 (8.97ms, 66.5MB)
+ * 테스트 6 〉	통과 (10.40ms, 65.7MB)
+ * 테스트 7 〉	통과 (12.73ms, 67.2MB)
+ * 테스트 8 〉	통과 (12.57ms, 67.5MB)
+ * 테스트 9 〉	통과 (11.86ms, 66MB)
+ * 테스트 10 〉	통과 (9.94ms, 68MB)
+ *
  * ```
  *
  *
