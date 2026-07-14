@@ -6,64 +6,33 @@ class Solution {
 
   fun solution(k: Int, tangerine: IntArray): Int {
     val map = HashMap<Int, Int>()
-    var len = 0
-    for (x in tangerine) map[x] = (map[x] ?: 0.also { len++ }) + 1
-
-    val cnts = IntArray(len)
-    var i = 0
-    for (x in map) cnts[i++] = x.value
-
-    qs(cnts, 0, len - 1)
+    var maxCnt = 0
+    for (x in tangerine)
+      map[x] = ((map[x] ?: 0) + 1).also { if (it > maxCnt) maxCnt = it }
 
     var ans = 0
     var picked = 0
-    for (i in len - 1 downTo 0) {
-      if (picked >= k) break
-      picked += cnts[i]
-      ans++
+
+    val cnts = IntArray(maxCnt + 1)
+    for (x in map) cnts[x.value]++
+
+    l@ for (cnt in maxCnt downTo 1) {
+      var times = cnts[cnt]
+      while (times-- > 0) {
+        picked += cnt
+        ans++
+        if (picked >= k) break@l
+      }
     }
 
     return ans
-  }
-
-  fun swap(
-    a: IntArray,
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun qs(
-    a: IntArray,
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1]
-
-    while (pos <= pr) {
-      val x = a[pos]
-      when {
-        x < piv -> swap(a, pos++, pl++)
-        x > piv -> swap(a, pos, pr--)
-        else -> pos++
-      }
-    }
-    qs(a, l, pl - 1)
-    qs(a, pr + 1, r)
   }
 }
 
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (8.72ms, 68.2MB)
  * 테스트 2 〉	통과 (11.52ms, 66.8MB)
  * 테스트 3 〉	통과 (8.83ms, 67.6MB)
@@ -74,6 +43,17 @@ class Solution {
  * 테스트 8 〉	통과 (9.50ms, 66.4MB)
  * 테스트 9 〉	통과 (9.56ms, 66.7MB)
  * 테스트 10 〉	통과 (14.83ms, 67.1MB)
+ * v2:
+ * 테스트 1 〉	통과 (12.15ms, 66.7MB)
+ * 테스트 2 〉	통과 (13.50ms, 68.8MB)
+ * 테스트 3 〉	통과 (11.52ms, 66.6MB)
+ * 테스트 4 〉	통과 (12.19ms, 67.6MB)
+ * 테스트 5 〉	통과 (9.12ms, 66.4MB)
+ * 테스트 6 〉	통과 (9.09ms, 65.6MB)
+ * 테스트 7 〉	통과 (9.96ms, 66.9MB)
+ * 테스트 8 〉	통과 (9.78ms, 68.3MB)
+ * 테스트 9 〉	통과 (10.21ms, 67.1MB)
+ * 테스트 10 〉	통과 (10.12ms, 69.2MB)
  * ```
  *
  *
