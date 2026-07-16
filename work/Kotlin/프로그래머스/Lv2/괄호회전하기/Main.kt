@@ -12,81 +12,70 @@ class Solution {
 
   val op3 = '{'
   val cp3 = '}'
+
   val INVALID = 0
+  val NOT_FOUND = -1
+
   fun solution(s: String): Int {
     var cnt = 0
 
-    val stack = CharArray(s.length)
-    var si = 0
-    var cracked = 0
+    val N = s.length
+    val stack = CharArray(N)
+    var stacked = 0
 
     fun push(c: Char) {
-      stack[si++] = c
+      if (stacked == 0) cnt++
+      stack[stacked++] = c
     }
 
-    fun pushCracked(c: Char) {
-      cracked++
-      push(c)
-    }
+    fun isOp(c: Char): Boolean = c == op1 || c == op2 || c == op3
+    fun isCp(c: Char): Boolean = c == cp1 || c == cp2 || c == cp3
+    fun isPair(op: Char, cp: Char): Boolean =
+      op == op1 && cp == cp1 ||
+        op == op2 && cp == cp2 ||
+        op == op3 && cp == cp3
 
-
-    for (i in 0 until s.length) {
+    var fr = NOT_FOUND
+    for (i in 1 until N) {
       val cur = s[i]
-      when {
-        cur == op1 ||
-          cur == op2 ||
-          cur == op3 -> push(cur)
-        si == 0 -> pushCracked(cur)
-        else -> {
-          val prv = stack[si - 1]
-          when {
-            prv == cp1 ||
-              prv == cp2 ||
-              prv == cp3 -> pushCracked(cur)
-            isPair(prv, cur) -> if (--si == cracked) cnt++
-            else -> return INVALID
-          }
-        }
+      if (isOp(cur) && isCp(s[i - 1])) {
+        fr = i
+        break
       }
     }
 
-    for (i in 0 until cracked) {
-      val j = si - (i + 1)
-      val cp = stack[i]
-      val op = stack[j]
-      if (isPair(op, cp)) cracked--
-      else return INVALID
+    if (fr == NOT_FOUND) fr = 0
+    val to = N - 1 + fr
+    for (i in fr..to) {
+      val j = i - if (i >= N) N else 0
+      val cur = s[j]
+      when {
+        isOp(cur) -> push(cur)
+        stacked > 0 && isPair(stack[stacked - 1], cur) -> stacked--
+        else -> return INVALID
+      }
     }
-
-    if (si > 0 && cracked == 0) cnt++
-
-
-    return if (cracked > 0) INVALID else cnt
+    return if (stacked > 0) INVALID else cnt
   }
-
-  private fun isPair(op: Char, cp: Char): Boolean =
-    op == op1 && cp == cp1 ||
-      op == op2 && cp == cp2 ||
-      op == op3 && cp == cp3
 }
 
 /**
  * ```
  * [ME]
- * 테스트 1 〉	실패 (0.25ms, 59.7MB)
- * 테스트 2 〉	통과 (0.23ms, 59.7MB)
- * 테스트 3 〉	실패 (0.24ms, 60.7MB)
- * 테스트 4 〉	실패 (0.22ms, 59.3MB)
- * 테스트 5 〉	실패 (0.24ms, 59.7MB)
- * 테스트 6 〉	통과 (0.24ms, 58.9MB)
- * 테스트 7 〉	통과 (0.28ms, 59.8MB)
- * 테스트 8 〉	통과 (0.27ms, 60MB)
- * 테스트 9 〉	실패 (0.23ms, 59.5MB)
- * 테스트 10 〉	실패 (0.24ms, 59.6MB)
- * 테스트 11 〉	통과 (0.26ms, 59.9MB)
- * 테스트 12 〉	통과 (0.16ms, 61.1MB)
- * 테스트 13 〉	실패 (0.17ms, 60.4MB)
- * 테스트 14 〉	통과 (0.16ms, 61.3MB)
+ * 테스트 1 〉	통과 (0.27ms, 59.4MB)
+ * 테스트 2 〉	통과 (0.34ms, 60.6MB)
+ * 테스트 3 〉	실패 (0.16ms, 59.7MB)
+ * 테스트 4 〉	실패 (0.14ms, 60.3MB)
+ * 테스트 5 〉	실패 (0.20ms, 60.3MB)
+ * 테스트 6 〉	통과 (0.32ms, 60.2MB)
+ * 테스트 7 〉	통과 (0.33ms, 59.6MB)
+ * 테스트 8 〉	통과 (0.26ms, 61.3MB)
+ * 테스트 9 〉	실패 (0.16ms, 59.8MB)
+ * 테스트 10 〉	실패 (0.14ms, 59.9MB)
+ * 테스트 11 〉	통과 (0.24ms, 59.5MB)
+ * 테스트 12 〉	통과 (0.19ms, 60.3MB)
+ * 테스트 13 〉	통과 (0.15ms, 60.1MB)
+ * 테스트 14 〉	통과 (0.17ms, 59.9MB)
  * ```
  *
  *
@@ -97,6 +86,14 @@ class Solution {
 fun main() {
   val s = Solution()
   validate(s.solution(")"), 0)
+  validate(s.solution("()()"), 2)
+  validate(s.solution("()"), 1)
+  validate(s.solution("())))((("), 1)
+  validate(s.solution("())))(((("), 0)
+  validate(s.solution("()))))((("), 0)
+  validate(s.solution(")("), 1)
+  validate(s.solution("))("), 0)
+  validate(s.solution(")(("), 0)
   validate(s.solution("[](){}"), 3)
   validate(s.solution("[)(]"), 0)
   validate(s.solution("}}}"), 0)
@@ -106,3 +103,5 @@ fun main() {
   validate(s.solution("{{}}()"), 2)
   validate(s.solution("}{{}}[()]{"), 3)
 }
+
+//      println("s[$j] = $cur")
