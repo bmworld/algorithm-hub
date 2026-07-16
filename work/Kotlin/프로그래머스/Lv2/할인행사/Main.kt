@@ -15,19 +15,23 @@ class Solution {
 
     var desires = N
     fun add(item: String) {
-      cnts[item].also {
-        if (it != null) cnts[item] = (it - 1).also { if (it == THRESHOLD_OF_SATISFIED) desires-- }
+      cnts[item]?.let {
+        val nxt = it - 1
+        cnts[item] = nxt
+        if (nxt == THRESHOLD_OF_SATISFIED) desires--
       }
     }
 
     fun remove(item: String) {
-      cnts[item].also {
-        if (it != null) cnts[item] = (it + 1).also { if (it == THRESHOLD_OF_UNSATISFIED) desires++ }
+      cnts[item]?.let {
+        val nxt = it + 1
+        cnts[item] = nxt
+        if (nxt == THRESHOLD_OF_UNSATISFIED) desires++
       }
     }
 
     var ans = 0
-    fun ch() {
+    fun check() {
       if (desires == THRESHOLD_OF_SATISFIED) ans++
     }
 
@@ -36,12 +40,12 @@ class Solution {
     }
 
 
-    ch()
+    check()
 
     for (i in PERIOD until discount.size) {
       remove(discount[i - PERIOD])
       add(discount[i])
-      ch()
+      check()
     }
 
     return ans
