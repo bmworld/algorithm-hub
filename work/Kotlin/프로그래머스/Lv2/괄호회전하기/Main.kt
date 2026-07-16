@@ -60,7 +60,8 @@ class Solution {
 
     if (si > 0 && cracked == 0) cnt++
 
-    return cnt
+
+    return if (cracked > 0) INVALID else cnt
   }
 
   private fun isPair(op: Char, cp: Char): Boolean =
@@ -95,6 +96,7 @@ class Solution {
  */
 fun main() {
   val s = Solution()
+  validate(s.solution(")"), 0)
   validate(s.solution("[](){}"), 3)
   validate(s.solution("[)(]"), 0)
   validate(s.solution("}}}"), 0)
