@@ -4,77 +4,92 @@ import util.validate
 
 class Solution {
 
-  val op1 = '('
-  val cp1 = ')'
+  companion object {
 
-  val op2 = '['
-  val cp2 = ']'
+    const val op1 = '('
+    const val cp1 = ')'
 
-  val op3 = '{'
-  val cp3 = '}'
+    const val op2 = '['
+    const val cp2 = ']'
 
-  val INVALID = 0
-  fun solution(s: String): Int {
-    var cnt = 0
+    const val op3 = '{'
+    const val cp3 = '}'
 
-    val N = s.length
-    val stack = CharArray(N)
-    var stacked = 0
+    const val INVALID = 0
 
-    fun push(c: Char) {
-      stack[stacked++] = c
-    }
+    const val PAIR = 'X'
 
-    fun isOp(c: Char): Boolean = c == op1 || c == op2 || c == op3
-    fun isCp(c: Char): Boolean = c == cp1 || c == cp2 || c == cp3
-    fun isPair(op: Char, cp: Char): Boolean =
-      op == op1 && cp == cp1 ||
-        op == op2 && cp == cp2 ||
-        op == op3 && cp == cp3
-
-    var cur = 0
-    var end = N - 1
-
-    while (cur <= end) {
-      val c = s[cur]
-      when {
-        isOp(c) -> push(c)
-        else -> {
-          val prv = if (stacked == 0) end else stacked - 1
-          if (!isPair(prvChar(stack, stacked, s, end), c)) return INVALID
-          else if (prv < cur) stacked-- else end--
-
-          if (isCp(prvChar(stack, stacked, s, end))) cnt++
-        }
-      }
-
-      cur++
-    }
-
-    return if (stacked > 0) INVALID else cnt
   }
 
-  private fun prvChar(stack: CharArray, stacked: Int, str: String,
-    end: Int): Char = if (stacked == 0) str[end] else stack[stacked - 1]
+
+  fun solution(s: String): Int {
+    val N = s.length
+    val stack = Stack(N)
+
+    var l = 0
+    var r = N - 1
+    while (l <= r) {
+      val c1 = s[l++]
+      when (c1) {
+        op1, op2, op3 -> stack.push(c1)
+        else -> {
+          var c2 = PAIR
+          while (stack.isNotEmpty() && c2 == PAIR) c2 = stack.pop()
+          if (c2 == PAIR) c2 = s[r--]
+          if (isPair(c2, c1)) stack.push(PAIR)
+          else return INVALID
+        }
+      }
+    }
+
+    return if (stack.isValidStack()) stack.size() else INVALID
+  }
+
+  fun isPair(op: Char, cp: Char): Boolean =
+    op == op1 && cp == cp1 ||
+      op == op2 && cp == cp2 ||
+      op == op3 && cp == cp3
+
+  class Stack(N: Int) {
+
+    val stack = CharArray(N)
+    var len = 0
+
+    fun size(): Int = len
+    fun isNotEmpty(): Boolean = len > 0
+    fun push(c: Char) {
+      stack[len++] = c
+    }
+
+    fun pop(): Char = if (isNotEmpty()) stack[--len]
+    else throw Exception("Empty Stack")
+
+    fun isValidStack(): Boolean {
+      for (i in 0 until len)
+        if (stack[i] != PAIR) return false
+
+      return true
+    }
+  }
 }
 
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.33ms, 59.7MB)
- * 테스트 2 〉	실패 (0.19ms, 60.3MB)
- * 테스트 3 〉	실패 (0.17ms, 60.3MB)
- * 테스트 4 〉	실패 (0.14ms, 59.7MB)
- * 테스트 5 〉	실패 (0.17ms, 60MB)
- * 테스트 6 〉	실패 (0.15ms, 59.8MB)
- * 테스트 7 〉	실패 (0.18ms, 60MB)
- * 테스트 8 〉	실패 (0.17ms, 60.4MB)
- * 테스트 9 〉	실패 (0.16ms, 59.3MB)
- * 테스트 10 〉	통과 (0.81ms, 60MB)
- * 테스트 11 〉	통과 (0.51ms, 60.5MB)
- * 테스트 12 〉	통과 (0.17ms, 60.2MB)
- * 테스트 13 〉	통과 (0.16ms, 59.9MB)
- * 테스트 14 〉	통과 (0.15ms, 59.5MB)
+ * 테스트 1 〉	통과 (0.41ms, 58.8MB)
+ * 테스트 2 〉	실패 (0.23ms, 59.3MB)
+ * 테스트 3 〉	실패 (0.22ms, 59.9MB)
+ * 테스트 4 〉	실패 (0.22ms, 57.9MB)
+ * 테스트 5 〉	실패 (0.24ms, 59.2MB)
+ * 테스트 6 〉	실패 (0.22ms, 59.8MB)
+ * 테스트 7 〉	실패 (0.19ms, 59.8MB)
+ * 테스트 8 〉	실패 (0.23ms, 60.1MB)
+ * 테스트 9 〉	실패 (0.24ms, 59.8MB)
+ * 테스트 10 〉	통과 (0.40ms, 59.5MB)
+ * 테스트 11 〉	통과 (0.33ms, 60.7MB)
+ * 테스트 12 〉	통과 (0.18ms, 59.6MB)
+ * 테스트 13 〉	통과 (0.19ms, 60.4MB)
+ * 테스트 14 〉	통과 (0.19ms, 60.7MB)
  * ```
  *
  *
@@ -102,4 +117,7 @@ fun main() {
   validate(s.solution("{{}]"), 0)
   validate(s.solution("{{}}()"), 2)
   validate(s.solution("}{{}}[()]{"), 3)
+  validate(s.solution("][])[({{}{}})({{}{}})](["), 2)
 }
+
+//      println("[${l - 1}, $r] $c1")
