@@ -24,6 +24,8 @@ class Solution {
     val stack = Stack(N)
 
     l@ for (i in 0 until N) {
+      stack.clear()
+
       val c = s[i]
       if (!isOp(c)) continue
       else stack.push(c)
@@ -37,7 +39,7 @@ class Solution {
       }
 
       if (stack.isEmpty()) ans++
-      else stack.clear()
+
     }
 
     return ans
