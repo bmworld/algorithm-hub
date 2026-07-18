@@ -15,36 +15,36 @@ class Solution {
     const val op3 = '{'
     const val cp3 = '}'
 
-    const val INVALID = 0
-
-    const val PAIR = 'X'
-
   }
 
 
   fun solution(s: String): Int {
+    var ans = 0
     val N = s.length
     val stack = Stack(N)
 
-    var l = 0
-    var r = N - 1
-    while (l <= r) {
-      val c1 = s[l++]
-      when (c1) {
-        op1, op2, op3 -> stack.push(c1)
-        else -> {
-          var c2 = PAIR
-          while (stack.isNotEmpty() && c2 == PAIR) c2 = stack.pop()
-          if (c2 == PAIR) c2 = s[r--]
-          if (isPair(c2, c1)) stack.push(PAIR)
-          else return INVALID
+    l@ for (i in 0 until N) {
+      val c = s[i]
+      if (!isOp(c)) continue
+      else stack.push(c)
+
+      for (j in i + 1 until i + N) {
+        val c = s[j % N]
+        when {
+          isOp(c) -> stack.push(c)
+          else -> if (stack.isEmpty() || !isPair(stack.pop(), c)) continue@l
         }
       }
+
+      if (stack.isEmpty()) ans++
+      else stack.clear()
     }
 
-    return if (stack.isValidStack()) stack.size() else INVALID
+    return ans
   }
 
+
+  fun isOp(c: Char): Boolean = c == op1 || c == op2 || c == op3
   fun isPair(op: Char, cp: Char): Boolean =
     op == op1 && cp == cp1 ||
       op == op2 && cp == cp2 ||
@@ -55,52 +55,90 @@ class Solution {
     val stack = CharArray(N)
     var len = 0
 
-    fun size(): Int = len
+    fun isEmpty(): Boolean = len == 0
     fun isNotEmpty(): Boolean = len > 0
+    fun clear() {
+      len = 0
+    }
+
     fun push(c: Char) {
       stack[len++] = c
     }
 
     fun pop(): Char = if (isNotEmpty()) stack[--len]
     else throw Exception("Empty Stack")
-
-    fun isValidStack(): Boolean {
-      for (i in 0 until len)
-        if (stack[i] != PAIR) return false
-
-      return true
-    }
   }
 }
 
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.41ms, 58.8MB)
- * 테스트 2 〉	실패 (0.23ms, 59.3MB)
- * 테스트 3 〉	실패 (0.22ms, 59.9MB)
- * 테스트 4 〉	실패 (0.22ms, 57.9MB)
- * 테스트 5 〉	실패 (0.24ms, 59.2MB)
- * 테스트 6 〉	실패 (0.22ms, 59.8MB)
- * 테스트 7 〉	실패 (0.19ms, 59.8MB)
- * 테스트 8 〉	실패 (0.23ms, 60.1MB)
- * 테스트 9 〉	실패 (0.24ms, 59.8MB)
- * 테스트 10 〉	통과 (0.40ms, 59.5MB)
- * 테스트 11 〉	통과 (0.33ms, 60.7MB)
- * 테스트 12 〉	통과 (0.18ms, 59.6MB)
- * 테스트 13 〉	통과 (0.19ms, 60.4MB)
- * 테스트 14 〉	통과 (0.19ms, 60.7MB)
+ * 테스트 1 〉	통과 (2.85ms, 60.3MB)
+ * 테스트 2 〉	통과 (1.79ms, 59.9MB)
+ * 테스트 3 〉	통과 (1.69ms, 60.2MB)
+ * 테스트 4 〉	통과 (2.62ms, 59.7MB)
+ * 테스트 5 〉	통과 (5.23ms, 58.9MB)
+ * 테스트 6 〉	통과 (3.33ms, 60.9MB)
+ * 테스트 7 〉	통과 (4.23ms, 59.9MB)
+ * 테스트 8 〉	통과 (4.50ms, 59.3MB)
+ * 테스트 9 〉	통과 (7.34ms, 59.4MB)
+ * 테스트 10 〉	통과 (7.68ms, 59.3MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * class Solution {
+ *     fun solution(s: String): Int {
+ *         var answer: Int = 0
+ *
+ *         for(i in 0..s.length-1) {
+ *             var tmp = s.substring(i)+s.substring(0,i)
+ *             if(isRight(tmp)) {
+ *                 answer+=1
+ *             }
+ *         }
+ *         return answer
+ *     }
+ *
+ *     fun isRight(str: String): Boolean {
+ *         var list = mutableListOf<Char>()
+ *         var endCh = charArrayOf(']',')','}')
+ *
+ *         for(ch in str) {
+ *             if(endCh.contains(ch)) {
+ *                 if(list.isEmpty()) {
+ *                     return false
+ *                 }
+ *                 var tmp=list.removeAt(list.size-1)
+ *                 when(ch) {
+ *                     ']' -> if(tmp!='[') return false
+ *                     ')' -> if(tmp!='(') return false
+ *                     '}' -> if(tmp!='{') return false
+ *                 }
+ *             } else {
+ *                 list.add(ch)
+ *             }
+ *         }
+ *         return list.size==0
+ *     }
+ * }
+ * 테스트 1 〉	통과 (13.57ms, 66.7MB)
+ * 테스트 2 〉	통과 (12.69ms, 66MB)
+ * 테스트 3 〉	통과 (11.96ms, 65.5MB)
+ * 테스트 4 〉	통과 (12.67ms, 65.5MB)
+ * 테스트 5 〉	통과 (15.37ms, 67.1MB)
+ * 테스트 6 〉	통과 (12.98ms, 66.3MB)
+ * 테스트 7 〉	통과 (16.41ms, 66.2MB)
+ * 테스트 8 〉	통과 (14.89ms, 65.2MB)
+ * 테스트 9 〉	통과 (18.30ms, 65.9MB)
+ * 테스트 10 〉	통과 (23.62ms, 66.6MB)
  * ```
  */
 fun main() {
   val s = Solution()
-  validate(s.solution(")"), 0)
   validate(s.solution("(()())"), 1)
+  validate(s.solution(")"), 0)
   validate(s.solution("()()"), 2)
   validate(s.solution("()"), 1)
   validate(s.solution("())))((("), 1)
@@ -118,6 +156,8 @@ fun main() {
   validate(s.solution("{{}}()"), 2)
   validate(s.solution("}{{}}[()]{"), 3)
   validate(s.solution("][])[({{}{}})({{}{}})](["), 2)
+  validate(s.solution("][({{}{}})({{}{}})()()()"), 1)
+  validate(s.solution(")(()"), 1)
 }
 
 //      println("[${l - 1}, $r] $c1")
