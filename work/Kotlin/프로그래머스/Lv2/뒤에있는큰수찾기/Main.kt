@@ -7,30 +7,33 @@ class Solution {
   companion object {
 
     val EMPTY = -1
+    val INF = Int.MAX_VALUE
 
   }
 
   fun solution(numbers: IntArray): IntArray {
     val N = numbers.size
-    var len = N
 
     val ans = IntArray(N) { EMPTY }
-    val tracer = HashSet<Int>()
+    val stack = IntArray(N + 1) { INF }
+    var top = 0
 
     repeat(N) {
       val i = N - (it + 1)
       val a = numbers[i]
 
-      for (j in i + 1 until len) {
-        val b = numbers[j]
-        if (b > a) {
-          ans[i] = b
-          break
+      while (top >= 0) {
+        val b = stack[top]
+        if (a > b) {
+          --top
+          continue
         }
+
+        if (a < b) stack[++top] = a
+        break
       }
 
-      if (tracer.contains(a)) len--
-      else tracer.add(a)
+      if (top >= 2) ans[i] = stack[top - 1]
     }
 
     return ans
@@ -40,23 +43,63 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.03ms, 59.7MB)
- * 테스트 2 〉	통과 (0.03ms, 60.2MB)
- * 테스트 3 〉	통과 (0.02ms, 60.5MB)
- * 테스트 4 〉	통과 (0.11ms, 59.5MB)
- * 테스트 5 〉	통과 (0.48ms, 60.5MB)
- * 테스트 6 〉	통과 (3.86ms, 62.2MB)
- * 테스트 7 〉	통과 (3.85ms, 62.9MB)
- * 테스트 8 〉	실패 (6.23ms, 72MB)
- * 테스트 9 〉	실패 (5.24ms, 72.4MB)
- * 테스트 10 〉	실패 (9.36ms, 79.8MB)
- * 테스트 11 〉	실패 (7.69ms, 82.3MB)
- * 테스트 12 〉	실패 (9.91ms, 94.6MB)
+ * 테스트 1 〉	통과 (0.01ms, 60.3MB)
+ * 테스트 2 〉	통과 (0.01ms, 59.5MB)
+ * 테스트 3 〉	통과 (0.01ms, 61.5MB)
+ * 테스트 4 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 5 〉	통과 (0.10ms, 61.2MB)
+ * 테스트 6 〉	통과 (1.15ms, 62.1MB)
+ * 테스트 7 〉	통과 (1.17ms, 61.5MB)
+ * 테스트 8 〉	통과 (2.23ms, 70.7MB)
+ * 테스트 9 〉	통과 (2.34ms, 71.1MB)
+ * 테스트 10 〉	통과 (2.83ms, 79.5MB)
+ * 테스트 11 〉	통과 (2.71ms, 79.9MB)
+ * 테스트 12 〉	통과 (4.42ms, 92.7MB)
+ * 테스트 13 〉	통과 (4.44ms, 92.4MB)
+ * 테스트 14 〉	통과 (12.72ms, 141MB)
+ * 테스트 15 〉	통과 (18.11ms, 180MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * import java.util.*
+ * class Solution {
+ *
+ *     fun solution(numbers: IntArray): IntArray {
+ *         val answer = mutableListOf<Int>()
+ *         val s = Stack<Int>()
+ *
+ *         for(i in numbers.lastIndex downTo 0) {
+ *             var bigNum = -1
+ *             while(s.isNotEmpty()){
+ *                 if(s.peek() > numbers[i]) {
+ *                     bigNum = s.peek()
+ *                     break
+ *                 }
+ *                 else { s.pop() }
+ *             }
+ *             answer.add(bigNum)
+ *             s.push(numbers[i])
+ *         }
+ *         return answer.reversed().toIntArray()
+ *     }
+ * }
+ * 테스트 1 〉	통과 (17.32ms, 62.1MB)
+ * 테스트 2 〉	통과 (12.52ms, 63.6MB)
+ * 테스트 3 〉	통과 (14.47ms, 64.1MB)
+ * 테스트 4 〉	통과 (14.26ms, 63.1MB)
+ * 테스트 5 〉	통과 (18.48ms, 64.9MB)
+ * 테스트 6 〉	통과 (17.57ms, 66.2MB)
+ * 테스트 7 〉	통과 (17.63ms, 67.2MB)
+ * 테스트 8 〉	통과 (34.00ms, 77.2MB)
+ * 테스트 9 〉	통과 (26.35ms, 77.3MB)
+ * 테스트 10 〉	통과 (35.19ms, 87.9MB)
+ * 테스트 11 〉	통과 (35.21ms, 87.8MB)
+ * 테스트 12 〉	통과 (55.11ms, 104MB)
+ * 테스트 13 〉	통과 (69.62ms, 104MB)
+ * 테스트 14 〉	통과 (101.53ms, 160MB)
+ * 테스트 15 〉	통과 (183.76ms, 227MB)
  * ```
  */
 fun main() {
@@ -64,5 +107,3 @@ fun main() {
   validate(s.solution(intArrayOf(2, 3, 3, 5)), intArrayOf(3, 5, 5, -1))
   validate(s.solution(intArrayOf(9, 1, 5, 3, 6, 2)), intArrayOf(-1, 5, 6, 6, -1, -1))
 }
-
-//          println("x,j = $b, $j")
