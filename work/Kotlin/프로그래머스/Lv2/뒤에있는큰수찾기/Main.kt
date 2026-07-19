@@ -12,25 +12,25 @@ class Solution {
 
   fun solution(numbers: IntArray): IntArray {
     val N = numbers.size
+    var len = N
 
-    val ans = IntArray(N)
-    val tracer = HashMap<Int, Int>()
+    val ans = IntArray(N) { EMPTY }
+    val tracer = HashSet<Int>()
 
     repeat(N) {
       val i = N - (it + 1)
       val a = numbers[i]
 
-      var pos = N
-      var x = EMPTY
-      for ((b, j) in tracer) {
-        if (b > a && j < pos) {
-          x = b
-          pos = j
+      for (j in i + 1 until len) {
+        val b = numbers[j]
+        if (b > a) {
+          ans[i] = b
+          break
         }
       }
 
-      ans[i] = x
-      tracer[a] = i
+      if (tracer.contains(a)) len--
+      else tracer.add(a)
     }
 
     return ans
@@ -40,18 +40,18 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.06ms, 59.5MB)
- * 테스트 2 〉	통과 (0.04ms, 60.7MB)
- * 테스트 3 〉	통과 (0.05ms, 58.9MB)
- * 테스트 4 〉	통과 (0.69ms, 59.9MB)
- * 테스트 5 〉	통과 (23.12ms, 60.3MB)
- * 테스트 6 〉	통과 (425.73ms, 62.2MB)
- * 테스트 7 〉	통과 (486.22ms, 64.3MB)
- * 테스트 8 〉	통과 (3980.20ms, 74MB)
- * 테스트 9 〉	통과 (3874.04ms, 75.1MB)
- * 테스트 10 〉	통과 (8947.30ms, 88.4MB)
- * 테스트 11 〉	통과 (9168.38ms, 86.5MB)
- * 테스트 12 〉	실패 (시간 초과)
+ * 테스트 1 〉	통과 (0.03ms, 59.7MB)
+ * 테스트 2 〉	통과 (0.03ms, 60.2MB)
+ * 테스트 3 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 4 〉	통과 (0.11ms, 59.5MB)
+ * 테스트 5 〉	통과 (0.48ms, 60.5MB)
+ * 테스트 6 〉	통과 (3.86ms, 62.2MB)
+ * 테스트 7 〉	통과 (3.85ms, 62.9MB)
+ * 테스트 8 〉	실패 (6.23ms, 72MB)
+ * 테스트 9 〉	실패 (5.24ms, 72.4MB)
+ * 테스트 10 〉	실패 (9.36ms, 79.8MB)
+ * 테스트 11 〉	실패 (7.69ms, 82.3MB)
+ * 테스트 12 〉	실패 (9.91ms, 94.6MB)
  * ```
  *
  *
