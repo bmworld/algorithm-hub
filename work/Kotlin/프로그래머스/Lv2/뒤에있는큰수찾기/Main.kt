@@ -6,8 +6,8 @@ class Solution {
 
   companion object {
 
-    val EMPTY = -1
-    val INF = Int.MAX_VALUE
+    const val EMPTY = -1
+    const val INF = Int.MAX_VALUE
 
   }
 
@@ -15,25 +15,18 @@ class Solution {
     val N = numbers.size
 
     val ans = IntArray(N) { EMPTY }
-    val stack = IntArray(N + 1) { INF }
-    var top = 0
+    val stack = IntArray(N + 1)
+    var top = EMPTY
 
     repeat(N) {
       val i = N - (it + 1)
       val a = numbers[i]
 
-      while (top >= 0) {
-        val b = stack[top]
-        if (a > b) {
-          --top
-          continue
-        }
+      while (top >= 0 && stack[top] <= a) top--
 
-        if (a < b) stack[++top] = a
-        break
-      }
+      if (top >= 0) ans[i] = stack[top]
 
-      if (top >= 2) ans[i] = stack[top - 1]
+      stack[++top] = a
     }
 
     return ans
@@ -43,21 +36,21 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.01ms, 60.3MB)
- * 테스트 2 〉	통과 (0.01ms, 59.5MB)
- * 테스트 3 〉	통과 (0.01ms, 61.5MB)
- * 테스트 4 〉	통과 (0.02ms, 60.7MB)
- * 테스트 5 〉	통과 (0.10ms, 61.2MB)
- * 테스트 6 〉	통과 (1.15ms, 62.1MB)
- * 테스트 7 〉	통과 (1.17ms, 61.5MB)
- * 테스트 8 〉	통과 (2.23ms, 70.7MB)
- * 테스트 9 〉	통과 (2.34ms, 71.1MB)
- * 테스트 10 〉	통과 (2.83ms, 79.5MB)
- * 테스트 11 〉	통과 (2.71ms, 79.9MB)
- * 테스트 12 〉	통과 (4.42ms, 92.7MB)
- * 테스트 13 〉	통과 (4.44ms, 92.4MB)
- * 테스트 14 〉	통과 (12.72ms, 141MB)
- * 테스트 15 〉	통과 (18.11ms, 180MB)
+ * 테스트 1 〉	통과 (0.01ms, 61.5MB)
+ * 테스트 2 〉	통과 (0.01ms, 60.7MB)
+ * 테스트 3 〉	통과 (0.01ms, 60.6MB)
+ * 테스트 4 〉	통과 (0.02ms, 58.4MB)
+ * 테스트 5 〉	통과 (0.09ms, 61.2MB)
+ * 테스트 6 〉	통과 (0.76ms, 63.1MB)
+ * 테스트 7 〉	통과 (0.71ms, 62.8MB)
+ * 테스트 8 〉	통과 (2.03ms, 70.8MB)
+ * 테스트 9 〉	통과 (1.81ms, 71.5MB)
+ * 테스트 10 〉	통과 (2.70ms, 78.2MB)
+ * 테스트 11 〉	통과 (2.37ms, 79.4MB)
+ * 테스트 12 〉	통과 (4.38ms, 93MB)
+ * 테스트 13 〉	통과 (4.59ms, 91.6MB)
+ * 테스트 14 〉	통과 (8.37ms, 139MB)
+ * 테스트 15 〉	통과 (13.92ms, 182MB)
  * ```
  *
  *
