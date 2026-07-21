@@ -13,19 +13,18 @@ class Solution {
 
     const val ADDED_SKIP = 2
     const val MAX = 100_000
+    const val MAX_TUPLE_LEN = 500
   }
 
   fun solution(s: String): IntArray {
     var len = 0
     val cnter = IntArray(MAX + 1)
+    val uniqNums = IntArray(MAX_TUPLE_LEN)
 
-    var max = 0
-    var min = MAX
     var x = 0
+    var uniqNumCnt = 0
     fun cnt() {
-      cnter[x]++
-      if (x > max) max = x
-      if (x < min) min = x
+      if (cnter[x]++ == 0) uniqNums[uniqNumCnt++] = x
       x = 0
     }
 
@@ -45,9 +44,9 @@ class Solution {
     }
 
     var ans = IntArray(len)
-    for (x in min..max) {
-      val cnt = cnter[x]
-      if (cnt > 0) ans[len - cnt] = x
+    repeat(uniqNumCnt) {
+      val x = uniqNums[it]
+      ans[len - cnter[x]] = x
     }
 
     return ans
