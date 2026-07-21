@@ -12,21 +12,25 @@ class Solution {
     val NUM = ZERO..ZERO + 9
 
     const val ADDED_SKIP = 2
+    const val MAX = 100_000
   }
 
   fun solution(s: String): IntArray {
     var len = 0
-    val cnter = HashMap<Int, Int>()
+    val cnter = IntArray(MAX + 1)
 
-    var fr = 2
-    val to = s.length - 2
+    var max = 0
+    var min = MAX
     var x = 0
-
     fun cnt() {
-      cnter[x] = (cnter[x] ?: 0) + 1
+      cnter[x]++
+      if (x > max) max = x
+      if (x < min) min = x
       x = 0
     }
 
+    var fr = 2
+    val to = s.length - 2
     while (fr <= to) {
       val c = s[fr++].code
       when (c) {
@@ -41,7 +45,10 @@ class Solution {
     }
 
     var ans = IntArray(len)
-    for ((x, cnt) in cnter) ans[len - cnt] = x
+    for (x in min..max) {
+      val cnt = cnter[x]
+      if (cnt > 0) ans[len - cnt] = x
+    }
 
     return ans
   }
