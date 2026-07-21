@@ -12,7 +12,7 @@ class Solution {
     const val ZERO = 48
     val NUM = ZERO..ZERO + 9
 
-    const val SKIP_DIST = 3
+    const val ADDED_SKIP = 2
     const val MAX_ELEMS = 500
   }
 
@@ -22,28 +22,32 @@ class Solution {
     val buf = IntArray(MAX_ELEMS)
     var maxX = 0
 
-    var fr = 1
+    var fr = 2
     val to = s.length - 2
     var x = 0
     var i = 0
     var elems = 0
 
 
+    fun add() {
+      buf[i++] = x.also { if (it > maxX) maxX = it }
+      x = 0
+      elems++
+    }
+
     while (fr <= to) {
-      val c = s[fr].code
+      val c = s[fr++].code
       when (c) {
         close -> {
+          add()
           map[elems] = IntArray(elems) { buf[it] }
-          total++
           i = 0
-          fr += SKIP_DIST
+          elems = 0
+          total++
+          fr += ADDED_SKIP
         }
-        sep -> {
-          buf[i++] = x.also { if (it > maxX) maxX = it }
-          x = 0
-          elems++
-        }
-        in NUM -> x = x * 10 + (ZERO - c)
+        sep -> add()
+        in NUM -> x = x * 10 + (c - ZERO)
       }
     }
 
@@ -64,26 +68,43 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	실패 (시간 초과)
- * 테스트 2 〉	실패 (시간 초과)
- * 테스트 3 〉	실패 (시간 초과)
- * 테스트 4 〉	실패 (시간 초과)
- * 테스트 5 〉	실패 (시간 초과)
- * 테스트 6 〉	실패 (시간 초과)
- * 테스트 7 〉	실패 (시간 초과)
- * 테스트 8 〉	실패 (시간 초과)
- * 테스트 9 〉	실패 (시간 초과)
- * 테스트 10 〉	실패 (시간 초과)
- * 테스트 11 〉	실패 (시간 초과)
- * 테스트 12 〉	실패 (시간 초과)
- * 테스트 13 〉	실패 (시간 초과)
- * 테스트 14 〉	실패 (시간 초과)
- * 테스트 15 〉	실패 (시간 초과)
+ * 테스트 1 〉	통과 (0.23ms, 60.4MB)
+ * 테스트 2 〉	통과 (0.30ms, 59.5MB)
+ * 테스트 3 〉	통과 (0.37ms, 59MB)
+ * 테스트 4 〉	통과 (0.44ms, 58.6MB)
+ * 테스트 5 〉	통과 (0.46ms, 59.8MB)
+ * 테스트 6 〉	통과 (2.09ms, 59.7MB)
+ * 테스트 7 〉	통과 (5.98ms, 60.3MB)
+ * 테스트 8 〉	통과 (11.71ms, 59.6MB)
+ * 테스트 9 〉	통과 (5.25ms, 61.1MB)
+ * 테스트 10 〉	통과 (6.39ms, 64.6MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * class Solution {
+ *     fun solution(s: String): IntArray {
+ *         return s.substring(2 until s.length-2)
+ *             .split("},{")
+ *             .asSequence()
+ *             .map { it.split(",").map { num -> num.toInt() } }
+ *             .toList()
+ *             .sortedBy { it.size }
+ *             .fold(setOf<Int>()) { acc, list -> acc.union(list) }
+ *             .toIntArray()
+ *     }
+ * }
+ * 테스트 1 〉	통과 (36.49ms, 65.5MB)
+ * 테스트 2 〉	통과 (35.40ms, 65MB)
+ * 테스트 3 〉	통과 (15.76ms, 62.3MB)
+ * 테스트 4 〉	통과 (29.81ms, 66.3MB)
+ * 테스트 5 〉	통과 (30.18ms, 66.6MB)
+ * 테스트 6 〉	통과 (28.63ms, 66.7MB)
+ * 테스트 7 〉	통과 (46.23ms, 71.6MB)
+ * 테스트 8 〉	통과 (49.59ms, 79.4MB)
+ * 테스트 9 〉	통과 (39.98ms, 75.6MB)
+ * 테스트 10 〉	통과 (53.83ms, 81MB)
  * ```
  */
 fun main() {
