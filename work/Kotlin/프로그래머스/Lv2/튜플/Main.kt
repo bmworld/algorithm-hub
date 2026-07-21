@@ -6,61 +6,43 @@ class Solution {
 
   companion object {
 
-    const val op = '{'.code
-    const val sep = ','.code
+    const val comma = ','.code
     const val close = '}'.code
     const val ZERO = 48
     val NUM = ZERO..ZERO + 9
 
     const val ADDED_SKIP = 2
-    const val MAX_ELEMS = 500
   }
 
   fun solution(s: String): IntArray {
-    var total = 0
-    val map = HashMap<Int, IntArray>()
-    val buf = IntArray(MAX_ELEMS)
-    var maxX = 0
+    var len = 0
+    val cnter = HashMap<Int, Int>()
 
     var fr = 2
     val to = s.length - 2
     var x = 0
-    var i = 0
-    var elems = 0
 
-
-    fun add() {
-      buf[i++] = x.also { if (it > maxX) maxX = it }
+    fun cnt() {
+      cnter[x] = (cnter[x] ?: 0) + 1
       x = 0
-      elems++
     }
 
     while (fr <= to) {
       val c = s[fr++].code
       when (c) {
         close -> {
-          add()
-          map[elems] = IntArray(elems) { buf[it] }
-          i = 0
-          elems = 0
-          total++
+          cnt()
+          len++
           fr += ADDED_SKIP
         }
-        sep -> add()
+        comma -> cnt()
         in NUM -> x = x * 10 + (c - ZERO)
       }
     }
 
-    var ans = IntArray(total)
-    val used = BooleanArray(maxX + 1)
-    repeat(total) {
-      for (x in map[it + 1]!!) {
-        if (used[x]) continue
-        used[x] = true
-        ans[it] = x
-        break
-      }
-    }
+    var ans = IntArray(len)
+    for ((x, cnt) in cnter) ans[len - cnt] = x
+
     return ans
   }
 }
@@ -78,6 +60,63 @@ class Solution {
  * 테스트 8 〉	통과 (11.71ms, 59.6MB)
  * 테스트 9 〉	통과 (5.25ms, 61.1MB)
  * 테스트 10 〉	통과 (6.39ms, 64.6MB)
+ * 테스트 11 〉	통과 (8.85ms, 65.1MB)
+ * 테스트 12 〉	통과 (11.16ms, 64.8MB)
+ * 테스트 13 〉	통과 (16.92ms, 64.4MB)
+ * 테스트 14 〉	통과 (12.22ms, 64MB)
+ * 테스트 15 〉	통과 (0.25ms, 60.7MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.18ms, 59.9MB)
+ * 테스트 2 〉	통과 (0.17ms, 60MB)
+ * 테스트 3 〉	통과 (0.17ms, 59.9MB)
+ * 테스트 4 〉	통과 (0.31ms, 60.5MB)
+ * 테스트 5 〉	통과 (0.64ms, 60.3MB)
+ * 테스트 6 〉	통과 (0.79ms, 59.5MB)
+ * 테스트 7 〉	통과 (6.23ms, 61.7MB)
+ * 테스트 8 〉	통과 (10.08ms, 67.8MB)
+ * 테스트 9 〉	통과 (21.24ms, 62.9MB)
+ * 테스트 10 〉	통과 (11.37ms, 65.2MB)
+ * 테스트 11 〉	통과 (18.08ms, 66.6MB)
+ * 테스트 12 〉	통과 (16.51ms, 70.2MB)
+ * 테스트 13 〉	통과 (19.14ms, 69.6MB)
+ * 테스트 14 〉	통과 (26.94ms, 70.2MB)
+ * 테스트 15 〉	통과 (0.20ms, 58.6MB)
+ *
+ * v3:
+ * 테스트 1 〉	통과 (0.27ms, 58.5MB)
+ * 테스트 2 〉	통과 (0.28ms, 60.5MB)
+ * 테스트 3 〉	통과 (0.30ms, 60.6MB)
+ * 테스트 4 〉	통과 (0.41ms, 59.8MB)
+ * 테스트 5 〉	통과 (0.44ms, 59.2MB)
+ * 테스트 6 〉	통과 (0.59ms, 61.3MB)
+ * 테스트 7 〉	통과 (4.71ms, 59.1MB)
+ * 테스트 8 〉	통과 (6.63ms, 60.8MB)
+ * 테스트 9 〉	통과 (5.21ms, 61.4MB)
+ * 테스트 10 〉	통과 (6.62ms, 61.5MB)
+ * 테스트 11 〉	통과 (8.03ms, 60.3MB)
+ * 테스트 12 〉	통과 (13.42ms, 62.7MB)
+ * 테스트 13 〉	통과 (13.81ms, 63.5MB)
+ * 테스트 14 〉	통과 (14.83ms, 63.2MB)
+ * 테스트 15 〉	통과 (0.34ms, 60.8MB)
+ *
+ * v4:
+ * 테스트 1 〉	통과 (0.31ms, 60.5MB)
+ * 테스트 2 〉	통과 (0.29ms, 61.3MB)
+ * 테스트 3 〉	통과 (0.32ms, 60.3MB)
+ * 테스트 4 〉	통과 (0.32ms, 60.3MB)
+ * 테스트 5 〉	통과 (0.45ms, 59.8MB)
+ * 테스트 6 〉	통과 (0.57ms, 59.4MB)
+ * 테스트 7 〉	통과 (4.47ms, 59.8MB)
+ * 테스트 8 〉	통과 (8.46ms, 61MB)
+ * 테스트 9 〉	통과 (5.62ms, 59.5MB)
+ * 테스트 10 〉	통과 (6.67ms, 61.4MB)
+ * 테스트 11 〉	통과 (7.82ms, 61.9MB)
+ * 테스트 12 〉	통과 (10.65ms, 62.4MB)
+ * 테스트 13 〉	통과 (13.06ms, 62.9MB)
+ * 테스트 14 〉	통과 (12.32ms, 63MB)
+ * 테스트 15 〉	통과 (0.27ms, 60.9MB)
+ *
  * ```
  *
  *
