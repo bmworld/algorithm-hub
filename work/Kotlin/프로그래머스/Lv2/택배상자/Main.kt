@@ -9,8 +9,8 @@ class Solution {
 
     val N = order.size
     val num = IntArray(N + 1) { it }
-    val stack = IntArray(N) { it + 1 }
-    var i = order[0]
+    val stack = IntArray(N)
+    var i = 0
     var n = i + 1
 
     for (x in order) {
@@ -49,6 +49,20 @@ class Solution {
  * 테스트 6 〉	통과 (5.23ms, 71.7MB)
  * 테스트 7 〉	통과 (13.08ms, 100MB)
  * 테스트 8 〉	통과 (2.33ms, 63.1MB)
+ * 테스트 9 〉	통과 (11.14ms, 89.6MB)
+ * 테스트 10 〉	통과 (13.83ms, 106MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (1.36ms, 66.8MB)
+ * 테스트 2 〉	통과 (3.38ms, 87MB)
+ * 테스트 3 〉	통과 (4.08ms, 93.9MB)
+ * 테스트 4 〉	통과 (3.22ms, 85.5MB)
+ * 테스트 5 〉	통과 (6.27ms, 106MB)
+ * 테스트 6 〉	통과 (3.57ms, 73.1MB)
+ * 테스트 7 〉	통과 (10.77ms, 102MB)
+ * 테스트 8 〉	통과 (1.83ms, 63.4MB)
+ * 테스트 9 〉	통과 (9.41ms, 91.3MB)
+ * 테스트 10 〉	통과 (13.15ms, 106MB)
  * ```
  *
  *
