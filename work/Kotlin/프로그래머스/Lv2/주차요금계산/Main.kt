@@ -8,36 +8,46 @@ class Solution {
 
     val ZERO = 48
     val CAR_NO_LEN = 4
-    val MAX_CAR_N0 = 9999
+    val MAX_CAR_NO = 9999
 
-    val DEADLINE = 1439
-    val SETTLE_THRESHOLD = 10_000
+    val OUT = -1
+    val DEADLINE = 23 * 60 + 59
   }
 
   fun solution(fees: IntArray, records: Array<String>): IntArray {
-
-    val history = HashMap<Int, Int>()
-    val timer = IntArray(MAX_CAR_N0 + 1)
-    var minNo = MAX_CAR_N0
+    val N = MAX_CAR_NO + 1
+    val inTime = IntArray(N) { OUT }
+    val timer = IntArray(N)
+    val used = BooleanArray(N)
+    var minNo = MAX_CAR_NO
     var maxNo = 0
+    var carCnt = 0
 
     for (str in records) {
-      val no = getCarNo(str)
-      val cur = getTime(str)
-      val prv = history[no]
-      when {
-        prv == null || isSettled(prv) == true -> history[no] = cur
-        else -> settle(timer, history, no, cur, prv)
+      val no = parseCarNo(str)
+      val time = parseTime(str)
+
+      if (!used[no]) {
+        used[no] = true
+        carCnt++
+      }
+
+      if (str[11] == 'I') inTime[no] = time
+      else {
+        timer[no] += time - inTime[no]
+        inTime[no] = OUT
       }
 
       if (no > maxNo) maxNo = no
       if (no < minNo) minNo = no
     }
 
-    for ((no, time) in history)
-      if (!isSettled(time)) settle(timer, history, no, DEADLINE, time)
+    for (no in minNo..maxNo) {
+      val t = inTime[no]
+      if (t != OUT) timer[no] += DEADLINE - t
+    }
 
-    val ans = IntArray(history.size)
+    val ans = IntArray(carCnt)
     var i = 0
 
     val baseTime = fees[0]
@@ -46,15 +56,14 @@ class Solution {
     val fee = fees[3]
 
     for (no in minNo..maxNo) {
-      val t = timer[no]
-      if (t == 0) continue
-      ans[i++] = baseFree + maxOf(0, (t - baseTime + unit - 1) / unit * fee)
+      if (!used[no]) continue
+      ans[i++] = baseFree + maxOf(0, (timer[no] - baseTime + unit - 1) / unit * fee)
     }
 
     return ans
   }
 
-  private fun getCarNo(str: String): Int {
+  private fun parseCarNo(str: String): Int {
     var no = 0
     repeat(CAR_NO_LEN) {
       no = no * 10 + str[6 + it].code - ZERO
@@ -62,23 +71,11 @@ class Solution {
     return no
   }
 
-  private fun getTime(str: String): Int =
+  private fun parseTime(str: String): Int =
     (str[0].code - ZERO) * 600 +
       (str[1].code - ZERO) * 60 +
       (str[3].code - ZERO) * 10 +
       (str[4].code - ZERO)
-
-  private fun isSettled(time: Int) = time > SETTLE_THRESHOLD
-
-  private fun settle(
-    timer: IntArray,
-    history: HashMap<Int, Int>,
-    no: Int,
-    end: Int,
-    stt: Int) {
-    timer[no] += end - stt
-    history[no] = end + SETTLE_THRESHOLD
-  }
 }
 
 /**
@@ -94,6 +91,30 @@ class Solution {
  * 테스트 8 〉	통과 (0.63ms, 60.8MB)
  * 테스트 9 〉	통과 (0.31ms, 59.7MB)
  * 테스트 10 〉	통과 (1.11ms, 60.6MB)
+ * 테스트 10 〉	통과 (1.11ms, 60.6MB)
+ * 테스트 11 〉	통과 (1.21ms, 61.3MB)
+ * 테스트 12 〉	통과 (1.63ms, 62.5MB)
+ * 테스트 13 〉	통과 (0.14ms, 61.1MB)
+ * 테스트 14 〉	통과 (0.11ms, 60.5MB)
+ * 테스트 15 〉	통과 (0.07ms, 59.8MB)
+ * 테스트 16 〉	통과 (0.06ms, 60.7MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.48ms, 60MB)
+ * 테스트 2 〉	통과 (0.23ms, 59.8MB)
+ * 테스트 3 〉	통과 (0.30ms, 60.3MB)
+ * 테스트 4 〉	통과 (0.39ms, 60.5MB)
+ * 테스트 5 〉	통과 (0.44ms, 59MB)
+ * 테스트 6 〉	통과 (0.41ms, 60.1MB)
+ * 테스트 7 〉	통과 (0.67ms, 61.2MB)
+ * 테스트 8 〉	통과 (0.55ms, 60.4MB)
+ * 테스트 9 〉	통과 (0.43ms, 60.6MB)
+ * 테스트 10 〉	통과 (0.68ms, 60.9MB)
+ * 테스트 11 〉	통과 (0.66ms, 60.9MB)
+ * 테스트 12 〉	통과 (0.80ms, 61.8MB)
+ * 테스트 13 〉	통과 (0.31ms, 60.3MB)
+ * 테스트 14 〉	통과 (0.29ms, 60.1MB)
+ * 테스트 15 〉	통과 (0.17ms, 59.5MB)
+ * 테스트 16 〉	통과 (0.17ms, 60.3MB)
  * ```
  *
  *
