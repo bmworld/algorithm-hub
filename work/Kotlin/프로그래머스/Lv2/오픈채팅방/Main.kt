@@ -8,7 +8,7 @@ class Solution {
 
     const val MAX_LEN = 10
     const val SEP = ' '
-    const val OP_POS = 0
+    const val ENTER = 1
     const val inSuffix = "님이 들어왔습니다."
     const val outSuffix = "님이 나갔습니다."
   }
@@ -16,29 +16,30 @@ class Solution {
   fun solution(record: Array<String>): Array<String> {
     val N = record.size
     var len = 0
-    val map = HashMap<String, String>()
+    val names = HashMap<String, String>()
 
-    val tmpRecord = Array(N) { "" }
+    val events = IntArray(N)
+    val records = Array(N) { "" }
+
     for (i in 0 until N) {
       val str = record[i]
       val split = str.split(SEP)
       val id = split[1]
 
-      when (val op = str[OP_POS]) {
+      when (val op = str[0]) {
         'E' -> {
-          tmpRecord[len++] = op + id
-          map[id] = split[2]
+          events[len] = ENTER
+          records[len++] = id
+          names[id] = split[2]
         }
-        'L' -> tmpRecord[len++] = op + id
-        'C' -> map[id] = split[2]
+        'L' -> records[len++] = id
+        'C' -> names[id] = split[2]
       }
     }
 
     return Array(len) {
-      val str = tmpRecord[it]
-      val op = str[OP_POS]
-      val id = String(CharArray(str.length - 1) { str[it + 1] })
-      map[id] + if (op == 'E') inSuffix else outSuffix
+      names[records[it]] +
+        if (events[it] == ENTER) inSuffix else outSuffix
     }
   }
 }
@@ -71,6 +72,32 @@ class Solution {
  * 테스트 23 〉	통과 (10.32ms, 62.1MB)
  * 테스트 24 〉	통과 (8.54ms, 61.9MB)
  * 테스트 25 〉	통과 (49.06ms, 141MB)
+ * v2:
+ * 테스트 1 〉	통과 (5.44ms, 60.6MB)
+ * 테스트 2 〉	통과 (5.86ms, 61.3MB)
+ * 테스트 3 〉	통과 (5.75ms, 60.6MB)
+ * 테스트 4 〉	통과 (5.22ms, 61.5MB)
+ * 테스트 5 〉	통과 (7.49ms, 62MB)
+ * 테스트 6 〉	통과 (8.32ms, 61.7MB)
+ * 테스트 7 〉	통과 (13.48ms, 61.8MB)
+ * 테스트 8 〉	통과 (7.08ms, 63.1MB)
+ * 테스트 9 〉	통과 (7.43ms, 62.6MB)
+ * 테스트 10 〉	통과 (8.38ms, 62.2MB)
+ * 테스트 11 〉	통과 (7.47ms, 61.2MB)
+ * 테스트 12 〉	통과 (6.56ms, 62MB)
+ * 테스트 13 〉	통과 (7.54ms, 61.5MB)
+ * 테스트 14 〉	통과 (7.61ms, 62.8MB)
+ * 테스트 15 〉	통과 (5.30ms, 60.7MB)
+ * 테스트 16 〉	통과 (6.07ms, 60.9MB)
+ * 테스트 17 〉	통과 (5.68ms, 60.8MB)
+ * 테스트 18 〉	통과 (6.06ms, 61.5MB)
+ * 테스트 19 〉	통과 (8.32ms, 61.6MB)
+ * 테스트 20 〉	통과 (15.05ms, 61.7MB)
+ * 테스트 21 〉	통과 (6.73ms, 61.6MB)
+ * 테스트 22 〉	통과 (8.45ms, 62.6MB)
+ * 테스트 23 〉	통과 (8.08ms, 62.1MB)
+ * 테스트 24 〉	통과 (6.84ms, 62.2MB)
+ * 테스트 25 〉	통과 (46.67ms, 142MB)
  * ```
  *
  *
