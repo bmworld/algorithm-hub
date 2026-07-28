@@ -58,11 +58,35 @@ class Timer(
 
 
 fun validate(actual: IntArray, expect: IntArray) {
-  check(actual.contentEquals(expect)) { "actual=$actual, expect=$expect" }
+  check(actual.size == expect.size) {
+    "size mismatch: actual=${actual.size}, expect=${expect.size}\n" +
+      "actual=${actual.contentToString()}\n" +
+      "expect=${expect.contentToString()}"
+  }
+
+  for (i in actual.indices) {
+    check(actual[i] == expect[i]) {
+      "index[$i] mismatch: actual=${actual[i]}, expect=${expect[i]}\n" +
+        "actual=${actual.contentToString()}\n" +
+        "expect=${expect.contentToString()}"
+    }
+  }
 }
 
 fun validate(actual: LongArray, expect: LongArray) {
-  check(actual.contentEquals(expect)) { "actual=$actual, expect=$expect" }
+  check(actual.size == expect.size) {
+    "size mismatch: actual=${actual.size}, expect=${expect.size}\n" +
+      "actual=${actual.contentToString()}\n" +
+      "expect=${expect.contentToString()}"
+  }
+
+  for (i in actual.indices) {
+    check(actual[i] == expect[i]) {
+      "index[$i] mismatch: actual=${actual[i]}, expect=${expect[i]}\n" +
+        "actual=${actual.contentToString()}\n" +
+        "expect=${expect.contentToString()}"
+    }
+  }
 }
 
 fun <T> validate(actual: Array<T>, expect: Array<T>) {
