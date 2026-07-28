@@ -11,15 +11,10 @@ class Solution {
   fun solution(numbers: LongArray): LongArray {
     return LongArray(numbers.size) {
       val x = numbers[it]
-      var lastZeroPos = 0
-      var t = x
-      while (t % 2 != 0L) {
-        t = t shr 1
-        lastZeroPos++
-      }
+      val lastZeroPos = x.inv().countTrailingZeroBits()
 
       var add = LONG shl lastZeroPos
-      val subt = maxOf(0, LONG shl (lastZeroPos - 1))
+      val subt = if (lastZeroPos == 0) 0L else LONG shl (lastZeroPos - 1)
       x + add - subt
     }
   }
@@ -39,6 +34,19 @@ class Solution {
  * 테스트 9 〉	통과 (4.41ms, 82.3MB)
  * 테스트 10 〉	통과 (6.15ms, 87.8MB)
  * 테스트 11 〉	통과 (7.39ms, 87.1MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.18ms, 59.7MB)
+ * 테스트 2 〉	통과 (3.91ms, 80.6MB)
+ * 테스트 3 〉	통과 (0.03ms, 61.3MB)
+ * 테스트 4 〉	통과 (0.18ms, 60MB)
+ * 테스트 5 〉	통과 (0.16ms, 61MB)
+ * 테스트 6 〉	통과 (0.18ms, 59.9MB)
+ * 테스트 7 〉	통과 (3.71ms, 86.1MB)
+ * 테스트 8 〉	통과 (3.62ms, 82.9MB)
+ * 테스트 9 〉	통과 (3.88ms, 82.6MB)
+ * 테스트 10 〉	통과 (4.08ms, 87.8MB)
+ * 테스트 11 〉	통과 (4.18ms, 88.4MB)
+ *
  * ```
  *
  *
