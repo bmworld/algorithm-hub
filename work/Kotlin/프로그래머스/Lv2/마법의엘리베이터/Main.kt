@@ -9,7 +9,7 @@ class Solution {
   }
 
   fun solution(storey: Int): Int {
-    val digits = IntArray(MAX_LEN)
+    val digits = IntArray(MAX_LEN + 1)
     var x = storey
     var i = 0
     while (x > 0) {
@@ -19,6 +19,16 @@ class Solution {
 
     var ans = 0
     var carry = 0
+
+    fun down(x: Int) {
+      ans += x
+    }
+
+    fun up(x: Int) {
+      ans += 10 - x
+      carry++
+    }
+
     repeat(i) {
       var x = digits[it]
       if (carry > 0) {
@@ -26,14 +36,14 @@ class Solution {
         carry = 0
       }
 
-      ans += if (x <= 5) x else {
-        carry++
-        10 - x
+      when {
+        x < 5 -> down(x)
+        x == 5 -> if (digits[it + 1] >= 5) up(x) else down(x)
+        else -> up(x)
       }
     }
 
-    if (carry > 0) ans += carry
-
+    if (carry > 0) down(carry)
     return ans
   }
 }
@@ -41,45 +51,51 @@ class Solution {
 /**
  * ```
  * [ME]
- * WA 1
- * 테스트 1 〉	실패 (0.01ms, 59.9MB)
- * 테스트 2 〉	통과 (0.01ms, 61MB)
- * 테스트 3 〉	실패 (0.01ms, 59.6MB)
- * 테스트 4 〉	실패 (0.01ms, 59.5MB)
- * 테스트 5 〉	실패 (0.01ms, 60.4MB)
- * 테스트 6 〉	통과 (0.01ms, 60.1MB)
- * 테스트 7 〉	실패 (0.01ms, 59.4MB)
- * 테스트 8 〉	통과 (0.01ms, 59.7MB)
- * 테스트 9 〉	실패 (0.01ms, 59MB)
- * 테스트 10 〉	실패 (0.01ms, 60MB)
- * 테스트 11 〉	실패 (0.01ms, 59.7MB)
- * 테스트 12 〉	실패 (0.01ms, 59.1MB)
- * 테스트 13 〉	통과 (0.01ms, 59.5MB)
- * WA 2
- * 테스트 1 〉	실패 (0.01ms, 61.4MB)
- * 테스트 2 〉	통과 (0.01ms, 59.9MB)
- * 테스트 3 〉	실패 (0.01ms, 58.4MB)
- * 테스트 4 〉	통과 (0.01ms, 59.3MB)
- * 테스트 5 〉	통과 (0.01ms, 60.2MB)
- * 테스트 6 〉	통과 (0.01ms, 59.2MB)
- * 테스트 7 〉	통과 (0.01ms, 58.3MB)
- * 테스트 8 〉	통과 (0.01ms, 60.2MB)
- * 테스트 9 〉	통과 (0.01ms, 61.3MB)
- * 테스트 10 〉	통과 (0.01ms, 61.3MB)
- * 테스트 11 〉	통과 (0.01ms, 60.9MB)
- * 테스트 12 〉	실패 (0.01ms, 59.9MB)
- * 테스트 13 〉	통과 (0.01ms, 60.5MB)
+ * 테스트 1 〉	통과 (0.28ms, 60.6MB)
+ * 테스트 2 〉	통과 (0.27ms, 60.4MB)
+ * 테스트 3 〉	통과 (0.22ms, 60.6MB)
+ * 테스트 4 〉	통과 (0.15ms, 60.6MB)
+ * 테스트 5 〉	통과 (0.16ms, 60.5MB)
+ * 테스트 6 〉	통과 (0.25ms, 60.7MB)
+ * 테스트 7 〉	통과 (0.22ms, 59.7MB)
+ * 테스트 8 〉	통과 (0.32ms, 59.7MB)
+ * 테스트 9 〉	통과 (0.24ms, 61.1MB)
+ * 테스트 10 〉	통과 (0.19ms, 60.6MB)
+ * 테스트 11 〉	통과 (0.15ms, 60.6MB)
+ * 테스트 12 〉	통과 (0.16ms, 59.8MB)
+ * 테스트 13 〉	통과 (0.26ms, 59.7MB)
  * ```
+ *
  *
  *
  * ```
  * [RIVAL]
+ * import kotlin.math.min
+ *
+ * class Solution {
+ *     fun solution(storey: Int): Int = if (storey < 10) min(storey, 11 - storey) else min(storey % 10 + solution(storey / 10), 10 - storey % 10 + solution(storey / 10 + 1))
+ * }
+ * 테스트 1 〉	통과 (0.02ms, 58.4MB)
+ * 테스트 2 〉	통과 (0.01ms, 60MB)
+ * 테스트 3 〉	통과 (0.01ms, 59.7MB)
+ * 테스트 4 〉	통과 (0.04ms, 59.3MB)
+ * 테스트 5 〉	통과 (0.02ms, 59.5MB)
+ * 테스트 6 〉	통과 (0.04ms, 60.3MB)
+ * 테스트 7 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 8 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 9 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 10 〉	통과 (0.03ms, 60.7MB)
+ *
  * ```
  */
 fun main() {
   val s = Solution()
   validate(s.solution(1), 1)
   validate(s.solution(5), 5)
+  validate(s.solution(15), 6)
+  validate(s.solution(95), 6)
+  validate(s.solution(45), 9)
+  validate(s.solution(55), 10)
   validate(s.solution(6), 5)
   validate(s.solution(16), 6)
   validate(s.solution(61), 6)
@@ -87,4 +103,6 @@ fun main() {
   validate(s.solution(2554), 16)
   validate(s.solution(100_000_000), 1)
   validate(s.solution(99_999_999), 2)
+  validate(s.solution(111), 3)
+
 }
