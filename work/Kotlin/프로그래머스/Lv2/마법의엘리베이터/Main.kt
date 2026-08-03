@@ -3,47 +3,30 @@ package 프로그래머스.Lv2.마법의엘리베이터
 import util.validate
 
 class Solution {
-  companion object {
-
-    const val MAX_LEN = 9
-  }
 
   fun solution(storey: Int): Int {
-    val digits = IntArray(MAX_LEN + 1)
-    var x = storey
-    var i = 0
-    while (x > 0) {
-      digits[i++] = x % 10
-      x /= 10
-    }
-
     var ans = 0
+
+    var x = storey
     var carry = 0
 
-    fun down(x: Int) {
-      ans += x
-    }
+    while (x > 0) {
+      var d = x % 10 + carry
+      carry = 0
 
-    fun up(x: Int) {
-      ans += 10 - x
-      carry++
-    }
-
-    repeat(i) {
-      var x = digits[it]
-      if (carry > 0) {
-        x += carry
-        carry = 0
-      }
+      x /= 10
 
       when {
-        x < 5 -> down(x)
-        x == 5 -> if (digits[it + 1] >= 5) up(x) else down(x)
-        else -> up(x)
+        d < 5 -> ans += d
+        d > 5 || x % 10 >= 5 -> {
+          ans += 10 - d
+          carry++
+        }
+        else -> ans += d
       }
     }
 
-    if (carry > 0) down(carry)
+    if (carry > 0) ans++
     return ans
   }
 }
@@ -64,6 +47,20 @@ class Solution {
  * 테스트 11 〉	통과 (0.15ms, 60.6MB)
  * 테스트 12 〉	통과 (0.16ms, 59.8MB)
  * 테스트 13 〉	통과 (0.26ms, 59.7MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.01ms, 60.8MB)
+ * 테스트 2 〉	통과 (0.01ms, 58.6MB)
+ * 테스트 3 〉	통과 (0.01ms, 59.9MB)
+ * 테스트 4 〉	통과 (0.01ms, 60.1MB)
+ * 테스트 5 〉	통과 (0.01ms, 59.6MB)
+ * 테스트 6 〉	통과 (0.01ms, 59.4MB)
+ * 테스트 7 〉	통과 (0.01ms, 60.1MB)
+ * 테스트 8 〉	통과 (0.01ms, 60.4MB)
+ * 테스트 9 〉	통과 (0.01ms, 60.4MB)
+ * 테스트 10 〉	통과 (0.01ms, 60.2MB)
+ * 테스트 11 〉	통과 (0.01ms, 61.4MB)
+ * 테스트 12 〉	통과 (0.01ms, 61.4MB)
+ * 테스트 13 〉	통과 (0.01ms, 59.3MB)
  * ```
  *
  *
