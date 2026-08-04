@@ -25,9 +25,11 @@ class Solution {
 
     val R = maps.size
     val C = maps[0].length
-    val CAP = R
+    val CAP = C
+    val SIZE = R * C
 
     fun pos(r: Int, c: Int) = r * CAP + c
+
     l@ for (r in 0 until R) {
       for (c in 0 until C) {
         when (maps[r][c]) {
@@ -44,18 +46,17 @@ class Solution {
     }
 
     // S -> L
-    val SIZE = R * C
-    val p1 = IntArray(SIZE)
     val q = IntArray(SIZE)
     var qh = 0
     var qt = 0
     q[qt++] = stt
 
-
+    val p1 = IntArray(SIZE)
     while (qh < qt) {
       val cur = q[qh++]
       val r = cur / CAP
       val c = cur % CAP
+
       for (i in 0..3) {
         val nr = r + dr[i]
         val nc = c + dc[i]
@@ -81,11 +82,11 @@ class Solution {
     if (time == UNSEEN) return IMPOSSIBLE
 
     // L -> E
-    val p2 = IntArray(SIZE)
     qh = 0
     qt = 0
     q[qt++] = stt
 
+    val p2 = IntArray(SIZE)
     while (qh < qt) {
       val cur = q[qh++]
       val r = cur / CAP
@@ -114,29 +115,29 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.02ms, 60.4MB)
- * 테스트 2 〉	실패 (0.05ms, 60.3MB)
- * 테스트 3 〉	실패 (0.05ms, 59.8MB)
- * 테스트 4 〉	통과 (0.05ms, 58.7MB)
- * 테스트 5 〉	통과 (0.07ms, 60MB)
- * 테스트 6 〉	통과 (0.04ms, 60.8MB)
- * 테스트 7 〉	통과 (0.46ms, 60.3MB)
- * 테스트 8 〉	실패 (0.58ms, 60.2MB)
- * 테스트 9 〉	실패 (0.02ms, 59.9MB)
- * 테스트 10 〉	실패 (런타임 에러)
- * 테스트 11 〉	실패 (0.34ms, 59.8MB)
- * 테스트 12 〉	통과 (1.55ms, 60MB)
- * 테스트 13 〉	실패 (런타임 에러)
- * 테스트 14 〉	실패 (1.19ms, 61MB)
- * 테스트 15 〉	실패 (런타임 에러)
- * 테스트 16 〉	실패 (2.55ms, 60MB)
- * 테스트 17 〉	실패 (3.64ms, 60.8MB)
- * 테스트 18 〉	통과 (0.02ms, 58.8MB)
- * 테스트 19 〉	통과 (0.08ms, 60.8MB)
- * 테스트 20 〉	통과 (0.11ms, 60.2MB)
- * 테스트 21 〉	통과 (0.48ms, 60.9MB)
- * 테스트 22 〉	실패 (0.03ms, 59.5MB)
- * 테스트 23 〉	통과 (0.03ms, 59.7MB)
+ * 테스트 1 〉	통과 (0.02ms, 59.9MB)
+ * 테스트 2 〉	통과 (0.14ms, 60.6MB)
+ * 테스트 3 〉	실패 (0.08ms, 60.6MB)
+ * 테스트 4 〉	통과 (0.05ms, 60.5MB)
+ * 테스트 5 〉	통과 (0.06ms, 59.6MB)
+ * 테스트 6 〉	통과 (0.03ms, 59.6MB)
+ * 테스트 7 〉	통과 (0.44ms, 60.7MB)
+ * 테스트 8 〉	통과 (0.71ms, 60.7MB)
+ * 테스트 9 〉	실패 (0.02ms, 60.7MB)
+ * 테스트 10 〉	통과 (0.02ms, 60MB)
+ * 테스트 11 〉	실패 (0.38ms, 61.5MB)
+ * 테스트 12 〉	통과 (1.48ms, 60.3MB)
+ * 테스트 13 〉	통과 (1.26ms, 60.5MB)
+ * 테스트 14 〉	실패 (1.44ms, 60MB)
+ * 테스트 15 〉	통과 (0.12ms, 59.8MB)
+ * 테스트 16 〉	실패 (2.54ms, 60.6MB)
+ * 테스트 17 〉	실패 (3.79ms, 59.3MB)
+ * 테스트 18 〉	통과 (0.10ms, 59.9MB)
+ * 테스트 19 〉	통과 (0.16ms, 60.9MB)
+ * 테스트 20 〉	통과 (2.23ms, 60.8MB)
+ * 테스트 21 〉	통과 (0.46ms, 60.1MB)
+ * 테스트 22 〉	통과 (0.06ms, 59.6MB)
+ * 테스트 23 〉	통과 (0.02ms, 59.5MB)
  * ```
  *
  *
@@ -149,8 +150,17 @@ fun main() {
   val s = Solution()
   validate(s.solution(arrayOf("SOOOL", "XXXXO", "OOOOO", "OXXXX", "OOOOE")), 16)
   validate(s.solution(arrayOf("LOOXS", "OOOOX", "OOOOO", "OOOOO", "EOOOO")), -1)
+  validate(s.solution(arrayOf(
+    "LXXXXS",
+    "OOOOOO",
+    "OOOOOO",
+    "OOOOOO",
+    "EOOOOO"
+  )), 11)
 
 }
 
 //    println("[path1] ${stt}~$end -> ans=$time")
 //     println("[path2] ${stt}~$end -> ans=$time")
+
+//    println("[path1] [$R, $C] $stt~$end -> ans=$time")
