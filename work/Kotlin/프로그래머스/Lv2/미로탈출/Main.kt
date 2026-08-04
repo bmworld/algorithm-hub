@@ -51,8 +51,7 @@ class Solution {
     var qt = 0
     q[qt++] = stt
 
-    val p1 = IntArray(SIZE)
-    p1[stt] = 0
+    val cnts = IntArray(SIZE)
 
     bfs@ while (qh < qt) {
       val cur = q[qh++]
@@ -63,14 +62,14 @@ class Solution {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nxt = pos(nr, nc)
-        if (nr in 0 until R && nc in 0 until C && p1[nxt] == UNSEEN) {
+        if (nr in 0 until R && nc in 0 until C && cnts[nxt] == UNSEEN) {
           when (maps[nr][nc]) {
             O, E -> {
-              p1[nxt] = p1[cur] + 1
+              cnts[nxt] = cnts[cur] + 1
               q[qt++] = nxt
             }
             L -> {
-              time = p1[cur] + 1
+              time = cnts[cur] + 1
               stt = nxt
               break@bfs
             }
@@ -87,8 +86,7 @@ class Solution {
     qt = 0
     q[qt++] = stt
 
-    val p2 = IntArray(SIZE)
-    p2[stt] = 0
+    cnts.fill(UNSEEN)
 
     bfs@ while (qh < qt) {
       val cur = q[qh++]
@@ -99,13 +97,13 @@ class Solution {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nxt = pos(nr, nc)
-        if (nr in 0 until R && nc in 0 until C && p2[nxt] == UNSEEN) {
+        if (nr in 0 until R && nc in 0 until C && cnts[nxt] == UNSEEN) {
           when (maps[nr][nc]) {
             S, O -> {
-              p2[nxt] = p2[cur] + 1
+              cnts[nxt] = cnts[cur] + 1
               q[qt++] = nxt
             }
-            E -> return time + p2[cur] + 1
+            E -> return time + cnts[cur] + 1
           }
         }
       }
@@ -135,6 +133,15 @@ class Solution {
  * 테스트 15 〉	통과 (0.12ms, 61.1MB)
  * 테스트 16 〉	통과 (1.98ms, 60.3MB)
  * 테스트 17 〉	통과 (2.90ms, 61.2MB)
+ * v2:
+ * 테스트 1 〉	통과 (8.26ms, 63.6MB)
+ * 테스트 2 〉	통과 (6.22ms, 62.8MB)
+ * 테스트 3 〉	통과 (6.17ms, 63.3MB)
+ * 테스트 4 〉	통과 (6.08ms, 63.9MB)
+ * 테스트 5 〉	통과 (6.39ms, 63.7MB)
+ * 테스트 6 〉	통과 (6.23ms, 63MB)
+ * 테스트 7 〉	통과 (6.85ms, 63.8MB)
+ * 테스트 8 〉	통과 (7.05ms, 64.1MB)
  * ```
  *
  *
