@@ -51,7 +51,7 @@ class Solution {
     var qt = 0
     q[qt++] = stt
 
-    val cnts = IntArray(SIZE)
+    val c1 = IntArray(SIZE)
 
     bfs@ while (qh < qt) {
       val cur = q[qh++]
@@ -62,14 +62,14 @@ class Solution {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nxt = pos(nr, nc)
-        if (nr in 0 until R && nc in 0 until C && cnts[nxt] == UNSEEN) {
+        if (nr in 0 until R && nc in 0 until C && c1[nxt] == UNSEEN) {
           when (maps[nr][nc]) {
             O, E -> {
-              cnts[nxt] = cnts[cur] + 1
+              c1[nxt] = c1[cur] + 1
               q[qt++] = nxt
             }
             L -> {
-              time = cnts[cur] + 1
+              time = c1[cur] + 1
               stt = nxt
               break@bfs
             }
@@ -86,8 +86,7 @@ class Solution {
     qt = 0
     q[qt++] = stt
 
-    cnts.fill(UNSEEN)
-
+    val c2 = IntArray(SIZE)
     bfs@ while (qh < qt) {
       val cur = q[qh++]
       val r = cur / CAP
@@ -97,13 +96,13 @@ class Solution {
         val nr = r + dr[i]
         val nc = c + dc[i]
         val nxt = pos(nr, nc)
-        if (nr in 0 until R && nc in 0 until C && cnts[nxt] == UNSEEN) {
+        if (nr in 0 until R && nc in 0 until C && c2[nxt] == UNSEEN) {
           when (maps[nr][nc]) {
             S, O -> {
-              cnts[nxt] = cnts[cur] + 1
+              c2[nxt] = c2[cur] + 1
               q[qt++] = nxt
             }
-            E -> return time + cnts[cur] + 1
+            E -> return time + c2[cur] + 1
           }
         }
       }
@@ -116,32 +115,29 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.03ms, 59.2MB)
- * 테스트 2 〉	통과 (0.06ms, 59.8MB)
+ * 테스트 1 〉	통과 (0.03ms, 59.5MB)
+ * 테스트 2 〉	통과 (0.05ms, 59.5MB)
  * 테스트 3 〉	통과 (0.05ms, 60.5MB)
- * 테스트 4 〉	통과 (0.05ms, 60.9MB)
- * 테스트 5 〉	통과 (0.06ms, 60.3MB)
- * 테스트 6 〉	통과 (0.04ms, 59.7MB)
- * 테스트 7 〉	통과 (0.45ms, 60.6MB)
- * 테스트 8 〉	통과 (0.74ms, 60.5MB)
- * 테스트 9 〉	통과 (0.02ms, 59.6MB)
- * 테스트 10 〉	통과 (0.02ms, 60.1MB)
- * 테스트 11 〉	통과 (0.16ms, 60.1MB)
- * 테스트 12 〉	통과 (0.95ms, 60.3MB)
- * 테스트 13 〉	통과 (1.20ms, 59.9MB)
- * 테스트 14 〉	통과 (0.88ms, 60.1MB)
- * 테스트 15 〉	통과 (0.12ms, 61.1MB)
- * 테스트 16 〉	통과 (1.98ms, 60.3MB)
- * 테스트 17 〉	통과 (2.90ms, 61.2MB)
- * v2:
- * 테스트 1 〉	통과 (8.26ms, 63.6MB)
- * 테스트 2 〉	통과 (6.22ms, 62.8MB)
- * 테스트 3 〉	통과 (6.17ms, 63.3MB)
- * 테스트 4 〉	통과 (6.08ms, 63.9MB)
- * 테스트 5 〉	통과 (6.39ms, 63.7MB)
- * 테스트 6 〉	통과 (6.23ms, 63MB)
- * 테스트 7 〉	통과 (6.85ms, 63.8MB)
- * 테스트 8 〉	통과 (7.05ms, 64.1MB)
+ * 테스트 4 〉	통과 (0.05ms, 58.6MB)
+ * 테스트 5 〉	통과 (0.09ms, 60.3MB)
+ * 테스트 6 〉	통과 (0.03ms, 60.7MB)
+ * 테스트 7 〉	통과 (0.42ms, 60.1MB)
+ * 테스트 8 〉	통과 (0.68ms, 59.4MB)
+ * 테스트 9 〉	통과 (0.02ms, 60.2MB)
+ * 테스트 10 〉	통과 (0.03ms, 60.1MB)
+ * 테스트 11 〉	통과 (0.17ms, 60.5MB)
+ * 테스트 12 〉	통과 (1.08ms, 61.3MB)
+ * 테스트 13 〉	통과 (1.20ms, 60.7MB)
+ * 테스트 14 〉	통과 (0.88ms, 60.8MB)
+ * 테스트 15 〉	통과 (0.13ms, 59.6MB)
+ * 테스트 16 〉	통과 (1.98ms, 60.4MB)
+ * 테스트 17 〉	통과 (2.75ms, 61.2MB)
+ * 테스트 18 〉	통과 (0.06ms, 60.5MB)
+ * 테스트 19 〉	통과 (0.07ms, 59.8MB)
+ * 테스트 20 〉	통과 (1.94ms, 60.9MB)
+ * 테스트 21 〉	통과 (0.43ms, 60.1MB)
+ * 테스트 22 〉	통과 (0.06ms, 60.6MB)
+ * 테스트 23 〉	통과 (0.02ms, 60.5MB)
  * ```
  *
  *
