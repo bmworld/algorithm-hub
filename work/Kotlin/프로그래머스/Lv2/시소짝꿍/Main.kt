@@ -15,9 +15,6 @@ class Solution {
     var max = MIN
     val cnts = LongArray(MAX + 1)
 
-    fun isMatched(w: Int, W: Int) =
-      w * 3 == W * 2 || w * 4 == W * 2 || w * 4 == W * 3
-
     for (w in weights) cnts[w.also {
       if (it < min) min = it
       if (it > max) max = it
@@ -33,10 +30,8 @@ class Solution {
         if (c2 == 0L) continue
 
         ans += when {
-          w1 < w2 && isMatched(w1, w2) ||
-            w1 > w2 && isMatched(w2, w1) -> c1 * c2
           w1 == w2 -> c1 * (c1 - 1) / 2
-          else -> 0
+          else -> if (w1 * 3 == w2 * 2 || w1 * 4 == w2 * 2 || w1 * 4 == w2 * 3) c1 * c2 else 0
         }
       }
     }
@@ -57,6 +52,17 @@ class Solution {
  * 테스트 8 〉	통과 (4.73ms, 62.6MB)
  * 테스트 9 〉	통과 (6.57ms, 63.6MB)
  * 테스트 10 〉	통과 (5.46ms, 64.2MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.04ms, 57.3MB)
+ * 테스트 2 〉	통과 (0.03ms, 60.4MB)
+ * 테스트 3 〉	통과 (0.07ms, 60.1MB)
+ * 테스트 4 〉	통과 (5.35ms, 61.8MB)
+ * 테스트 5 〉	통과 (4.85ms, 60.8MB)
+ * 테스트 6 〉	통과 (5.41ms, 60.9MB)
+ * 테스트 7 〉	통과 (4.25ms, 62.5MB)
+ * 테스트 8 〉	통과 (4.15ms, 63.5MB)
+ * 테스트 9 〉	통과 (4.10ms, 63.3MB)
+ * 테스트 10 〉	통과 (5.15ms, 64.6MB)
  * ```
  *
  *
