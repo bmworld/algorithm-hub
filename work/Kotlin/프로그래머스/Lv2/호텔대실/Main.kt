@@ -1,6 +1,7 @@
 package 프로그래머스.Lv2.호텔대실
 
 import util.validate
+import java.util.*
 
 class Solution {
   private companion object {
@@ -22,23 +23,12 @@ class Solution {
 
     qs(revs, 0, N - 1)
 
-    val rooms = mutableListOf<Int>()
+    val rooms = PriorityQueue<Int>()
     for (t in revs) {
-      val end = t / SEP + CLEANING_TIME
       val stt = t % SEP
+      val end = t / SEP + CLEANING_TIME
 
-      var i = EMPTY
-      var minReady = EMPTY
-      for (j in 0 until rooms.size) {
-        val ready = rooms[j]
-        if (ready <= stt && (minReady == EMPTY || ready < minReady)) {
-          minReady = ready
-          i = j
-        }
-      }
-
-      if (i == EMPTY) rooms.add(end)
-      else rooms[i] = end
+      rooms.add(end + if (rooms.isNotEmpty() && stt >= rooms.peek()) rooms.poll() else 0)
     }
 
     return rooms.size
@@ -87,25 +77,25 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.05ms, 60MB)
- * 테스트 2 〉	실패 (0.55ms, 61.3MB)
- * 테스트 3 〉	실패 (3.64ms, 61.8MB)
- * 테스트 4 〉	실패 (1.39ms, 61MB)
- * 테스트 5 〉	통과 (0.02ms, 60.5MB)
- * 테스트 6 〉	실패 (3.83ms, 60MB)
- * 테스트 7 〉	실패 (3.51ms, 59.6MB)
- * 테스트 8 〉	실패 (0.89ms, 60.3MB)
- * 테스트 9 〉	실패 (0.73ms, 60.8MB)
- * 테스트 10 〉	실패 (2.54ms, 59.2MB)
- * 테스트 11 〉	실패 (3.39ms, 61.5MB)
- * 테스트 12 〉	실패 (3.09ms, 61.9MB)
- * 테스트 13 〉	실패 (0.33ms, 60.7MB)
- * 테스트 14 〉	실패 (3.28ms, 61.4MB)
- * 테스트 15 〉	실패 (3.19ms, 60.9MB)
- * 테스트 16 〉	실패 (0.91ms, 59.5MB)
- * 테스트 17 〉	실패 (3.57ms, 62.3MB)
- * 테스트 18 〉	실패 (1.91ms, 61.5MB)
- * 테스트 19 〉	통과 (4.79ms, 61.6MB)
+ * 테스트 1 〉	실패 (0.26ms, 60.6MB)
+ * 테스트 2 〉	실패 (0.51ms, 61.2MB)
+ * 테스트 3 〉	실패 (1.48ms, 62.4MB)
+ * 테스트 4 〉	실패 (1.29ms, 60.9MB)
+ * 테스트 5 〉	통과 (0.22ms, 60.1MB)
+ * 테스트 6 〉	실패 (1.72ms, 60MB)
+ * 테스트 7 〉	실패 (1.84ms, 60.6MB)
+ * 테스트 8 〉	실패 (1.20ms, 60.1MB)
+ * 테스트 9 〉	실패 (0.83ms, 61.5MB)
+ * 테스트 10 〉	실패 (1.37ms, 61.1MB)
+ * 테스트 11 〉	실패 (1.85ms, 60.4MB)
+ * 테스트 12 〉	실패 (1.37ms, 60.7MB)
+ * 테스트 13 〉	실패 (0.77ms, 61.8MB)
+ * 테스트 14 〉	실패 (1.81ms, 61.6MB)
+ * 테스트 15 〉	실패 (1.59ms, 60.8MB)
+ * 테스트 16 〉	실패 (0.84ms, 61.6MB)
+ * 테스트 17 〉	실패 (1.80ms, 61.8MB)
+ * 테스트 18 〉	실패 (1.15ms, 60.9MB)
+ * 테스트 19 〉	통과 (1.05ms, 62.1MB)
  * ```
  *
  *
@@ -148,6 +138,17 @@ fun main() {
       arrayOf("12:40", "13:00"),
       arrayOf("12:50", "13:00"),
     )), 3
+  )
+
+
+  validate(
+    s.solution(arrayOf(
+      arrayOf("00:00", "01:00"),
+      arrayOf("00:50", "01:00"),
+      arrayOf("00:30", "01:20"),
+      arrayOf("01:00", "01:20"),
+      arrayOf("01:10", "01:20"),
+    )), 4
   )
 }
 
