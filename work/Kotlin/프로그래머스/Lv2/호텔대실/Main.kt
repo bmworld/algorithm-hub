@@ -5,6 +5,7 @@ import util.validate
 class Solution {
   private companion object {
 
+    const val EMPTY = -1
     const val ZERO = 48
     const val SEP = 10_000
     const val CLEANING_TIME = 10
@@ -13,7 +14,6 @@ class Solution {
   fun solution(books: Array<Array<String>>): Int {
     val N = books.size
 
-    val rooms = mutableListOf<Int>()
     val revs = IntArray(N)
     for (i in 0 until N) {
       val rev = books[i]
@@ -22,26 +22,30 @@ class Solution {
 
     qs(revs, 0, N - 1)
 
-
-    l@ for (t in revs) {
-      val end = t / SEP
+    val rooms = mutableListOf<Int>()
+    for (t in revs) {
+      val end = t / SEP + CLEANING_TIME
       val stt = t % SEP
 
+      var i = EMPTY
+      var minReady = EMPTY
       for (j in 0 until rooms.size) {
-        if (stt >= rooms[j]) {
-          rooms[j] = end + CLEANING_TIME
-          continue@l
+        val ready = rooms[j]
+        if (ready <= stt && (minReady == EMPTY || ready < minReady)) {
+          minReady = ready
+          i = j
         }
       }
 
-      rooms.add(end + CLEANING_TIME)
+      if (i == EMPTY) rooms.add(end)
+      else rooms[i] = end
     }
 
     return rooms.size
   }
 
   private fun getTime(hhMM: String): Int =
-    (hhMM[0].code - ZERO) * 600 + (hhMM[1].code - ZERO) * 60 + (hhMM[3].code - ZERO) * 10 + (hhMM[4].code - ZERO) * 10
+    (hhMM[0].code - ZERO) * 600 + (hhMM[1].code - ZERO) * 60 + (hhMM[3].code - ZERO) * 10 + (hhMM[4].code - ZERO)
 
 
   fun swap(
@@ -66,7 +70,7 @@ class Solution {
     var pr = r
     val piv = a[(l + r) shr 1]
 
-    loop@ while (pos <= pr) {
+    while (pos <= pr) {
       val x = a[pos]
       when {
         x < piv -> swap(a, pos++, pl++)
@@ -120,21 +124,31 @@ fun main() {
       arrayOf("18:20", "21:20"),
     )), 3
   )
-//
-//  validate(
-//    s.solution(arrayOf(
-//      arrayOf("09:10", "10:10"),
-//      arrayOf("10:20", "12:20"),
-//    )), 1
-//  )
-//
-//  validate(
-//    s.solution(arrayOf(
-//      arrayOf("10:20", "12:30"),
-//      arrayOf("10:20", "12:30"),
-//      arrayOf("10:20", "12:30"),
-//    )), 3
-//  )
+
+  validate(
+    s.solution(arrayOf(
+      arrayOf("09:10", "10:10"),
+      arrayOf("10:20", "12:20"),
+    )), 1
+  )
+
+  validate(
+    s.solution(arrayOf(
+      arrayOf("10:20", "12:30"),
+      arrayOf("10:20", "12:30"),
+      arrayOf("10:20", "12:30"),
+    )), 3
+  )
+
+
+  validate(
+    s.solution(arrayOf(
+      arrayOf("12:20", "12:30"),
+      arrayOf("12:40", "12:50"),
+      arrayOf("12:40", "13:00"),
+      arrayOf("12:50", "13:00"),
+    )), 3
+  )
 }
 
 //       println("[$stt ~ $end] [${rooms.size}]")
