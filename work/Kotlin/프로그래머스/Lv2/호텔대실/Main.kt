@@ -99,6 +99,44 @@ class Solution {
  * 테스트 10 〉	통과 (1.22ms, 62.4MB)
  * 테스트 11 〉	통과 (2.24ms, 60.4MB)
  * 테스트 12 〉	통과 (1.75ms, 62.2MB)
+ * v2:
+ * class Solution {
+ *   private companion object {
+ *
+ *     const val ZERO = 48
+ *     const val CLEANING_TIME = 9
+ *     const val MAX_TIME = 1440 + CLEANING_TIME
+ *   }
+ *
+ *   fun solution(books: Array<Array<String>>): Int {
+ *
+ *     val cnts = IntArray(MAX_TIME)
+ *     for (rev in books) {
+ *       val fr = getTime(rev[0])
+ *       val to = getTime(rev[1]) + CLEANING_TIME
+ *       for (t in fr..to) cnts[t]++
+ *     }
+ *
+ *     var maxCnt = 0
+ *     for (cnt in cnts) if (cnt > maxCnt) maxCnt = cnt
+ *     return maxCnt
+ *   }
+ *
+ *   private fun getTime(hhMM: String): Int =
+ *     (hhMM[0].code - ZERO) * 600 + (hhMM[1].code - ZERO) * 60 + (hhMM[3].code - ZERO) * 10 + (hhMM[4].code - ZERO)
+ * }
+ * 테스트 1 〉	통과 (0.04ms, 59.8MB)
+ * 테스트 2 〉	통과 (1.20ms, 60.7MB)
+ * 테스트 3 〉	통과 (2.00ms, 61.3MB)
+ * 테스트 4 〉	통과 (1.53ms, 61.7MB)
+ * 테스트 5 〉	통과 (0.05ms, 59.9MB)
+ * 테스트 6 〉	통과 (2.17ms, 61.4MB)
+ * 테스트 7 〉	통과 (1.83ms, 62.1MB)
+ * 테스트 8 〉	통과 (1.60ms, 60.3MB)
+ * 테스트 9 〉	통과 (1.35ms, 60.1MB)
+ * 테스트 10 〉	통과 (1.61ms, 61.1MB)
+ * 테스트 11 〉	통과 (2.15ms, 61MB)
+ * 테스트 12 〉	통과 (1.89ms, 61.8MB)
  * ```
  *
  *
