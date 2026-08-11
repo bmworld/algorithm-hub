@@ -1,7 +1,6 @@
 package 프로그래머스.Lv2.배달
 
 import util.validate
-import java.util.*
 
 class Solution {
   companion object {
@@ -22,13 +21,15 @@ class Solution {
       g[to] += t * SEP + fr
     }
 
-    val q = PriorityQueue<Int>()
+    val q = IntArray(N * N)
     val dist = IntArray(N + 1) { INF }
     dist[START] = 0
-    q.add(START)
+    var qh = 0
+    var qt = 0
+    q[qt++] = START
 
-    while (q.isNotEmpty()) {
-      val e = q.poll()
+    while (qh < qt) {
+      val e = q[qh++]
       val t1 = e / SEP
       val fr = e % SEP
 
@@ -39,7 +40,7 @@ class Solution {
 
         if (acc <= k && acc < dist[to]) {
           dist[to] = acc
-          q.add(acc * SEP + to)
+          q[qt++] = acc * SEP + to
         }
       }
     }
@@ -68,6 +69,23 @@ class Solution {
  * 테스트 13 〉	통과 (0.37ms, 58.3MB)
  * 테스트 14 〉	통과 (0.68ms, 61.3MB)
  * 테스트 15 〉	통과 (0.90ms, 61.2MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.06ms, 59.9MB)
+ * 테스트 2 〉	통과 (0.08ms, 60.3MB)
+ * 테스트 3 〉	통과 (0.05ms, 60MB)
+ * 테스트 4 〉	통과 (0.10ms, 60.4MB)
+ * 테스트 5 〉	통과 (0.07ms, 60.5MB)
+ * 테스트 6 〉	통과 (0.07ms, 59.8MB)
+ * 테스트 7 〉	통과 (0.05ms, 61MB)
+ * 테스트 8 〉	통과 (0.05ms, 59.7MB)
+ * 테스트 9 〉	통과 (0.06ms, 60.4MB)
+ * 테스트 10 〉	통과 (0.05ms, 59.3MB)
+ * 테스트 11 〉	통과 (0.08ms, 59MB)
+ * 테스트 12 〉	통과 (0.19ms, 60.1MB)
+ * 테스트 13 〉	통과 (0.45ms, 59.2MB)
+ * 테스트 14 〉	통과 (1.08ms, 59.8MB)
+ * 테스트 15 〉	통과 (2.77ms, 60.6MB)
+ *
  * ```
  *
  *
