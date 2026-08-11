@@ -1,7 +1,6 @@
 package 프로그래머스.Lv2.배달
 
 import util.validate
-import java.util.*
 
 class Solution {
   companion object {
@@ -16,21 +15,25 @@ class Solution {
     fun pos(fr: Int, to: Int): Int = fr * CAP + to
     val dist = IntArray(CAP * CAP) { INF }
 
-    val q = PriorityQueue<Int>()
+    val q = IntArray(CAP * CAP)
     dist[pos(1, 1)] = 0
 
     for (x in road) {
       val fr = x[0]
       val to = x[1]
       val t = x[2]
-      if (t < dist[pos(fr, to)]) dist[pos(fr, to)] = t
-      if (t < dist[pos(to, fr)]) dist[pos(to, fr)] = t
+      val p1 = dist[pos(fr, to)]
+      if (t < p1) dist[pos(fr, to)] = t
+      val p2 = pos(to, fr)
+      if (t < dist[p2]) dist[p2] = t
     }
 
-    for (to in 2..N) if (dist[pos(1, to)] <= K) q.add(to)
+    var qh = 0
+    var qt = 0
+    for (to in 2..N) if (dist[pos(1, to)] <= K) q[qt++] = to
 
-    while (q.isNotEmpty()) {
-      val fr = q.poll()
+    while (qh < qt) {
+      val fr = q[qh++]
       val t = dist[pos(1, fr)]
 
       for (to in 2..N) {
@@ -38,7 +41,7 @@ class Solution {
         val acc = t + dist[pos(fr, to)]
         if (acc in 1..K && acc < dist[pos(1, to)]) {
           dist[pos(1, to)] = acc
-          q.add(to)
+          q[qt++] = to
         }
       }
     }
@@ -99,6 +102,32 @@ class Solution {
  * 테스트 13 〉	통과 (0.45ms, 58.1MB)
  * 테스트 14 〉	통과 (0.53ms, 60.4MB)
  * 테스트 15 〉	통과 (0.53ms, 62.2MB)
+ * v4:
+ * 테스트 1 〉	통과 (0.02ms, 60.2MB)
+ * 테스트 2 〉	통과 (0.03ms, 61.2MB)
+ * 테스트 3 〉	통과 (0.02ms, 59.4MB)
+ * 테스트 4 〉	통과 (0.02ms, 59.9MB)
+ * 테스트 5 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 6 〉	통과 (0.03ms, 60.2MB)
+ * 테스트 7 〉	통과 (0.02ms, 61.5MB)
+ * 테스트 8 〉	통과 (0.03ms, 60.2MB)
+ * 테스트 9 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 10 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 11 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 12 〉	통과 (0.10ms, 60.9MB)
+ * 테스트 13 〉	통과 (0.10ms, 60.5MB)
+ * 테스트 14 〉	통과 (0.18ms, 59.8MB)
+ * 테스트 15 〉	통과 (0.24ms, 61.3MB)
+ * 테스트 16 〉	통과 (0.04ms, 60.5MB)
+ * 테스트 17 〉	통과 (0.06ms, 60.6MB)
+ * 테스트 18 〉	통과 (0.20ms, 59.7MB)
+ * 테스트 19 〉	통과 (0.22ms, 61.6MB)
+ * 테스트 20 〉	통과 (0.14ms, 58.7MB)
+ * 테스트 21 〉	통과 (0.24ms, 60.7MB)
+ * 테스트 22 〉	통과 (0.20ms, 59.5MB)
+ * 테스트 23 〉	통과 (0.31ms, 61.4MB)
+ * 테스트 24 〉	통과 (0.27ms, 62MB)
+ * 테스트 25 〉	통과 (0.27ms, 61.8MB)
  *
  *
  * ```
@@ -137,21 +166,31 @@ class Solution {
  *     return answer;
  *     }
  * }
- * 테스트 1 〉	통과 (0.02ms, 61MB)
- * 테스트 2 〉	통과 (0.02ms, 60.2MB)
- * 테스트 3 〉	통과 (0.02ms, 58.1MB)
- * 테스트 4 〉	통과 (0.02ms, 59.6MB)
- * 테스트 5 〉	통과 (0.02ms, 59.2MB)
- * 테스트 6 〉	통과 (0.02ms, 59.1MB)
- * 테스트 7 〉	통과 (0.01ms, 59.9MB)
- * 테스트 8 〉	통과 (0.01ms, 60.7MB)
- * 테스트 9 〉	통과 (0.02ms, 59.1MB)
- * 테스트 10 〉	통과 (0.01ms, 59.8MB)
- * 테스트 11 〉	통과 (0.01ms, 60.3MB)
- * 테스트 12 〉	통과 (0.03ms, 59.4MB)
- * 테스트 13 〉	통과 (0.03ms, 61.2MB)
- * 테스트 14 〉	통과 (0.23ms, 61.3MB)
- * 테스트 15 〉	통과 (0.45ms, 60.6MB)
+ * 테스트 1 〉	통과 (0.01ms, 59.8MB)
+ * 테스트 2 〉	통과 (0.01ms, 60.9MB)
+ * 테스트 3 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 4 〉	통과 (0.02ms, 61.7MB)
+ * 테스트 5 〉	통과 (0.02ms, 59.7MB)
+ * 테스트 6 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 7 〉	통과 (0.02ms, 61.4MB)
+ * 테스트 8 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 9 〉	통과 (0.02ms, 60.9MB)
+ * 테스트 10 〉	통과 (0.01ms, 60.9MB)
+ * 테스트 11 〉	통과 (0.02ms, 60.2MB)
+ * 테스트 12 〉	통과 (0.03ms, 58.6MB)
+ * 테스트 13 〉	통과 (0.03ms, 58.8MB)
+ * 테스트 14 〉	통과 (0.23ms, 60MB)
+ * 테스트 15 〉	통과 (0.32ms, 60.7MB)
+ * 테스트 16 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 17 〉	통과 (0.04ms, 60MB)
+ * 테스트 18 〉	통과 (0.12ms, 60.7MB)
+ * 테스트 19 〉	통과 (0.32ms, 60.7MB)
+ * 테스트 20 〉	통과 (0.09ms, 60.3MB)
+ * 테스트 21 〉	통과 (0.53ms, 61.2MB)
+ * 테스트 22 〉	통과 (0.10ms, 61.2MB)
+ * 테스트 23 〉	통과 (0.49ms, 60.8MB)
+ * 테스트 24 〉	통과 (0.25ms, 61.5MB)
+ * 테스트 25 〉	통과 (0.40ms, 60.9MB)
  * ```
  */
 fun main() {
