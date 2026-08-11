@@ -12,42 +12,41 @@ class Solution {
   fun solution(N: Int, road: Array<IntArray>, K: Int): Int {
 
     val CAP = N + 1
-    fun pos(fr: Int, to: Int): Int = fr * CAP + to
     val dist = IntArray(CAP * CAP) { INF }
 
     val q = IntArray(CAP * CAP)
-    dist[pos(1, 1)] = 0
+    dist[1 * CAP + 1] = 0
 
     for (x in road) {
       val fr = x[0]
       val to = x[1]
       val t = x[2]
-      val p1 = dist[pos(fr, to)]
-      if (t < p1) dist[pos(fr, to)] = t
-      val p2 = pos(to, fr)
+      val p1 = dist[fr * CAP + to]
+      if (t < p1) dist[fr * CAP + to] = t
+      val p2 = to * CAP + fr
       if (t < dist[p2]) dist[p2] = t
     }
 
     var qh = 0
     var qt = 0
-    for (to in 2..N) if (dist[pos(1, to)] <= K) q[qt++] = to
+    for (to in 2..N) if (dist[1 * CAP + to] <= K) q[qt++] = to
 
     while (qh < qt) {
       val fr = q[qh++]
-      val t = dist[pos(1, fr)]
+      val t = dist[1 * CAP + fr]
 
       for (to in 2..N) {
         if (fr == to) continue
-        val acc = t + dist[pos(fr, to)]
-        if (acc in 1..K && acc < dist[pos(1, to)]) {
-          dist[pos(1, to)] = acc
+        val acc = t + dist[fr * CAP + to]
+        if (acc in 1..K && acc < dist[1 * CAP + to]) {
+          dist[1 * CAP + to] = acc
           q[qt++] = to
         }
       }
     }
 
     var ans = 0
-    for (to in 1..N) if (dist[pos(1, to)] <= K) ans++
+    for (to in 1..N) if (dist[1 * CAP + to] <= K) ans++
     return ans
   }
 }
@@ -128,6 +127,32 @@ class Solution {
  * 테스트 23 〉	통과 (0.31ms, 61.4MB)
  * 테스트 24 〉	통과 (0.27ms, 62MB)
  * 테스트 25 〉	통과 (0.27ms, 61.8MB)
+ * v5:
+ * 테스트 1 〉	통과 (0.02ms, 59.6MB)
+ * 테스트 2 〉	통과 (0.02ms, 59.5MB)
+ * 테스트 3 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 4 〉	통과 (0.02ms, 58.5MB)
+ * 테스트 5 〉	통과 (0.02ms, 61.2MB)
+ * 테스트 6 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 7 〉	통과 (0.03ms, 60.9MB)
+ * 테스트 8 〉	통과 (0.02ms, 61MB)
+ * 테스트 9 〉	통과 (0.02ms, 61.1MB)
+ * 테스트 10 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 11 〉	통과 (0.02ms, 59.4MB)
+ * 테스트 12 〉	통과 (0.06ms, 60.2MB)
+ * 테스트 13 〉	통과 (0.05ms, 61.1MB)
+ * 테스트 14 〉	통과 (0.12ms, 59.9MB)
+ * 테스트 15 〉	통과 (0.17ms, 60.7MB)
+ * 테스트 16 〉	통과 (0.03ms, 60.5MB)
+ * 테스트 17 〉	통과 (0.06ms, 60.4MB)
+ * 테스트 18 〉	통과 (0.08ms, 60.8MB)
+ * 테스트 19 〉	통과 (0.12ms, 60.7MB)
+ * 테스트 20 〉	통과 (0.09ms, 60.3MB)
+ * 테스트 21 〉	통과 (0.24ms, 61.1MB)
+ * 테스트 22 〉	통과 (0.13ms, 60.7MB)
+ * 테스트 23 〉	통과 (0.27ms, 59.5MB)
+ * 테스트 24 〉	통과 (0.29ms, 61MB)
+ * 테스트 25 〉	통과 (0.23ms, 61.5MB)
  *
  *
  * ```
