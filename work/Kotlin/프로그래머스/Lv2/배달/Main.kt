@@ -1,52 +1,50 @@
 package 프로그래머스.Lv2.배달
 
 import util.validate
+import java.util.*
 
 class Solution {
   companion object {
 
-    const val START = 1
     const val SEP = 100
     const val INF = Int.MAX_VALUE
   }
 
-  fun solution(N: Int, road: Array<IntArray>, k: Int): Int {
+  fun solution(N: Int, road: Array<IntArray>, K: Int): Int {
 
-    val g = Array(N + 1) { mutableListOf<Int>() }
-    for (arr in road) {
-      val fr = arr[0]
-      val to = arr[1]
-      val t = arr[2]
-      g[fr] += t * SEP + to
-      g[to] += t * SEP + fr
+    val CAP = N + 1
+    fun pos(fr: Int, to: Int): Int = fr * CAP + to
+    val dist = IntArray(CAP * CAP) { INF }
+
+    val q = PriorityQueue<Int>()
+    dist[pos(1, 1)] = 0
+
+    for (x in road) {
+      val fr = x[0]
+      val to = x[1]
+      val t = x[2]
+      if (t < dist[pos(fr, to)]) dist[pos(fr, to)] = t
+      if (t < dist[pos(to, fr)]) dist[pos(to, fr)] = t
     }
 
-    val q = IntArray(N * N)
-    val dist = IntArray(N + 1) { INF }
-    dist[START] = 0
-    var qh = 0
-    var qt = 0
-    q[qt++] = START
+    for (to in 2..N) if (dist[pos(1, to)] <= K) q.add(to)
 
-    while (qh < qt) {
-      val e = q[qh++]
-      val t1 = e / SEP
-      val fr = e % SEP
+    while (q.isNotEmpty()) {
+      val fr = q.poll()
+      val t = dist[pos(1, fr)]
 
-      for (e2 in g[fr]) {
-        val t2 = e2 / SEP
-        val to = e2 % SEP
-        val acc = t1 + t2
-
-        if (acc <= k && acc < dist[to]) {
-          dist[to] = acc
-          q[qt++] = acc * SEP + to
+      for (to in 2..N) {
+        if (fr == to) continue
+        val acc = t + dist[pos(fr, to)]
+        if (acc in 1..K && acc < dist[pos(1, to)]) {
+          dist[pos(1, to)] = acc
+          q.add(to)
         }
       }
     }
 
     var ans = 0
-    for (i in 1..N) if (dist[i] <= k) ans++
+    for (to in 1..N) if (dist[pos(1, to)] <= K) ans++
     return ans
   }
 }
@@ -85,6 +83,23 @@ class Solution {
  * 테스트 13 〉	통과 (0.45ms, 59.2MB)
  * 테스트 14 〉	통과 (1.08ms, 59.8MB)
  * 테스트 15 〉	통과 (2.77ms, 60.6MB)
+ * v3:
+ * 테스트 1 〉	통과 (0.30ms, 59.2MB)
+ * 테스트 2 〉	통과 (0.29ms, 59MB)
+ * 테스트 3 〉	통과 (0.27ms, 60.8MB)
+ * 테스트 4 〉	통과 (0.37ms, 59.2MB)
+ * 테스트 5 〉	통과 (0.33ms, 58.5MB)
+ * 테스트 6 〉	통과 (0.32ms, 58.3MB)
+ * 테스트 7 〉	통과 (0.32ms, 59.8MB)
+ * 테스트 8 〉	통과 (0.32ms, 58.8MB)
+ * 테스트 9 〉	통과 (0.31ms, 59.6MB)
+ * 테스트 10 〉	통과 (0.25ms, 58.7MB)
+ * 테스트 11 〉	통과 (0.32ms, 60.9MB)
+ * 테스트 12 〉	통과 (0.73ms, 58.3MB)
+ * 테스트 13 〉	통과 (0.45ms, 58.1MB)
+ * 테스트 14 〉	통과 (0.53ms, 60.4MB)
+ * 테스트 15 〉	통과 (0.53ms, 62.2MB)
+ *
  *
  * ```
  *
@@ -163,4 +178,4 @@ fun main() {
     ), 4), 4)
 }
 
-//      println("[$fr] t= $t1")
+//        println("[$fr -> $to] k=$K VS acc=$acc VS ${dist[pos(1, to)]}}")
