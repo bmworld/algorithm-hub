@@ -90,7 +90,8 @@ fun validate(actual: LongArray, expect: LongArray) {
 }
 
 fun <T> validate(actual: Array<T>, expect: Array<T>) {
-  check(actual.contentEquals(expect)) { "actual=$actual, expect=$expect" }
+  check(actual.contentEquals(
+    expect)) { "actual=${actual.contentToString()}, expect=${expect.contentToString()}" }
 }
 
 
