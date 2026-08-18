@@ -7,22 +7,22 @@ class Solution {
 
     const val A = 65
     const val INT = 1
-    const val MAX_COMBINATION = 1012
+    const val MAX_COMBINATION = 1_024
   }
 
   fun solution(orders: Array<String>, course: IntArray): Array<String> {
     val N = orders.size
     val bins = IntArray(N)
 
-    for (i in 0 until N) {
+    for (i in orders.indices) {
       var flag = 0
       for (order in orders[i]) flag = flag or (INT shl order.code - A)
       bins[i] = flag
     }
 
     val ans = Array(MAX_COMBINATION) { "" }
+    val top = IntArray(MAX_COMBINATION)
     val used = HashSet<Int>()
-    val top = IntArray(N)
 
     var ansCnt = 0
 
@@ -136,31 +136,122 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.52ms, 61MB)
- * 테스트 2 〉	통과 (0.34ms, 59.9MB)
- * 테스트 3 〉	실패 (런타임 에러)
- * 테스트 4 〉	실패 (런타임 에러)
- * 테스트 5 〉	통과 (0.39ms, 60.7MB)
- * 테스트 6 〉	통과 (0.66ms, 59.8MB)
- * 테스트 7 〉	통과 (0.72ms, 59.2MB)
- * 테스트 8 〉	통과 (1.95ms, 62.6MB)
- * 테스트 9 〉	통과 (1.68ms, 63.2MB)
- * 테스트 10 〉	실패 (런타임 에러)
- * 테스트 11 〉	통과 (2.03ms, 64.6MB)
- * 테스트 12 〉	통과 (2.27ms, 64.5MB)
- * 테스트 13 〉	실패 (런타임 에러)
- * 테스트 14 〉	통과 (1.93ms, 64.5MB)
- * 테스트 15 〉	실패 (런타임 에러)
- * 테스트 16 〉	통과 (1.36ms, 62.7MB)
- * 테스트 17 〉	통과 (1.37ms, 62.7MB)
- * 테스트 18 〉	통과 (1.40ms, 62.6MB)
- * 테스트 19 〉	통과 (0.67ms, 59.8MB)
- * 테스트 20 〉	통과 (1.44ms, 62.4MB)
+ * 테스트 1 〉	통과 (0.38ms, 59.6MB)
+ * 테스트 2 〉	통과 (0.78ms, 59.7MB)
+ * 테스트 3 〉	통과 (0.48ms, 60.8MB)
+ * 테스트 4 〉	통과 (0.44ms, 60.3MB)
+ * 테스트 5 〉	통과 (0.46ms, 60.1MB)
+ * 테스트 6 〉	통과 (0.60ms, 60.2MB)
+ * 테스트 7 〉	통과 (0.94ms, 59MB)
+ * 테스트 8 〉	통과 (1.72ms, 63MB)
+ * 테스트 9 〉	통과 (1.72ms, 63.7MB)
+ * 테스트 10 〉	통과 (2.74ms, 64.6MB)
+ * 테스트 11 〉	통과 (1.83ms, 65.2MB)
+ * 테스트 12 〉	통과 (2.69ms, 62.8MB)
+ * 테스트 13 〉	통과 (2.88ms, 65.3MB)
+ * 테스트 14 〉	통과 (1.91ms, 64.9MB)
+ * 테스트 15 〉	통과 (2.85ms, 64.8MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * class Solution {
+ *     fun solution(orders: Array<String>, course: IntArray): Array<String> {
+ *         val candidateList = mutableListOf<String>()
+ *
+ *     // r = 뽑을 갯수
+ *     fun combination(list: List<Char>, r: Int, startIndex: Int = 0, candidates: String = ""): Unit = when (r) {
+ *         0 -> {
+ *             candidateList.add(candidates)
+ *             Unit
+ *         }
+ *         else -> {
+ *             for (i in startIndex until list.count()) {
+ *                 combination(list, r - 1, i + 1, candidates + list[i])
+ *             }
+ *         }
+ *     }
+ *
+ *     orders.forEach { order ->
+ *         course.forEach { course ->
+ *             combination(order.toList().sorted(), course)
+ *         }
+ *     }
+ *
+ *
+ *     val answer = mutableListOf<String>()
+ *
+ *     candidateList.groupingBy { it }.eachCount().toList().groupBy { it.first.length }.forEach { _, pair ->
+ *         val maxCount = pair.maxBy { it.second }?.second ?: 0
+ *         answer.addAll(pair.filter { it.second >= 2 && it.second == maxCount }.map { it.first })
+ *     }
+ *     return answer.sorted().toTypedArray()
+ *     }
+ * }
+ * 테스트 1 〉	통과 (20.20ms, 66.3MB)
+ * 테스트 2 〉	통과 (26.62ms, 65.8MB)
+ * 테스트 3 〉	통과 (24.51ms, 64.7MB)
+ * 테스트 4 〉	통과 (21.77ms, 64.6MB)
+ * 테스트 5 〉	통과 (27.81ms, 65.5MB)
+ * 테스트 6 〉	통과 (22.93ms, 66MB)
+ * 테스트 7 〉	통과 (23.37ms, 65.4MB)
+ * 테스트 8 〉	통과 (25.39ms, 69.2MB)
+ * 테스트 9 〉	통과 (26.85ms, 70.7MB)
+ * 테스트 10 〉	통과 (28.15ms, 67.9MB)
+ * 테스트 11 〉	통과 (25.42ms, 67.6MB)
+ * 테스트 12 〉	통과 (24.41ms, 67.8MB)
+ * 테스트 13 〉	통과 (26.89ms, 69.8MB)
+ * 테스트 14 〉	통과 (29.20ms, 69.5MB)
+ * 테스트 15 〉	통과 (31.93ms, 67.9MB)
+ *
+ * [RIVAL 2]
+ * class Solution {
+ *     fun solution(orders: Array<String>, course: IntArray): Array<String> {
+ *         val answer = mutableListOf<String>()
+ *         val courseMap = mutableMapOf<Int, MutableMap<String, Int>>()
+ *
+ *         for(order in orders) {
+ *             val menu = order.toCharArray().sortedArray()
+ *
+ *             for(i in 0 until (1 shl menu.size)) {
+ *                 val com = StringBuilder()
+ *                 for(j in menu.indices) {
+ *                     if((i and (1 shl j) != 0)) com.append(menu[j])
+ *                 }
+ *                 val key = com.toString()
+ *                 courseMap[key.length] = (courseMap[key.length] ?: mutableMapOf()).also { it[key] = (it[key] ?: 0) + 1 }
+ *             }
+ *         }
+ *
+ *         for(count in course) {
+ *             val max = courseMap[count]?.values?.max() ?: 0
+ *             if(max < 2) continue
+ *
+ *             courseMap[count]!!.entries.forEach { if(it.value == max) answer.add(it.key) }
+ *         }
+ *
+ *         answer.sort()
+ *         return answer.toTypedArray()
+ *     }
+ * }
+ * 테스트 1 〉	통과 (18.16ms, 62.1MB)
+ * 테스트 2 〉	통과 (17.66ms, 63MB)
+ * 테스트 3 〉	통과 (14.56ms, 63.2MB)
+ * 테스트 4 〉	통과 (14.49ms, 63MB)
+ * 테스트 5 〉	통과 (13.17ms, 63.4MB)
+ * 테스트 6 〉	통과 (13.68ms, 64MB)
+ * 테스트 7 〉	통과 (14.17ms, 63.6MB)
+ * 테스트 8 〉	통과 (25.75ms, 65.8MB)
+ * 테스트 9 〉	통과 (18.91ms, 65.9MB)
+ * 테스트 10 〉	통과 (21.82ms, 65.9MB)
+ * 테스트 11 〉	통과 (16.28ms, 64.8MB)
+ * 테스트 12 〉	통과 (17.02ms, 65.6MB)
+ * 테스트 13 〉	통과 (18.80ms, 65.7MB)
+ * 테스트 14 〉	통과 (27.17ms, 67.3MB)
+ * 테스트 15 〉	통과 (19.46ms, 65.7MB)
+ *
+ *
  * ```
  */
 fun main() {
