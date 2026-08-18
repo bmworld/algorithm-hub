@@ -5,75 +5,90 @@ import util.validate
 class Solution {
   companion object {
 
-    const val BINARY_INT_SIZE = 32
     const val A = 65
-    const val Z = 90
     const val INT = 1
   }
 
   fun solution(orders: Array<String>, course: IntArray): Array<String> {
+    val N = orders.size
+    val bins = IntArray(N)
 
-    val map = HashMap<Int, MutableList<Int>>()
-    var maxLen = 0
-    for (order in orders) {
+    for (i in 0 until N) {
       var flag = 0
-      for (menu in order) flag = flag or (INT shl (Z - menu.code))
-
-      val len = order.length
-      if (map[len] == null) map[len] = mutableListOf(flag)
-      else map[len]!! += flag
-
-      if (len > maxLen) maxLen = len
+      for (order in orders[i]) flag = flag or (INT shl order.code - A)
+      bins[i] = flag
     }
 
-    val ans = IntArray(orders.size)
-    var ansLen = 0
-    for (len1 in course) {
-      val odrs1 = map[len1] ?: continue
+    val ans = Array(N) { "" }
+    val used = HashSet<Int>()
+    val top = IntArray(N)
 
-      val top = IntArray(odrs1.size)
-      var topCnt = 0
-      var maxCnt = 0
-      for (o1 in odrs1) {
+    var ansCnt = 0
+
+    var topCnt = 0
+    var maxCnt = 0
+    fun dfs(dep: Int, stt: Int, len: Int, o1: String, combined: Int) {
+      if (dep == len) {
+
+        if (combined in used) return
+        else used.add(combined)
+
         var cnt = 0
-        for (len2 in len1 + 1..maxLen) for (o2 in map[len2] ?: continue) if (o1 and o2 == o1) cnt++
+        for (comp in bins)
+          if (comp.countOneBits() >= len && combined and comp == combined) cnt++
 
-        println("[${o1.toString(2)}] ->cnt = ${cnt}")
-        if (cnt == 0) continue
-        else if (cnt == maxCnt) top[topCnt++] = o1
+        if (cnt < 2) return
+        else if (cnt == maxCnt) top[topCnt++] = combined
         else if (cnt > maxCnt) {
           maxCnt = cnt
-          top[0] = o1
+          top[0] = combined
           topCnt = 1
         }
+        return
+      }
+
+      for (i in stt until o1.length) {
+        val x = 1 shl (o1[i].code - A)
+        dfs(dep + 1, i + 1, len, o1, combined or x)
+      }
+    }
+
+    for (len in course) {
+      topCnt = 0
+      maxCnt = 0
+
+      for (i in 0 until N) {
+        val o1 = orders[i]
+        val o1Len = o1.length
+        if (o1Len < len) continue
+
+        dfs(0, 0, len, o1, 0)
       }
 
       repeat(topCnt) {
-        ans[ansLen++] = top[it]
-      }
-    }
+        var x = top[it]
+        val order = CharArray(x.countOneBits())
+        var i = 0
+        while (x > 0) {
+          val alpbt = x.countTrailingZeroBits()
+          order[i++] = (alpbt + A).toChar()
+          x = x xor (INT shl alpbt)
+        }
 
-    qs(ans, 0, ansLen - 1)
-    println("ansLen = ${ansLen}")
-
-    return Array(ansLen) {
-      var x = ans[it]
-      println("x = ${x}")
-      val order = CharArray(x.countOneBits())
-      var i = 0
-      while (x > 0) {
-        val alpbt = BINARY_INT_SIZE - (x.countLeadingZeroBits() + 1)
-        order[i++] = (Z - alpbt).toChar()
-        x = x xor (INT shl alpbt)
+        ans[ansCnt++] = String(order)
       }
 
-      String(order)
+      used.clear()
     }
+
+    qs(ans, 0, ansCnt - 1)
+
+    return Array(ansCnt) { ans[it] }
   }
 
 
   fun swap(
-    a: IntArray,
+    a: Array<String>,
     i: Int,
     j: Int,
   ) {
@@ -83,7 +98,7 @@ class Solution {
   }
 
   fun qs(
-    a: IntArray,
+    a: Array<String>,
     l: Int,
     r: Int,
   ) {
@@ -91,23 +106,55 @@ class Solution {
 
     val m = (l + r) shr 1
     val piv = a[m]
-    println("[$l~$r] -> a[$m] = ${a[m].toString(2)}")
     swap(a, m, r)
 
     var pos = l
-    for (i in l until r) if (a[i] < piv) swap(a, pos++, i)
-    if (piv < a[pos]) swap(a, pos, r)
-    println("a[$pos] = ${a[pos].toString(2)}")
-
+    for (i in l until r) if (comp(a[i], piv)) swap(a, pos++, i)
+    if (comp(piv, a[pos])) swap(a, pos, r)
 
     qs(a, l, pos - 1)
     qs(a, pos + 1, r)
+  }
+
+  fun comp(a: String, b: String): Boolean {
+
+    val aLen = a.length
+    val bLen = b.length
+
+    for (i in 0 until minOf(aLen, bLen)) {
+      val ax = a[i]
+      val bx = b[i]
+      if (ax < bx) return true
+      if (ax > bx) return false
+    }
+
+    return aLen < bLen
   }
 }
 
 /**
  * ```
  * [ME]
+ * 테스트 1 〉	통과 (0.41ms, 60.9MB)
+ * 테스트 2 〉	통과 (0.25ms, 61.3MB)
+ * 테스트 3 〉	실패 (런타임 에러)
+ * 테스트 4 〉	실패 (런타임 에러)
+ * 테스트 5 〉	통과 (0.38ms, 60.7MB)
+ * 테스트 6 〉	통과 (0.61ms, 59.3MB)
+ * 테스트 7 〉	통과 (0.66ms, 61.1MB)
+ * 테스트 8 〉	통과 (1.62ms, 63.3MB)
+ * 테스트 9 〉	실패 (런타임 에러)
+ * 테스트 10 〉	실패 (런타임 에러)
+ * 테스트 11 〉	통과 (1.75ms, 64.5MB)
+ * 테스트 12 〉	통과 (2.10ms, 65.1MB)
+ * 테스트 13 〉	실패 (런타임 에러)
+ * 테스트 14 〉	통과 (1.79ms, 63.9MB)
+ * 테스트 15 〉	실패 (런타임 에러)
+ * 테스트 16 〉	통과 (1.39ms, 62MB)
+ * 테스트 17 〉	통과 (1.37ms, 60.8MB)
+ * 테스트 18 〉	통과 (1.41ms, 59.5MB)
+ * 테스트 19 〉	통과 (0.82ms, 59.1MB)
+ * 테스트 20 〉	통과 (1.69ms, 62.6MB)
  * ```
  *
  *
@@ -117,24 +164,26 @@ class Solution {
  */
 fun main() {
   val s = Solution()
+
   validate(s.solution(arrayOf("ABCFG", "AC", "CDE", "ACDE", "BCFG", "ACDEH"),
     intArrayOf(2, 3, 4)),
     arrayOf("AC", "ACDE", "BCFG", "CDE")
   )
-//
-//  validate(s.solution(arrayOf("ABCDE", "AB", "CD", "ADE", "XYZ", "XYZ", "ACD"),
-//    intArrayOf(2, 3, 5)),
-//    arrayOf("ACD", "AD", "ADE", "CD", "XYZ")
-//  )
-//
-//  validate(s.solution(arrayOf("XYZ", "XWY", "WXA"),
-//    intArrayOf(2, 3, 4)),
-//    arrayOf("WX", "XY")
-//  )
+
+  validate(s.solution(arrayOf("XYZ", "XWY", "WXA"),
+    intArrayOf(2, 3, 4)),
+    arrayOf("WX", "XY")
+  )
+
+  validate(s.solution(arrayOf("ABCDE", "AB", "CD", "ADE", "XYZ", "XYZ", "ACD"),
+    intArrayOf(2, 3, 5)),
+    arrayOf("ACD", "AD", "ADE", "CD", "XYZ")
+  )
+
 
 }
 
-//      println("[$len] ${map[len]!!.size} -> ${flag.toString(2)}")
-//  println("[$len1 -> $len2] ${o1.toString(2)} and ${o2.toString(2)} -> ${
-//              (o1 and o2).toString(2)
-//            }")
+//         println("[$len] ${combined.toString(2)} in $o1 ---> cnt = $cnt")
+//  println(
+//          "ㄴ [$dep] -> $i -> ${combined.toString(2)} or ${x.toString(2)} -> ${nxt.toString(2)}")
+//      println("[$len] -> topCnt=$topCnt, maxCnt=$maxCnt")
