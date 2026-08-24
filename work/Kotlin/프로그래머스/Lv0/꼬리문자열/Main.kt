@@ -20,8 +20,7 @@ class Solution {
         for (j in 0 until M) if (str[i + j] != ex[j]) continue@validator
         continue@l
       }
-
-      System.arraycopy(str.toCharArray(), 0, tmp, len, N)
+      str.toCharArray(tmp, len, 0, N)
       len += N
     }
 
@@ -39,6 +38,14 @@ class Solution {
  * 테스트 5 〉	통과 (0.03ms, 60MB)
  * 테스트 6 〉	통과 (0.02ms, 59.9MB)
  * 테스트 7 〉	통과 (0.02ms, 60.3MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.02ms, 59MB)
+ * 테스트 2 〉	통과 (0.03ms, 59.4MB)
+ * 테스트 3 〉	통과 (0.02ms, 58MB)
+ * 테스트 4 〉	통과 (0.03ms, 58.3MB)
+ * 테스트 5 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 6 〉	통과 (0.03ms, 59.5MB)
+ * 테스트 7 〉	통과 (0.03ms, 60.7MB)
  * ```
  *
  *
