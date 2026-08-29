@@ -52,8 +52,6 @@ class Solution {
     val usedOp = BooleanArray(uopCnt)
     fun dfs(dep: Int) {
       if (dep == uopCnt) {
-        if (uopCnt == UNIQ_OPERATOR_MAX_SIZE && op[1] == s) return
-
         val tmpNums = nums.copyOf(ni)
         val tmpOps = ops.copyOf(oi)
         var tmpOpLen = oi
@@ -105,41 +103,143 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.35ms, 58.3MB)
- * 테스트 2 〉	통과 (0.33ms, 59.8MB)
- * 테스트 3 〉	통과 (0.34ms, 60.1MB)
- * 테스트 4 〉	통과 (0.31ms, 60.5MB)
- * 테스트 5 〉	통과 (0.33ms, 60MB)
- * 테스트 6 〉	통과 (0.33ms, 59.8MB)
- * 테스트 7 〉	통과 (0.31ms, 60.3MB)
- * 테스트 8 〉	실패 (0.36ms, 59.5MB)
- * 테스트 9 〉	통과 (0.32ms, 59.6MB)
- * 테스트 10 〉	통과 (0.32ms, 60.6MB)
- * 테스트 11 〉	실패 (0.32ms, 59.8MB)
- * 테스트 12 〉	통과 (0.37ms, 60.3MB)
- * 테스트 13 〉	실패 (0.43ms, 59.4MB)
- * 테스트 14 〉	실패 (2.15ms, 59.2MB)
- * 테스트 15 〉	통과 (0.32ms, 59.5MB)
- * 테스트 16 〉	통과 (0.30ms, 60.6MB)
- * 테스트 17 〉	통과 (0.30ms, 59.7MB)
- * 테스트 18 〉	통과 (0.51ms, 60MB)
- * 테스트 19 〉	통과 (0.30ms, 60.1MB)
- * 테스트 20 〉	통과 (0.35ms, 59.9MB)
- * 테스트 21 〉	통과 (0.33ms, 60.4MB)
- * 테스트 22 〉	통과 (0.32ms, 60.9MB)
- * 테스트 23 〉	통과 (0.33ms, 60MB)
- * 테스트 24 〉	통과 (0.31ms, 60.6MB)
- * 테스트 25 〉	통과 (0.38ms, 60.9MB)
- * 테스트 26 〉	통과 (0.52ms, 60.8MB)
- * 테스트 27 〉	실패 (0.34ms, 59.6MB)
- * 테스트 28 〉	통과 (0.32ms, 60.4MB)
- * 테스트 29 〉	통과 (0.31ms, 59.3MB)
- * 테스트 30 〉	통과 (0.33ms, 60.7MB)
+ * 테스트 1 〉	통과 (0.37ms, 58.6MB)
+ * 테스트 2 〉	통과 (0.31ms, 59.4MB)
+ * 테스트 3 〉	통과 (0.32ms, 59.7MB)
+ * 테스트 4 〉	통과 (0.36ms, 59.4MB)
+ * 테스트 5 〉	통과 (0.33ms, 60.6MB)
+ * 테스트 6 〉	통과 (0.31ms, 60.1MB)
+ * 테스트 7 〉	통과 (0.33ms, 59.9MB)
+ * 테스트 8 〉	통과 (0.49ms, 59.9MB)
+ * 테스트 9 〉	통과 (0.36ms, 59.4MB)
+ * 테스트 10 〉	통과 (0.43ms, 60.5MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * class Solution {
+ *     fun solution(expression: String): Long {
+ *         var answer: Long = 0
+ *         val cases = listOf("*+-","*-+", "+*-", "+-*", "-*+", "-+*")
+ *         val numsOrder = expression.split('*', '-', '+').map { it.toLong() }
+ *         val opsOrder = expression.filter { it in "*+-" }
+ *         cases.forEach { ops ->
+ *             val tempNums = numsOrder.toMutableList()
+ *             val tempOps = opsOrder.toMutableList()
+ *             ops.forEach { op ->
+ *                 var index = tempOps.indexOfFirst { it == op }
+ *                 while (index >= 0) {
+ *                     val result = when (op) {
+ *                         '*' -> tempNums[index] * tempNums[index + 1]
+ *                         '+' -> tempNums[index] + tempNums[index + 1]
+ *                         '-' -> tempNums[index] - tempNums[index + 1]
+ *                         else -> 0
+ *                     }
+ *                     tempNums[index+1] = result
+ *                     tempNums.removeAt(index)
+ *                     tempOps.removeAt(index)
+ *                     index = tempOps.indexOfFirst { it == op }
+ *                 }
+ *             }
+ *             answer = answer.coerceAtLeast(Math.abs(tempNums[0]))
+ *         }
+ *
+ *         return answer
+ *     }
+ * }
+ * 테스트 1 〉	통과 (21.69ms, 66.4MB)
+ * 테스트 2 〉	통과 (24.07ms, 66.5MB)
+ * 테스트 3 〉	통과 (23.02ms, 66.1MB)
+ * 테스트 4 〉	통과 (22.72ms, 66.6MB)
+ * 테스트 5 〉	통과 (29.27ms, 66MB)
+ * 테스트 6 〉	통과 (24.17ms, 66MB)
+ * 테스트 7 〉	통과 (22.29ms, 66.4MB)
+ * 테스트 8 〉	통과 (23.60ms, 66.1MB)
+ * 테스트 9 〉	통과 (22.91ms, 65.6MB)
+ * 테스트 10 〉	통과 (23.70ms, 66.1MB)
+ *
+ * [RIVAL 2]
+ * class Solution {
+ *     private val numbers = mutableListOf<Long>()
+ *     private val operators = mutableListOf<Char>()
+ *
+ *     fun solution(expression: String): Long {
+ *         var answer: Long = 0
+ *         val numTemp = StringBuilder()
+ *         for (c in expression) {
+ *             when (c) {
+ *                 '*', '+', '-' -> {
+ *                     operators.add(c)
+ *                     numbers.add(numTemp.toString().toLong())
+ *                     numTemp.clear()
+ *                 }
+ *                 else -> numTemp.append(c)
+ *             }
+ *         }
+ *         numbers.add(numTemp.toString().toLong())
+ *
+ *         val ops = operators.distinct()
+ *         val visited = BooleanArray(ops.size)
+ *         val priority = mutableListOf<Char>()
+ *         fun dfs(depth: Int) {
+ *             if (depth == ops.size) {
+ *                 answer = maxOf(answer, calc(priority))
+ *                 return
+ *             }
+ *
+ *             for (i in ops.indices) {
+ *                 if (!visited[i]) {
+ *                     visited[i] = true
+ *                     priority.add(ops[i])
+ *
+ *                     dfs(depth + 1)
+ *
+ *                     priority.removeLast()
+ *                     visited[i] = false
+ *                 }
+ *             }
+ *         }
+ *         dfs(0)
+ *
+ *         return answer
+ *     }
+ *
+ *     private fun calc(priority: List<Char>): Long {
+ *         val nums = numbers.toMutableList()
+ *         val ops = operators.toMutableList()
+ *
+ *         for (p in priority) {
+ *             var i = 0
+ *             while (i < ops.size) {
+ *                 if (ops[i] == p) {
+ *                     nums[i] = when(p) {
+ *                         '*' -> nums[i] * nums[i + 1]
+ *                         '+' -> nums[i] + nums[i + 1]
+ *                         '-' -> nums[i] - nums[i + 1]
+ *                         else -> 0
+ *                     }
+ *                     nums.removeAt(i + 1)
+ *                     ops.removeAt(i)
+ *                 } else {
+ *                     i++
+ *                 }
+ *             }
+ *         }
+ *
+ *         return Math.abs(nums[0])
+ *     }
+ * }
+ * 테스트 1 〉	통과 (7.52ms, 61.3MB)
+ * 테스트 2 〉	통과 (7.56ms, 59.7MB)
+ * 테스트 3 〉	통과 (8.72ms, 61.1MB)
+ * 테스트 4 〉	통과 (7.76ms, 61.6MB)
+ * 테스트 5 〉	통과 (7.66ms, 62.1MB)
+ * 테스트 6 〉	통과 (7.42ms, 61.9MB)
+ * 테스트 7 〉	통과 (8.51ms, 62.3MB)
+ * 테스트 8 〉	통과 (7.99ms, 61.6MB)
+ * 테스트 9 〉	통과 (7.98ms, 61.4MB)
+ * 테스트 10 〉	통과 (7.82ms, 62.3MB)
  * ```
  */
 fun main() {
@@ -148,8 +248,3 @@ fun main() {
   validate(s.solution("100-200*300-500+20"), 60420)
   validate(s.solution("50*6-3*2"), 300)
 }
-
-//println(
-//"[$o1] ${tmpNums.contentToString()}, ${tmpOps.contentToString()} until $tmpOpLen")
-
-//        println("---- op = ${op.joinToString()} -> tmpNums[0] = ${tmpNums[0]}")
