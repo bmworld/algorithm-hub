@@ -3,24 +3,9 @@ package 프로그래머스.Lv0.문자열로변환
 import util.validate
 
 class Solution {
-  companion object {
 
-    const val MAX_LEN = 10
-    const val ZERO = 48
-  }
-
-  fun solution(n: Int): String {
-    val ans = CharArray(MAX_LEN)
-    var i = MAX_LEN
-
-    var x = n
-    while (x > 0) {
-      ans[--i] = (x % 10 + ZERO).toChar()
-      x /= 10
-    }
-
-    return String(ans.copyOfRange(i, MAX_LEN))
-  }
+  fun solution(n: Int): String =
+    n.toString()
 }
 
 /**
@@ -36,6 +21,18 @@ class Solution {
  * 테스트 8 〉	통과 (7.56ms, 61MB)
  * 테스트 9 〉	통과 (6.44ms, 63.3MB)
  * 테스트 10 〉	통과 (6.56ms, 62.3MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.01ms, 59.6MB)
+ * 테스트 2 〉	통과 (0.02ms, 59.8MB)
+ * 테스트 3 〉	통과 (0.01ms, 60.5MB)
+ * 테스트 4 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 5 〉	통과 (0.01ms, 60MB)
+ * 테스트 6 〉	통과 (0.02ms, 60.9MB)
+ * 테스트 7 〉	통과 (0.01ms, 60.4MB)
+ * 테스트 8 〉	통과 (0.01ms, 60MB)
+ * 테스트 9 〉	통과 (0.01ms, 58.6MB)
+ * 테스트 10 〉	통과 (0.01ms, 57.7MB)
  *
  * ```
  *
