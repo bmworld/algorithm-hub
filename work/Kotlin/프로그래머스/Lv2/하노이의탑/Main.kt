@@ -8,21 +8,15 @@ class Solution {
     var ans = Array<IntArray>((1 shl n) - 1) { IntArray(2) }
     var i = 0
 
-    fun move(fr: Int, to: Int, cnt: Int) {
+    fun move(fr: Int, mid: Int, to: Int, cnt: Int) {
       if (cnt == 0) return
 
-      val mid = when {
-        fr in 1..2 && to in 1..2 -> 3
-        fr in 2..3 && to in 2..3 -> 1
-        else -> 2
-      }
-
-      move(fr, mid, cnt - 1)
+      move(fr, to, mid, cnt - 1)
       ans[i++] = intArrayOf(fr, to)
-      move(mid, to, cnt - 1)
+      move(mid, fr, to, cnt - 1)
     }
 
-    move(1, 3, n)
+    move(1, 2, 3, n)
 
     return ans
   }
@@ -41,6 +35,22 @@ class Solution {
  * 테스트 8 〉	통과 (0.43ms, 60.8MB)
  * 테스트 9 〉	통과 (0.52ms, 62MB)
  * 테스트 10 〉	통과 (0.75ms, 62.3MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.20ms, 60.6MB)
+ * 테스트 2 〉	통과 (0.21ms, 59.6MB)
+ * 테스트 3 〉	통과 (0.19ms, 60.5MB)
+ * 테스트 4 〉	통과 (0.15ms, 60.2MB)
+ * 테스트 5 〉	통과 (0.23ms, 60.5MB)
+ * 테스트 6 〉	통과 (0.25ms, 60.6MB)
+ * 테스트 7 〉	통과 (0.25ms, 61MB)
+ * 테스트 8 〉	통과 (0.30ms, 62.7MB)
+ * 테스트 9 〉	통과 (0.39ms, 61.7MB)
+ * 테스트 10 〉	통과 (0.53ms, 61.7MB)
+ * 테스트 11 〉	통과 (0.96ms, 66.5MB)
+ * 테스트 12 〉	통과 (1.17ms, 71.5MB)
+ * 테스트 13 〉	통과 (2.01ms, 76.7MB)
+ *
  *
  * [RIVAL]
  * class Solution
