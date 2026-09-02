@@ -5,20 +5,19 @@ import util.validate
 class Solution {
 
   fun solution(n: Int): Array<IntArray> {
-    var ans = Array<IntArray>((1 shl n) - 1) { IntArray(2) }
-    var i = 0
+    var ans = mutableListOf<IntArray>()
 
     fun move(fr: Int, mid: Int, to: Int, cnt: Int) {
       if (cnt == 0) return
 
       move(fr, to, mid, cnt - 1)
-      ans[i++] = intArrayOf(fr, to)
+      ans.add(intArrayOf(fr, to))
       move(mid, fr, to, cnt - 1)
     }
 
     move(1, 2, 3, n)
 
-    return ans
+    return ans.toTypedArray()
   }
 }
 
@@ -50,6 +49,21 @@ class Solution {
  * 테스트 11 〉	통과 (0.96ms, 66.5MB)
  * 테스트 12 〉	통과 (1.17ms, 71.5MB)
  * 테스트 13 〉	통과 (2.01ms, 76.7MB)
+ *
+ * v3:
+ * 테스트 1 〉	통과 (0.02ms, 58.1MB)
+ * 테스트 2 〉	통과 (0.03ms, 61MB)
+ * 테스트 3 〉	통과 (0.03ms, 60.4MB)
+ * 테스트 4 〉	통과 (0.08ms, 59.1MB)
+ * 테스트 5 〉	통과 (0.06ms, 60.7MB)
+ * 테스트 6 〉	통과 (0.92ms, 58.9MB)
+ * 테스트 7 〉	통과 (0.18ms, 60.3MB)
+ * 테스트 8 〉	통과 (0.26ms, 61.7MB)
+ * 테스트 9 〉	통과 (0.34ms, 61.2MB)
+ * 테스트 10 〉	통과 (0.66ms, 63.2MB)
+ * 테스트 11 〉	통과 (0.59ms, 65.6MB)
+ * 테스트 12 〉	통과 (4.02ms, 71.4MB)
+ * 테스트 13 〉	통과 (1.78ms, 77MB)
  *
  *
  * [RIVAL]
