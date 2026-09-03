@@ -18,13 +18,13 @@ class Solution {
     for (x in my_string) {
       when (x.code) {
         SPACE -> if (wi > 0) {
-          tmp[ai++] = String(word.copyOf(wi))
+          tmp[ai++] = String(word, 0, wi)
           wi = 0
         }
         else -> word[wi++] = x
       }
     }
-    if (wi > 0) tmp[ai++] = String(word.copyOf(wi))
+    if (wi > 0) tmp[ai++] = String(word, 0, wi)
 
     return Array(ai) { tmp[it] }
   }
@@ -41,6 +41,15 @@ class Solution {
  * 테스트 6 〉	통과 (0.07ms, 59.5MB)
  * 테스트 7 〉	통과 (0.07ms, 60.3MB)
  * 테스트 8 〉	통과 (0.10ms, 60.1MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.13ms, 59.5MB)
+ * 테스트 2 〉	통과 (0.07ms, 60.6MB)
+ * 테스트 3 〉	통과 (0.05ms, 60.2MB)
+ * 테스트 4 〉	통과 (0.08ms, 60MB)
+ * 테스트 5 〉	통과 (0.06ms, 60.4MB)
+ * 테스트 6 〉	통과 (0.06ms, 60.6MB)
+ * 테스트 7 〉	통과 (0.06ms, 60.4MB)
+ * 테스트 8 〉	통과 (0.09ms, 60.4MB)
  *
  * [RIVAL]
  * class Solution {
