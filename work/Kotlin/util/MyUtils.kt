@@ -89,6 +89,23 @@ fun validate(actual: LongArray, expect: LongArray) {
   }
 }
 
+fun validate(actual: DoubleArray, expect: DoubleArray) {
+  check(actual.size == expect.size) {
+    "size mismatch: actual=${actual.size}, expect=${expect.size}\n" +
+      "actual=${actual.contentToString()}\n" +
+      "expect=${expect.contentToString()}"
+  }
+
+  for (i in actual.indices) {
+    check(actual[i] == expect[i]) {
+      "index[$i] mismatch: actual=${actual[i]}, expect=${expect[i]}\n" +
+        "actual=${actual.contentToString()}\n" +
+        "expect=${expect.contentToString()}"
+    }
+  }
+}
+
+
 fun <T> validate(actual: Array<T>, expect: Array<T>) {
   check(actual.contentEquals(
     expect)) { "actual=${actual.contentToString()}, expect=${expect.contentToString()}" }
@@ -109,5 +126,5 @@ fun validate(actual: Array<IntArray>, expect: Array<IntArray>) {
 
 
 fun <T> validate(actual: T, expect: T) {
-  check(actual == expect) { "actual=$actual, expect=$expect" }
+  check(actual == expect) { "actual=${actual}, expect=$expect" }
 }
