@@ -16,9 +16,14 @@ class Solution {
   fun solution(picks: IntArray, minerals: Array<String>): Int {
     var ans = 0
 
+    var dCnt = picks[0]
+    var iCnt = picks[1]
+    var sCnt = picks[2]
+
+    val maxGroup = dCnt + iCnt + sCnt
     val N = minerals.size
     val fatigues = IntArray((N + BUNDLE - 1) / BUNDLE)
-    var len = 0
+    var group = 0
 
     var i = 0
     var fatigue = 0
@@ -30,44 +35,59 @@ class Solution {
       }
 
       if (i % 5 == 0 || i == N) {
-        fatigues[len++] = fatigue
-        fatigue = 0
+        fatigues[group++] = fatigue
+        if (group < maxGroup) fatigue = 0
+        else break
       }
     }
 
-    qs(fatigues, 0, len - 1)
+    qs(fatigues, 0, group - 1)
 
-    var dCnt = picks[0]
-    while (dCnt-- > 0 && len > 0) {
-      var f = fatigues[--len]
-      val dCnt = f / D
-      if (dCnt > 0) f %= D
-      val iCnt = f / I
-      if (iCnt > 0) f %= I
+    while (dCnt-- > 0 && group > 0) {
+      var f = fatigues[--group]
+      if (f > D) {
+        ans += f / D
+        f %= D
+      }
 
-      ans += dCnt + iCnt + f
+      if (f > I) {
+        ans += f / I
+        f %= I
+      }
+
+      ans += f
     }
 
-    var iCnt = picks[1]
-    while (iCnt-- > 0 && len > 0) {
-      var f = fatigues[--len]
-      val dCnt = f / D
-      if (dCnt > 0) f %= D
-      val iCnt = f / I
-      if (iCnt > 0) f %= I
 
-      ans += dCnt * 5 + iCnt + f
+    while (iCnt-- > 0 && group > 0) {
+      var f = fatigues[--group]
+      if (f > D) {
+        ans += (f / D) * 5
+        f %= D
+      }
+
+      if (f > I) {
+        ans += f / I
+        f %= I
+      }
+
+      ans += f
     }
 
-    var sCnt = picks[2]
-    while (sCnt-- > 0 && len > 0) {
-      var f = fatigues[--len]
-      val dCnt = f / D
-      if (dCnt > 0) f %= D
-      val iCnt = f / I
-      if (iCnt > 0) f %= I
 
-      ans += dCnt * 25 + iCnt * 5 + f
+    while (sCnt-- > 0 && group > 0) {
+      var f = fatigues[--group]
+      if (f > D) {
+        ans += (f / D) * 25
+        f %= D
+      }
+
+      if (f > I) {
+        ans += (f / I) * 5
+        f %= I
+      }
+
+      ans += f
     }
 
     return ans
@@ -112,41 +132,41 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.02ms, 58MB)
- * 테스트 2 〉	통과 (0.03ms, 60.1MB)
- * 테스트 3 〉	통과 (0.02ms, 61MB)
- * 테스트 4 〉	통과 (0.04ms, 60.8MB)
- * 테스트 5 〉	통과 (0.02ms, 58.4MB)
- * 테스트 6 〉	통과 (0.02ms, 59.6MB)
- * 테스트 7 〉	통과 (0.04ms, 59.9MB)
- * 테스트 8 〉	실패 (0.02ms, 60.7MB)
- * 테스트 9 〉	실패 (0.03ms, 60.8MB)
- * 테스트 10 〉	통과 (0.02ms, 59.3MB)
- * 테스트 11 〉	통과 (0.02ms, 60.2MB)
- * 테스트 12 〉	통과 (0.02ms, 61.8MB)
- * 테스트 13 〉	통과 (0.03ms, 57.2MB)
- * 테스트 14 〉	통과 (0.02ms, 60.3MB)
- * 테스트 15 〉	통과 (0.02ms, 61MB)
- * 테스트 16 〉	통과 (0.02ms, 60.7MB)
- * 테스트 17 〉	통과 (0.02ms, 60.5MB)
- * 테스트 18 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 1 〉	통과 (0.02ms, 58.5MB)
+ * 테스트 2 〉	통과 (0.02ms, 61MB)
+ * 테스트 3 〉	통과 (0.02ms, 59.5MB)
+ * 테스트 4 〉	통과 (0.02ms, 60.9MB)
+ * 테스트 5 〉	통과 (0.03ms, 60.4MB)
+ * 테스트 6 〉	통과 (0.02ms, 57.9MB)
+ * 테스트 7 〉	통과 (0.02ms, 59MB)
+ * 테스트 8 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 9 〉	통과 (0.02ms, 59.7MB)
+ * 테스트 10 〉	실패 (0.02ms, 60.8MB)
+ * 테스트 11 〉	통과 (0.03ms, 58.8MB)
+ * 테스트 12 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 13 〉	통과 (0.03ms, 58MB)
+ * 테스트 14 〉	실패 (0.02ms, 60.4MB)
+ * 테스트 15 〉	통과 (0.02ms, 61.9MB)
+ * 테스트 16 〉	통과 (0.02ms, 59.3MB)
+ * 테스트 17 〉	통과 (0.02ms, 57.7MB)
+ * 테스트 18 〉	통과 (0.02ms, 60.9MB)
  * 테스트 19 〉	통과 (0.02ms, 60.3MB)
- * 테스트 20 〉	실패 (0.03ms, 60.1MB)
- * 테스트 21 〉	통과 (0.02ms, 60.5MB)
- * 테스트 22 〉	통과 (0.03ms, 59.5MB)
- * 테스트 23 〉	통과 (0.02ms, 59.4MB)
- * 테스트 24 〉	통과 (0.02ms, 61.5MB)
- * 테스트 25 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 20 〉	통과 (0.02ms, 59.5MB)
+ * 테스트 21 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 22 〉	통과 (0.02ms, 60.8MB)
+ * 테스트 23 〉	통과 (0.02ms, 59.7MB)
+ * 테스트 24 〉	통과 (0.02ms, 60.1MB)
+ * 테스트 25 〉	실패 (0.02ms, 59.9MB)
  * 테스트 26 〉	통과 (0.02ms, 60.7MB)
- * 테스트 27 〉	통과 (0.02ms, 59.3MB)
- * 테스트 28 〉	통과 (0.02ms, 60.5MB)
- * 테스트 29 〉	통과 (0.02ms, 60MB)
- * 테스트 30 〉	통과 (0.02ms, 60.2MB)
- * 테스트 31 〉	통과 (0.02ms, 60.9MB)
- * 테스트 32 〉	통과 (0.02ms, 60.1MB)
- * 테스트 33 〉	통과 (0.02ms, 60.4MB)
- * 테스트 34 〉	통과 (0.02ms, 60.3MB)
- * 테스트 35 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 27 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 28 〉	통과 (0.02ms, 61.5MB)
+ * 테스트 29 〉	실패 (0.02ms, 60.6MB)
+ * 테스트 30 〉	실패 (0.02ms, 59.9MB)
+ * 테스트 31 〉	실패 (0.02ms, 60.3MB)
+ * 테스트 32 〉	실패 (0.02ms, 60.4MB)
+ * 테스트 33 〉	실패 (0.02ms, 60.8MB)
+ * 테스트 34 〉	통과 (0.02ms, 59MB)
+ * 테스트 35 〉	통과 (0.02ms, 60.4MB)
  *
  * [RIVAL]
  * ```
@@ -169,6 +189,58 @@ fun main() {
         "iron", "iron", "iron", "iron", "iron", "diamond"
       )
     ), 50
+  )
+
+  validate(
+    s.solution(
+      intArrayOf(0, 0, 0),
+      arrayOf(
+        "diamond", "diamond", "diamond", "diamond", "diamond",
+        "iron", "iron", "iron", "iron", "iron", "diamond"
+      )
+    ), 0
+  )
+
+
+  validate(
+    s.solution(
+      intArrayOf(1, 0, 0),
+      arrayOf(
+        "diamond", "diamond", "diamond", "diamond", "diamond",
+        "iron", "iron", "iron", "iron", "iron", "diamond"
+      )
+    ), 5
+  )
+
+  validate(
+    s.solution(
+      intArrayOf(0, 1, 0),
+      arrayOf(
+        "diamond", "diamond", "diamond", "diamond", "diamond",
+        "iron", "iron", "iron", "iron", "iron", "diamond"
+      )
+    ), 25
+  )
+
+
+  validate(
+    s.solution(
+      intArrayOf(0, 0, 1),
+      arrayOf(
+        "iron", "iron", "iron", "iron", "iron",
+        "diamond", "diamond", "diamond", "diamond", "diamond",
+      )
+    ), 25
+  )
+
+  validate(
+    s.solution(
+      intArrayOf(10, 0, 0),
+      arrayOf(
+        "iron", "iron", "iron", "iron", "iron",
+        "diamond"
+      )
+    ), 6
   )
 
 }
