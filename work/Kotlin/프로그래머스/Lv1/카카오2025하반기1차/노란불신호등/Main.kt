@@ -1,4 +1,4 @@
-package 프로그래머스.카카오2025하반기1차.노란불신호등
+package 프로그래머스.Lv1.카카오2025하반기1차.노란불신호등
 
 const val POS_G = 0
 const val POS_Y = 1
