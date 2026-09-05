@@ -11,11 +11,10 @@ class Solution {
 /**
  * ```
  * [ME]
- * ```
  *
+ * [RIVAL 1]
  *
- * ```
- * [RIVAL]
+ * [RIVAL 2]
  * ```
  */
 fun main() {
