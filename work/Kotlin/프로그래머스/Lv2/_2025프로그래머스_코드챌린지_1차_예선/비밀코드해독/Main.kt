@@ -20,19 +20,16 @@ class Solution {
       mask
     }
 
-    fun dfs(dep: Int, stt: Int, code: Int) {
-      if (dep == CODE_LEN) {
-        for (i in masks.indices)
-          if ((masks[i] and code).countOneBits() != res[i]) return
-
-        ans++
-        return
-      }
-
-      for (i in stt..n - CODE_LEN + (dep + 1)) dfs(dep + 1, i + 1, code or (1 shl i))
-    }
-
-    dfs(0, 1, 0)
+    for (a in 1..n - CODE_LEN + 1)
+      for (b in a + 1..n - CODE_LEN + 2)
+        for (c in b + 1..n - CODE_LEN + 3)
+          for (d in c + 1..n - CODE_LEN + 4)
+            l@ for (e in d + 1..n - CODE_LEN + 5) {
+              val code = (1 shl a) or (1 shl b) or (1 shl c) or (1 shl d) or (1 shl e)
+              for (i in masks.indices)
+                if ((masks[i] and code).countOneBits() != res[i]) continue@l
+              ans++
+            }
 
     return ans
   }
@@ -82,6 +79,27 @@ class Solution {
  * 테스트 18 〉	통과 (11.80ms, 63.4MB)
  * 테스트 19 〉	통과 (10.93ms, 62.5MB)
  * 테스트 20 〉	통과 (11.04ms, 64MB)
+ * v3:
+ * 테스트 1 〉	통과 (8.95ms, 63.6MB)
+ * 테스트 2 〉	통과 (9.89ms, 63MB)
+ * 테스트 3 〉	통과 (8.93ms, 63.8MB)
+ * 테스트 4 〉	통과 (8.76ms, 63.6MB)
+ * 테스트 5 〉	통과 (8.95ms, 63.7MB)
+ * 테스트 6 〉	통과 (12.97ms, 62.5MB)
+ * 테스트 7 〉	통과 (11.20ms, 62.6MB)
+ * 테스트 8 〉	통과 (9.49ms, 62.3MB)
+ * 테스트 9 〉	통과 (10.32ms, 62.4MB)
+ * 테스트 10 〉	통과 (10.82ms, 64.2MB)
+ * 테스트 11 〉	통과 (9.74ms, 64.5MB)
+ * 테스트 12 〉	통과 (18.05ms, 63.7MB)
+ * 테스트 13 〉	통과 (17.00ms, 64.2MB)
+ * 테스트 14 〉	통과 (13.09ms, 64.1MB)
+ * 테스트 15 〉	통과 (17.84ms, 61.5MB)
+ * 테스트 16 〉	통과 (14.35ms, 63.9MB)
+ * 테스트 17 〉	통과 (12.91ms, 64.4MB)
+ * 테스트 18 〉	통과 (13.51ms, 63.6MB)
+ * 테스트 19 〉	통과 (12.52ms, 63.3MB)
+ * 테스트 20 〉	통과 (12.53ms, 63.9MB)
  *
  * [RIVAL 1]
  * import kotlin.math.*
