@@ -13,58 +13,54 @@ class Solution {
     val M = emoticons.size
 
     var maxSubs = 0
-    var maxAmnt = 0
-    val sales = IntArray(M)
+    var maxSales = 0
 
-    fun dfs(checked: Int) {
+    fun dfs(checked: Int, payments: IntArray) {
       if (checked == M) {
         var subs = 0
-        var amnt = 0
-        val payments = IntArray(N)
-
-        repeat(M) { i ->
-          val p = emoticons[i]
-          val d = sales[i] * 10
-          val sp = p * (100 - d) / 100
-
-          for (j in users.indices) {
-            val user = users[j]
-            if (user[0] > d) continue
-
-            val paid = payments[j]
-            if (paid == SUBSCRIBED) continue
-
-            if (paid + sp >= user[1]) {
-              payments[j] = SUBSCRIBED
-              subs++
-              amnt -= paid
-            } else {
-              payments[j] += sp
-              amnt += sp
-            }
-          }
+        var sales = 0
+        for (p in payments) {
+          if (p == SUBSCRIBED) subs++
+          else sales += p
         }
 
         if (subs > maxSubs) {
           maxSubs = subs
-          maxAmnt = amnt
-        } else if (subs == maxSubs && amnt > maxAmnt) {
-          maxAmnt = amnt
+          maxSales = sales
+        } else if (subs == maxSubs && sales > maxSales) {
+          maxSales = sales
         }
-
         return
       }
 
-
+      val ogPrice = emoticons[checked]
       for (d in 1..4) {
-        sales[checked] = d
-        dfs(checked + 1)
+        val tmp = payments.copyOf()
+
+        val disCount = d * 10
+        val price = ogPrice * (100 - disCount) / 100
+        for (i in users.indices) {
+          val user = users[i]
+
+          if (user[0] > disCount) continue
+
+          val paid = tmp[i]
+          if (paid == SUBSCRIBED) continue
+
+          if (paid + price >= user[1]) {
+            tmp[i] = SUBSCRIBED
+          } else {
+            tmp[i] += price
+          }
+        }
+
+        dfs(checked + 1, tmp)
       }
     }
 
-    dfs(0)
+    dfs(0, IntArray(N))
 
-    return intArrayOf(maxSubs, maxAmnt)
+    return intArrayOf(maxSubs, maxSales)
   }
 }
 
@@ -100,6 +96,21 @@ class Solution {
  * 테스트 12 〉	통과 (4.72ms, 61.3MB)
  * 테스트 13 〉	통과 (31.37ms, 66.9MB)
  * 테스트 14 〉	통과 (24.51ms, 66.2MB)
+ * [ME v3]
+ * 테스트 1 〉	통과 (0.19ms, 59.8MB)
+ * 테스트 2 〉	통과 (0.16ms, 59.9MB)
+ * 테스트 3 〉	통과 (0.19ms, 59.8MB)
+ * 테스트 4 〉	통과 (0.35ms, 60.2MB)
+ * 테스트 5 〉	통과 (0.60ms, 58.7MB)
+ * 테스트 6 〉	통과 (0.42ms, 60.1MB)
+ * 테스트 7 〉	통과 (1.33ms, 60.1MB)
+ * 테스트 8 〉	통과 (0.76ms, 62.3MB)
+ * 테스트 9 〉	통과 (2.16ms, 60.3MB)
+ * 테스트 10 〉	통과 (1.11ms, 62.6MB)
+ * 테스트 11 〉	통과 (7.23ms, 63.9MB)
+ * 테스트 12 〉	통과 (2.09ms, 64.2MB)
+ * 테스트 13 〉	통과 (16.02ms, 69.6MB)
+ * 테스트 14 〉	통과 (14.63ms, 69.6MB)
  *
  *
  *
@@ -236,16 +247,16 @@ class Solution {
  */
 fun main() {
   val s = Solution()
-//  validate(
-//    s.solution(
-//      arrayOf(
-//        intArrayOf(40, 10000),
-//        intArrayOf(24, 10000),
-//      ),
-//      intArrayOf(7000, 9000)
-//    ),
-//    intArrayOf(1, 5400)
-//  )
+  validate(
+    s.solution(
+      arrayOf(
+        intArrayOf(40, 10000),
+        intArrayOf(24, 10000),
+      ),
+      intArrayOf(7000, 9000)
+    ),
+    intArrayOf(1, 5400)
+  )
 
   validate(
     s.solution(
