@@ -13,62 +13,58 @@ class Solution {
     val M = emoticons.size
 
     var maxSubs = 0
-    var maxSales = 0
+    var maxAmnt = 0
+    val sales = IntArray(M)
 
-    val discounts = intArrayOf(10, 20, 30, 40)
-
-    fun dfs(checked: Int, userPayments: IntArray) {
+    fun dfs(checked: Int) {
       if (checked == M) {
         var subs = 0
-        var sales = 0
-        for (p in userPayments) {
-          if (p == SUBSCRIBED) subs++
-          else sales += p
+        var amnt = 0
+        val payments = IntArray(N)
+
+        repeat(M) { i ->
+          val p = emoticons[i]
+          val d = sales[i] * 10
+          val sp = p * (100 - d) / 100
+
+          for (j in users.indices) {
+            val user = users[j]
+            if (user[0] > d) continue
+
+            val paid = payments[j]
+            if (paid == SUBSCRIBED) continue
+
+            if (paid + sp >= user[1]) {
+              payments[j] = SUBSCRIBED
+              subs++
+              amnt -= paid
+            } else {
+              payments[j] += sp
+              amnt += sp
+            }
+          }
         }
 
         if (subs > maxSubs) {
           maxSubs = subs
-          maxSales = sales
-        } else if (subs == maxSubs && sales > maxSales) {
-          maxSales = sales
+          maxAmnt = amnt
+        } else if (subs == maxSubs && amnt > maxAmnt) {
+          maxAmnt = amnt
         }
+
         return
       }
 
-      val p = emoticons[checked]
-      for (d in discounts) {
-        var subs = 0
-        var sales = 0
-        val tmpPayments = userPayments.copyOf()
 
-        val sp = p * (100 - d) / 100
-        for (ui in users.indices) {
-          val user = users[ui]
-
-          val ud = user[0]
-          if (ud > d) continue
-
-          val paid = tmpPayments[ui]
-          if (paid == SUBSCRIBED) continue
-
-          val up = user[1]
-          if (paid + sp >= up) {
-            tmpPayments[ui] = SUBSCRIBED
-            subs++
-            sales -= paid
-          } else {
-            tmpPayments[ui] += sp
-            sales += sp
-          }
-        }
-
-        dfs(checked + 1, tmpPayments)
+      for (d in 1..4) {
+        sales[checked] = d
+        dfs(checked + 1)
       }
     }
 
-    dfs(0, IntArray(N))
+    dfs(0)
 
-    return intArrayOf(maxSubs, maxSales)
+    return intArrayOf(maxSubs, maxAmnt)
   }
 }
 
@@ -89,6 +85,23 @@ class Solution {
  * 테스트 12 〉	통과 (2.48ms, 63.5MB)
  * 테스트 13 〉	통과 (16.99ms, 70.1MB)
  * 테스트 14 〉	통과 (14.64ms, 71.4MB)
+ * [ME v2]
+ * 테스트 1 〉	통과 (0.16ms, 60.1MB)
+ * 테스트 2 〉	통과 (0.15ms, 60.7MB)
+ * 테스트 3 〉	통과 (0.25ms, 59.8MB)
+ * 테스트 4 〉	통과 (0.60ms, 60MB)
+ * 테스트 5 〉	통과 (0.76ms, 60.9MB)
+ * 테스트 6 〉	통과 (0.61ms, 59.6MB)
+ * 테스트 7 〉	통과 (1.76ms, 60.3MB)
+ * 테스트 8 〉	통과 (0.94ms, 59.8MB)
+ * 테스트 9 〉	통과 (4.71ms, 59.3MB)
+ * 테스트 10 〉	통과 (2.03ms, 60.3MB)
+ * 테스트 11 〉	통과 (11.56ms, 61.2MB)
+ * 테스트 12 〉	통과 (4.72ms, 61.3MB)
+ * 테스트 13 〉	통과 (31.37ms, 66.9MB)
+ * 테스트 14 〉	통과 (24.51ms, 66.2MB)
+ *
+ *
  *
  * [RIVAL 1]
  * class Solution {
@@ -223,16 +236,16 @@ class Solution {
  */
 fun main() {
   val s = Solution()
-  validate(
-    s.solution(
-      arrayOf(
-        intArrayOf(40, 10000),
-        intArrayOf(24, 10000),
-      ),
-      intArrayOf(7000, 9000)
-    ),
-    intArrayOf(1, 5400)
-  )
+//  validate(
+//    s.solution(
+//      arrayOf(
+//        intArrayOf(40, 10000),
+//        intArrayOf(24, 10000),
+//      ),
+//      intArrayOf(7000, 9000)
+//    ),
+//    intArrayOf(1, 5400)
+//  )
 
   validate(
     s.solution(
@@ -251,5 +264,4 @@ fun main() {
   )
 }
 
-// println(
-//          "emoticons[$checked] sp= $sp, discount[$d], subs=$subs, sales=$sales, userPayments = ${tmpPayments.contentToString()}")
+//          println("[$p->$sp] payments = ${payments.contentToString()}")
