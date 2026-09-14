@@ -13,61 +13,78 @@ class Solution {
     val M = emoticons.size
     qs(emoticons, 0, M - 1)
 
-    var maxSubs = 0
-    var maxSales = 0
+    var totalSubs = 0
+    var totalSales = 0
+    val payments = IntArray(N)
+    val discounts = intArrayOf(10, 20, 30, 40)
 
-    val discounts = intArrayOf(0, 10, 20, 30, 40)
 
-    fun dfs(checked: Int, accSubs: Int, accSales: Int, userPayments: IntArray) {
-      if (checked == M) {
-        if (accSubs > maxSubs) {
-          maxSubs = accSubs
-          maxSales = accSales
-        } else if (accSubs == maxSubs && accSales > maxSales) {
-          maxSales = accSales
-        }
-        return
-      }
+    for (p in emoticons) {
 
-      val p = emoticons[checked]
+      var bestD = 0
+      var bestSubs = 0
+      var bestSales = 0
 
       for (d in discounts) {
+
         var subs = 0
         var sales = 0
-        val tmpPayments = userPayments.copyOf()
+        val price = p * (100 - d) / 100
 
-        val sp = p * (100 - d) / 100
-        for (ui in users.indices) {
-          val user = users[ui]
-
+        for (i in users.indices) {
+          val user = users[i]
           val ud = user[0]
           if (ud > d) continue
-
-          val paid = tmpPayments[ui]
+          val paid = payments[i]
           if (paid == SUBSCRIBED) continue
-
-          val up = user[1]
-          if (paid + sp >= up) {
-            tmpPayments[ui] = SUBSCRIBED
+          if (paid + price >= user[1]) {
             subs++
             sales -= paid
           } else {
-            tmpPayments[ui] += sp
-            sales += sp
+            sales += price
           }
         }
 
+        if (subs > bestSubs) {
+          bestD = d
+          bestSubs = subs
+          bestSales = sales
+        } else if (subs == bestSubs && sales > bestSales) {
+          bestD = d
+          bestSales = sales
+        }
+
         println(
-          "emoticons[$checked] sp= $sp, discount[$d], subs=$subs, sales=$sales, userPayments = ${tmpPayments.contentToString()}")
-        dfs(checked + 1, accSubs + subs, accSales + sales, tmpPayments)
+          "[p=$p->$price]  d=$d vs $bestD, subs=$subs vs $bestSubs, sales=$sales vs $bestSales")
       }
+
+
+      for (i in users.indices) {
+        val user = users[i]
+        val ud = user[0]
+        if (ud > bestD) continue
+        val paid = payments[i]
+        if (paid == SUBSCRIBED) continue
+        val price = p * (100 - bestD) / 100
+        if (paid + price >= user[1]) {
+          payments[i] = SUBSCRIBED
+          totalSubs++
+          totalSales -= paid
+        } else {
+          payments[i] += price
+          totalSales += price
+        }
+      }
+
+      println(
+        "[p=$p] bestD=$bestD, bestSales=$bestSales, bestSubs=$bestSubs ---- $totalSubs, $totalSales")
+      println("[p=$p] payments = ${payments.contentToString()}")
+
+
     }
 
 
-    dfs(0, 0, 0, IntArray(N))
-
-
-    return intArrayOf(maxSubs, maxSales)
+    return intArrayOf(totalSubs, totalSales)
   }
 
   fun swap(
@@ -95,8 +112,8 @@ class Solution {
     while (pos <= pr) {
       val x = a[pos]
       when {
-        x > piv -> swap(a, pos++, pl++)
-        x < piv -> swap(a, pos, pr--)
+        x < piv -> swap(a, pos++, pl++)
+        x > piv -> swap(a, pos, pr--)
         else -> pos++
       }
     }
@@ -116,16 +133,17 @@ class Solution {
  */
 fun main() {
   val s = Solution()
-  validate(
-    s.solution(
-      arrayOf(
-        intArrayOf(40, 10000),
-        intArrayOf(24, 10000),
-      ),
-      intArrayOf(7000, 9000)
-    ),
-    intArrayOf(1, 5400)
-  )
+
+//  validate(
+//    s.solution(
+//      arrayOf(
+//        intArrayOf(40, 10000),
+//        intArrayOf(24, 10000),
+//      ),
+//      intArrayOf(7000, 9000)
+//    ),
+//    intArrayOf(1, 5400)
+//  )
 
   validate(
     s.solution(
