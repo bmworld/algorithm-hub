@@ -5,28 +5,41 @@ import util.validate
 class Solution {
 
   fun solution(W: Int, H: Int): Long {
-    var cut = 0L
-
-    val W = W.toDouble()
-    var w1 = 0.0
-    repeat(H) {
-      var h = it + 1
-      val w2 = h * W / H
-      cut += (ceil(w2) - w1.toInt()).toLong()
-      w1 = w2
-    }
-
-    return W.toLong() * H.toLong() - cut
+    val w = W.toLong()
+    val h = H.toLong()
+    val overlapCnt = gcd(w, h)
+    val crossedCnt = w + h
+    return w * h - crossedCnt + overlapCnt
   }
 
-  private fun ceil(x: Double): Int {
-    val int = x.toInt()
-    return when {
-      x == int.toDouble() || x < 0 -> int
-      else -> int + 1
-    }
-  }
+  fun gcd(a: Long, b: Long): Long = if (b == 0L) a else gcd(b, a % b)
 }
+
+//class Solution {
+//
+//  fun solution(W: Int, H: Int): Long {
+//    var cut = 0L
+//
+//    val W = W.toDouble()
+//    var w1 = 0.0
+//    repeat(H) {
+//      var h = it + 1
+//      val w2 = h * W / H
+//      cut += (ceil(w2) - w1.toInt()).toLong()
+//      w1 = w2
+//    }
+//
+//    return W.toLong() * H.toLong() - cut
+//  }
+//
+//  private fun ceil(x: Double): Int {
+//    val int = x.toInt()
+//    return when {
+//      x == int.toDouble() || x < 0 -> int
+//      else -> int + 1
+//    }
+//  }
+//}
 
 /**
  * ```
@@ -46,6 +59,24 @@ class Solution {
  * 테스트 13 〉	통과 (172.37ms, 59.2MB)
  * 테스트 14 〉	통과 (97.34ms, 59.9MB)
  * 테스트 15 〉	통과 (47.84ms, 59.6MB)
+ *
+ * [ME v2]
+ * 테스트 1 〉	통과 (0.01ms, 60.3MB)
+ * 테스트 2 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 3 〉	통과 (0.02ms, 59.9MB)
+ * 테스트 4 〉	통과 (0.05ms, 59.4MB)
+ * 테스트 5 〉	통과 (0.01ms, 60.8MB)
+ * 테스트 6 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 7 〉	통과 (0.02ms, 57.7MB)
+ * 테스트 8 〉	통과 (0.02ms, 59.6MB)
+ * 테스트 9 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 10 〉	통과 (0.01ms, 60.2MB)
+ * 테스트 11 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 12 〉	통과 (0.01ms, 59.4MB)
+ * 테스트 13 〉	통과 (0.02ms, 59.6MB)
+ * 테스트 14 〉	통과 (0.02ms, 61.1MB)
+ * 테스트 15 〉	통과 (0.01ms, 61.2MB)
+ *
  *
  * [RIVAL 1]
  * class Solution {
