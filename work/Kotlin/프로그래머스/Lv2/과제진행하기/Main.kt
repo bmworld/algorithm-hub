@@ -66,7 +66,7 @@ class Solution {
       }
     }
 
-    done(cur)
+    if (cur != EMPTY) done(cur)
 
     repeat(stacked) {
       ans[ai++] = nameMapper[stack[--stacked] / SEP]
@@ -338,6 +338,15 @@ fun main() {
     )
   ), arrayOf("z", "a3", "a2", "a1", "bbb"))
 
-}
+  // 마지막 과제가 pt = 1 -> t loop 이후 done() 에서 오류발생여부
+  validate(s.solution(
+    arrayOf(
+      arrayOf("a1", "23:50", "10"),
+      arrayOf("z", "23:51", "1"),
+      arrayOf("a2", "23:52", "2"),
+      arrayOf("a3", "23:53", "2"),
+      arrayOf("b", "23:59", "1"),
+    )
+  ), arrayOf("z", "a3", "a2", "b", "a1"))
 
-//      println("--- [$t] $cur ($rmnPt) vs ${x1 / SEP}(${x1 % SEP})")
+}
