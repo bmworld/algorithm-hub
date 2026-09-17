@@ -31,7 +31,9 @@ class Solution {
 
     val uniqCombs = HashSet<Int>()
     val combined = BooleanArray(C)
-    val combCh = HashSet<Long>()
+    val combCh = LongArray(R)
+
+
     fun dfs(dep: Int, stt: Int, len: Int) {
       if (dep == len) {
 
@@ -40,14 +42,13 @@ class Solution {
 
         for (comn in uniqCombs) if (cand and comn == comn) return
 
-
-        combCh.clear()
+        var checkedComb = 0
         for (r in 0 until R) {
           var comb = 0L
           for (c in 0 until C) if (combined[c]) comb += rel[pos(r, c)]
 
-          if (combCh.contains(comb)) return
-          else combCh.add(comb)
+          for (r in 0 until checkedComb) if (combCh[r] == comb) return
+          combCh[checkedComb++] = comb
         }
 
         uniqCombs.add(cand)
@@ -90,6 +91,28 @@ class Solution {
  * 테스트 18 〉	통과 (0.89ms, 59.7MB)
  * 테스트 19 〉	통과 (0.90ms, 59.9MB)
  * 테스트 20 〉	통과 (1.06ms, 58.9MB)
+ * [ME v2]
+ * 테스트 1 〉	통과 (0.09ms, 60MB)
+ * 테스트 2 〉	통과 (0.09ms, 58.1MB)
+ * 테스트 3 〉	통과 (0.09ms, 57.5MB)
+ * 테스트 4 〉	통과 (0.12ms, 60MB)
+ * 테스트 5 〉	통과 (0.08ms, 60.9MB)
+ * 테스트 6 〉	통과 (0.09ms, 59.9MB)
+ * 테스트 7 〉	통과 (0.10ms, 59.3MB)
+ * 테스트 8 〉	통과 (0.07ms, 60.6MB)
+ * 테스트 9 〉	통과 (0.15ms, 60.2MB)
+ * 테스트 10 〉	통과 (0.12ms, 59.4MB)
+ * 테스트 11 〉	통과 (0.22ms, 57.9MB)
+ * 테스트 12 〉	통과 (0.60ms, 59.7MB)
+ * 테스트 13 〉	통과 (0.27ms, 60.9MB)
+ * 테스트 14 〉	통과 (0.13ms, 60.1MB)
+ * 테스트 15 〉	통과 (0.14ms, 59.2MB)
+ * 테스트 16 〉	통과 (0.10ms, 60.1MB)
+ * 테스트 17 〉	통과 (0.10ms, 59.7MB)
+ * 테스트 18 〉	통과 (0.67ms, 60.3MB)
+ * 테스트 19 〉	통과 (0.58ms, 60.3MB)
+ * 테스트 20 〉	통과 (0.76ms, 59.2MB)
+ *
  *
  *
  *
