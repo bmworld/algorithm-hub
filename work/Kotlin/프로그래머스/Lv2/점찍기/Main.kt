@@ -1,25 +1,27 @@
 package 프로그래머스.Lv2.점찍기
 
 import util.validate
-import java.lang.Math.sqrt
 
 class Solution {
 
   fun solution(k: Int, d: Int): Long {
     var ans = 0L
 
+    val dd = d.toLong() * d
     val k = k.toLong()
-    val sqd = d.toLong() * d
-    val r = sqrt(sqd / 2.0).toLong() / k
-    ans += (r + 1) * (r + 1)
 
-
-    for (a in r * k + k..d step k) {
-      val b = sqrt(sqd.toDouble() - (a * a)).toLong()
-      val cnt = b / k + 1
-      ans += cnt * 2
+    var a = d - d % k
+    var b = 0L
+    l@ while (a > b) {
+      while (dd >= a * a + (b + k) * (b + k)) {
+        if (a == b + k) break@l
+        b += k
+      }
+      ans += (b / k + 1) * 2
+      a -= k
     }
 
+    ans += (a / k + 1) * (a / k + 1)
     return ans
   }
 }
@@ -39,6 +41,20 @@ class Solution {
  * 테스트 10 〉	통과 (0.29ms, 59MB)
  * 테스트 11 〉	통과 (3.76ms, 60.9MB)
  * 테스트 12 〉	통과 (0.20ms, 59.7MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.02ms, 61.6MB)
+ * 테스트 2 〉	통과 (0.02ms, 60.2MB)
+ * 테스트 3 〉	통과 (0.10ms, 60.4MB)
+ * 테스트 4 〉	통과 (0.08ms, 60.6MB)
+ * 테스트 5 〉	통과 (0.14ms, 61.1MB)
+ * 테스트 6 〉	통과 (0.13ms, 60.8MB)
+ * 테스트 7 〉	통과 (0.11ms, 59MB)
+ * 테스트 8 〉	통과 (1.31ms, 60.9MB)
+ * 테스트 9 〉	통과 (0.15ms, 59.7MB)
+ * 테스트 10 〉	통과 (0.29ms, 60MB)
+ * 테스트 11 〉	통과 (3.41ms, 59.6MB)
+ * 테스트 12 〉	통과 (0.02ms, 61.1MB)
+ *
  *
  * [RIVAL 1]
  * import kotlin.math.*
@@ -122,6 +138,3 @@ fun main() {
 // 큰 수
   validate(s.solution(1000, 1_000_000), 786_388)
 }
-
-//    println("[$k,$d] r=$r")
-//      println("$a, $b -> $cnt")
