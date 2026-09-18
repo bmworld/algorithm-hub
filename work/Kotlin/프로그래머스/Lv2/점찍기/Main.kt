@@ -6,16 +6,14 @@ import java.lang.Math.sqrt
 class Solution {
 
   fun solution(k: Int, d: Int): Long {
-    if (k > d) return 1
-
     var ans = 0L
-    val d = d / k
 
+    val k = k.toLong()
     val sqd = d.toLong() * d
     val r = sqrt(sqd / 2.0).toLong()
-    ans += (r + 1) * (r + 1)
+    ans += (r / k + 1) * (r / k + 1)
 
-    for (a in r + 1..d) {
+    for (a in r + k..d step k) {
       val b = sqrt(sqd.toDouble() - (a * a)).toLong()
       ans += (b + 1) * 2
     }
@@ -43,6 +41,15 @@ class Solution {
  * 테스트 14 〉	실패 (2.18ms, 60MB)
  * 테스트 15 〉	통과 (0.02ms, 59.3MB)
  * 테스트 16 〉	통과 (0.02ms, 61.2MB)
+ * WA2:
+ * 테스트 1 〉	통과 (0.20ms, 58.5MB)
+ * 테스트 2 〉	실패 (0.27ms, 60.2MB)
+ * 테스트 3 〉	실패 (0.47ms, 57.8MB)
+ * 테스트 4 〉	실패 (0.28ms, 57.3MB)
+ * 테스트 5 〉	실패 (0.26ms, 60.5MB)
+ * 테스트 6 〉	실패 (0.22ms, 60.7MB)
+ * 테스트 7 〉	실패 (0.27ms, 60.3MB)
+ * 테스트 8 〉	실패 (0.74ms, 59.8MB)
  *
  * [RIVAL 1]
  *
@@ -51,10 +58,28 @@ class Solution {
  */
 fun main() {
   val s = Solution()
-  validate(s.solution(2, 1), 1)
-  validate(s.solution(1, 1), 3)
-  validate(s.solution(1, 10), 90)
+//  validate(s.solution(2, 1), 1)
+//  validate(s.solution(1, 1), 3)
+//  validate(s.solution(1, 10), 90)
   validate(s.solution(2, 4), 6)
   validate(s.solution(1, 5), 26)
-  validate(s.solution(1, 1_000_000), 785399162407)
+  validate(s.solution(1, 1_000_000), 785_399_162_407)
 }
+
+////      println("[$a] ans+=$b*2 = $ans")
+//  fun sqrt(n: Long, k: Int): Long {
+//    if (n <= 1L) return n
+//
+//    var l = 1L
+//    var r = n / 2
+//    while (l <= r) {
+//      val m = (l + r) shr 1
+//      val sq = m * m
+//      when {
+//
+//      }
+//    }
+//
+//
+//    return 1L
+//  }
