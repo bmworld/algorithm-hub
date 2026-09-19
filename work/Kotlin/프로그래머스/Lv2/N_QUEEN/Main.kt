@@ -7,40 +7,31 @@ class Solution {
   fun solution(n: Int): Int {
     var ans = 0
     val half = n / 2
-    var colMask = 0
-    var dlMask = 0
-    var dRMask = 0
+    val ALL = (1 shl n) - 1
 
-    fun dfs(r: Int, c: Int) {
-      val cm = 1 shl c
-      val dlm = 1 shl (n - 1 - r + c)
-      val drm = 1 shl (r + c)
-      if (colMask and cm == cm
-        || dlMask and dlm == dlm
-        || dRMask and drm == drm
-      ) return
-
+    fun dfs(r: Int, c: Int, colFlag: Int, dlFlag: Int, drFlag: Int) {
       if (r == n - 1) {
         ans++
         return
       }
 
-      colMask = colMask or cm
-      dlMask = dlMask or dlm
-      dRMask = dRMask or drm
+      val cur = 1 shl c
+      val cf = colFlag or cur
+      val dlf = (dlFlag or cur) shl 1
+      val drf = (drFlag or cur) shr 1
+      var cnds = (ALL and (cf or dlf or drf)) xor ALL
 
-      for (lc in 0..c - 2) dfs(r + 1, lc)
-      for (rc in c + 2..n - 1) dfs(r + 1, rc)
-
-      colMask = colMask xor cm
-      dlMask = dlMask xor dlm
-      dRMask = dRMask xor drm
+      while (cnds > 0) {
+        val nc = cnds.countTrailingZeroBits()
+        cnds = cnds xor (1 shl nc)
+        dfs(r + 1, nc, cf, dlf, drf)
+      }
     }
 
-    for (c in 0 until half) dfs(0, c)
+    for (c in 0 until half) dfs(0, c, 0, 0, 0)
     ans *= 2
 
-    if (n % 2 == 1) dfs(0, half)
+    if (n % 2 == 1) dfs(0, half, 0, 0, 0)
 
     return ans
   }
@@ -61,6 +52,7 @@ class Solution {
  * 테스트 9 〉	통과 (1.63ms, 62.4MB)
  * 테스트 10 〉	통과 (7.51ms, 59.8MB)
  * 테스트 11 〉	통과 (30.44ms, 60.8MB)
+ *
  * v2:
  * 테스트 1 〉	통과 (0.18ms, 60.2MB)
  * 테스트 2 〉	통과 (0.28ms, 59.9MB)
@@ -73,6 +65,19 @@ class Solution {
  * 테스트 9 〉	통과 (1.73ms, 61.3MB)
  * 테스트 10 〉	통과 (7.51ms, 60.9MB)
  * 테스트 11 〉	통과 (28.68ms, 60.8MB)
+ *
+ * v3:
+ * 테스트 1 〉	통과 (0.22ms, 60MB)
+ * 테스트 2 〉	통과 (0.75ms, 58MB)
+ * 테스트 3 〉	통과 (0.41ms, 58.4MB)
+ * 테스트 4 〉	통과 (0.25ms, 60.8MB)
+ * 테스트 5 〉	통과 (0.21ms, 59.5MB)
+ * 테스트 6 〉	통과 (0.28ms, 59.5MB)
+ * 테스트 7 〉	통과 (0.33ms, 60.3MB)
+ * 테스트 8 〉	통과 (0.52ms, 60MB)
+ * 테스트 9 〉	통과 (0.77ms, 59.6MB)
+ * 테스트 10 〉	통과 (4.03ms, 57.4MB)
+ * 테스트 11 〉	통과 (4.98ms, 59.6MB)
  *
  *
  * [RIVAL 1]
@@ -178,3 +183,9 @@ fun main() {
   validate(s.solution(3), 0)
   validate(s.solution(4), 2)
 }
+
+//println("[$r, $c] " +
+//        "cols = ${cMask.toString(2)}, " +
+//        "dl=${dlMask.toString(2)}, " +
+//        "dr=${drMask.toString(2)} " +
+//        "-> cnds=${cnds.toString(2)}")
