@@ -7,30 +7,34 @@ class Solution {
   fun solution(n: Int): Int {
     var ans = 0
     val half = n / 2
-    val cols = BooleanArray(n)
-    val diaL = BooleanArray(2 * n - 1)
-    val diaR = BooleanArray(2 * n - 1)
+    var colMask = 0
+    var dlMask = 0
+    var dRMask = 0
 
     fun dfs(r: Int, c: Int) {
-      if (cols[c]) return
-      if (diaL[n - 1 - r + c]) return
-      if (diaR[r + c]) return
+      val cm = 1 shl c
+      val dlm = 1 shl (n - 1 - r + c)
+      val drm = 1 shl (r + c)
+      if (colMask and cm == cm
+        || dlMask and dlm == dlm
+        || dRMask and drm == drm
+      ) return
 
       if (r == n - 1) {
         ans++
         return
       }
 
-      cols[c] = true
-      diaL[n - 1 - r + c] = true
-      diaR[r + c] = true
+      colMask = colMask or cm
+      dlMask = dlMask or dlm
+      dRMask = dRMask or drm
 
       for (lc in 0..c - 2) dfs(r + 1, lc)
       for (rc in c + 2..n - 1) dfs(r + 1, rc)
 
-      cols[c] = false
-      diaL[n - 1 - r + c] = false
-      diaR[r + c] = false
+      colMask = colMask xor cm
+      dlMask = dlMask xor dlm
+      dRMask = dRMask xor drm
     }
 
     for (c in 0 until half) dfs(0, c)
@@ -45,6 +49,7 @@ class Solution {
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (0.23ms, 58.1MB)
  * 테스트 2 〉	통과 (0.19ms, 59.8MB)
  * 테스트 3 〉	통과 (0.21ms, 59.7MB)
@@ -56,6 +61,19 @@ class Solution {
  * 테스트 9 〉	통과 (1.63ms, 62.4MB)
  * 테스트 10 〉	통과 (7.51ms, 59.8MB)
  * 테스트 11 〉	통과 (30.44ms, 60.8MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.18ms, 60.2MB)
+ * 테스트 2 〉	통과 (0.28ms, 59.9MB)
+ * 테스트 3 〉	통과 (0.18ms, 60.2MB)
+ * 테스트 4 〉	통과 (0.22ms, 59.7MB)
+ * 테스트 5 〉	통과 (0.17ms, 59.8MB)
+ * 테스트 6 〉	통과 (0.36ms, 59.3MB)
+ * 테스트 7 〉	통과 (0.55ms, 59.5MB)
+ * 테스트 8 〉	통과 (0.86ms, 61.4MB)
+ * 테스트 9 〉	통과 (1.73ms, 61.3MB)
+ * 테스트 10 〉	통과 (7.51ms, 60.9MB)
+ * 테스트 11 〉	통과 (28.68ms, 60.8MB)
+ *
  *
  * [RIVAL 1]
  * class Solution {
