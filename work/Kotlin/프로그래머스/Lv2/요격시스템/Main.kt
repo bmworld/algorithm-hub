@@ -5,21 +5,18 @@ import util.validate
 class Solution {
   companion object {
 
-    const val MAX_POS = 100_000_000
     const val SEP = 1_000_000_000L
   }
 
   fun solution(targets: Array<IntArray>): Int {
     val N = targets.size
     val msle = LongArray(N)
-    val tracer = IntArray(MAX_POS)
 
     for (i in targets.indices) {
       val range = targets[i]
       val s = range[0]
       val e = range[1] - 1
-      msle[i] = s * SEP + e
-      for (p in s..e) tracer[p]++
+      msle[i] = e * SEP + s
     }
 
     qs(msle, 0, N - 1)
@@ -28,29 +25,20 @@ class Solution {
     var i = N - 1
     l@ while (i >= 0) {
       ans++
-      val cur = msle[i--]
-      if (i < 0) break
-      val s = (cur / SEP).toInt()
-      val e = (cur % SEP).toInt()
+      val m1 = msle[i--]
+      var s = m1 % SEP
+      var e = m1 / SEP
 
-      var maxCnt = 0
-      var shoot = 0
-      for (p in s..e) {
-        val cnt = tracer[p]
-        if (cnt > maxCnt) {
-          maxCnt = cnt
-          shoot = p
-        }
-      }
-
-
-      while (true) {
-        if (i < 0) break@l
-        val nxt = msle[i]
-        if (shoot in nxt / SEP..nxt % SEP) i--
-        else break
+      while (i >= 0) {
+        val m2 = msle[i]
+        val e2 = m2 / SEP
+        if (e2 < s) break
+        else i--
+        s = maxOf(s, m2 % SEP)
+        e = minOf(e, e2)
       }
     }
+
     return ans
   }
 
@@ -92,21 +80,82 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (415.39ms, 441MB)
- * 테스트 2 〉	통과 (154.63ms, 441MB)
- * 테스트 3 〉	실패 (163.87ms, 441MB)
- * 테스트 4 〉	실패 (150.03ms, 443MB)
- * 테스트 5 〉	실패 (194.72ms, 450MB)
- * 테스트 6 〉	실패 (5513.17ms, 476MB)
- * 테스트 7 〉	실패 (시간 초과)
- * 테스트 8 〉	실패 (시간 초과)
- * 테스트 9 〉	실패 (시간 초과)
- * 테스트 10 〉	실패 (시간 초과)
- * 테스트 11 〉	통과 (146.55ms, 441MB)
+ * 테스트 1 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 2 〉	통과 (0.08ms, 60MB)
+ * 테스트 3 〉	통과 (0.13ms, 60.3MB)
+ * 테스트 4 〉	통과 (0.95ms, 61.1MB)
+ * 테스트 5 〉	통과 (3.91ms, 67.7MB)
+ * 테스트 6 〉	통과 (23.99ms, 88.3MB)
+ * 테스트 7 〉	통과 (68.43ms, 165MB)
+ * 테스트 8 〉	통과 (63.21ms, 160MB)
+ * 테스트 9 〉	통과 (63.62ms, 157MB)
+ * 테스트 10 〉	통과 (48.47ms, 148MB)
+ * 테스트 11 〉	통과 (0.01ms, 60.5MB)
  *
  * [RIVAL 1]
+ * class Solution {
+ *     fun solution(targets: Array<IntArray>): Int {
+ *         var answer: Int = 0
+ *         targets.sortBy{it[1]}
+ *         var destination = -1
+ *         //exclusive
+ *         for(target in targets){
+ *             val (s,e) = target
+ *             if(destination < s){
+ *                 destination = e-1
+ *                 answer++
+ *             }
+ *         }
+ *         return answer
+ *     }
+ * }
+ * 테스트 1 〉	통과 (8.85ms, 62.4MB)
+ * 테스트 2 〉	통과 (7.06ms, 63.6MB)
+ * 테스트 3 〉	통과 (7.14ms, 63.5MB)
+ * 테스트 4 〉	통과 (9.35ms, 64.2MB)
+ * 테스트 5 〉	통과 (18.88ms, 71.6MB)
+ * 테스트 6 〉	통과 (82.36ms, 97.9MB)
+ * 테스트 7 〉	통과 (282.63ms, 181MB)
+ * 테스트 8 〉	통과 (279.87ms, 305MB)
  *
  * [RIVAL 2]
+ * data class Range(
+ *     val start: Int,
+ *     val end: Int,
+ * ) {
+ *     fun commonWith(other: Range): Range? = when {
+ *         start >= other.end || end <= other.start -> null
+ *
+ *         else -> Range(
+ *             maxOf(start, other.start),
+ *             minOf(end, other.end)
+ *         )
+ *     }
+ * }
+ *
+ * class Solution {
+ *     fun solution(targets: Array<IntArray>): Int {
+ *         var ans = 1
+ *
+ *         targets.map { Range(it[0], it[1]) }.sortedBy { it.start }.reduce { common, target ->
+ *             target.commonWith(common) ?: run {
+ *                 ans ++
+ *                 target
+ *             }
+ *         }
+ *
+ *         return ans
+ *     }
+ * }
+ * 테스트 1 〉	통과 (12.06ms, 63.2MB)
+ * 테스트 2 〉	통과 (11.35ms, 64.2MB)
+ * 테스트 3 〉	통과 (12.24ms, 65.5MB)
+ * 테스트 4 〉	통과 (12.72ms, 65MB)
+ * 테스트 5 〉	통과 (20.03ms, 74MB)
+ * 테스트 6 〉	통과 (54.71ms, 102MB)
+ * 테스트 7 〉	통과 (162.54ms, 196MB)
+ * 테스트 8 〉	통과 (222.43ms, 323MB)
+ *
  * ```
  */
 fun main() {
@@ -116,7 +165,7 @@ fun main() {
       intArrayOf(4, 5),
       intArrayOf(4, 8),
       intArrayOf(10, 14),
-      intArrayOf(11, 14),
+      intArrayOf(11, 13),
       intArrayOf(5, 12),
       intArrayOf(3, 7),
       intArrayOf(1, 4),
