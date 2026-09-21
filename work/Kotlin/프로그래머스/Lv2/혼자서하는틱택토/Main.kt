@@ -17,6 +17,20 @@ class Solution {
 
     var oc = 0
     var xc = 0
+
+    repeat(SIZE) { r ->
+      val row = board[r]
+      repeat(SIZE) { c ->
+        when (row[c]) {
+          O -> oc++
+          X -> xc++
+        }
+      }
+    }
+
+    val diff = oc - xc
+    if (diff !in 0..1) return INVALID
+
     var ol = 0
     var xl = 0
 
@@ -26,52 +40,17 @@ class Solution {
       if (a == X) xl++
     }
 
-
-    repeat(SIZE) { r ->
-      val row = board[r]
-      var o = 0
-      var x = 0
-      repeat(SIZE) { c ->
-        when (row[c]) {
-          O -> {
-            oc++
-            o++
-          }
-          X -> {
-            xc++
-            x++
-          }
-        }
-      }
-      if (o == 3) ol++
-      else if (x == 3) xl++
-    }
-
+    checkLine(board[0][0], board[0][1], board[0][2])
+    checkLine(board[1][0], board[1][1], board[1][2])
+    checkLine(board[2][0], board[2][1], board[2][2])
     checkLine(board[0][0], board[1][0], board[2][0])
     checkLine(board[0][1], board[1][1], board[2][1])
     checkLine(board[0][2], board[1][2], board[2][2])
     checkLine(board[0][0], board[1][1], board[2][2])
     checkLine(board[0][2], board[1][1], board[2][0])
 
-    val diff = oc - xc
-    when {
-      oc + xc == SIZE * SIZE -> if (
-        diff != 1 ||
-        !(
-          ol == 0 && xl == 0 ||
-            ol == 1 && xl == 0 ||
-            ol == 0 && xl == 1 ||
-            ol == 2 && xl == 0 ||
-            ol == 0 && xl == 2
-          )
-      ) return INVALID
-      else -> if (
-        !(diff == 0 && ol == 0 && xl >= 0 ||
-          diff == 1 && xl == 0 && 0 <= ol)
-      ) return INVALID
-    }
-
-    return VALID
+    return if (diff == 0 && ol != 0 || diff == 1 && xl != 0) INVALID
+    else VALID
   }
 }
 
@@ -88,6 +67,17 @@ class Solution {
  * 테스트 8 〉	통과 (0.15ms, 60.4MB)
  * 테스트 9 〉	통과 (0.15ms, 61.2MB)
  * 테스트 10 〉	통과 (0.15ms, 60MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.21ms, 60.4MB)
+ * 테스트 2 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 3 〉	통과 (0.19ms, 60.1MB)
+ * 테스트 4 〉	통과 (0.22ms, 60MB)
+ * 테스트 5 〉	통과 (0.01ms, 60.4MB)
+ * 테스트 6 〉	통과 (0.15ms, 59.4MB)
+ * 테스트 7 〉	통과 (0.16ms, 59.7MB)
+ * 테스트 8 〉	통과 (0.17ms, 58.7MB)
+ * 테스트 9 〉	통과 (0.02ms, 59.5MB)
+ * 테스트 10 〉	통과 (0.01ms, 59.3MB)
  *
  *
  *
