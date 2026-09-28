@@ -22,32 +22,25 @@ class Solution {
 
     var RYAN = 0
     var best = 0
-    val ch = IntArray(ALL)
 
-    fun dfs(stt: Int, rmn: Int, acc: Int, flag: Int) {
-      if (rmn == 0) {
-        if (acc > RYAN || acc == RYAN && flag > best) {
+    fun dfs(score: Int, rmn: Int, acc: Int, flag: Int) {
+      val i = MAX_SCORE - score
+      val curFlag = 1 shl i
+
+      if (score == 0) {
+        val done = if (rmn > 0) flag or curFlag else flag
+        if (acc > RYAN || acc == RYAN && done > best) {
           RYAN = acc
-          best = flag
+          best = done
         }
         return
       }
 
+      val required = info[i] + 1
+      if (rmn >= required)
+        dfs(score - 1, rmn - required, acc + scores[i], flag or curFlag)
 
-      for (score in stt downTo 0) {
-        val i = MAX_SCORE - score
-        val reqCnt = if (score == 0) 0 else info[i] + 1
-        if (reqCnt > rmn) continue
-        val used = if (score == 0) rmn else reqCnt
-        ch[i] = used
-
-        dfs(score - 1,
-          rmn - used,
-          acc + scores[i],
-          flag or (1 shl i)
-        )
-        ch[i] = 0
-      }
+      dfs(score - 1, rmn, acc, flag)
     }
 
     dfs(MAX_SCORE, n, 0, 0)
@@ -81,6 +74,49 @@ class Solution {
  * 테스트 8 〉	통과 (0.24ms, 58.8MB)
  * 테스트 9 〉	통과 (0.34ms, 59.5MB)
  * 테스트 10 〉	통과 (0.29ms, 59.5MB)
+ * 테스트 11 〉	통과 (0.27ms, 59.7MB)
+ * 테스트 12 〉	통과 (0.24ms, 58.1MB)
+ * 테스트 13 〉	통과 (0.32ms, 60.2MB)
+ * 테스트 14 〉	통과 (0.32ms, 60.2MB)
+ * 테스트 15 〉	통과 (0.36ms, 61MB)
+ * 테스트 16 〉	통과 (0.28ms, 60.8MB)
+ * 테스트 17 〉	통과 (0.28ms, 58MB)
+ * 테스트 18 〉	통과 (0.24ms, 60.6MB)
+ * 테스트 19 〉	통과 (0.16ms, 60.3MB)
+ * 테스트 20 〉	통과 (0.31ms, 59.8MB)
+ * 테스트 21 〉	통과 (0.44ms, 58.3MB)
+ * 테스트 22 〉	통과 (0.42ms, 59.4MB)
+ * 테스트 23 〉	통과 (0.16ms, 59.9MB)
+ * 테스트 24 〉	통과 (0.41ms, 60.3MB)
+ * 테스트 25 〉	통과 (0.35ms, 59.9MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.29ms, 59.7MB)
+ * 테스트 2 〉	통과 (0.36ms, 59MB)
+ * 테스트 3 〉	통과 (0.35ms, 58.2MB)
+ * 테스트 4 〉	통과 (0.35ms, 59.3MB)
+ * 테스트 5 〉	통과 (0.33ms, 60.6MB)
+ * 테스트 6 〉	통과 (0.36ms, 59.1MB)
+ * 테스트 7 〉	통과 (0.31ms, 61MB)
+ * 테스트 8 〉	통과 (0.34ms, 60.9MB)
+ * 테스트 9 〉	통과 (0.35ms, 60MB)
+ * 테스트 10 〉	통과 (0.28ms, 61.1MB)
+ * 테스트 11 〉	통과 (0.36ms, 60.1MB)
+ * 테스트 12 〉	통과 (0.29ms, 60.6MB)
+ * 테스트 13 〉	통과 (0.35ms, 58.9MB)
+ * 테스트 14 〉	통과 (0.30ms, 60.7MB)
+ * 테스트 15 〉	통과 (0.49ms, 57.9MB)
+ * 테스트 16 〉	통과 (0.34ms, 60MB)
+ * 테스트 17 〉	통과 (0.29ms, 59.6MB)
+ * 테스트 18 〉	통과 (0.29ms, 60MB)
+ * 테스트 19 〉	통과 (0.14ms, 60MB)
+ * 테스트 20 〉	통과 (0.50ms, 57.8MB)
+ * 테스트 21 〉	통과 (0.33ms, 60.9MB)
+ * 테스트 22 〉	통과 (0.42ms, 57.3MB)
+ * 테스트 23 〉	통과 (0.23ms, 59.9MB)
+ * 테스트 24 〉	통과 (0.43ms, 60.8MB)
+ * 테스트 25 〉	통과 (0.52ms, 61.1MB)
+ *
  *
  *
  *
