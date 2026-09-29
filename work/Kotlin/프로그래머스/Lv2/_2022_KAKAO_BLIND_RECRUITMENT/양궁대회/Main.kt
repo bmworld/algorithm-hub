@@ -6,56 +6,60 @@ class Solution {
   companion object {
 
     const val MAX_SCORE = 10
-    const val ALL = MAX_SCORE + 1
+    const val EMPTY_SCORE = -1
   }
 
   fun solution(n: Int, info: IntArray): IntArray {
     var APEACH = 0
-    val scores = IntArray(ALL)
-    for (i in info.indices) {
+    for (i in info.indices) if (info[i] > 0) APEACH += MAX_SCORE - i
+    val bestScore = IntArray(n + 1) { EMPTY_SCORE }
+    val bestCombo = IntArray(n + 1)
+
+    bestScore[0] = 0
+
+    for (i in 0 until MAX_SCORE) {
       val score = MAX_SCORE - i
-      scores[i] = if (info[i] > 0) {
-        APEACH += score
-        score * 2
-      } else score
+      val cost = info[i] + 1
+      val value = if (cost > 1) score * 2 else score
+
+      for (used in n downTo cost) {
+        val rmn = used - cost
+        val rmnS = bestScore[rmn]
+        if (rmnS == EMPTY_SCORE) continue
+
+        val s = rmnS + value
+        val c = bestCombo[rmn] or (1 shl i)
+
+        val compS = bestScore[used]
+        val compC = bestCombo[used]
+
+        if (s > compS || s == compS && c > compC) {
+          bestScore[used] = s
+          bestCombo[used] = c
+        }
+      }
     }
 
     var RYAN = 0
-    var best = 0
-
-    fun dfs(score: Int, rmn: Int, acc: Int, flag: Int) {
-      val i = MAX_SCORE - score
-      val curFlag = 1 shl i
-
-      if (score == 0) {
-        val done = if (rmn > 0) flag or curFlag else flag
-        if (acc > RYAN || acc == RYAN && done > best) {
-          RYAN = acc
-          best = done
-        }
-        return
+    var combo = 0
+    var validCnt = 0
+    for (used in 1..n) {
+      val s = bestScore[used]
+      val c = bestCombo[used]
+      if (s > RYAN || s == RYAN && c > combo) {
+        RYAN = s
+        combo = c
+        validCnt = used
       }
-
-      val required = info[i] + 1
-      if (rmn >= required)
-        dfs(score - 1, rmn - required, acc + scores[i], flag or curFlag)
-
-      dfs(score - 1, rmn, acc, flag)
     }
 
-    dfs(MAX_SCORE, n, 0, 0)
+    if (RYAN <= APEACH) return intArrayOf(EMPTY_SCORE)
 
-    if (RYAN <= APEACH) return intArrayOf(-1)
+    val ans = IntArray(MAX_SCORE + 1)
+    for (i in 0 until MAX_SCORE)
+      if (combo and (1 shl i) != 0) ans[i] = info[i] + 1
 
-    val ans = IntArray(ALL)
-    var rmn = n
-    while (best > 0) {
-      val i = best.countTrailingZeroBits()
-      ans[i] =
-        if (MAX_SCORE - i == 0) rmn
-        else (info[i] + 1).also { rmn -= it }
-      best = best xor (1 shl i)
-    }
+    ans[MAX_SCORE] = n - validCnt
 
     return ans
   }
@@ -63,7 +67,7 @@ class Solution {
 
 /**
  * ```
- * [ME]
+ * [ME] 1/0 Knapsack
  * 테스트 1 〉	통과 (0.25ms, 59.7MB)
  * 테스트 2 〉	통과 (0.32ms, 59.7MB)
  * 테스트 3 〉	통과 (0.39ms, 60MB)
@@ -90,32 +94,59 @@ class Solution {
  * 테스트 24 〉	통과 (0.41ms, 60.3MB)
  * 테스트 25 〉	통과 (0.35ms, 59.9MB)
  *
- * v2:
- * 테스트 1 〉	통과 (0.29ms, 59.7MB)
- * 테스트 2 〉	통과 (0.36ms, 59MB)
- * 테스트 3 〉	통과 (0.35ms, 58.2MB)
- * 테스트 4 〉	통과 (0.35ms, 59.3MB)
- * 테스트 5 〉	통과 (0.33ms, 60.6MB)
- * 테스트 6 〉	통과 (0.36ms, 59.1MB)
- * 테스트 7 〉	통과 (0.31ms, 61MB)
- * 테스트 8 〉	통과 (0.34ms, 60.9MB)
- * 테스트 9 〉	통과 (0.35ms, 60MB)
- * 테스트 10 〉	통과 (0.28ms, 61.1MB)
- * 테스트 11 〉	통과 (0.36ms, 60.1MB)
- * 테스트 12 〉	통과 (0.29ms, 60.6MB)
- * 테스트 13 〉	통과 (0.35ms, 58.9MB)
- * 테스트 14 〉	통과 (0.30ms, 60.7MB)
- * 테스트 15 〉	통과 (0.49ms, 57.9MB)
- * 테스트 16 〉	통과 (0.34ms, 60MB)
- * 테스트 17 〉	통과 (0.29ms, 59.6MB)
- * 테스트 18 〉	통과 (0.29ms, 60MB)
- * 테스트 19 〉	통과 (0.14ms, 60MB)
- * 테스트 20 〉	통과 (0.50ms, 57.8MB)
- * 테스트 21 〉	통과 (0.33ms, 60.9MB)
- * 테스트 22 〉	통과 (0.42ms, 57.3MB)
- * 테스트 23 〉	통과 (0.23ms, 59.9MB)
- * 테스트 24 〉	통과 (0.43ms, 60.8MB)
- * 테스트 25 〉	통과 (0.52ms, 61.1MB)
+ * v2: 1/0 Knapsack
+ * 테스트 1 〉	통과 (0.31ms, 59.5MB)
+ * 테스트 2 〉	통과 (0.35ms, 60.7MB)
+ * 테스트 3 〉	통과 (0.43ms, 58.6MB)
+ * 테스트 4 〉	통과 (0.34ms, 58MB)
+ * 테스트 5 〉	통과 (0.41ms, 60.1MB)
+ * 테스트 6 〉	통과 (0.34ms, 59.9MB)
+ * 테스트 7 〉	통과 (0.35ms, 60MB)
+ * 테스트 8 〉	통과 (0.25ms, 59.9MB)
+ * 테스트 9 〉	통과 (0.28ms, 59.3MB)
+ * 테스트 10 〉	통과 (0.26ms, 59.9MB)
+ * 테스트 11 〉	통과 (0.38ms, 59.4MB)
+ * 테스트 12 〉	통과 (0.30ms, 60.8MB)
+ * 테스트 13 〉	통과 (0.42ms, 60MB)
+ * 테스트 14 〉	통과 (0.32ms, 61.5MB)
+ * 테스트 15 〉	통과 (0.36ms, 60.5MB)
+ * 테스트 16 〉	통과 (0.30ms, 59.4MB)
+ * 테스트 17 〉	통과 (0.38ms, 59.7MB)
+ * 테스트 18 〉	통과 (0.37ms, 61.5MB)
+ * 테스트 19 〉	통과 (0.20ms, 59MB)
+ * 테스트 20 〉	통과 (0.45ms, 58.4MB)
+ * 테스트 21 〉	통과 (0.37ms, 60.9MB)
+ * 테스트 22 〉	통과 (0.50ms, 59.4MB)
+ * 테스트 23 〉	통과 (0.17ms, 61.5MB)
+ * 테스트 24 〉	통과 (0.37ms, 60.4MB)
+ * 테스트 25 〉	통과 (0.43ms, 59.7MB)
+ *
+ * v3: DFS -> DP (1D 0/1 Knapsack)
+ * 테스트 1 〉	통과 (0.02ms, 59.3MB)
+ * 테스트 2 〉	통과 (0.02ms, 60.7MB)
+ * 테스트 3 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 4 〉	통과 (0.02ms, 58.9MB)
+ * 테스트 5 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 6 〉	통과 (0.02ms, 59.2MB)
+ * 테스트 7 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 8 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 9 〉	통과 (0.02ms, 59.9MB)
+ * 테스트 10 〉	통과 (0.01ms, 59.8MB)
+ * 테스트 11 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 12 〉	통과 (0.02ms, 61MB)
+ * 테스트 13 〉	통과 (0.02ms, 60.6MB)
+ * 테스트 14 〉	통과 (0.02ms, 59.1MB)
+ * 테스트 15 〉	통과 (0.02ms, 59.2MB)
+ * 테스트 16 〉	통과 (0.02ms, 61.3MB)
+ * 테스트 17 〉	통과 (0.02ms, 60MB)
+ * 테스트 18 〉	통과 (0.02ms, 60MB)
+ * 테스트 19 〉	통과 (0.01ms, 60.6MB)
+ * 테스트 20 〉	통과 (0.02ms, 61MB)
+ * 테스트 21 〉	통과 (0.02ms, 61MB)
+ * 테스트 22 〉	통과 (0.02ms, 59.7MB)
+ * 테스트 23 〉	통과 (0.01ms, 59.8MB)
+ * 테스트 24 〉	통과 (0.02ms, 61.4MB)
+ * 테스트 25 〉	통과 (0.02ms, 59.6MB)
  *
  *
  *
@@ -277,7 +308,6 @@ fun main() {
     intArrayOf(1, 1, 1, 1, 1, 1, 1, 1, 0, 0, 2)
   )
 
-  //
   validate(s.solution(10,
     intArrayOf(0, 0, 0, 0, 0, 0, 0, 4, 4, 2, 0)),
     intArrayOf(1, 1, 1, 1, 1, 1, 1, 0, 0, 3, 0)
@@ -289,8 +319,8 @@ fun main() {
   )
 }
 
-//    println("RYAN = ${RYAN} vs APEACH= $APEACH --- best=${best.toString(2)}")
-//           println(
-//            "ch=${ch.contentToString()} -> cur (${flag.toString(2)}) vs best(${
-//              best.toString(2)
-//            }) | acc=$acc")
+//      println("----- [$s] usedArrow in $n downTo $cost")
+//println(
+//"[used] cur=$cur, prv=$prv" +
+//" | [score] cur=$curS vs comp=$compS" +
+//" | [combo] cur=${curC.toString(2)} vs comp=${compC.toString(2)}")
