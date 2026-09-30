@@ -5,12 +5,11 @@ import util.validate
 class Solution {
   companion object {
 
-    const val SIZE = 100
-    const val EMPTY = -1
-    const val DANGER = 1
+    const val SEP = 10_000
   }
 
   fun solution(points: Array<IntArray>, routes: Array<IntArray>): Int {
+    var ans = 0
 
     var R = 0
     var C = 0
@@ -21,69 +20,42 @@ class Solution {
       if (c + 1 > C) C = c + 1
     }
 
-    val X = routes.size
     val M = routes[0].size
-    val CAP = C
+    fun pos(t: Int, r: Int, c: Int): Int = t * SEP + r * C + c
 
-    fun pos(r: Int, c: Int): Int = r * CAP + c
+    val ch = HashMap<Int, Int>(R * C)
 
-    val tracker = Array(X) { robot ->
-      IntArray(((R - 1) + (C - 1)) * (M - 1) + 1) { EMPTY }.also { track ->
-        val route = routes[robot]
-        var ri = 0
-        var toR = 0
-        var toC = 0
-        points[route[ri++] - 1].also {
-          track[0] = pos(it[0], it[1])
+    for (route in routes) {
+      var i = 0
+      val fr = points[route[i++] - 1]
+      var r = fr[0]
+      var c = fr[1]
+
+      val to = points[route[i] - 1]
+      var toR = to[0]
+      var toC = to[1]
+
+      var t = 0
+      while (i < M) {
+        val key = pos(t++, r, c)
+        ch[key] = 1 + ch.getOrDefault(key, 0)
+          .also { if (it == 1) ans++ }
+
+        if (r == toR && c == toC) {
+          if (++i < M) points[route[i] - 1].also {
+            toR = it[0]
+            toC = it[1]
+          } else break
         }
-        points[route[ri] - 1].also {
-          toR = it[0]
-          toC = it[1]
-        }
 
-        for (t in 1 until track.size) {
-          val prv = track[t - 1]
-          var r = prv / CAP
-          var c = prv % CAP
-          val dr = r - toR
-          val dc = c - toC
-
-          when {
-            abs(dr) > 0 -> if (dr >= 0) r-- else r++
-            else -> if (dc >= 0) c-- else c++
-          }
-
-          track[t] = pos(r, c)
-
-          if (r == toR && c == toC) {
-            if (++ri == M) break
-            points[route[ri] - 1].also {
-              toR = it[0]
-              toC = it[1]
-            }
-          }
-        }
-      }
-    }
-
-    var ans = 0
-    var t = 0
-    var rmn = X
-    val center = IntArray(R * C)
-
-    while (rmn > 1) {
-      val ch = center.clone()
-      repeat(X) { robot ->
-        val track = tracker[robot]
-        val pos = track[t]
+        val dr = r - toR
+        val dc = c - toC
         when {
-          pos == EMPTY -> if (track[t - 1] != EMPTY) rmn--
-          else -> if (ch[pos]++ == DANGER) ans++
+          abs(dr) > 0 -> if (dr >= 0) r-- else r++
+          else -> if (dc >= 0) c-- else c++
         }
       }
-      t++
     }
-
     return ans
   }
 
@@ -135,6 +107,28 @@ class Solution {
  * 테스트 18 〉	통과 (112.18ms, 272MB)
  * 테스트 19 〉	통과 (86.82ms, 266MB)
  * 테스트 20 〉	통과 (88.06ms, 271MB)
+ *
+ * v3:
+ * 테스트 1 〉	통과 (0.83ms, 59.7MB)
+ * 테스트 2 〉	통과 (0.44ms, 60.1MB)
+ * 테스트 3 〉	통과 (0.85ms, 57.8MB)
+ * 테스트 4 〉	통과 (0.65ms, 59.8MB)
+ * 테스트 5 〉	통과 (2.03ms, 59.6MB)
+ * 테스트 6 〉	통과 (2.03ms, 60.5MB)
+ * 테스트 7 〉	통과 (3.82ms, 61MB)
+ * 테스트 8 〉	통과 (30.08ms, 70.2MB)
+ * 테스트 9 〉	통과 (38.29ms, 68.3MB)
+ * 테스트 10 〉	통과 (19.26ms, 67MB)
+ * 테스트 11 〉	통과 (22.55ms, 68MB)
+ * 테스트 12 〉	통과 (34.43ms, 71.1MB)
+ * 테스트 13 〉	통과 (33.97ms, 68.3MB)
+ * 테스트 14 〉	통과 (84.09ms, 107MB)
+ * 테스트 15 〉	통과 (78.48ms, 107MB)
+ * 테스트 16 〉	통과 (103.82ms, 107MB)
+ * 테스트 17 〉	통과 (132.04ms, 145MB)
+ * 테스트 18 〉	통과 (142.48ms, 151MB)
+ * 테스트 19 〉	통과 (64.24ms, 94.7MB)
+ * 테스트 20 〉	통과 (76.98ms, 108MB)
  *
  * [RIVAL 1]
  * class Solution {
@@ -343,5 +337,4 @@ fun main() {
 
 }
 
-//          println("[$robot] path[$t] = ${path[t]}($r, $c) -> $toR, $toC")
-//      println("[$t] rmn=$rmn, ans=$ans, \n -> ${ch.contentToString()}")
+//        println("[$i] t=$t, $r, $c -> $toR, $toC | ch[$key]=${ch[key]}")
