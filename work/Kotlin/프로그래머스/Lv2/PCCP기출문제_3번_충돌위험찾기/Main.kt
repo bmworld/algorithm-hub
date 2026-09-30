@@ -5,7 +5,8 @@ import util.validate
 class Solution {
   companion object {
 
-    const val SEP = 10_000
+    const val DANGER = 1
+    const val DONE = -1
   }
 
   fun solution(points: Array<IntArray>, routes: Array<IntArray>): Int {
@@ -20,40 +21,62 @@ class Solution {
       if (c + 1 > C) C = c + 1
     }
 
+    val X = routes.size
     val M = routes[0].size
-    fun pos(t: Int, r: Int, c: Int): Int = t * SEP + r * C + c
 
-    val ch = HashMap<Int, Int>()
+    fun pos(r: Int, c: Int): Int = r * C + c
+    val cur = IntArray(X) {
+      val p = points[routes[it][0] - 1]
+      pos(p[0], p[1])
+    }
+    val nxtRouteIdx = IntArray(X) { 1 }
+    val nxt = IntArray(X) {
+      val p = points[routes[it][1] - 1]
+      pos(p[0], p[1])
+    }
 
-    for (route in routes) {
-      var i = 0
-      val fr = points[route[i++] - 1]
-      var r = fr[0]
-      var c = fr[1]
+    val center = IntArray(R * C)
+    var rmn = X
+    while (rmn > 1) {
+      val ch = center.copyOf()
 
-      val to = points[route[i] - 1]
-      var toR = to[0]
-      var toC = to[1]
+      repeat(X) { robot ->
+        val p = cur[robot]
+        if (p == DONE) return@repeat
+        var r = p / C
+        var c = p % C
 
-      var t = 0
-      while (i < M) {
-        val key = pos(t++, r, c)
-        ch[key] = 1 + ch.getOrDefault(key, 0)
-          .also { if (it == 1) ans++ }
+        if (ch[pos(r, c)]++ == DANGER) ans++
+
+        val npInfo = nxt[robot]
+        var toR = npInfo / C
+        var toC = npInfo % C
 
         if (r == toR && c == toC) {
-          if (++i < M) points[route[i] - 1].also {
-            toR = it[0]
-            toC = it[1]
-          } else break
+          val i = ++nxtRouteIdx[robot]
+          if (i < M) {
+            val np = routes[robot][i]
+            points[np - 1].also {
+              toR = it[0]
+              toC = it[1]
+              nxt[robot] = pos(toR, toC)
+            }
+          } else {
+            cur[robot] = DONE
+            rmn--
+            return@repeat
+          }
         }
 
         val dr = r - toR
         val dc = c - toC
+
         when {
           abs(dr) > 0 -> if (dr >= 0) r-- else r++
           else -> if (dc >= 0) c-- else c++
         }
+
+        cur[robot] = pos(r, c)
       }
     }
     return ans
@@ -129,6 +152,28 @@ class Solution {
  * 테스트 18 〉	통과 (128.15ms, 153MB)
  * 테스트 19 〉	통과 (67.18ms, 93.4MB)
  * 테스트 20 〉	통과 (78.02ms, 108MB)
+ *
+ * v4:
+ * 테스트 1 〉	통과 (0.31ms, 59.9MB)
+ * 테스트 2 〉	통과 (0.25ms, 59.9MB)
+ * 테스트 3 〉	통과 (0.19ms, 60.1MB)
+ * 테스트 4 〉	통과 (0.42ms, 60.2MB)
+ * 테스트 5 〉	통과 (0.47ms, 57.3MB)
+ * 테스트 6 〉	통과 (0.93ms, 57.5MB)
+ * 테스트 7 〉	통과 (3.99ms, 65.2MB)
+ * 테스트 8 〉	통과 (15.63ms, 85.7MB)
+ * 테스트 9 〉	통과 (53.54ms, 157MB)
+ * 테스트 10 〉	통과 (13.58ms, 77.8MB)
+ * 테스트 11 〉	통과 (14.56ms, 82.6MB)
+ * 테스트 12 〉	통과 (17.19ms, 87.1MB)
+ * 테스트 13 〉	통과 (53.53ms, 157MB)
+ * 테스트 14 〉	통과 (92.36ms, 263MB)
+ * 테스트 15 〉	통과 (87.82ms, 262MB)
+ * 테스트 16 〉	통과 (107.61ms, 266MB)
+ * 테스트 17 〉	통과 (94.00ms, 262MB)
+ * 테스트 18 〉	통과 (100.06ms, 268MB)
+ * 테스트 19 〉	통과 (89.15ms, 260MB)
+ * 테스트 20 〉	통과 (91.81ms, 266MB)
  *
  * [RIVAL 1]
  * class Solution {
