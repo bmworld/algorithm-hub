@@ -28,7 +28,7 @@ class Solution {
     fun pos(r: Int, c: Int): Int = r * CAP + c
 
     val tracker = Array(X) { robot ->
-      IntArray((R - 1) * (C - 1) * (M - 1) + 1) { EMPTY }.also { track ->
+      IntArray(((R - 1) + (C - 1)) * (M - 1) + 1) { EMPTY }.also { track ->
         val route = routes[robot]
         var ri = 0
         var toR = 0
@@ -113,6 +113,28 @@ class Solution {
  * 테스트 18 〉	통과 (285.78ms, 698MB)
  * 테스트 19 〉	통과 (225.11ms, 525MB)
  * 테스트 20 〉	통과 (245.31ms, 551MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.26ms, 59.7MB)
+ * 테스트 2 〉	통과 (0.24ms, 60.5MB)
+ * 테스트 3 〉	통과 (0.35ms, 60.4MB)
+ * 테스트 4 〉	통과 (0.37ms, 60.6MB)
+ * 테스트 5 〉	통과 (0.32ms, 59.3MB)
+ * 테스트 6 〉	통과 (0.91ms, 60.1MB)
+ * 테스트 7 〉	통과 (4.23ms, 65.9MB)
+ * 테스트 8 〉	통과 (14.52ms, 87.1MB)
+ * 테스트 9 〉	통과 (47.61ms, 160MB)
+ * 테스트 10 〉	통과 (12.89ms, 80.6MB)
+ * 테스트 11 〉	통과 (15.80ms, 82.3MB)
+ * 테스트 12 〉	통과 (17.12ms, 88.3MB)
+ * 테스트 13 〉	통과 (50.41ms, 162MB)
+ * 테스트 14 〉	통과 (86.79ms, 266MB)
+ * 테스트 15 〉	통과 (86.76ms, 266MB)
+ * 테스트 16 〉	통과 (91.55ms, 272MB)
+ * 테스트 17 〉	통과 (95.98ms, 267MB)
+ * 테스트 18 〉	통과 (112.18ms, 272MB)
+ * 테스트 19 〉	통과 (86.82ms, 266MB)
+ * 테스트 20 〉	통과 (88.06ms, 271MB)
  *
  * [RIVAL 1]
  * class Solution {
