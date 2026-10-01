@@ -7,13 +7,19 @@ class Solution {
   fun solution(cards: IntArray): Int {
     val N = cards.size
     val used = BooleanArray(N + 1)
-    val cnter = IntArray(N)
-    var groups = 0
 
+    var t1 = 0
+    var t2 = 0
 
     fun dfs(x: Int, cnt: Int) {
       if (used[x]) {
-        if (cnt > 0) cnter[groups++] = cnt
+        when {
+          cnt > t1 -> {
+            t2 = t1
+            t1 = cnt
+          }
+          cnt > t2 -> t2 = cnt
+        }
         return
       }
 
@@ -21,22 +27,7 @@ class Solution {
       dfs(cards[x - 1], cnt + 1)
     }
 
-
     for (x in cards) dfs(x, 0)
-
-    var t1 = 0
-    var t2 = 0
-    repeat(groups) {
-      val cnt = cnter[it]
-      when {
-        cnt > t1 -> {
-          t2 = t1
-          t1 = cnt
-        }
-        cnt > t2 -> t2 = cnt
-      }
-    }
-
     return t1 * t2
   }
 }
@@ -44,16 +35,16 @@ class Solution {
 /**
  * ```
  * [ME]
- * 테스트 1 〉	통과 (0.18ms, 59.9MB)
- * 테스트 2 〉	통과 (0.16ms, 60.1MB)
- * 테스트 3 〉	통과 (0.21ms, 60.6MB)
- * 테스트 4 〉	통과 (0.15ms, 59.3MB)
- * 테스트 5 〉	통과 (0.22ms, 61.5MB)
- * 테스트 6 〉	통과 (0.24ms, 58.6MB)
- * 테스트 7 〉	통과 (0.21ms, 59.3MB)
- * 테스트 8 〉	통과 (0.18ms, 59.6MB)
- * 테스트 9 〉	통과 (0.23ms, 60.7MB)
- * 테스트 10 〉	통과 (0.16ms, 59.9MB)
+ * 테스트 1 〉	통과 (0.21ms, 59.2MB)
+ * 테스트 2 〉	통과 (0.18ms, 57.8MB)
+ * 테스트 3 〉	통과 (0.18ms, 60.1MB)
+ * 테스트 4 〉	통과 (0.27ms, 60.1MB)
+ * 테스트 5 〉	통과 (0.23ms, 59.3MB)
+ * 테스트 6 〉	통과 (0.21ms, 57.4MB)
+ * 테스트 7 〉	통과 (0.15ms, 59.4MB)
+ * 테스트 8 〉	통과 (0.21ms, 58MB)
+ * 테스트 9 〉	통과 (0.22ms, 59.8MB)
+ * 테스트 10 〉	통과 (0.17ms, 60.8MB)
  *
  * [RIVAL 1]
  * import java.util.*
