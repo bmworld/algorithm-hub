@@ -6,36 +6,21 @@ class Solution {
 
   fun solution(cap: Int, n: Int, deliveries: IntArray, pickups: IntArray): Long {
     var ans = 0L
-    var d = n - 1
-    var p = n - 1
+    var dRmn = 0
+    var pRmn = 0
 
-    while (d >= 0 || p >= 0) {
+    for (dist in n downTo 1) {
+      var dAmnt = deliveries[dist - 1]
+      var pAmnt = pickups[dist - 1]
+      if (dAmnt == 0 && pAmnt == 0) continue
 
-      while (d >= 0) if (deliveries[d] == 0) d-- else break
-      while (p >= 0) if (pickups[p] == 0) p-- else break
+      var times = 0
+      if (dAmnt > dRmn || pAmnt > pRmn)
+        times = maxOf((dAmnt - dRmn + cap - 1) / cap, (pAmnt - pRmn + cap - 1) / cap)
 
-      var to = maxOf(p, d)
-      ans += (to + 1) * 2
-
-      var nd = minOf(d, to)
-      var dCap = cap
-      while (nd >= 0 && dCap > 0) {
-        val x = deliveries[nd]
-        val c = minOf(x, dCap)
-        dCap -= c
-        deliveries[nd] = (x - c).also { if (it == 0) nd-- }
-      }
-
-      var np = minOf(p, to)
-      var pCap = cap
-      while (np >= 0 && pCap > 0) {
-        val x = pickups[np]
-        val c = minOf(x, pCap)
-        pCap -= c
-        pickups[np] = (x - c).also { if (it == 0) np-- }
-      }
-      d = nd
-      p = np
+      dRmn += times * cap - dAmnt
+      pRmn += times * cap - pAmnt
+      ans += dist * 2 * times
     }
 
     return ans
@@ -44,7 +29,8 @@ class Solution {
 
 /**
  * ```
- * [ME]테스트 1 〉	통과 (0.18ms, 60.3MB)
+ * [ME]
+ * 테스트 1 〉	통과 (0.18ms, 60.3MB)
  * 테스트 2 〉	통과 (0.05ms, 60.9MB)
  * 테스트 3 〉	통과 (0.19ms, 60.3MB)
  * 테스트 4 〉	통과 (0.18ms, 60.7MB)
@@ -60,6 +46,26 @@ class Solution {
  * 테스트 14 〉	통과 (0.59ms, 60.8MB)
  * 테스트 15 〉	통과 (4.24ms, 66.7MB)
  * 테스트 16 〉	통과 (16.74ms, 66.5MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.04ms, 58.6MB)
+ * 테스트 2 〉	통과 (0.03ms, 59.9MB)
+ * 테스트 3 〉	통과 (0.02ms, 60.3MB)
+ * 테스트 4 〉	통과 (0.03ms, 60.4MB)
+ * 테스트 5 〉	통과 (0.03ms, 60.4MB)
+ * 테스트 6 〉	통과 (0.04ms, 58.2MB)
+ * 테스트 7 〉	통과 (0.08ms, 59.7MB)
+ * 테스트 8 〉	통과 (0.08ms, 60.3MB)
+ * 테스트 9 〉	통과 (0.21ms, 60.5MB)
+ * 테스트 10 〉	통과 (0.20ms, 60.3MB)
+ * 테스트 11 〉	통과 (0.47ms, 58.7MB)
+ * 테스트 12 〉	통과 (0.21ms, 60MB)
+ * 테스트 13 〉	통과 (0.20ms, 59.1MB)
+ * 테스트 14 〉	통과 (0.21ms, 60.6MB)
+ * 테스트 15 〉	통과 (3.98ms, 64.2MB)
+ * 테스트 16 〉	통과 (4.47ms, 64.9MB)
+ *
+ *
  *
  * [RIVAL 1]
  * class Solution {
@@ -170,5 +176,3 @@ fun main() {
   validate(s.solution(4, 5, intArrayOf(1, 0, 3, 1, 2), intArrayOf(0, 3, 0, 4, 0)), 16)
   validate(s.solution(2, 7, intArrayOf(1, 0, 2, 0, 1, 0, 2), intArrayOf(0, 2, 0, 1, 0, 2, 0)), 30)
 }
-
-//      println("[$to] d ($d -> $nd), p ($p -> $np) = ans=$ans")
