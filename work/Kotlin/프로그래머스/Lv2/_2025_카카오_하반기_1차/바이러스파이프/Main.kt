@@ -11,7 +11,6 @@ class Solution {
     const val C = 2
     const val TYPE_SIZE = 3
     const val BIN_LEN = 32
-    const val DEF_INFECTED = 1
     const val EMPTY = -1
     const val INFECTED = 0
   }
@@ -53,40 +52,38 @@ class Solution {
       }
     }
 
-    var ans = DEF_INFECTED
+    var ans = 0
 
-    fun dfs(dep: Int, type: Int, path: Int, map: IntArray) {
+    fun dfs(dep: Int, type: Int, map: IntArray) {
       for (node in 0 until n) {
         val p = map[node]
         if (p and (1 shl type) != 0) map[node] = p shr TYPE_SIZE
       }
 
       if (dep == k) {
-        var infected = 0
-        for (x in map) {
-          if (x == INFECTED) infected++
-        }
-        if (infected > ans) ans = infected
+        var cnt = 0
+        for (x in map) if (x == INFECTED) cnt++
+        if (cnt > ans) ans = cnt
         return
       }
 
       when (type) {
         A -> {
-          dfs(dep + 1, B, path or (1 shl (dep * TYPE_SIZE + B)), map.clone())
-          dfs(dep + 1, C, path or (1 shl (dep * TYPE_SIZE + C)), map.clone())
+          dfs(dep + 1, B, map.clone())
+          dfs(dep + 1, C, map.clone())
         }
         B -> {
-          dfs(dep + 1, A, path or (1 shl (dep * TYPE_SIZE + A)), map.clone())
-          dfs(dep + 1, C, path or (1 shl (dep * TYPE_SIZE + C)), map.clone())
+          dfs(dep + 1, A, map.clone())
+          dfs(dep + 1, C, map.clone())
         }
         C -> {
-          dfs(dep + 1, A, path or (1 shl (dep * TYPE_SIZE + A)), map.clone())
-          dfs(dep + 1, B, path or (1 shl (dep * TYPE_SIZE + B)), map.clone())
+          dfs(dep + 1, A, map.clone())
+          dfs(dep + 1, B, map.clone())
         }
       }
     }
 
-    for (type in A..C) dfs(1, type, type, map.clone())
+    for (type in A..C) dfs(1, type, map.clone())
 
     return ans
   }
