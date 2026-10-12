@@ -113,27 +113,25 @@ class Solution {
         }
       }
 
-      ans[i] = binSearch(infoByCond[cond]!!, minScore)
+      ans[i] = lowerBound(infoByCond[cond]!!, minScore)
     }
 
     return ans
   }
 
-  private fun binSearch(arr: MutableList<Int>, score: Int): Int {
-    val all = arr.size
+  private fun lowerBound(arr: MutableList<Int>, score: Int): Int {
     var l = 0
-    var r = all - 1
-    while (l <= r) {
+    val all = arr.size
+    var r = all
+    while (l < r) {
       val m = (l + r) shr 1
-      val mv = arr[m]
       when {
-        mv < score -> l = m + 1
-        mv > score -> r = m - 1
-        else -> return all - m
+        arr[m] >= score -> r = m
+        else -> l = m + 1
       }
     }
 
-    return all - l - if (l < all && arr[l] < score) 1 else 0
+    return all - r
   }
 
   private fun getBinPosAndJump(type: Int, c: Char, isQuery: Boolean): Pair<Int, Int> {
@@ -234,6 +232,7 @@ class Solution {
 /**
  * ```
  * [ME]
+ * v1: WA
  * 정확성 테스트
  * 테스트 1 〉	통과 (0.06ms, 59.9MB)
  * 테스트 2 〉	통과 (0.06ms, 58.7MB)
@@ -259,7 +258,7 @@ class Solution {
  * 테스트 3 〉	실패 (시간 초과)
  * 테스트 4 〉	실패 (시간 초과)
  *
- * v2:
+ * v2: WA
  * 정확성  테스트
  * 테스트 1 〉	통과 (0.85ms, 60.1MB)
  * 테스트 2 〉	통과 (0.96ms, 60.2MB)
@@ -285,9 +284,266 @@ class Solution {
  * 테스트 3 〉	실패 (362.90ms, 242MB)
  * 테스트 4 〉	실패 (393.08ms, 252MB)
  *
+ * v3: AC
+ * 테스트 1 〉	통과 (1.35ms, 59.9MB)
+ * 테스트 2 〉	통과 (1.22ms, 59.9MB)
+ * 테스트 3 〉	통과 (1.13ms, 60.3MB)
+ * 테스트 4 〉	통과 (2.63ms, 61.1MB)
+ * 테스트 5 〉	통과 (3.57ms, 60.7MB)
+ * 테스트 6 〉	통과 (7.15ms, 64.1MB)
+ * 테스트 7 〉	통과 (3.75ms, 63.1MB)
+ * 테스트 8 〉	통과 (29.63ms, 68.6MB)
+ * 테스트 9 〉	통과 (43.56ms, 78.9MB)
+ * 테스트 10 〉	통과 (37.92ms, 81.8MB)
+ * 테스트 11 〉	통과 (3.34ms, 61.4MB)
+ * 테스트 12 〉	통과 (9.46ms, 66.4MB)
+ * 테스트 13 〉	통과 (4.76ms, 61.7MB)
+ * 테스트 14 〉	통과 (24.99ms, 73.5MB)
+ * 테스트 15 〉	통과 (21.51ms, 74.4MB)
+ * 테스트 16 〉	통과 (3.48ms, 60.9MB)
+ * 테스트 17 〉	통과 (7.52ms, 65.1MB)
+ * 테스트 18 〉	통과 (21.35ms, 73.1MB)
+ * 효율성  테스트
+ * 테스트 1 〉	통과 (395.05ms, 259MB)
+ * 테스트 2 〉	통과 (417.09ms, 260MB)
+ * 테스트 3 〉	통과 (378.18ms, 255MB)
+ * 테스트 4 〉	통과 (400.84ms, 252MB)
+ *
+ * v4: 개선 (Binary Search -> Lower Bound)
+ * 테스트 1 〉	통과 (0.93ms, 59.8MB)
+ * 테스트 2 〉	통과 (1.03ms, 60MB)
+ * 테스트 3 〉	통과 (1.18ms, 59.3MB)
+ * 테스트 4 〉	통과 (1.90ms, 58.8MB)
+ * 테스트 5 〉	통과 (4.01ms, 61.1MB)
+ * 테스트 6 〉	통과 (8.03ms, 63MB)
+ * 테스트 7 〉	통과 (3.07ms, 62.7MB)
+ * 테스트 8 〉	통과 (26.79ms, 69.6MB)
+ * 테스트 9 〉	통과 (39.48ms, 80.1MB)
+ * 테스트 10 〉	통과 (37.41ms, 82.1MB)
+ * 테스트 11 〉	통과 (3.15ms, 60.4MB)
+ * 테스트 12 〉	통과 (7.60ms, 65.7MB)
+ * 테스트 13 〉	통과 (3.43ms, 62.3MB)
+ * 테스트 14 〉	통과 (21.99ms, 73.3MB)
+ * 테스트 15 〉	통과 (21.85ms, 74.3MB)
+ * 테스트 16 〉	통과 (3.03ms, 61.5MB)
+ * 테스트 17 〉	통과 (7.73ms, 66.2MB)
+ * 테스트 18 〉	통과 (21.47ms, 74.6MB)
+ * 효율성  테스트
+ * 테스트 1 〉	통과 (369.41ms, 236MB)
+ * 테스트 2 〉	통과 (384.70ms, 252MB)
+ * 테스트 3 〉	통과 (361.65ms, 251MB)
+ * 테스트 4 〉	통과 (378.95ms, 251MB)
+ *
+ *
  * [RIVAL 1]
+ * class Solution {
+ *     fun solution(info: Array<String>, query: Array<String>): IntArray {
+ *         val root = Node()
+ *
+ *         for (record in info) {
+ *             root.addRecord(record.split(" "))
+ *         }
+ *
+ *         root.sortScores()
+ *
+ *         val answer = IntArray(query.size)
+ *         for ((index, q) in query.withIndex()) {
+ *             answer[index] = root.count(q.split(" ").filterNot { it == "and" })
+ *             // println("#$index: ${answer[index]}")
+ *         }
+ *         return answer
+ *     }
+ *
+ *     class Node {
+ *         var scores: MutableList<Int>? = null
+ *         val children: MutableMap<String, Node> = mutableMapOf()
+ *
+ *         fun addRecord(record: List<String>, depth: Int = 0) {
+ *             val key = record[depth]
+ *             if (depth == 4) {
+ *                 val score = key.toInt()
+ *
+ *                 if (scores == null)
+ *                     scores = mutableListOf(score)
+ *                 else
+ *                     scores!!.add(score)
+ *             } else {
+ *                 if (children[key] == null)
+ *                     children[key] = Node()
+ *
+ *                 children[key]!!.addRecord(record, depth + 1)
+ *             }
+ *         }
+ *
+ *         fun sortScores(depth: Int = 0) {
+ *             if (depth == 4) {
+ *                 scores!!.sort()
+ *             } else {
+ *                 for (child in children.values)
+ *                     child.sortScores(depth + 1)
+ *             }
+ *         }
+ *
+ *         fun count(query: List<String>, depth: Int = 0): Int {
+ *             val key = query[depth]
+ *             if (depth == 4) {
+ *                 return scores!!.size - lowerBound(key.toInt())
+ *             } else {
+ *                 var sum = 0
+ *                 if (key == "-") {
+ *                     for (child in children.values)
+ *                         sum += child.count(query, depth + 1)
+ *                 } else {
+ *                     sum += children[key]?.count(query, depth + 1) ?: 0
+ *                 }
+ *                 return sum
+ *             }
+ *         }
+ *
+ *         private fun lowerBound(least: Int): Int {
+ *             if (least > scores!!.last()) return scores!!.size
+ *
+ *             var top = scores!!.lastIndex
+ *             var bottom = 0
+ *             var mid = top
+ *
+ *             while (top > bottom) {
+ *                 val mid = (bottom + top) / 2
+ *                 if (mid == top)
+ *                     return top
+ *
+ *                 if (scores!![mid] < least) {
+ *                     bottom = mid + 1
+ *                 } else {
+ *                     top = mid
+ *                 }
+ *             }
+ *             return bottom
+ *         }
+ *     }
+ * }
+ * 테스트 1 〉	통과 (10.81ms, 59.4MB)
+ * 테스트 2 〉	통과 (9.68ms, 61.8MB)
+ * 테스트 3 〉	통과 (10.84ms, 61.6MB)
+ * 테스트 4 〉	통과 (14.74ms, 63MB)
+ * 테스트 5 〉	통과 (19.78ms, 71.8MB)
+ * 테스트 6 〉	통과 (18.45ms, 63.8MB)
+ * 테스트 7 〉	통과 (26.05ms, 73MB)
+ * 테스트 8 〉	통과 (17.83ms, 71.7MB)
+ * 테스트 9 〉	통과 (20.70ms, 72MB)
+ * 테스트 10 〉	통과 (27.02ms, 72.2MB)
+ * 테스트 11 〉	통과 (15.99ms, 70.7MB)
+ * 테스트 12 〉	통과 (13.63ms, 62.7MB)
+ * 테스트 13 〉	통과 (17.52ms, 72.5MB)
+ * 테스트 14 〉	통과 (15.90ms, 70.6MB)
+ * 테스트 15 〉	통과 (18.83ms, 70.1MB)
+ * 테스트 16 〉	통과 (13.67ms, 70.1MB)
+ * 테스트 17 〉	통과 (22.67ms, 63.1MB)
+ * 테스트 18 〉	통과 (15.41ms, 71MB)
+ * 효율성  테스트
+ * 테스트 1 〉	통과 (293.05ms, 208MB)
+ * 테스트 2 〉	통과 (340.90ms, 216MB)
+ * 테스트 3 〉	실행 중단
+ * 테스트 4 〉	통과 (559.47ms, 206MB)
+ *
  *
  * [RIVAL 2]
+ * class Solution {
+ *     fun solution(info: Array<String>, query: Array<String>): IntArray {
+ *         var answer = Array(query.size){it}
+ *         val hashInfo = HashMap<List<String>, MutableList<Int>>()
+ *
+ *         val language = listOf("java", "cpp", "python", "-")
+ *         val position = listOf("backend", "frontend", "-")
+ *         val career = listOf("junior", "senior", "-")
+ *         val soulFood = listOf("pizza", "chicken", "-")
+ *
+ *         for (l in language){
+ *             for (p in position){
+ *                 for (c in career){
+ *                     for (s in soulFood){
+ *                         hashInfo[listOf(l, p, c, s)] = mutableListOf()
+ *                     }
+ *                 }
+ *             }
+ *         }
+ *
+ *         for (data in info){
+ *             val temp = data.split(" ")
+ *             hashInfo[listOf(temp[0], temp[1], temp[2], temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", temp[1], temp[2], temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], "-", temp[2], temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], temp[1], "-", temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], temp[1], temp[2], "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", "-", temp[2], temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", temp[1], "-", temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", temp[1], temp[2], "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], "-", "-", temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], "-", temp[2], "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], temp[1], "-", "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", "-", "-", temp[3])]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", "-", temp[2], "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", temp[1], "-", "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf(temp[0], "-", "-", "-")]?.add(temp[4].toInt())
+ *             hashInfo[listOf("-", "-", "-", "-")]?.add(temp[4].toInt())
+ *         }
+ *
+ *         for (i in hashInfo){
+ *             hashInfo[i.key]?.sort()
+ *         }
+ *
+ *         for ((idx, q) in query.withIndex()){
+ *             val temp = q.split(" and ", " ")
+ *
+ *             if (hashInfo[listOf(temp[0], temp[1], temp[2], temp[3])]!!.isNotEmpty()){
+ *                 answer[idx] = hashInfo[listOf(temp[0], temp[1], temp[2], temp[3])]!!.size - lowerBound(hashInfo[listOf(temp[0], temp[1], temp[2], temp[3])]!!, if (temp[4] == "-") 0 else temp[4].toInt())
+ *             }
+ *             else{
+ *                 answer[idx] = 0
+ *             }
+ *         }
+ *
+ *         return answer.toIntArray()
+ *     }
+ *
+ *     fun lowerBound(arr: MutableList<Int>, target: Int): Int{
+ *         var start = 0
+ *         var end = arr.size
+ *
+ *         while (start < end){
+ *             val mid = (start + end) / 2
+ *             if (arr[mid] < target)
+ *                 start = mid + 1
+ *             else
+ *                 end = mid
+ *         }
+ *
+ *         return end
+ *     }
+ * }
+ * 테스트 1 〉	통과 (26.56ms, 65.6MB)
+ * 테스트 2 〉	통과 (27.71ms, 66.3MB)
+ * 테스트 3 〉	통과 (28.31ms, 65.9MB)
+ * 테스트 4 〉	통과 (34.70ms, 69.4MB)
+ * 테스트 5 〉	통과 (34.29ms, 72.1MB)
+ * 테스트 6 〉	통과 (56.19ms, 70.8MB)
+ * 테스트 7 〉	통과 (38.57ms, 73.1MB)
+ * 테스트 8 〉	통과 (92.28ms, 80.2MB)
+ * 테스트 9 〉	통과 (83.88ms, 83.2MB)
+ * 테스트 10 〉	통과 (70.90ms, 84.1MB)
+ * 테스트 11 〉	통과 (35.01ms, 72.5MB)
+ * 테스트 12 〉	통과 (50.25ms, 71MB)
+ * 테스트 13 〉	통과 (37.87ms, 73.4MB)
+ * 테스트 14 〉	통과 (64.23ms, 75.9MB)
+ * 테스트 15 〉	통과 (88.97ms, 76.5MB)
+ * 테스트 16 〉	통과 (34.59ms, 71.6MB)
+ * 테스트 17 〉	통과 (43.61ms, 71.6MB)
+ * 테스트 18 〉	통과 (53.02ms, 77.5MB)
+ * 효율성  테스트
+ * 테스트 1 〉	통과 (725.08ms, 274MB)
+ * 테스트 2 〉	통과 (720.54ms, 279MB)
+ * 테스트 3 〉	통과 (707.06ms, 279MB)
+ * 테스트 4 〉	통과 (1013.29ms, 273MB)
  * ```
  */
 fun main() {
@@ -322,4 +578,15 @@ fun main() {
       "java and backend and junior and pizza 101"
     )
   ), intArrayOf(0))
+
+  validate(s.solution(
+    arrayOf(
+      "java backend junior pizza 100",
+      "java backend junior pizza 100",
+      "java backend junior pizza 100"
+    ),
+    arrayOf(
+      "java and backend and junior and pizza 100"
+    )
+  ), intArrayOf(3))
 }
