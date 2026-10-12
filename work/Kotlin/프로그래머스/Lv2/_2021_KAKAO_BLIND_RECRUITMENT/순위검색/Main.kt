@@ -1,18 +1,14 @@
 package 프로그래머스.Lv2._2021_KAKAO_BLIND_RECRUITMENT.순위검색
 
 import util.validate
+import java.util.HashMap
 
 class Solution {
   companion object {
 
-    const val SEP = 1_000
-
     const val ZERO = 48
+    const val NA = -1
     val NUM = ZERO..ZERO + 9
-
-    const val SPACE = ' '
-    const val EMPTY = '-'.code
-    const val AND = 'a'.code
 
     const val LANG = 0
     const val PSTN = 1
@@ -34,106 +30,174 @@ class Solution {
   }
 
   fun solution(info: Array<String>, query: Array<String>): IntArray {
-    val N = info.size
     val M = query.size
-    val cnds = IntArray(N)
-    val answer = IntArray(M)
+    val ans = IntArray(M)
+    val infoByCond = HashMap<Int, MutableList<Int>>()
 
+    // Preprocessing
+    for (l in intArrayOf(NA, CCP, JAVA, PTHN)) {
+      for (p in intArrayOf(NA, BE, FE)) {
+        for (c in intArrayOf(NA, JNR, SNR)) {
+          for (f in intArrayOf(NA, CHKN, PZZA)) {
+            infoByCond[
+              (if (l == NA) 0 else 1 shl l) or
+                (if (p == NA) 0 else 1 shl p) or
+                (if (c == NA) 0 else 1 shl c) or
+                (if (f == NA) 0 else 1 shl f)
+            ] = mutableListOf()
+          }
+        }
+      }
+    }
+
+    // Parse
     for (i in info.indices) {
       val str = info[i]
       var score = 0
-      var flag = 0
-      var kind = LANG
+      var cond = 0
+      var type = LANG
 
-      var pos = 0
-      while (pos < str.length) {
-        val c = str[pos++]
+      var j = 0
+      while (j < str.length) {
+        val c = str[j]
         when (c.code) {
           in NUM -> {
             score = c.code - ZERO
-            for (k in pos until str.length)
+            for (k in j + 1 until str.length)
               score = score * 10 + str[k].code - ZERO
             break
           }
-          else -> flag = flag or (1 shl getBinaryPos(c, kind++))
-        }
-
-        while (str[pos++] != SPACE) {
+          else -> getBinPosAndJump(type++, c, false).also {
+            val (pos, jump) = it
+            cond = cond or (1 shl pos)
+            j += jump
+          }
         }
       }
-      cnds[i] = score * SEP + flag
+
+      for (e in infoByCond) {
+        val flag = e.key
+        if (flag and cond == flag) e.value.add(score)
+      }
     }
 
-    qs(cnds, 0, N - 1)
+    // Sort
+    for (e in infoByCond) {
+      val arr = e.value
+      qs(arr, 0, arr.size - 1)
+    }
 
-
+    // Start
     for (i in query.indices) {
       val str = query[i]
 
-      var condition = 0
+      var cond = 0
       var minScore = 0
-      var pos = 0
-      var kind = LANG
-      while (pos < str.length) {
-        val c = str[pos++]
+      var j = 0
+      var type = LANG
+      while (j < str.length) {
+        val c = str[j]
         when (c.code) {
           in NUM -> {
             minScore = c.code - ZERO
-            for (k in pos until str.length)
+            for (k in j + 1 until str.length)
               minScore = minScore * 10 + str[k].code - ZERO
             break
           }
-          EMPTY -> kind++
-          AND -> {}
-          else -> condition = condition or (1 shl getBinaryPos(c, kind++))
-        }
-
-        while (str[pos++] != SPACE) {
+          '-'.code -> j += if (type++ < FOOD) 6 else 2
+          else -> getBinPosAndJump(type++, c, true).also {
+            val (pos, jump) = it
+            cond = cond or (1 shl pos)
+            j += jump
+          }
         }
       }
 
-      var selected = 0
-      for (j in N - 1 downTo 0) {
-        val cnd = cnds[j]
-        if (cnd / SEP < minScore) break
-        if (cnd % SEP and condition == condition) selected++
-      }
-
-      answer[i] = selected
+      ans[i] = binSearch(infoByCond[cond]!!, minScore)
     }
 
-    return answer
+    return ans
   }
 
-  private fun getBinaryPos(c: Char, kind: Int): Int =
-    when (kind) {
+  private fun binSearch(arr: MutableList<Int>, score: Int): Int {
+    val all = arr.size
+    var l = 0
+    var r = all - 1
+    while (l <= r) {
+      val m = (l + r) shr 1
+      val mv = arr[m]
+      when {
+        mv < score -> l = m + 1
+        mv > score -> r = m - 1
+        else -> return all - m
+      }
+    }
+
+    return all - l - if (l < all && arr[l] < score) 1 else 0
+  }
+
+  private fun getBinPosAndJump(type: Int, c: Char, isQuery: Boolean): Pair<Int, Int> {
+    var jump = 0
+    val pos = when (type) {
       LANG -> when (c) {
-        'c' -> CCP
-        'j' -> JAVA
-        'p' -> PTHN
+        'c' -> {
+          jump += 4
+          CCP
+        }
+        'j' -> {
+          jump += 5
+          JAVA
+        }
+        'p' -> {
+          jump += 7
+          PTHN
+        }
         else -> throw Exception()
       }
       PSTN -> when (c) {
-        'b' -> BE
-        'f' -> FE
+        'b' -> {
+          jump += 8
+          BE
+        }
+        'f' -> {
+          jump += 9
+          FE
+        }
         else -> throw Exception()
       }
       CRRE -> when (c) {
-        'j' -> JNR
-        's' -> SNR
+        'j' -> {
+          jump += 7
+          JNR
+        }
+        's' -> {
+          jump += 7
+          SNR
+        }
         else -> throw Exception()
       }
       FOOD -> when (c) {
-        'c' -> CHKN
-        'p' -> PZZA
+        'c' -> {
+          jump += 8
+          CHKN
+        }
+        'p' -> {
+          jump += 6
+          PZZA
+        }
         else -> throw Exception()
       }
       else -> throw Exception()
     }
+    return Pair(
+      pos,
+      jump + if (isQuery && type < FOOD) 4 else 0
+    )
+  }
 
 
   fun swap(
-    a: IntArray,
+    a: MutableList<Int>,
     i: Int,
     j: Int,
   ) {
@@ -143,7 +207,7 @@ class Solution {
   }
 
   fun qs(
-    a: IntArray,
+    a: MutableList<Int>,
     l: Int,
     r: Int,
   ) {
@@ -195,6 +259,32 @@ class Solution {
  * 테스트 3 〉	실패 (시간 초과)
  * 테스트 4 〉	실패 (시간 초과)
  *
+ * v2:
+ * 정확성  테스트
+ * 테스트 1 〉	통과 (0.85ms, 60.1MB)
+ * 테스트 2 〉	통과 (0.96ms, 60.2MB)
+ * 테스트 3 〉	통과 (1.28ms, 59.2MB)
+ * 테스트 4 〉	통과 (1.85ms, 61.6MB)
+ * 테스트 5 〉	실패 (3.38ms, 62.2MB)
+ * 테스트 6 〉	실패 (7.58ms, 63.2MB)
+ * 테스트 7 〉	실패 (3.30ms, 62.9MB)
+ * 테스트 8 〉	실패 (26.26ms, 69.3MB)
+ * 테스트 9 〉	실패 (37.56ms, 78.9MB)
+ * 테스트 10 〉	실패 (37.54ms, 81.9MB)
+ * 테스트 11 〉	통과 (3.13ms, 62.3MB)
+ * 테스트 12 〉	통과 (7.50ms, 66.5MB)
+ * 테스트 13 〉	통과 (3.60ms, 61.3MB)
+ * 테스트 14 〉	통과 (30.57ms, 73MB)
+ * 테스트 15 〉	통과 (21.90ms, 74.3MB)
+ * 테스트 16 〉	실패 (3.19ms, 61MB)
+ * 테스트 17 〉	통과 (7.85ms, 66.3MB)
+ * 테스트 18 〉	실패 (21.37ms, 75.2MB)
+ * 효율성  테스트
+ * 테스트 1 〉	실패 (380.20ms, 252MB)
+ * 테스트 2 〉	실패 (392.49ms, 254MB)
+ * 테스트 3 〉	실패 (362.90ms, 242MB)
+ * 테스트 4 〉	실패 (393.08ms, 252MB)
+ *
  * [RIVAL 1]
  *
  * [RIVAL 2]
@@ -218,11 +308,18 @@ fun main() {
       "cpp and - and senior and pizza 250",
       "- and backend and senior and - 150",
       "- and - and - and chicken 100",
-      "- and - and - and - 150"
+      "- and - and - and - 150",
+      "- and - and - and - 160"
     )
   ),
-    intArrayOf(1, 1, 1, 1, 2, 4))
-}
+    intArrayOf(1, 1, 1, 1, 2, 4, 2))
 
-////    for (x in user) println("$x = ${x / SEP} && ${(x % SEP).toString(2)}")
-//        println("[$j] ${cnd / SEP}, ${(cnd % SEP).toString(2)} -> $selected")
+  validate(s.solution(
+    arrayOf(
+      "java backend junior pizza 100"
+    ),
+    arrayOf(
+      "java and backend and junior and pizza 101"
+    )
+  ), intArrayOf(0))
+}
