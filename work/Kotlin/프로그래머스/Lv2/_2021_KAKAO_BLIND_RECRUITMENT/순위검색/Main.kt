@@ -54,10 +54,13 @@ class Solution {
     for (i in info.indices) {
       val str = info[i]
       var score = 0
-      var cond = 0
       var type = LANG
 
       var j = 0
+      var t1 = 0
+      var t2 = 0
+      var t3 = 0
+      var t4 = 0
       while (j < str.length) {
         val c = str[j]
         when (c.code) {
@@ -67,18 +70,40 @@ class Solution {
               score = score * 10 + str[k].code - ZERO
             break
           }
-          else -> getBinPosAndJump(type++, c, false).also {
-            val (pos, jump) = it
-            cond = cond or (1 shl pos)
+          else -> {
+            val (pos, jump) = getBinPosAndJump(type, c, false)
+            when (type++) {
+              LANG -> t1 = 1 shl pos
+              PSTN -> t2 = 1 shl pos
+              CRRE -> t3 = 1 shl pos
+              FOOD -> t4 = 1 shl pos
+            }
             j += jump
           }
         }
       }
 
-      for (e in infoByCond) {
-        val flag = e.key
-        if (flag and cond == flag) e.value.add(score)
-      }
+      infoByCond[0]!!.add(score)
+
+      infoByCond[t1]!!.add(score)
+      infoByCond[t2]!!.add(score)
+      infoByCond[t3]!!.add(score)
+      infoByCond[t4]!!.add(score)
+
+      infoByCond[t1 or t2]!!.add(score)
+      infoByCond[t1 or t3]!!.add(score)
+      infoByCond[t1 or t4]!!.add(score)
+      infoByCond[t2 or t3]!!.add(score)
+      infoByCond[t2 or t4]!!.add(score)
+      infoByCond[t3 or t4]!!.add(score)
+
+      infoByCond[t1 or t2 or t3]!!.add(score)
+      infoByCond[t1 or t2 or t4]!!.add(score)
+      infoByCond[t1 or t3 or t4]!!.add(score)
+      infoByCond[t2 or t3 or t4]!!.add(score)
+
+      infoByCond[t1 or t2 or t3 or t4]!!.add(score)
+
     }
 
     // Sort
@@ -87,7 +112,7 @@ class Solution {
       qs(arr, 0, arr.size - 1)
     }
 
-    // Start
+    // Query
     for (i in query.indices) {
       val str = query[i]
 
@@ -333,6 +358,31 @@ class Solution {
  * 테스트 2 〉	통과 (384.70ms, 252MB)
  * 테스트 3 〉	통과 (361.65ms, 251MB)
  * 테스트 4 〉	통과 (378.95ms, 251MB)
+ *
+ * v5: 개선 (Proprocessing 에서 user 에 해당되는 항목만)
+ * 테스트 1 〉	통과 (0.74ms, 60.6MB)
+ * 테스트 2 〉	통과 (0.76ms, 60MB)
+ * 테스트 3 〉	통과 (1.27ms, 59.5MB)
+ * 테스트 4 〉	통과 (1.63ms, 61.9MB)
+ * 테스트 5 〉	통과 (3.99ms, 61.4MB)
+ * 테스트 6 〉	통과 (4.73ms, 64.6MB)
+ * 테스트 7 〉	통과 (2.72ms, 61.3MB)
+ * 테스트 8 〉	통과 (18.73ms, 69.9MB)
+ * 테스트 9 〉	통과 (39.69ms, 77.5MB)
+ * 테스트 10 〉	통과 (30.10ms, 80.2MB)
+ * 테스트 11 〉	통과 (2.95ms, 61.7MB)
+ * 테스트 12 〉	통과 (5.44ms, 65.7MB)
+ * 테스트 13 〉	통과 (3.24ms, 63.5MB)
+ * 테스트 14 〉	통과 (15.62ms, 72.5MB)
+ * 테스트 15 〉	통과 (16.59ms, 75.1MB)
+ * 테스트 16 〉	통과 (3.00ms, 60.8MB)
+ * 테스트 17 〉	통과 (4.88ms, 66.3MB)
+ * 테스트 18 〉	통과 (15.86ms, 74MB)
+ * 효율성  테스트
+ * 테스트 1 〉	통과 (506.08ms, 281MB)
+ * 테스트 2 〉	통과 (466.34ms, 272MB)
+ * 테스트 3 〉	통과 (436.23ms, 269MB)
+ * 테스트 4 〉	통과 (436.02ms, 265MB)
  *
  *
  * [RIVAL 1]
@@ -590,3 +640,9 @@ fun main() {
     )
   ), intArrayOf(3))
 }
+
+//println("" +
+//"t1 = ${t1.toString(2)}, " +
+//"t2 = ${t2.toString(2)}, " +
+//"t3 = ${t3.toString(2)}, " +
+//"t4 = ${t4.toString(2)}")
