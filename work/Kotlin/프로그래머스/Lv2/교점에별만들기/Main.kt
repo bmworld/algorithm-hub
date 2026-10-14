@@ -10,8 +10,7 @@ class Solution {
 
   fun solution(line: Array<IntArray>): Array<String> {
     val N = line.size
-    val MAX_SIZE = N * (N - 1) / PAIR
-    val points = LongArray(MAX_SIZE * PAIR)
+    val points = LongArray(N * (N - 1))
 
     var minX = Long.MAX_VALUE
     var maxX = Long.MIN_VALUE
@@ -39,10 +38,11 @@ class Solution {
 
         val x = xNmrtr / xDnmntr
 
-        val yNmrtr = a1 * x + c1
-        if (b1 != 0L && yNmrtr % b1 != 0L) continue
+        val yNmrtr = if (b1 != 0L) a1 * x + c1 else a2 * x + c2
+        val yDnmntr = if (b1 != 0L) b1 else b2
+        if (yNmrtr % yDnmntr != 0L) continue
 
-        val y = -(yNmrtr / b1)
+        val y = -(yNmrtr / yDnmntr)
 
         points[pairs] = x.also {
           if (it < minX) minX = it
@@ -74,6 +74,7 @@ class Solution {
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (0.27ms, 60MB)
  * 테스트 2 〉	통과 (3.79ms, 62.3MB)
  * 테스트 3 〉	실패 (런타임 에러)
@@ -103,10 +104,164 @@ class Solution {
  * 테스트 27 〉	실패 (런타임 에러)
  * 테스트 28 〉	실패 (런타임 에러)
  * 테스트 29 〉	통과 (0.17ms, 58.9MB)
+ * v2: AC
+ * 테스트 1 〉	통과 (0.30ms, 57.3MB)
+ * 테스트 2 〉	통과 (3.97ms, 60.8MB)
+ * 테스트 3 〉	통과 (0.18ms, 59.7MB)
+ * 테스트 4 〉	통과 (5.40ms, 65.4MB)
+ * 테스트 5 〉	통과 (2.75ms, 62.4MB)
+ * 테스트 6 〉	통과 (1.47ms, 59.7MB)
+ * 테스트 7 〉	통과 (3.89ms, 61.1MB)
+ * 테스트 8 〉	통과 (0.25ms, 58.5MB)
+ * 테스트 9 〉	통과 (9.19ms, 64.9MB)
+ * 테스트 10 〉	통과 (11.37ms, 63.8MB)
  *
  * [RIVAL 1]
+ * class Solution {
+ *     fun solution(line: Array<IntArray>): Array<String> {
+ *         val crossList = mutableListOf<DoubleArray>()
+ *
+ *         line.forEachIndexed { index, ints ->
+ *             val a = ints[0].toDouble()
+ *             val b = ints[1].toDouble()
+ *             val c = ints[2].toDouble()
+ *
+ *             if (index < line.size - 1) {
+ *                 for (i in (index + 1) until line.size) {
+ *                     val check = check(
+ *                         a,
+ *                         b,
+ *                         c,
+ *                         line[i][0].toDouble(),
+ *                         line[i][1].toDouble(),
+ *                         line[i][2].toDouble()
+ *                     )
+ *                     if (check != null) {
+ *                         crossList.add(check)
+ *                     }
+ *                 }
+ *             }
+ *         }
+ *
+ *         val xList = crossList.map { it[0] }
+ *         val yList = crossList.map { it[1] }
+ *         val xMax = xList.max()!!
+ *         val xMin = xList.min()!!
+ *         val yMax = yList.max()!!
+ *         val yMin = yList.min()!!
+ *         val xDiff = xMax - xMin
+ *         val yDiff = yMax - yMin
+ *         var stringX = ""
+ *
+ *         var answer = mutableListOf<String>()
+ *
+ *         for (i in 0 until (xDiff + 1.0).toInt()) {
+ *             stringX += "."
+ *         }
+ *
+ *         for (j in 0 until (yDiff + 1).toInt())
+ *             answer.add(stringX)
+ *
+ *         crossList.forEach {
+ *             val charArray = answer[(it[1] - yMin).toInt()].toCharArray()
+ *             charArray[(it[0] - xMin).toInt()] = '*'
+ *             answer[(it[1] - yMin).toInt()] = String(charArray)
+ *         }
+ *
+ *         return answer.toTypedArray().reversedArray()
+ *     }
+ *
+ *     fun check(a: Double, b: Double, e: Double, c: Double, d: Double, f: Double) : DoubleArray? {
+ *         return if ((a*d - b*c) == 0.0) {
+ *             null
+ *         } else {
+ *             val x = (b*f - e*d) / (a*d - b*c)
+ *             val y = (e*c - a*f) / (a*d - b*c)
+ *
+ *             if (x % 1 == 0.0 && y % 1 == 0.0) {
+ *                 doubleArrayOf(x, y)
+ *             } else {
+ *                 null
+ *             }
+ *         }
+ *     }
+ * }
+ * 테스트 1 〉	통과 (17.62ms, 64.7MB)
+ * 테스트 2 〉	통과 (15.01ms, 64.9MB)
+ * 테스트 3 〉	통과 (16.18ms, 63.8MB)
+ * 테스트 4 〉	통과 (15.30ms, 65.8MB)
+ * 테스트 5 〉	통과 (15.14ms, 65MB)
+ * 테스트 6 〉	통과 (14.25ms, 64.9MB)
+ * 테스트 7 〉	통과 (15.08ms, 65.4MB)
+ * 테스트 8 〉	통과 (13.79ms, 64.2MB)
+ * 테스트 9 〉	통과 (20.20ms, 65.5MB)
+ * 테스트 10 〉	통과 (25.51ms, 64MB)
  *
  * [RIVAL 2]
+ * class Solution {
+ *     lateinit var line: Array<IntArray>
+ *
+ *     fun findDotOrNull(i: Int, j: Int): List<Double>? {
+ *         val xI = line[i][0]
+ *         val yI = line[i][1]
+ *         val cI = line[i][2]
+ *         val xJ = line[j][0]
+ *         val yJ = line[j][1]
+ *         val cJ = line[j][2]
+ *
+ *         val bottom = xI * yJ.toDouble() - xJ * yI.toDouble()
+ *         if(bottom == 0.0) return null
+ *
+ *         val topX = cJ * yI.toDouble() - cI * yJ.toDouble()
+ *         val resultX = topX / bottom
+ *         if(resultX != Math.floor(resultX)) return null
+ *
+ *         val topY = xI * cJ.toDouble() - xJ * cI.toDouble()
+ *         val resultY = topY / bottom
+ *         if(resultY != Math.floor(resultY)) return null
+ *
+ *         return listOf(resultX, resultY)
+ *     }
+ *
+ *     fun solution(line: Array<IntArray>): Array<String> {
+ *         val set = HashSet<List<Double>>()
+ *         this.line = line
+ *         for(i in 0 until line.size) {
+ *             for(j in i + 1 until line.size) {
+ *                 findDotOrNull(i, j)?.let { set.add(it) }
+ *             }
+ *         }
+ *
+ *         val minX = set.minBy { it[0] }!![0]
+ *         val maxX = set.maxBy { it[0] }!![0]
+ *         val minY = set.minBy { it[1] }!![1]
+ *         val maxY = set.maxBy { it[1] }!![1]
+ *
+ *         val answer = Array((maxY - minY + 1).toInt()) {
+ *             StringBuilder().apply {
+ *                 for(i in 0 until (maxX - minX + 1).toInt()) append('.')
+ *             }
+ *         }
+ *
+ *         set.forEach {
+ *             val i = (it[1] - minY).toInt()
+ *             val j = (it[0] - minX).toInt()
+ *             answer[i][j] = '*'
+ *         }
+ *
+ *         return answer.map { it.toString() }.toTypedArray()
+ *     }
+ * }
+ * 테스트 1 〉	통과 (12.40ms, 63.9MB)
+ * 테스트 2 〉	통과 (15.29ms, 67.1MB)
+ * 테스트 3 〉	통과 (9.21ms, 62.7MB)
+ * 테스트 4 〉	통과 (16.89ms, 69MB)
+ * 테스트 5 〉	통과 (15.35ms, 64.5MB)
+ * 테스트 6 〉	통과 (11.31ms, 63.9MB)
+ * 테스트 7 〉	통과 (14.67ms, 66.4MB)
+ * 테스트 8 〉	통과 (9.83ms, 63.1MB)
+ * 테스트 9 〉	통과 (24.57ms, 65.6MB)
+ * 테스트 10 〉	통과 (19.62ms, 65.4MB)
  * ```
  */
 fun main() {
@@ -167,8 +322,4 @@ fun main() {
 
 // 가장 바깥쪽(경계) 좌표(LONG) -200000<=x<=200000, -19_999_900_000 <=y<= 19999900000
 // 100000x + y + 100000
-// 99999x + y - 100000
-
-// println(
-//          "[$i <-> $j] x=$x ($xNmrtr / $xDnmntr),  y=$y ($yNmrtr / $b1)")
-//println("intersections = ${points.contentToString()}, rangeX = $minX ~ $maxX, rangeY = $minY ~ $maxY")
+// 99999x + y - 100000\
