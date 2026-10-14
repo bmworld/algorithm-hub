@@ -31,18 +31,16 @@ class Solution {
         val b2 = l2[1].toLong()
         val c2 = l2[2].toLong()
 
-        val xDnmntr = a1 * b2 - a2 * b1
-        if (xDnmntr == 0L) continue
-        val xNmrtr = b1 * c2 - b2 * c1
-        if (xNmrtr % xDnmntr != 0L) continue
+        val d = a1 * b2 - a2 * b1
+        if (d == 0L) continue
 
-        val x = xNmrtr / xDnmntr
+        val xn = b1 * c2 - b2 * c1
+        if (xn % d != 0L) continue
+        val x = xn / d
 
-        val yNmrtr = if (b1 != 0L) a1 * x + c1 else a2 * x + c2
-        val yDnmntr = if (b1 != 0L) b1 else b2
-        if (yNmrtr % yDnmntr != 0L) continue
-
-        val y = -(yNmrtr / yDnmntr)
+        val yn = a1 * c2 - a2 * c1
+        if (yn % d != 0L) continue
+        val y = -(yn / d)
 
         points[pairs] = x.also {
           if (it < minX) minX = it
@@ -104,6 +102,7 @@ class Solution {
  * 테스트 27 〉	실패 (런타임 에러)
  * 테스트 28 〉	실패 (런타임 에러)
  * 테스트 29 〉	통과 (0.17ms, 58.9MB)
+ *
  * v2: AC
  * 테스트 1 〉	통과 (0.30ms, 57.3MB)
  * 테스트 2 〉	통과 (3.97ms, 60.8MB)
@@ -115,6 +114,28 @@ class Solution {
  * 테스트 8 〉	통과 (0.25ms, 58.5MB)
  * 테스트 9 〉	통과 (9.19ms, 64.9MB)
  * 테스트 10 〉	통과 (11.37ms, 63.8MB)
+ * 테스트 11 〉	통과 (10.36ms, 65.9MB)
+ * 테스트 12 〉	통과 (9.68ms, 67.8MB)
+ * 테스트 13 〉	통과 (14.20ms, 69.5MB)
+ * 테스트 14 〉	통과 (11.73ms, 65MB)
+ * 테스트 15 〉	통과 (8.93ms, 68MB)
+ *
+ * v3: 수식 간결화
+ * 테스트 1 〉	통과 (0.27ms, 60.4MB)
+ * 테스트 2 〉	통과 (4.23ms, 62.6MB)
+ * 테스트 3 〉	통과 (0.28ms, 57.9MB)
+ * 테스트 4 〉	통과 (5.46ms, 65MB)
+ * 테스트 5 〉	통과 (2.77ms, 61.9MB)
+ * 테스트 6 〉	통과 (1.28ms, 61MB)
+ * 테스트 7 〉	통과 (3.19ms, 61.4MB)
+ * 테스트 8 〉	통과 (0.18ms, 59.3MB)
+ * 테스트 9 〉	통과 (8.43ms, 65.4MB)
+ * 테스트 10 〉	통과 (8.34ms, 66.9MB)
+ * 테스트 11 〉	통과 (8.56ms, 66MB)
+ * 테스트 12 〉	통과 (9.53ms, 68MB)
+ * 테스트 13 〉	통과 (11.33ms, 68.2MB)
+ * 테스트 14 〉	통과 (10.94ms, 67.5MB)
+ * 테스트 15 〉	통과 (8.39ms, 67.6MB)
  *
  * [RIVAL 1]
  * class Solution {
