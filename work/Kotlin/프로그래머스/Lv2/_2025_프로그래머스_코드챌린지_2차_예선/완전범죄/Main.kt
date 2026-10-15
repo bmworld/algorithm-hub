@@ -5,79 +5,40 @@ import util.validate
 class Solution {
   private companion object {
 
-    const val ARRESTED = -1
-
-    const val SEP = 10
     const val MIN_E = 1
     const val MAX_E = 3
-    const val MAX_DIFF = MAX_E - MIN_E
+    const val ALL_ITEMS = MAX_E * MAX_E
   }
 
   fun solution(evdnc: Array<IntArray>, n: Int, m: Int): Int {
-    val N = evdnc.size
-    val arr = IntArray(N)
+    var aSum = 0
+    val cnts = IntArray(ALL_ITEMS)
+    val cap = MAX_E
+    fun pos(a: Int, b: Int) = (MAX_E - a) * cap + (b - 1)
 
     for (i in evdnc.indices) {
       val e = evdnc[i]
       val a = e[0]
       val b = e[1]
-      val diff = a - b + MAX_DIFF
-      arr[i] = diff * SEP + a
+      cnts[pos(a, b)]++
+      aSum += a
     }
 
-    qs(arr, 0, N - 1)
-
-    var aSum = 0
     var bSum = 0
-    for (i in 0 until N) {
-      val e = arr[i]
-      val diff = e / SEP - MAX_DIFF
-      val a = e % SEP
-      val b = a - diff
-
-
-      when {
-        bSum + b < m -> bSum += b
-        aSum + a < n -> aSum += a
-        else -> return ARRESTED
+    l@ for (a in MAX_E downTo MIN_E) {
+      for (b in MIN_E..MAX_E) {
+        var cnt = cnts[pos(a, b)]
+        while (cnt-- > 0 && bSum + b < m) {
+          aSum -= a
+          if (aSum <= 0) break@l
+          bSum += b
+        }
       }
     }
 
-    return aSum
-  }
+    aSum = maxOf(aSum, 0)
 
-  fun swap(
-    a: IntArray,
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun qs(
-    a: IntArray,
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1]
-
-    while (pos <= pr) {
-      val x = a[pos]
-      when {
-        x > piv -> swap(a, pos++, pl++)
-        x < piv -> swap(a, pos, pr--)
-        else -> pos++
-      }
-    }
-    qs(a, l, pl - 1)
-    qs(a, pr + 1, r)
+    return if (aSum < n) aSum else -1
   }
 }
 
@@ -94,6 +55,47 @@ class Solution {
  * 테스트 8 〉	통과 (0.03ms, 60.7MB)
  * 테스트 9 〉	통과 (0.02ms, 59.5MB)
  * 테스트 10 〉	통과 (0.02ms, 60.8MB)
+ *
+ * v2: WA1
+ * 테스트 1 〉	통과 (0.02ms, 58.2MB)
+ * 테스트 2 〉	통과 (0.03ms, 60.7MB)
+ * 테스트 3 〉	통과 (0.03ms, 59.5MB)
+ * 테스트 4 〉	통과 (0.03ms, 58.6MB)
+ * 테스트 5 〉	통과 (0.03ms, 60.5MB)
+ * 테스트 6 〉	통과 (0.04ms, 60.4MB)
+ * 테스트 7 〉	통과 (0.03ms, 60.2MB)
+ * 테스트 8 〉	통과 (0.03ms, 60.3MB)
+ * 테스트 9 〉	통과 (0.02ms, 61MB)
+ * 테스트 10 〉	통과 (0.02ms, 60.1MB)
+ * 테스트 11 〉	통과 (0.02ms, 58MB)
+ * 테스트 12 〉	통과 (0.02ms, 57.5MB)
+ * 테스트 13 〉	통과 (0.03ms, 60.3MB)
+ * 테스트 14 〉	통과 (0.02ms, 59.6MB)
+ * 테스트 15 〉	통과 (0.04ms, 59.7MB)
+ * 테스트 16 〉	통과 (0.02ms, 60MB)
+ * 테스트 17 〉	통과 (0.03ms, 59.3MB)
+ * 테스트 18 〉	통과 (0.02ms, 57.3MB)
+ * 테스트 19 〉	통과 (0.03ms, 60.6MB)
+ * 테스트 20 〉	통과 (0.03ms, 60.1MB)
+ * 테스트 21 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 22 〉	통과 (0.03ms, 60.8MB)
+ * 테스트 23 〉	통과 (0.04ms, 58.8MB)
+ * 테스트 24 〉	통과 (0.03ms, 59.6MB)
+ * 테스트 25 〉	통과 (0.03ms, 60.4MB)
+ * 테스트 26 〉	실패 (0.02ms, 61MB)
+ * 테스트 27 〉	통과 (0.03ms, 59.4MB)
+ * 테스트 28 〉	통과 (0.03ms, 58.5MB)
+ * 테스트 29 〉	통과 (0.03ms, 58MB)
+ * 테스트 30 〉	통과 (0.02ms, 60.9MB)
+ * 테스트 31 〉	통과 (0.03ms, 61MB)
+ * 테스트 32 〉	통과 (0.03ms, 57.8MB)
+ * 테스트 33 〉	통과 (0.03ms, 61.9MB)
+ * 테스트 34 〉	실패 (0.03ms, 59.7MB)
+ * 테스트 35 〉	통과 (0.03ms, 60.2MB)
+ * 테스트 36 〉	통과 (0.03ms, 59.7MB)
+ * 테스트 37 〉	통과 (0.02ms, 60.8MB)
+ * 테스트 38 〉	통과 (0.02ms, 60MB)
+ * 테스트 39 〉	통과 (0.02ms, 60.1MB)
  *
  * [RIVAL 1]
  * class Solution {
@@ -239,4 +241,28 @@ fun main() {
       1
     ), -1
   )
+
+//
+  validate(
+    s.solution(
+      arrayOf(
+        intArrayOf(3, 1),
+        intArrayOf(2, 2)
+      ),
+      5,
+      3
+    ),
+    2
+  )
+
+  // 반례: A 한도 때문에 실패
+  // ME: -1 / AC: 1
+  validate(s.solution(
+    arrayOf(
+      intArrayOf(1, 1),
+      intArrayOf(2, 3)
+    ),
+    2,
+    4
+  ), 1)
 }
