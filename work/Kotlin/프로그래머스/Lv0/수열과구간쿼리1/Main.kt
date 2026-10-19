@@ -6,21 +6,19 @@ class Solution {
 
   fun solution(arr: IntArray, qs: Array<IntArray>): IntArray {
     val N = arr.size
-    val stt = IntArray(N)
-    val end = IntArray(N)
+    val diff = IntArray(N + 1)
 
     var min = N - 1
     var max = 0
     for (q in qs) {
-      stt[q[0].also { if (it < min) min = it }]++
-      end[q[1].also { if (it > max) max = it }]++
+      diff[q[0].also { if (it < min) min = it }]++
+      diff[q[1].also { if (it > max) max = it } + 1]--
     }
 
     var cnt = 0
     for (i in min..max) {
-      cnt += stt[i]
+      cnt += diff[i]
       arr[i] += cnt
-      cnt -= end[i]
     }
 
     return arr
@@ -38,9 +36,16 @@ class Solution {
  * 테스트 6 〉	통과 (0.02ms, 60MB)
  * 테스트 7 〉	통과 (0.08ms, 61.1MB)
  * 테스트 8 〉	통과 (0.10ms, 61MB)
- * 테스트 9 〉	통과 (0.05ms, 58.4MB)
- * 테스트 10 〉	통과 (0.08ms, 61.1MB)
- * 테스트 11 〉	통과 (0.08ms, 59.6MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.13ms, 60.3MB)
+ * 테스트 2 〉	통과 (0.07ms, 61.6MB)
+ * 테스트 3 〉	통과 (0.06ms, 59.7MB)
+ * 테스트 4 〉	통과 (0.03ms, 60.6MB)
+ * 테스트 5 〉	통과 (0.02ms, 60.5MB)
+ * 테스트 6 〉	통과 (0.02ms, 60.4MB)
+ * 테스트 7 〉	통과 (0.12ms, 59MB)
+ * 테스트 8 〉	통과 (0.10ms, 60.9MB)
  *
  * [RIVAL 1]
  * class Solution {
