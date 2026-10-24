@@ -24,8 +24,7 @@ class Solution {
       var x = 0
       for (i in s until s + l) {
         val d = str[i].code - ZERO
-        val kd = kArr[kLen - (i - s + 1)]
-        if (d < kd) continue@l
+        if (i == s && d < kArr[kLen - 1]) continue@l
         x = x * 10 + d
       }
       if (x > k) buf[cnt++] = x
@@ -37,6 +36,17 @@ class Solution {
 /**
  * ```
  * [ME]
+ * 테스트 1 〉	통과 (1.12ms, 72.2MB)
+ * 테스트 2 〉	통과 (0.98ms, 70.8MB)
+ * 테스트 3 〉	통과 (0.21ms, 60.3MB)
+ * 테스트 4 〉	통과 (0.16ms, 60.8MB)
+ * 테스트 5 〉	통과 (0.62ms, 64.3MB)
+ * 테스트 6 〉	통과 (0.69ms, 65.9MB)
+ * 테스트 7 〉	통과 (0.68ms, 63.8MB)
+ * 테스트 8 〉	통과 (1.07ms, 68.3MB)
+ * 테스트 9 〉	통과 (0.71ms, 66.3MB)
+ * 테스트 10 〉	통과 (0.93ms, 70.2MB)
+ * 테스트 11 〉	통과 (0.67ms, 66.6MB)
  *
  * [RIVAL 1]
  *
