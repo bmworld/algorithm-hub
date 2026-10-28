@@ -11,7 +11,8 @@ class Solution {
     val last = n - 1
     val k = hintBundle[0].size - 1
 
-    fun dfs(stage: Int, acc: Int, hints: IntArray) {
+    val hints = IntArray(n)
+    fun dfs(stage: Int, acc: Int) {
       if (acc >= ans) return
       val cur = cost[stage][minOf(hints[stage], last)]
 
@@ -21,14 +22,15 @@ class Solution {
       }
 
       val nxt = acc + cur
-      dfs(stage + 1, nxt, hints.copyOf())
+      dfs(stage + 1, nxt)
 
       val bundle = hintBundle[stage]
       for (j in 1..k) hints[bundle[j] - 1]++
-      dfs(stage + 1, nxt + bundle[0], hints.copyOf())
+      dfs(stage + 1, nxt + bundle[0])
+      for (j in 1..k) hints[bundle[j] - 1]--
     }
 
-    dfs(0, 0, IntArray(n))
+    dfs(0, 0)
 
     return ans
   }
@@ -48,7 +50,7 @@ class Solution {
  * 테스트 9 〉	통과 (4.66ms, 69.2MB)
  * 테스트 10 〉	통과 (8.81ms, 69MB)
  *
- * v2:
+ * v2: Pruning 추가
  * 테스트 1 〉	통과 (0.22ms, 59.3MB)
  * 테스트 2 〉	통과 (0.28ms, 59.2MB)
  * 테스트 3 〉	통과 (0.47ms, 60.9MB)
@@ -59,6 +61,19 @@ class Solution {
  * 테스트 8 〉	통과 (0.56ms, 60MB)
  * 테스트 9 〉	통과 (1.67ms, 65.3MB)
  * 테스트 10 〉	통과 (1.33ms, 63.9MB)
+ *
+ * v3: 최적화 (배열복사 제거)
+ * 테스트 1 〉	통과 (0.24ms, 59.9MB)
+ * 테스트 2 〉	통과 (0.18ms, 60.2MB)
+ * 테스트 3 〉	통과 (0.33ms, 59.4MB)
+ * 테스트 4 〉	통과 (0.66ms, 60.4MB)
+ * 테스트 5 〉	통과 (1.37ms, 59.5MB)
+ * 테스트 6 〉	통과 (0.18ms, 58.6MB)
+ * 테스트 7 〉	통과 (0.56ms, 59.7MB)
+ * 테스트 8 〉	통과 (0.55ms, 60.2MB)
+ * 테스트 9 〉	통과 (1.11ms, 63.2MB)
+ * 테스트 10 〉	통과 (1.04ms, 63.3MB)
+ *
  *
  * [RIVAL 1]
  * class Solution {
