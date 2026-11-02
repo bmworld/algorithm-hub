@@ -8,29 +8,27 @@ class Solution {
     if (!words.contains(target)) return 0
 
     val N = words.size
+    val len = begin.length
     val used = BooleanArray(N)
-    val dep = HashMap<String, Int>(N + 1)
-    val q = Array(N + 1) { begin }
+    val q = Array(N + 1) { Pair(begin, 0) }
     var qh = 0
-    var qt = 0
-    q[qt++] = begin
-    dep[begin] = 0
+    var qt = 1
 
     while (qh < qt) {
-      val a = q[qh++]
-      val d = dep[a]!!
+      val e = q[qh++]
+      val a = e.first
+
       l@ for (i in words.indices) {
         if (used[i]) continue
         val b = words[i]
         var diff = 0
-        for (j in a.indices) if (a[j] != b[j]) if (++diff > 1) continue@l
+        for (j in 0 until len) if (a[j] != b[j]) if (++diff > 1) continue@l
 
         when {
-          b == target -> return d + 1
+          b == target -> return e.second + 1
           else -> {
             used[i] = true
-            dep[b] = d + 1
-            q[qt++] = b
+            q[qt++] = Pair(b, e.second + 1)
           }
         }
       }
@@ -54,6 +52,13 @@ class Solution {
  * 테스트 3 〉	통과 (11.31ms, 63.3MB)
  * 테스트 4 〉	통과 (10.11ms, 63.3MB)
  * 테스트 5 〉	통과 (8.99ms, 63.5MB)
+ *
+ * v3: BFS 자료구조 변경 (IntArray+HashMap -> Array<Pair>)
+ * 테스트 1 〉	통과 (9.50ms, 63.3MB)
+ * 테스트 2 〉	통과 (8.95ms, 63.5MB)
+ * 테스트 3 〉	통과 (10.43ms, 63.2MB)
+ * 테스트 4 〉	통과 (9.06ms, 63.8MB)
+ * 테스트 5 〉	통과 (9.71ms, 63.8MB)
  *
  * [RIVAL 1]
  * import java.util.*
@@ -169,6 +174,3 @@ fun main() {
     "aab", "abb", "bbb"
   )), 3)
 }
-
-// println("[a] $a(dep=$d)")
-//        println("[b] $b => ${comp(a, b)}")
