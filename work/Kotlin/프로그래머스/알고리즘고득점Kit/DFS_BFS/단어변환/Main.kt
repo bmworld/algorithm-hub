@@ -8,33 +8,34 @@ class Solution {
     if (!words.contains(target)) return 0
 
     val N = words.size
-    val len = begin.length
     val used = BooleanArray(N)
+    val dep = HashMap<String, Int>(N + 1)
+    val q = Array(N + 1) { begin }
+    var qh = 0
+    var qt = 0
+    q[qt++] = begin
+    dep[begin] = 0
 
-    var min = Int.MAX_VALUE
-
-    fun dfs(dep: Int, cur: String) {
-      if (dep > min || dep >= N) return
-      if (cur == target) {
-        if (dep < min) min = dep
-        return
-      }
-
-      l@ for (i in 0 until N) {
+    while (qh < qt) {
+      val a = q[qh++]
+      val d = dep[a]!!
+      l@ for (i in words.indices) {
         if (used[i]) continue
+        val b = words[i]
         var diff = 0
-        val comp = words[i]
-        for (j in 0 until len)
-          if (cur[j] != comp[j]) if (++diff > 1) continue@l
+        for (j in a.indices) if (a[j] != b[j]) if (++diff > 1) continue@l
 
-        used[i] = true
-        dfs(dep + 1, comp)
-        used[i] = false
+        when {
+          b == target -> return d + 1
+          else -> {
+            used[i] = true
+            dep[b] = d + 1
+            q[qt++] = b
+          }
+        }
       }
     }
-
-    dfs(0, begin)
-    return if (min == Int.MAX_VALUE) 0 else min
+    return 0
   }
 }
 
@@ -46,6 +47,13 @@ class Solution {
  * 테스트 3 〉	통과 (9.08ms, 63MB)
  * 테스트 4 〉	통과 (9.13ms, 61.2MB)
  * 테스트 5 〉	통과 (8.81ms, 63.4MB)
+ *
+ * v2: DFS -> BFS
+ * 테스트 1 〉	통과 (8.99ms, 63.5MB)
+ * 테스트 2 〉	통과 (8.82ms, 63.5MB)
+ * 테스트 3 〉	통과 (11.31ms, 63.3MB)
+ * 테스트 4 〉	통과 (10.11ms, 63.3MB)
+ * 테스트 5 〉	통과 (8.99ms, 63.5MB)
  *
  * [RIVAL 1]
  * import java.util.*
@@ -156,7 +164,11 @@ fun main() {
   validate(s.solution("hit", "hot", arrayOf(
     "hot", "dot", "dog", "lot", "hit"
   )), 1)
+
+  validate(s.solution("aaa", "bbb", arrayOf(
+    "aab", "abb", "bbb"
+  )), 3)
 }
 
-// println("---- [$dep] = ${used.contentToString()}")
-//        println("[$dep][$i] cur=$cur vs comp=$comp (diff= $diff)")
+// println("[a] $a(dep=$d)")
+//        println("[b] $b => ${comp(a, b)}")
