@@ -17,65 +17,29 @@ class Solution {
     val end = IntArray(MAX_NUM + 1)
     val g = HashMap<Int, MutableList<Int>>()
 
-    var max = 0
     for (edge in edges) {
       val a = edge[0]
       val b = edge[1]
       end[b]++
-
       if (g[a] == null) g[a] = mutableListOf(b)
       else g[a]!! += b
 
-      if (a > max) max = a
-      if (b > max) max = b
+      if (g[b] == null) g[b] = mutableListOf()
     }
 
-    val used = BooleanArray(max + 1)
-    for ((n, sib) in g) if (sib.size >= 2 && end[n] == 0) {
-      ans[X] = n
-      used[n] = true
-      for (n2 in sib) if (--end[n2] == 0 && g[n2].isNullOrEmpty()) ans[BAR]++
-      break
-    }
-
-    val q = IntArray(g.size + 1)
-    for ((n, sib) in g) if (!used[n]) {
+    for ((n, sib) in g) {
       val s = sib.size
       val e = end[n]
       when {
-        s <= 1 && e == 0 -> {
-          ans[BAR]++
-          mark(q, n, used, g)
-        }
-        s == 2 && e >= 2 -> {
-          ans[EHT]++
-          mark(q, n, used, g)
-        }
+        s >= 2 && e == 0 -> ans[X] = n
+        s == 2 && e >= 2 -> ans[EHT]++
+        s == 0 -> ans[BAR]++
       }
     }
 
-    for ((n, sib) in g) if (!used[n]) {
-      ans[DNT]++
-      mark(q, n, used, g)
-    }
+    ans[DNT] = g[ans[X]]!!.size - ans[BAR] - ans[EHT]
 
     return ans
-  }
-
-  fun mark(q: IntArray, node: Int, used: BooleanArray,
-    g: HashMap<Int, MutableList<Int>>) {
-    var qh = 0
-    var qt = 0
-    q[qt++] = node
-    used[node] = true
-
-    while (qh < qt) {
-      val n = q[qh++]
-      for (n2 in g[n] ?: continue) if (!used[n2]) {
-        used[n2] = true
-        q[qt++] = n2
-      }
-    }
   }
 }
 
@@ -191,10 +155,214 @@ class Solution {
  * 테스트 34 〉	통과 (4.72ms, 63.7MB)
  * 테스트 35 〉	통과 (4.70ms, 65.4MB)
  *
+ * v4:
+ * 테스트 1 〉	통과 (5.18ms, 62.4MB)
+ * 테스트 2 〉	통과 (5.66ms, 63.6MB)
+ * 테스트 3 〉	통과 (7.04ms, 64.8MB)
+ * 테스트 4 〉	통과 (5.67ms, 63.8MB)
+ * 테스트 5 〉	통과 (6.70ms, 64.2MB)
+ * 테스트 6 〉	통과 (5.83ms, 64.8MB)
+ * 테스트 7 〉	통과 (5.74ms, 65.6MB)
+ * 테스트 8 〉	통과 (102.14ms, 170MB)
+ * 테스트 9 〉	통과 (64.89ms, 140MB)
+ * 테스트 10 〉	통과 (147.51ms, 227MB)
+ * 테스트 11 〉	통과 (118.55ms, 172MB)
+ * 테스트 12 〉	통과 (110.08ms, 173MB)
+ * 테스트 13 〉	통과 (127.13ms, 170MB)
+ * 테스트 14 〉	통과 (195.59ms, 389MB)
+ * 테스트 15 〉	통과 (93.02ms, 173MB)
+ * 테스트 16 〉	통과 (78.05ms, 141MB)
+ * 테스트 17 〉	통과 (122.99ms, 213MB)
+ * 테스트 18 〉	통과 (110.32ms, 172MB)
+ * 테스트 19 〉	통과 (102.02ms, 172MB)
+ * 테스트 20 〉	통과 (84.84ms, 162MB)
+ * 테스트 21 〉	통과 (170.81ms, 281MB)
+ * 테스트 22 〉	통과 (195.73ms, 241MB)
+ * 테스트 23 〉	통과 (211.71ms, 245MB)
+ * 테스트 24 〉	통과 (196.31ms, 237MB)
+ * 테스트 25 〉	통과 (151.08ms, 243MB)
+ * 테스트 26 〉	통과 (185.80ms, 235MB)
+ * 테스트 27 〉	통과 (4.75ms, 64.7MB)
+ * 테스트 28 〉	통과 (4.58ms, 64.3MB)
+ * 테스트 29 〉	통과 (4.37ms, 63.7MB)
+ * 테스트 30 〉	통과 (4.46ms, 64.6MB)
+ * 테스트 31 〉	통과 (4.63ms, 64MB)
+ * 테스트 32 〉	통과 (4.82ms, 64.7MB)
+ * 테스트 33 〉	통과 (4.55ms, 66.1MB)
+ * 테스트 34 〉	통과 (4.72ms, 63.9MB)
+ * 테스트 35 〉	통과 (4.51ms, 64.9MB)
+ *
  *
  * [RIVAL 1]
+ * const val SIZE = 4
+ * const val MAX = 1_000_001
+ * data class Node(
+ *     var inDegree: Int = 0,
+ *     var outDegree: Int = 0
+ * )
+ * class Solution {
+ *     private lateinit var answer: IntArray
+ *     private lateinit var graph: Array<Node>
+ *     fun solution(edges: Array<IntArray>): IntArray {
+ *         answer = IntArray(SIZE)
+ *         graph = Array(MAX) { Node() }
+ *         edges.forEach { (a, b) ->
+ *             graph[a].outDegree++
+ *             graph[b].inDegree++
+ *         }
+ *         for ((number, node) in graph.withIndex()) {
+ *             if (2 <= node.outDegree && node.inDegree == 0) {
+ *                 answer[0] = number
+ *             } else if (node.outDegree == 0 && 0 < node.inDegree) {
+ *                 answer[2]++
+ *             } else if (2 <= node.outDegree && 2 <= node.inDegree) {
+ *                 answer[3]++
+ *             }
+ *         }
+ *         answer[1] = graph[answer[0]].outDegree - answer[2] - answer[3]
+ *         return answer
+ *     }
+ * }
+ * 테스트 1 〉	통과 (26.25ms, 86.9MB)
+ * 테스트 2 〉	통과 (25.90ms, 87.2MB)
+ * 테스트 3 〉	통과 (30.24ms, 86.5MB)
+ * 테스트 4 〉	통과 (27.08ms, 85.7MB)
+ * 테스트 5 〉	통과 (24.64ms, 86.7MB)
+ * 테스트 6 〉	통과 (29.43ms, 86.7MB)
+ * 테스트 7 〉	통과 (29.43ms, 86.7MB)
+ * 테스트 8 〉	통과 (30.15ms, 141MB)
+ * 테스트 9 〉	통과 (24.71ms, 134MB)
+ * 테스트 10 〉	통과 (38.36ms, 165MB)
+ * 테스트 11 〉	통과 (32.18ms, 142MB)
+ * 테스트 12 〉	통과 (30.57ms, 141MB)
+ * 테스트 13 〉	통과 (26.36ms, 142MB)
+ * 테스트 14 〉	통과 (44.61ms, 205MB)
+ * 테스트 15 〉	통과 (29.05ms, 141MB)
+ * 테스트 16 〉	통과 (29.58ms, 133MB)
+ * 테스트 17 〉	통과 (35.89ms, 151MB)
+ * 테스트 18 〉	통과 (28.99ms, 142MB)
+ * 테스트 19 〉	통과 (30.09ms, 142MB)
+ * 테스트 20 〉	통과 (26.47ms, 139MB)
+ * 테스트 21 〉	통과 (44.42ms, 189MB)
+ * 테스트 22 〉	통과 (35.63ms, 173MB)
+ * 테스트 23 〉	통과 (38.71ms, 174MB)
+ * 테스트 24 〉	통과 (38.93ms, 176MB)
+ * 테스트 25 〉	통과 (35.98ms, 176MB)
+ * 테스트 26 〉	통과 (38.50ms, 173MB)
+ *
  *
  * [RIVAL 2]
+ * import java.util.*
+ *
+ * class Solution {
+ *
+ *     fun solution(edges: Array<IntArray>): IntArray {
+ *         // node, edge에 따라 방문 여부 나눠야
+ *         val outEdge: HashMap<Int, ArrayList<Int>> = HashMap()
+ *         val inEdge: HashMap<Int, ArrayList<Int>> = HashMap()
+ *         val visited: HashMap<Int, Boolean> = HashMap()
+ *
+ *         // 그래프 데이터 업데이트
+ *         // 시작점 찾기
+ *         var addedNode: Int = 0
+ *         for ((from, to) in edges) {
+ *             // edge 방문정보 업데이트
+ *             val toNodes = outEdge[from] ?: ArrayList()
+ *             val fromNodes = inEdge[to] ?: ArrayList()
+ *
+ *             toNodes.add(to)
+ *             fromNodes.add(from)
+ *
+ *             outEdge[from] = toNodes
+ *             inEdge[to] = fromNodes
+ *
+ *             // node 방문정보 업데이트
+ *             visited[from] = false
+ *             visited[to] = false
+ *
+ *             if (toNodes.size >= 2 &&
+ *                     inEdge[from] == null) {
+ *                 addedNode = from
+ *             }
+ *         }
+ *
+ *         // 시작점부터 bfs
+ *         // 추가된 노드가 만나는 개수만큼의 그래프가 있음
+ *         var answer: IntArray = intArrayOf(addedNode, 0, 0, 0)
+ *         outEdge[addedNode]?.forEach {
+ *             val index = bfs(it, outEdge, visited)
+ *             answer[index]++
+ *         }
+ *
+ *         return answer
+ *     }
+ *
+ *     fun bfs(firstNode: Int,
+ *             edges: HashMap<Int, ArrayList<Int>>,
+ *             visited: HashMap<Int, Boolean>) : Int {
+ *
+ *         // 큐 생성
+ *         val q: Queue<Int> = LinkedList()
+ *         q.add(firstNode)
+ *
+ *         // 돌아가면서 카운트 세기
+ *         var nodeCount = 0
+ *         var edgeCount = 0
+ *
+ *         while (q.size > 0) {
+ *             var node = q.poll()
+ *             // node visit 체크
+ *             if (!visited[node]!!) {
+ *                 nodeCount++
+ *                 visited[node] = true
+ *             }
+ *             // 다음 노드 탐구
+ *             edges[node]?.forEach {
+ *                 edgeCount++
+ *                 q.add(it)
+ *             }
+ *             // edge visit 처리
+ *             edges[node]?.clear()
+ *         }
+ *
+ *         // 유형 분석
+ *         return when {
+ *             nodeCount == edgeCount -> 1
+ *             nodeCount == edgeCount + 1 -> 2
+ *             nodeCount == edgeCount - 1 -> 3
+ *             else -> 0
+ *         }
+ *
+ *
+ *     }
+ * }
+ * 테스트 1 〉	통과 (0.53ms, 59.5MB)
+ * 테스트 2 〉	통과 (1.09ms, 59.2MB)
+ * 테스트 3 〉	통과 (1.39ms, 59.6MB)
+ * 테스트 4 〉	통과 (0.55ms, 60.2MB)
+ * 테스트 5 〉	통과 (2.20ms, 61.4MB)
+ * 테스트 6 〉	통과 (2.05ms, 60.8MB)
+ * 테스트 7 〉	통과 (2.13ms, 61.7MB)
+ * 테스트 8 〉	통과 (175.49ms, 241MB)
+ * 테스트 9 〉	통과 (126.60ms, 172MB)
+ * 테스트 10 〉	통과 (346.84ms, 433MB)
+ * 테스트 11 〉	통과 (225.14ms, 250MB)
+ * 테스트 12 〉	통과 (219.41ms, 250MB)
+ * 테스트 13 〉	통과 (196.61ms, 242MB)
+ * 테스트 14 〉	통과 (475.54ms, 516MB)
+ * 테스트 15 〉	통과 (228.53ms, 240MB)
+ * 테스트 16 〉	통과 (118.70ms, 181MB)
+ * 테스트 17 〉	통과 (411.20ms, 441MB)
+ * 테스트 18 〉	통과 (216.84ms, 244MB)
+ * 테스트 19 〉	통과 (250.17ms, 243MB)
+ * 테스트 20 〉	통과 (220.36ms, 223MB)
+ * 테스트 21 〉	통과 (413.22ms, 513MB)
+ * 테스트 22 〉	통과 (376.26ms, 430MB)
+ * 테스트 23 〉	통과 (376.99ms, 431MB)
+ * 테스트 24 〉	통과 (359.05ms, 430MB)
+ * 테스트 25 〉	통과 (428.80ms, 431MB)
+ * 테스트 26 〉	통과 (348.16ms, 430MB)
+ *
  * ```
  */
 fun main() {
