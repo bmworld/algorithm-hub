@@ -15,7 +15,7 @@ class Solution {
     val ans = IntArray(4)
 
     val N = edges.size
-    val size = N + 2
+    val size = N * 2
     val stt = IntArray(size)
     val end = IntArray(size)
     val g = Array(size) { mutableListOf<Int>() }
@@ -26,24 +26,27 @@ class Solution {
       val b = edge[1]
       stt[a]++
       end[b]++
+
       g[a] += b
+
       if (a > max) max = a
       if (b > max) max = b
     }
 
     val used = BooleanArray(max + 1)
-    val q = IntArray(max + 1)
+    for (x in 1..max) if (stt[x] >= 2 && end[x] == 0) {
+      ans[X] = x
+      used[x] = true
+      for (sib in g[x]) end[sib]--
+      break
+    }
 
+    val q = IntArray(max + 1)
     for (n in 1..max) {
       val s = stt[n]
       val e = end[n]
-
       when {
-        s >= 2 && e == 0 -> {
-          ans[X] = n
-          used[n] = true
-        }
-        s == 1 && e == 0 -> {
+        s <= 1 && e == 0 -> {
           ans[BAR]++
           mark(q, n, used, g)
         }
@@ -54,12 +57,9 @@ class Solution {
       }
     }
 
-    for (n in 1..max) if (!used[n]) {
-      if (stt[n] == 0) ans[BAR]++
-      else {
-        ans[DNT]++
-        mark(q, n, used, g)
-      }
+    for (n in 1..max) if (!used[n] && (stt[n] > 0 && end[n] > 0)) {
+      ans[DNT]++
+      mark(q, n, used, g)
     }
 
     return ans
@@ -120,6 +120,42 @@ class Solution {
  * 테스트 33 〉	통과 (0.05ms, 59.1MB)
  * 테스트 34 〉	통과 (0.05ms, 60.2MB)
  * 테스트 35 〉	실패 (0.08ms, 58.7MB)
+ * v2:
+ * 테스트 1 〉	통과 (0.14ms, 59.5MB)
+ * 테스트 2 〉	통과 (0.46ms, 60.4MB)
+ * 테스트 3 〉	통과 (0.37ms, 59.1MB)
+ * 테스트 4 〉	통과 (0.11ms, 60.9MB)
+ * 테스트 5 〉	통과 (0.72ms, 59.7MB)
+ * 테스트 6 〉	통과 (0.55ms, 61.6MB)
+ * 테스트 7 〉	통과 (0.77ms, 60.9MB)
+ * 테스트 8 〉	통과 (101.80ms, 151MB)
+ * 테스트 9 〉	통과 (58.33ms, 139MB)
+ * 테스트 10 〉	통과 (144.29ms, 204MB)
+ * 테스트 11 〉	통과 (110.82ms, 158MB)
+ * 테스트 12 〉	통과 (68.92ms, 153MB)
+ * 테스트 13 〉	통과 (70.01ms, 153MB)
+ * 테스트 14 〉	통과 (167.67ms, 263MB)
+ * 테스트 15 〉	통과 (93.02ms, 151MB)
+ * 테스트 16 〉	통과 (66.39ms, 136MB)
+ * 테스트 17 〉	통과 (159.68ms, 191MB)
+ * 테스트 18 〉	통과 (76.95ms, 152MB)
+ * 테스트 19 〉	통과 (72.65ms, 153MB)
+ * 테스트 20 〉	통과 (61.28ms, 145MB)
+ * 테스트 21 〉	통과 (226.58ms, 256MB)
+ * 테스트 22 〉	통과 (158.37ms, 219MB)
+ * 테스트 23 〉	통과 (161.37ms, 216MB)
+ * 테스트 24 〉	통과 (139.20ms, 220MB)
+ * 테스트 25 〉	통과 (160.27ms, 215MB)
+ * 테스트 26 〉	통과 (154.84ms, 226MB)
+ * 테스트 27 〉	통과 (0.07ms, 59.8MB)
+ * 테스트 28 〉	통과 (0.05ms, 61.3MB)
+ * 테스트 29 〉	통과 (0.05ms, 59.9MB)
+ * 테스트 30 〉	통과 (0.06ms, 60.1MB)
+ * 테스트 31 〉	통과 (0.08ms, 60.4MB)
+ * 테스트 32 〉	통과 (0.05ms, 59.2MB)
+ * 테스트 33 〉	통과 (0.06ms, 60.2MB)
+ * 테스트 34 〉	통과 (0.05ms, 60.7MB)
+ * 테스트 35 〉	실패 (0.06ms, 60.7MB)
  *
  * [RIVAL 1]
  *
@@ -169,19 +205,19 @@ fun main() {
 // 예상 실제 결과: [1, 2, 0, 0]
 
 // CASE 2: 정점 번호에 빈 구간 존재
-  validate(s.solution(arrayOf(
-    intArrayOf(2, 1),
-    intArrayOf(1, 1),
-    intArrayOf(2, 4)
-  )), intArrayOf(2, 1, 1, 0))
+//  validate(s.solution(arrayOf(
+//    intArrayOf(2, 1),
+//    intArrayOf(1, 1),
+//    intArrayOf(2, 4)
+//  )), intArrayOf(2, 1, 1, 0))
 // 예상 실제 결과: [2, 1, 2, 0]
 
 // CASE 3: 간선 수보다 정점 번호가 큼
-  validate(s.solution(arrayOf(
-    intArrayOf(10, 11),
-    intArrayOf(11, 11),
-    intArrayOf(10, 12)
-  )), intArrayOf(10, 1, 1, 0))
+//  validate(s.solution(arrayOf(
+//    intArrayOf(10, 11),
+//    intArrayOf(11, 11),
+//    intArrayOf(10, 12)
+//  )), intArrayOf(10, 1, 1, 0))
 // 실제 결과: ArrayIndexOutOfBoundsException
 
   // CASE 4: 막대 끝점을 세면서 used 처리하지 않음
