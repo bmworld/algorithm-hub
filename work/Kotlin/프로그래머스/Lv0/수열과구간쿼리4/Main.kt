@@ -9,9 +9,7 @@ class Solution {
       val s = q[0]
       val e = q[1]
       val k = q[2]
-
-      if (s == 0) arr[0]++
-      if (k > 0) for (i in maxOf(s, k)..e step k) arr[i]++
+      for (i in s..e) if (i % k == 0) arr[i]++
     }
     return arr
   }
@@ -20,6 +18,7 @@ class Solution {
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	실패 (0.26ms, 60.8MB)
  * 테스트 2 〉	통과 (0.24ms, 59.9MB)
  * 테스트 3 〉	통과 (0.22ms, 59.9MB)
@@ -31,6 +30,19 @@ class Solution {
  * 테스트 9 〉	통과 (0.25ms, 61MB)
  * 테스트 10 〉	통과 (0.32ms, 60.3MB)
  * 테스트 11 〉	통과 (0.26ms, 62.5MB)
+ *
+ * v2: ac
+ * 테스트 1 〉	통과 (1.53ms, 60.1MB)
+ * 테스트 2 〉	통과 (0.52ms, 60.6MB)
+ * 테스트 3 〉	통과 (0.12ms, 60MB)
+ * 테스트 4 〉	통과 (0.03ms, 59.1MB)
+ * 테스트 5 〉	통과 (0.04ms, 60.6MB)
+ * 테스트 6 〉	통과 (0.01ms, 60.3MB)
+ * 테스트 7 〉	통과 (0.75ms, 61MB)
+ * 테스트 8 〉	통과 (0.92ms, 60.9MB)
+ * 테스트 9 〉	통과 (0.43ms, 60.4MB)
+ * 테스트 10 〉	통과 (1.13ms, 60.5MB)
+ * 테스트 11 〉	통과 (0.67ms, 60MB)
  *
  * [RIVAL 1]
  *
@@ -52,6 +64,13 @@ fun main() {
       intArrayOf(0, 4, 0),
       intArrayOf(3, 4, 0),
       intArrayOf(3, 4, 1),
+      intArrayOf(0, 4, 5),
     )
-  ), intArrayOf(1, 1, 2, 4, 5))
+  ), intArrayOf(2, 2, 3, 6, 7))
+
+  validate(s.solution(intArrayOf(0, 0, 0),
+    arrayOf(
+      intArrayOf(0, 2, 0),
+    )
+  ), intArrayOf(1, 1, 1))
 }
