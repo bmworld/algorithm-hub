@@ -9,7 +9,12 @@ class Solution {
       val s = q[0]
       val e = q[1]
       val k = q[2]
-      for (i in s..e) if (i % k == 0) arr[i]++
+      if (k == 0) {
+        if (s == 0) arr[0]++
+      } else {
+        val ns = ((s + k - 1) / k) * k
+        for (i in ns..e step k) arr[i]++
+      }
     }
     return arr
   }
@@ -43,6 +48,19 @@ class Solution {
  * 테스트 9 〉	통과 (0.43ms, 60.4MB)
  * 테스트 10 〉	통과 (1.13ms, 60.5MB)
  * 테스트 11 〉	통과 (0.67ms, 60MB)
+ *
+ * v3:
+ * 테스트 1 〉	통과 (0.25ms, 60.2MB)
+ * 테스트 2 〉	통과 (0.24ms, 60.8MB)
+ * 테스트 3 〉	통과 (0.34ms, 59.6MB)
+ * 테스트 4 〉	통과 (0.20ms, 61MB)
+ * 테스트 5 〉	통과 (0.21ms, 59.3MB)
+ * 테스트 6 〉	통과 (0.16ms, 60.4MB)
+ * 테스트 7 〉	통과 (0.38ms, 61MB)
+ * 테스트 8 〉	통과 (0.26ms, 60.5MB)
+ * 테스트 9 〉	통과 (0.31ms, 60.6MB)
+ * 테스트 10 〉	통과 (0.26ms, 61MB)
+ * 테스트 11 〉	통과 (0.26ms, 60.5MB)
  *
  * [RIVAL 1]
  *
