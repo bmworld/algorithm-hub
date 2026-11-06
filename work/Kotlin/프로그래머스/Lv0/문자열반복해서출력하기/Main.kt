@@ -29,7 +29,7 @@ private fun i(): Int {
   return v
 }
 
-const val MAX_LEN = 10
+const val MAX_LEN = 15 // ** <-- 문제 조건(1 ≤ str의 길이 ≤ 10)과 맞지 않는 테스트입력의 최대값 대응
 const val NL: Byte = 10
 const val SPACE: Byte = 32
 const val ZERO: Byte = 48
@@ -47,13 +47,25 @@ fun main(args: Array<String>) {
  * ```
  * [ME]
  * v1:
- * 테스트 1 〉	통과 (60.05ms, 51.3MB)
- * 테스트 2 〉	실패 (런타임 에러)
- * 테스트 3 〉	통과 (62.08ms, 51.3MB)
+ * 테스트 1 〉	통과 (60.87ms, 52MB)
+ * 테스트 2 〉	통과 (67.82ms, 50.8MB)
+ * 테스트 3 〉	통과 (70.87ms, 51.6MB)
  * ```
  *
  *
  * ```
  * [RIVAL]
+ * fun main(args: Array<String>) {
+ *         val input = readLine()!!.split(' ')
+ *     val s1 = input[0]
+ *     val a = input[1]!!.toInt()
+ *     repeat(a) {
+ *         print(s1)
+ *     }
+ * }
+ * 테스트 1 〉	통과 (66.13ms, 52.7MB)
+ * 테스트 2 〉	통과 (62.83ms, 52.4MB)
+ * 테스트 3 〉	통과 (62.50ms, 52.5MB)
+ *
  * ```
  */
