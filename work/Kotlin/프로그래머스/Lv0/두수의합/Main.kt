@@ -33,16 +33,15 @@ class Solution {
       tmp[size - (i + 1)] = (d + ZERO).toChar()
     }
 
-    return String(
-      if (tmp[0] != '0') tmp
-      else tmp.copyOfRange(1, size)
-    )
+    return if (tmp[0] != '0') String(tmp)
+    else String(tmp, 1, size - 1)
   }
 }
 
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (7.01ms, 62.7MB)
  * 테스트 2 〉	통과 (6.21ms, 63.4MB)
  * 테스트 3 〉	통과 (9.12ms, 62.9MB)
@@ -51,6 +50,16 @@ class Solution {
  * 테스트 6 〉	통과 (6.35ms, 61.7MB)
  * 테스트 7 〉	통과 (6.35ms, 61.8MB)
  * 테스트 8 〉	통과 (6.82ms, 63.4MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (0.02ms, 59MB)
+ *  * 테스트 2 〉	통과 (0.06ms, 58.2MB)
+ *  * 테스트 3 〉	통과 (0.43ms, 59.3MB)
+ *  * 테스트 4 〉	통과 (1.66ms, 58.7MB)
+ *  * 테스트 5 〉	통과 (3.80ms, 60.1MB)
+ *  * 테스트 6 〉	통과 (0.03ms, 59.4MB)
+ *  * 테스트 7 〉	통과 (0.08ms, 60.6MB)
+ *  * 테스트 8 〉	통과 (0.41ms, 59.5MB)
  *
  * [RIVAL 1]
  * import java.math.*;
