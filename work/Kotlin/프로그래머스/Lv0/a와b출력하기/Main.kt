@@ -1,13 +1,8 @@
 package 프로그래머스.Lv0.a와b출력하기
 
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.util.*
 
 fun main(args: Array<String>) {
-  val token = StringTokenizer(BufferedReader(InputStreamReader(System.`in`)).readLine())
-  val a = token.nextToken()
-  val b = token.nextToken()
+  val (a, b) = readln()!!.split(" ")
   print("a = $a\nb = $b")
 }
 
@@ -34,6 +29,13 @@ fun main(args: Array<String>) {
  * 테스트 3 〉	통과 (59.79ms, 51.2MB)
  * 테스트 4 〉	통과 (75.42ms, 51.7MB)
  * 테스트 5 〉	통과 (64.50ms, 51.3MB)
+ *
+ * v4:
+ * 테스트 1 〉	통과 (67.36ms, 52.8MB)
+ * 테스트 2 〉	통과 (76.53ms, 52.8MB)
+ * 테스트 3 〉	통과 (63.88ms, 52.7MB)
+ * 테스트 4 〉	통과 (65.69ms, 53.2MB)
+ * 테스트 5 〉	통과 (67.41ms, 52.9MB)
  *
  * [RIVAL 1]
  *
