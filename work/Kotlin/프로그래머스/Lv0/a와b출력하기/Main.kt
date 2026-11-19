@@ -1,11 +1,8 @@
 package 프로그래머스.Lv0.a와b출력하기
 
 import java.io.BufferedInputStream
-import java.io.BufferedOutputStream
 
 private const val IBS = 1 shl 4
-private const val OBS = 1 shl 5
-private val O = BufferedOutputStream(System.`out`, OBS)
 private val I = BufferedInputStream(System.`in`)
 private val IB = ByteArray(IBS)
 private var Ii = 0
@@ -35,48 +32,28 @@ private fun i(): Int {
   return s * v
 }
 
-private const val WS = 10
-private val WB = ByteArray(WS)
-private fun w(
-  num: Int,
-) {
-  var v = if (num >= 0) num
-  else {
-    O.write(45)
-    -num
-  }
-
-  var pos = WS - 1
-  do {
-    WB[pos--] = (v % 10 + 48).toByte()
-    v /= 10
-  } while (v > 0)
-  O.write(WB, ++pos, WS - pos)
-}
-
-private val aEqual = "a = ".toByteArray()
-private val bEqual = "b = ".toByteArray()
-private val NL = 10
 fun main(args: Array<String>) {
   val a = i()
   val b = i()
-
-  O.write(aEqual)
-  w(a)
-  O.write(NL)
-  O.write(bEqual)
-  w(b)
-  O.flush()
+  print("a = $a\nb = $b")
 }
 
 /**
  * ```
  * [ME]
+ * v1:
  * 테스트 1 〉	통과 (140.50ms, 51.3MB)
  * 테스트 2 〉	통과 (127.60ms, 51MB)
  * 테스트 3 〉	통과 (142.12ms, 51.4MB)
  * 테스트 4 〉	통과 (136.34ms, 50.8MB)
  * 테스트 5 〉	통과 (158.01ms, 50.8MB)
+ *
+ * v2:
+ * 테스트 1 〉	통과 (79.96ms, 51.4MB)
+ * 테스트 2 〉	통과 (109.01ms, 51.1MB)
+ * 테스트 3 〉	통과 (74.18ms, 51.4MB)
+ * 테스트 4 〉	통과 (85.78ms, 52.4MB)
+ * 테스트 5 〉	통과 (73.96ms, 51.5MB)
  *
  * [RIVAL 1]
  *
