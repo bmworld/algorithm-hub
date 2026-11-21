@@ -55,65 +55,18 @@ fun w(
 
 
 fun main() {
-  val N = i()
-  val arr = Array(N) { i -> Meeting(i(), i(), i()) }
-  qs(arr, 0, N - 1)
-
-  var best = 0
-  fun dfs(i: Int, sum: Int, dep: Int) {
-    if (i == N) {
-      if (sum > best) best = sum
-      return
-    }
-
-    val cur = arr[i]
-    var ni = N
-    for (j in i + 1 until N) if (arr[j].s >= cur.e) {
-      ni = j
-      break
-    }
-
-    dfs(ni, sum + cur.c, dep + 1)
-
-    dfs(i + 1, sum, dep + 1)
+  val n = i()
+  val cnt = IntArray(n) {
+    i()
+    i()
+    i()
   }
+  val dp = IntArray(n)
+  dp[0] = cnt[0]
+  if (n > 1) dp[1] = maxOf(dp[0], cnt[1])
+  for (i in 2 until n)
+    dp[i] = maxOf(dp[i - 1], dp[i - 2] + cnt[i])
 
-  for (i in arr.indices) dfs(i, 0, 0)
-
-  w(best)
+  w(dp[n - 1])
   O.flush()
 }
-
-data class Meeting(val s: Int, val e: Int, val c: Int)
-
-fun swap(a: Array<Meeting>, i: Int, j: Int) {
-  val tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
-}
-
-fun qs(a: Array<Meeting>, l: Int, r: Int) {
-  if (l >= r) return
-  val piv = (l + r) shr 1
-  val comp = a[piv].e
-  swap(a, piv, r)
-
-  var m = l
-  for (i in l until r) if (a[i].e < comp) swap(a, m++, i)
-  if (comp < a[m].e) swap(a, m, r)
-
-  qs(a, l, m - 1)
-  qs(a, m + 1, r)
-}
-
-/**
-6
-90 120 40
-50 80 70
-110 140 50
-10 40 80
-30 60 60
-70 100 100
- */
-
-//    println("[$dep][${i}] $sum vs best=$best")
