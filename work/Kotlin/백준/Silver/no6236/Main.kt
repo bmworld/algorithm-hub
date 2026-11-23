@@ -60,7 +60,7 @@ fun main() {
 
   val N = i()
   val M = i()
-  val cnds = IntArray(N) { i().also { if (it > r) r = it } }
+  val cnds = IntArray(N) { i().also { r += it } }
 
   while (l <= r) {
     val m = (l + r) shr 1
@@ -85,3 +85,19 @@ fun main() {
   w(r)
   O.flush()
 }
+
+/**
+IN
+2 1
+64
+208
+
+OUT
+272
+
+IN
+2 2
+98
+768
+
+ */
