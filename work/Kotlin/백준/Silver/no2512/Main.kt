@@ -3,7 +3,7 @@ package 백준.Silver.no2512
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
+const val IBS = 1 shl 15
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -55,54 +55,64 @@ fun w(
 
 
 fun main() {
-  val N = i()
-  val bdgt = IntArray(N) { i() }
-  val M = i()
+  var ans = 0
 
-  val avg = M / N
-  var rmn = M % N
+  val n = i()
+  val arr = IntArray(n) { i() }
+  var bdgt = i()
 
-  var underAvgCnt = 0
-  val cnds = IntArray(N)
-  var ci = 0
-  for (x in bdgt) when {
-    x < avg -> {
-      underAvgCnt++
-      rmn += avg - x
-    }
-    x > avg -> cnds[ci++] = x
+  val cnds = IntArray(n)
+  var cndCnt = 0
+  var maxCnd = 0
+
+  val avg = bdgt / n
+  for (x in arr) when {
+    x <= avg -> bdgt -= x.also { if (it > ans) ans = it }
+    else -> cnds[cndCnt++] = x.also { if (it > maxCnd) maxCnd = it }
   }
 
-  val max = avg + if (N != underAvgCnt) rmn / (N - underAvgCnt) else 0
-  var cap = avg
-  repeat(ci) {
-    val x = cnds[it]
-    if (x in cap..max) cap = x
-    else cap = max
-  }
+  if (cndCnt > 0) ans = bs(cnds.copyOf(cndCnt), avg + 1, maxCnd, bdgt)
 
-  w(cap)
+  w(ans)
   O.flush()
+}
+
+fun bs(arr: IntArray, min: Int, max: Int, bdgt: Int): Int {
+
+  var l = min
+  var r = minOf(max, bdgt)
+
+  while (l <= r) {
+    var rmn = bdgt
+    val m = (l + r) shr 1
+    for (x in arr) {
+      rmn -= minOf(x, m)
+      if (rmn < 0) break
+    }
+
+    when {
+      rmn < 0 -> r = m - 1
+      rmn > 0 -> l = m + 1
+      else -> return m
+    }
+  }
+
+  return r
 }
 
 /**
 IN
-4
-6 10 1 10
-37
-
+5
+2 5 2 10 3
+20
 OUT
-10
-
-
+8
 
 IN
-4
-4 1 4 2
-16
+7
+74 61 82 31 9 28 18
+202
 
 OUT
-4
+38
  */
-
-//  println("avg = ${avg}, rmn=$rmn, under=$underAvgCnt, max=$cap, cap=$max")
