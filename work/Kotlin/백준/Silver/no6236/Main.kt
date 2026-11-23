@@ -64,40 +64,48 @@ fun main() {
 
   while (l <= r) {
     val m = (l + r) shr 1
-
     var t = 1
     var bal = m
-    repeat(N) {
+    for (it in 0 until N) {
       val x = cnds[it]
-      if (x > bal) {
-        t++
-        bal = m
+      when {
+        x > m -> {
+          t = M + 1
+          break
+        }
+        x > bal -> {
+          t++
+          bal = m
+        }
       }
       bal -= x
     }
 
     when {
-      t >= M -> l = m + 1
+      t > M -> l = m + 1
       else -> r = m - 1
     }
   }
 
-  w(r)
+  w(l)
   O.flush()
 }
 
 /**
 IN
-2 1
-64
-208
+2 2
+230
+782
 
 OUT
-272
+782
 
-IN
-2 2
-98
-768
+IN 2 1
+233
+552
+
+OUT 785
 
  */
+
+//    println("[$l~$r] m = $m, t=$t vs M=$M")
