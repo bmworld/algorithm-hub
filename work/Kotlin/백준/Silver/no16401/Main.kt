@@ -3,7 +3,7 @@ package 백준.Silver.no16401
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 20
+const val IBS = 1 shl 21
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -65,10 +65,8 @@ fun main() {
   while (l <= r) {
     var rmn = M
     val m = (l + r) shr 1
-    for (x in cnds) {
-      if (x >= m) rmn -= x / m
-      if (rmn < 0) break
-    }
+    repeat(N) { if (rmn > 0) rmn -= cnds[it] / m }
+
     when {
       rmn <= 0 -> l = m + 1
       else -> r = m - 1
