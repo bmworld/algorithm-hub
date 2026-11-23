@@ -3,7 +3,7 @@ package 백준.Silver.no2512
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 15
+const val IBS = 1 shl 16
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -55,25 +55,11 @@ fun w(
 
 
 fun main() {
-  var ans = 0
-
   val n = i()
-  val arr = IntArray(n) { i() }
-  var bdgt = i()
-
-  val cnds = IntArray(n)
-  var cndCnt = 0
-  var maxCnd = 0
-
-  val avg = bdgt / n
-  for (x in arr) when {
-    x <= avg -> bdgt -= x.also { if (it > ans) ans = it }
-    else -> cnds[cndCnt++] = x.also { if (it > maxCnd) maxCnd = it }
-  }
-
-  if (cndCnt > 0) ans = bs(cnds.copyOf(cndCnt), avg + 1, maxCnd, bdgt)
-
-  w(ans)
+  var max = 0
+  val arr = IntArray(n) { i().also { if (it > max) max = it } }
+  val bdgt = i()
+  w(bs(arr, 1, max, bdgt))
   O.flush()
 }
 
@@ -99,20 +85,3 @@ fun bs(arr: IntArray, min: Int, max: Int, bdgt: Int): Int {
 
   return r
 }
-
-/**
-IN
-5
-2 5 2 10 3
-20
-OUT
-8
-
-IN
-7
-74 61 82 31 9 28 18
-202
-
-OUT
-38
- */
