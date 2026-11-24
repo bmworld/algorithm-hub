@@ -128,3 +128,40 @@ fun validate(actual: Array<IntArray>, expect: Array<IntArray>) {
 fun <T> validate(actual: T, expect: T) {
   check(actual == expect) { "actual=${actual}, expect=$expect" }
 }
+
+/**
+ * 3way quick sort
+ */
+fun swap(
+  a: IntArray,
+  i: Int,
+  j: Int,
+) {
+  val tmp = a[i]
+  a[i] = a[j]
+  a[j] = tmp
+}
+
+fun qs(
+  a: IntArray,
+  l: Int,
+  r: Int,
+) {
+  if (l >= r) return
+
+  var pos = l
+  var pl = l
+  var pr = r
+  val piv = a[(l + r) shr 1]
+
+  while (pos <= pr) {
+    val x = a[pos]
+    when {
+      x < piv -> swap(a, pos++, pl++)
+      x > piv -> swap(a, pos, pr--)
+      else -> pos++
+    }
+  }
+  qs(a, l, pl - 1)
+  qs(a, pr + 1, r)
+}
