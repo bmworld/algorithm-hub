@@ -59,55 +59,20 @@ fun main() {
 
   repeat(i()) {
     val n = i()
-    val cnds = LongArray(n) { i() * SEP + i() }
-    qs(cnds, 0, n - 1)
+    val cnds = IntArray(n)
+    repeat(n) { cnds[i() - 1] = i() - 1 }
 
     var ans = 0
-    var topB = n + 1L
-    for (x in cnds) {
-      val b = (x % SEP)
+    var topB = n
+    for (b in cnds) {
       if (b >= topB) continue
-      topB = b
       ans++
+      if (b == 0) break
+      else topB = b
     }
 
     w(ans)
     O.write(10)
   }
   O.flush()
-}
-
-fun swap(
-  a: LongArray,
-  i: Int,
-  j: Int,
-) {
-  val tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
-}
-
-fun qs(
-  a: LongArray,
-  l: Int,
-  r: Int,
-) {
-  if (l >= r) return
-
-  var pos = l
-  var pl = l
-  var pr = r
-  val comp = a[(l + r) shr 1] / SEP
-
-  while (pos <= pr) {
-    val x = a[pos] / SEP
-
-    when {
-      x < comp -> swap(a, pos++, pl++)
-      x > comp -> swap(a, pos, pr--)
-      else -> pos++
-    }
-  }
-  qs(a, l, pl - 1)
-  qs(a, pr + 1, r)
 }
