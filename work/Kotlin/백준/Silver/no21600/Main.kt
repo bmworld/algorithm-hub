@@ -59,8 +59,7 @@ fun main() {
   var seq = 0
   repeat(i()) {
     val a = i()
-    seq = if (a > seq) seq + 1 else minOf(seq, a)
-    if (seq > ans) ans = seq
+    if (a > seq) ans = maxOf(ans, ++seq) else a
   }
 
   w(ans)
