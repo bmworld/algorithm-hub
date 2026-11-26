@@ -75,21 +75,18 @@ fun main() {
         if (it < minH) minH = it
         if (it > maxH) maxH = it
       }
-      val e = pos(r, c, n)
-      arr[e] = h
-      sec[h].add(e)
+      val root = pos(r, c, n)
+      arr[root] = h
+      sec[h].add(root)
     }
   }
 
   var ans = NO_RAIN_CNT
   var cnt = 0
   for (h in maxH downTo maxOf(minH, MIN_H + 1)) {
-    for (e in sec[h]) {
-      val r = e / n
-      val c = e % n
-      val merged = unionWithSib(arr, n, r, c, h, tree)
-      cnt += 1 - merged
-    }
+    for (root in sec[h])
+      cnt += 1 - unionWithSib(arr, n, h, tree, root)
+
     if (cnt > ans) ans = cnt
   }
 
@@ -98,25 +95,25 @@ fun main() {
 }
 
 fun pos(r: Int, c: Int, CAP: Int): Int = r * CAP + c
-fun unionWithSib(arr: IntArray, n: Int, r: Int, c: Int, minH: Int,
-  tree: IntArray): Int {
+fun unionWithSib(arr: IntArray, n: Int, h: Int, tree: IntArray, root: Int): Int {
 
   val merged = HashSet<Int>()
-  val initRoot = pos(r, c, n)
-  val root1 = find(initRoot, tree)
-  if (root1 != initRoot) merged.add(initRoot)
-
+  val r = root / n
+  val c = root % n
   repeat(4) { i ->
     val r2 = r + dr[i]
     val c2 = c + dc[i]
     if (r2 !in 0 until n || c2 !in 0 until n) return@repeat
     val p2 = pos(r2, c2, n)
     val h2 = arr[p2]
-    if (h2 < minH) return@repeat
+    if (h2 <= h) return@repeat
     val root2 = find(p2, tree)
-    if (h2 > minH && root1 != root2) merged.add(root2)
-    union(root1, root2, tree)
+    if (root == root2) return@repeat
+    union(root, root2, tree)
+    merged.add(root2)
   }
+
+  arr[root] = h + 1 // 인접한 같은높이 처리용 Trick
 
   return merged.size
 }
@@ -200,58 +197,4 @@ fun union(a: Int, b: Int, tree: IntArray) {
 74 79 84 89 94 99 100 100
 [OUT]
 1
- */
-
-/**
- * [RIVAL]
- * private val direction = arrayOf(intArrayOf(0, 1), intArrayOf(1, 0), intArrayOf(0, -1), intArrayOf(-1, 0))
- * private var n = 0
- * private lateinit var board: Array<IntArray>
- * private lateinit var check: Array<BooleanArray>
- *
- * fun main() {
- *     n = i()
- *     board = Array(n) { IntArray(n) }
- *     var minHeight = 101
- *     var maxHeight = -1
- *     for (r in 0 until n) {
- *         for (c in 0 until n) {
- *             board[r][c] = i()
- *             if (board[r][c] > maxHeight) maxHeight = board[r][c]
- *             if (board[r][c] < minHeight) minHeight = board[r][c]
- *         }
- *     }
- *     var answer = 0
- *     var cnt: Int
- *     for (rainHeight in minHeight - 1 until maxHeight) {
- *         check = Array(n) { BooleanArray(n) }
- *         cnt = 0
- *         for (r in 0 until n) {
- *             for (c in 0 until n) {
- *                 if (board[r][c] > rainHeight && !check[r][c]) {
- *                     check[r][c] = true
- *                     cnt++
- *                     dfs(r, c, rainHeight)
- *                 }
- *             }
- *         }
- *         if (cnt > answer) answer = cnt
- *     }
- *     writeInt(answer)
- *     flushBuffer()
- * }
- *
- * private fun dfs(r: Int, c: Int, rainHeight: Int) {
- *     var nr: Int
- *     var nc: Int
- *     for (d in direction) {
- *         nr = r + d[0]
- *         nc = c + d[1]
- *
- *         if (nr in 0 until n && nc in 0 until n && board[nr][nc] > rainHeight && !check[nr][nc]) {
- *             check[nr][nc] = true
- *             dfs(nr, nc, rainHeight)
- *         }
- *     }
- * }
  */
