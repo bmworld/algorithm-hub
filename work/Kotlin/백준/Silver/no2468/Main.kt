@@ -3,7 +3,7 @@ package 백준.Silver.no2468
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 15
+const val IBS = 1 shl 17
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -83,8 +83,8 @@ fun main() {
   val q = IntArray(size)
 
   var UID = MAX_H + 1
-  var cnt = 0
-  for (h in maxH downTo maxOf(minH, MIN_H + 1)) {
+  var rmn = 0
+  l@ for (h in maxH downTo maxOf(minH, MIN_H + 1)) {
     val poses = sec[h]
     if (poses.isEmpty()) continue
 
@@ -94,17 +94,17 @@ fun main() {
       val p = pos(r, c, n)
 
       val (uid, mergedCnt) = getUidAndMergedCnt(arr, n, r, c, h, UID)
-      cnt += 1 - mergedCnt
+      rmn += 1 - mergedCnt
       if (uid == UID) UID++
       arr[p] = uid
 
-      for (i in dr.indices) {
+      repeat(4) { i ->
         val nr = r + dr[i]
         val nc = c + dc[i]
-        if (nr !in 0 until n || nc !in 0 until n) continue
+        if (nr !in 0 until n || nc !in 0 until n) return@repeat
         val np = pos(nr, nc, n)
         val nh = arr[np]
-        if (nh <= h || nh == uid) continue
+        if (nh <= h || nh == uid) return@repeat
         arr[np] = uid
 
         var qh = 0
@@ -115,13 +115,13 @@ fun main() {
           val e2 = q[qh++]
           val r2 = e2 / n
           val c2 = e2 % n
-          for (j in dr.indices) {
+          repeat(4) { j ->
             val nr2 = r2 + dr[j]
             val nc2 = c2 + dc[j]
-            if (nr2 !in 0 until n || nc2 !in 0 until n) continue
+            if (nr2 !in 0 until n || nc2 !in 0 until n) return@repeat
             val np2 = pos(nr2, nc2, n)
             val nh2 = arr[np2]
-            if (nh2 <= h || nh2 == uid) continue
+            if (nh2 <= h || nh2 == uid) return@repeat
             arr[np2] = uid
             q[qt++] = np2
           }
@@ -129,7 +129,7 @@ fun main() {
       }
     }
 
-    if (cnt > ans) ans = cnt
+    if (rmn > ans) ans = rmn
   }
 
   w(ans)
@@ -143,13 +143,13 @@ fun getUidAndMergedCnt(arr: IntArray, n: Int, r: Int, c: Int, minH: Int,
   val oldUids = HashSet<Int>()
   var minUid = newUid
 
-  for (i in dr.indices) {
+  repeat(4) { i ->
     val nr = r + dr[i]
     val nc = c + dc[i]
-    if (nr !in 0 until n || nc !in 0 until n) continue
+    if (nr !in 0 until n || nc !in 0 until n) return@repeat
     val p = pos(nr, nc, n)
     val h = arr[p]
-    if (h <= minH) continue
+    if (h <= minH) return@repeat
 
     oldUids.add(h)
     if (h < minUid) minUid = h
