@@ -3,7 +3,7 @@ package 백준.Silver.no2468
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 17
+const val IBS = 1 shl 16
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -60,13 +60,15 @@ val dr = intArrayOf(0, 1, 0, -1)
 val dc = intArrayOf(1, 0, -1, 0)
 fun main() {
   val n = i()
-  val size = n * n
 
   var minH = MAX_H
   var maxH = MIN_H
 
   val sec = Array(MAX_H + 1) { mutableListOf<Int>() }
+
+  val size = n * n
   val arr = IntArray(size)
+  val tree = IntArray(size) { it }
   repeat(n) { r ->
     repeat(n) { c ->
       val h = i().also {
@@ -80,56 +82,15 @@ fun main() {
   }
 
   var ans = NO_RAIN_CNT
-  val q = IntArray(size)
-
-  var UID = MAX_H + 1
-  var rmn = 0
-  l@ for (h in maxH downTo maxOf(minH, MIN_H + 1)) {
-    val poses = sec[h]
-    if (poses.isEmpty()) continue
-
-    for (e in poses) {
+  var cnt = 0
+  for (h in maxH downTo maxOf(minH, MIN_H + 1)) {
+    for (e in sec[h]) {
       val r = e / n
       val c = e % n
-      val p = pos(r, c, n)
-
-      val (uid, mergedCnt) = getUidAndMergedCnt(arr, n, r, c, h, UID)
-      rmn += 1 - mergedCnt
-      if (uid == UID) UID++
-      arr[p] = uid
-
-      repeat(4) { i ->
-        val nr = r + dr[i]
-        val nc = c + dc[i]
-        if (nr !in 0 until n || nc !in 0 until n) return@repeat
-        val np = pos(nr, nc, n)
-        val nh = arr[np]
-        if (nh <= h || nh == uid) return@repeat
-        arr[np] = uid
-
-        var qh = 0
-        var qt = 0
-        q[qt++] = np
-
-        while (qh < qt) {
-          val e2 = q[qh++]
-          val r2 = e2 / n
-          val c2 = e2 % n
-          repeat(4) { j ->
-            val nr2 = r2 + dr[j]
-            val nc2 = c2 + dc[j]
-            if (nr2 !in 0 until n || nc2 !in 0 until n) return@repeat
-            val np2 = pos(nr2, nc2, n)
-            val nh2 = arr[np2]
-            if (nh2 <= h || nh2 == uid) return@repeat
-            arr[np2] = uid
-            q[qt++] = np2
-          }
-        }
-      }
+      val merged = unionWithSib(arr, n, r, c, h, tree)
+      cnt += 1 - merged
     }
-
-    if (rmn > ans) ans = rmn
+    if (cnt > ans) ans = cnt
   }
 
   w(ans)
@@ -137,25 +98,42 @@ fun main() {
 }
 
 fun pos(r: Int, c: Int, CAP: Int): Int = r * CAP + c
-fun getUidAndMergedCnt(arr: IntArray, n: Int, r: Int, c: Int, minH: Int,
-  newUid: Int): Pair<Int, Int> {
+fun unionWithSib(arr: IntArray, n: Int, r: Int, c: Int, minH: Int,
+  tree: IntArray): Int {
 
-  val oldUids = HashSet<Int>()
-  var minUid = newUid
+  val merged = HashSet<Int>()
+  val initRoot = pos(r, c, n)
+  val root1 = find(initRoot, tree)
+  if (root1 != initRoot) merged.add(initRoot)
 
   repeat(4) { i ->
-    val nr = r + dr[i]
-    val nc = c + dc[i]
-    if (nr !in 0 until n || nc !in 0 until n) return@repeat
-    val p = pos(nr, nc, n)
-    val h = arr[p]
-    if (h <= minH) return@repeat
-
-    oldUids.add(h)
-    if (h < minUid) minUid = h
+    val r2 = r + dr[i]
+    val c2 = c + dc[i]
+    if (r2 !in 0 until n || c2 !in 0 until n) return@repeat
+    val p2 = pos(r2, c2, n)
+    val h2 = arr[p2]
+    if (h2 < minH) return@repeat
+    val root2 = find(p2, tree)
+    if (h2 > minH && root1 != root2) merged.add(root2)
+    union(root1, root2, tree)
   }
 
-  return Pair(minUid, oldUids.size)
+  return merged.size
+}
+
+fun find(x: Int, tree: IntArray): Int {
+  val r = tree[x]
+  return if (x == r) r
+  else find(r, tree).also { tree[x] = it }
+}
+
+fun union(a: Int, b: Int, tree: IntArray) {
+  val ra = find(a, tree)
+  val rb = find(b, tree)
+  when {
+    ra < rb -> tree[rb] = ra
+    ra > rb -> tree[ra] = rb
+  }
 }
 
 /**
@@ -189,12 +167,44 @@ fun getUidAndMergedCnt(arr: IntArray, n: Int, r: Int, c: Int, minH: Int,
 
 [OUT]
 19
+
+[IN]
+14
+7 15 28 25 27 13 4 24 3 6 25 29 15 22
+15 27 21 24 4 24 15 20 25 25 12 13 13 10
+17 10 23 16 24 27 28 2 17 1 27 13 3 17
+11 15 27 24 21 10 8 17 9 2 25 8 11 11
+27 4 9 15 8 5 23 19 10 3 25 9 7 6
+2 5 6 25 24 22 15 27 7 12 13 10 18 13
+2 15 28 12 14 14 4 7 22 4 26 21 7 21
+10 24 18 1 24 19 20 28 6 2 5 10 20 7
+5 4 10 2 28 24 15 11 1 25 29 5 2 28
+17 17 28 8 1 26 21 6 14 27 28 26 6 6
+4 18 17 6 20 14 3 14 3 1 15 23 22 10
+24 20 13 17 19 28 14 9 15 12 9 12 6 9
+9 27 18 2 11 24 18 29 6 7 3 27 20 22
+29 26 15 17 26 25 26 3 18 7 7 23 9 18
+
+[OUT]
+28
+
+[IN]
+8
+39 44 49 54 59 64 69 74
+44 49 54 59 64 69 74 79
+49 54 59 64 69 74 79 84
+54 59 64 69 74 79 84 89
+59 64 69 74 79 84 89 94
+64 69 74 79 84 89 94 99
+69 74 79 84 89 94 99 100
+74 79 84 89 94 99 100 100
+[OUT]
+1
  */
 
 /**
  * [RIVAL]
  * private val direction = arrayOf(intArrayOf(0, 1), intArrayOf(1, 0), intArrayOf(0, -1), intArrayOf(-1, 0))
- *
  * private var n = 0
  * private lateinit var board: Array<IntArray>
  * private lateinit var check: Array<BooleanArray>
@@ -244,67 +254,4 @@ fun getUidAndMergedCnt(arr: IntArray, n: Int, r: Int, c: Int, minH: Int,
  *         }
  *     }
  * }
- *
- * private const val EOF = -1
- * private const val ASCII_minus: Byte = 45
- * private const val ASCII_0: Byte = 48
- * private val din = java.io.DataInputStream(System.`in`)
- * private val dout = java.io.DataOutputStream(System.out)
- * private val inbuffer = ByteArray(65536)
- * private var inbufferpointer = 0
- * private var bytesread = 0
- * private val outbuffer = ByteArray(65536)
- * private var outbufferpointer = 0
- * private val bytebuffer = ByteArray(20)
- *
- * private fun i(): Int {
- *     var v = 0
- *     var c = r()
- *     do v = v * 10 + c - 48 while (isDigit(r().also { c = it }))
- *     return v
- * }
- *
- * private fun r(): Byte {
- *     if (inbufferpointer == bytesread) fillBuffer()
- *     return if (bytesread == EOF) EOF.toByte() else inbuffer[inbufferpointer++]
- * }
- *
- * private fun fillBuffer() {
- *     bytesread = din.read(inbuffer, 0.also { inbufferpointer = it }, inbuffer.size)
- * }
- *
- * private fun writeInt(i: Int) {
- *     var i = i
- *     if (i == 0) {
- *         writeByte(ASCII_0)
- *     } else {
- *         if (i < 0) {
- *             writeByte(ASCII_minus)
- *             i = -i
- *         }
- *         var index = 0
- *         while (i > 0) {
- *             bytebuffer[index++] = (i % 10 + ASCII_0).toByte()
- *             i /= 10
- *         }
- *         while (index-- > 0) {
- *             writeByte(bytebuffer[index])
- *         }
- *     }
- * }
- *
- * private fun writeByte(b: Byte) {
- *     if (outbufferpointer == outbuffer.size) flushBuffer()
- *     outbuffer[outbufferpointer++] = b
- * }
- *
- * private fun flushBuffer() {
- *     if (outbufferpointer != 0) {
- *         dout.write(outbuffer, 0, outbufferpointer)
- *         outbufferpointer = 0
- *     }
- * }
- *
- * private fun isDigit(b: Byte) = b >= ASCII_0
- *
  */
