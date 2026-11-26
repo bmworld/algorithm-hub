@@ -84,19 +84,19 @@ private fun getSum(
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
 // ---------------------------------------------------------------------
-
-fun test(
-  stt: Int,
-  end: Int
-) {
-  var total = 0
-  repeat(end - stt + 1) { i ->
-    val v = stt + i
-    val w = getW(v)
-    total += w
-  }
-  println("[TEST] $total")
-}
+//
+//fun test(
+//  stt: Int,
+//  end: Int
+//) {
+//  var total = 0
+//  repeat(end - stt + 1) { i ->
+//    val v = stt + i
+//    val w = getW(v)
+//    total += w
+//  }
+//  println("[TEST] $total")
+//}
 
 fun getW(
   num: Int
