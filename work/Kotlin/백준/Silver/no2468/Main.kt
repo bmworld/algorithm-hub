@@ -3,7 +3,7 @@ package 백준.Silver.no2468
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 16
+const val IBS = 1 shl 17
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -69,6 +69,7 @@ fun main() {
   val size = n * n
   val arr = IntArray(size)
   val tree = IntArray(size) { it }
+  val treeSize = IntArray(size) { 1 }
   repeat(n) { r ->
     repeat(n) { c ->
       val h = i().also {
@@ -85,7 +86,7 @@ fun main() {
   var cnt = 0
   for (h in maxH downTo maxOf(minH, MIN_H + 1)) {
     for (root in sec[h])
-      cnt += 1 - unionWithSib(arr, n, h, tree, root)
+      cnt += 1 - unionWithSib(arr, n, h, tree, root, treeSize)
 
     if (cnt > ans) ans = cnt
   }
@@ -95,9 +96,10 @@ fun main() {
 }
 
 fun pos(r: Int, c: Int, CAP: Int): Int = r * CAP + c
-fun unionWithSib(arr: IntArray, n: Int, h: Int, tree: IntArray, root: Int): Int {
+fun unionWithSib(arr: IntArray, n: Int, h: Int, tree: IntArray, root: Int,
+  treeSize: IntArray): Int {
 
-  val merged = HashSet<Int>()
+  var merged = 0
   val r = root / n
   val c = root % n
   repeat(4) { i ->
@@ -108,14 +110,12 @@ fun unionWithSib(arr: IntArray, n: Int, h: Int, tree: IntArray, root: Int): Int 
     val h2 = arr[p2]
     if (h2 <= h) return@repeat
     val root2 = find(p2, tree)
-    if (root == root2) return@repeat
-    union(root, root2, tree)
-    merged.add(root2)
+    if (union(root, root2, tree, treeSize)) merged++
   }
 
   arr[root] = h + 1 // 인접한 같은높이 처리용 Trick
 
-  return merged.size
+  return merged
 }
 
 fun find(x: Int, tree: IntArray): Int {
@@ -124,13 +124,23 @@ fun find(x: Int, tree: IntArray): Int {
   else find(r, tree).also { tree[x] = it }
 }
 
-fun union(a: Int, b: Int, tree: IntArray) {
-  val ra = find(a, tree)
-  val rb = find(b, tree)
-  when {
-    ra < rb -> tree[rb] = ra
-    ra > rb -> tree[ra] = rb
+fun union(a: Int, b: Int, tree: IntArray, treeSize: IntArray): Boolean {
+  var ra = find(a, tree)
+  var rb = find(b, tree)
+  if (ra == rb) return false
+
+  val szA = treeSize[ra]
+  val szB = treeSize[rb]
+  if (szA < szB) {
+    val tmp = ra
+    ra = rb
+    rb = tmp
   }
+
+  tree[rb] = ra
+  treeSize[ra] += szB
+
+  return true
 }
 
 /**
@@ -195,6 +205,7 @@ fun union(a: Int, b: Int, tree: IntArray) {
 64 69 74 79 84 89 94 99
 69 74 79 84 89 94 99 100
 74 79 84 89 94 99 100 100
+
 [OUT]
 1
  */
