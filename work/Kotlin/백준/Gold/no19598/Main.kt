@@ -58,74 +58,102 @@ val SEP = 10_000_000_000UL
 @OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
 
-  fun swap(
-    a: ULongArray,
-    i: Int,
-    j: Int,
-  ) {
-    val tmp = a[i]
-    a[i] = a[j]
-    a[j] = tmp
-  }
-
-  fun qs(
-    a: ULongArray,
-    l: Int,
-    r: Int,
-  ) {
-    if (l >= r) return
-
-    var pos = l
-    var pl = l
-    var pr = r
-    val piv = a[(l + r) shr 1]
-
-    while (pos <= pr) {
-      val x = a[pos]
-      when {
-        x < piv -> swap(a, pos++, pl++)
-        x > piv -> swap(a, pos, pr--)
-        else -> pos++
-      }
-    }
-    qs(a, l, pl - 1)
-    qs(a, pr + 1, r)
-  }
-
-
   val n = i()
-  val arr = ULongArray(n) {
-    val s = i().toULong()
-    val e = i().toULong()
-    e * SEP + s
+  val meetings = ULongArray(n) { i().toULong() * SEP + i().toULong() }
+  qs(meetings, 0, n - 1)
+  val h = HEAP(n)
+
+  for (i in 0 until n) {
+    val etr = meetings[i]
+    val s = (etr / SEP).toInt()
+    val e = (etr % SEP).toInt()
+    if (!h.isEmpty() && s >= h.top()) h.pop()
+    h.push(e)
   }
 
-  qs(arr, 0, n - 1)
-
-  val meetings = IntArray(n)
-  var cnt = 0
-  for (x in arr) {
-    val e = (x / SEP).toInt()
-    val s = (x % SEP).toInt()
-
-    var pos = cnt
-    var closest = 0
-    for (i in 0 until cnt) {
-      val e2 = meetings[i]
-      when {
-        e2 > s -> continue
-        e2 > closest -> {
-          pos = i
-          if (e2 == s) break
-          else closest = e2
-        }
-      }
-    }
-    meetings[if (pos != cnt) pos else cnt++] = e
-  }
-
-  w(cnt)
+  w(h.len)
   O.flush()
+}
+
+class HEAP(size: Int) {
+
+  private val heap = IntArray(size + 1)
+  private val root = 1
+  var len = 0
+
+  fun isEmpty() = len == 0
+
+  fun push(v: Int) {
+    var ci = ++len
+    heap[len] = v
+    while (ci > root) {
+      val pi = ci shr 1
+      val p = heap[pi]
+      val c = heap[ci]
+      if (p > c) {
+        heap[pi] = c
+        heap[ci] = p
+        ci = pi
+      } else break
+    }
+  }
+
+  fun pop(): Int {
+    if (len == 0) return 0
+    val v = heap[root]
+    val x = heap[len--]
+
+    var pi = root
+    var ci = root shl 1
+    while (ci <= len) {
+      val ri = ci + 1
+      if (ri <= len && heap[ri] < heap[ci]) ci++
+      if (heap[ci] >= x) break
+      heap[pi] = heap[ci]
+      pi = ci
+      ci = pi shl 1
+    }
+    heap[pi] = x
+    return v
+  }
+
+  fun top(): Int = heap[root]
+}
+
+@OptIn(ExperimentalUnsignedTypes::class)
+fun swap(
+  a: ULongArray,
+  i: Int,
+  j: Int,
+) {
+  val tmp = a[i]
+  a[i] = a[j]
+  a[j] = tmp
+}
+
+@OptIn(ExperimentalUnsignedTypes::class)
+fun qs(
+  a: ULongArray,
+  l: Int,
+  r: Int,
+) {
+  if (l >= r) return
+
+  var pos = l
+  var pl = l
+  var pr = r
+  val piv = a[(l + r) shr 1]
+
+  while (pos <= pr) {
+    val x = a[pos]
+    when {
+      x < piv -> swap(a, pos++, pl++)
+      x > piv -> swap(a, pos, pr--)
+      else -> pos++
+    }
+  }
+  qs(a, l, pl - 1)
+  qs(a, pr + 1, r)
 }
 
 /**
@@ -141,5 +169,4 @@ fun main() {
 4 6
 [OUT]
 3
-
  */
