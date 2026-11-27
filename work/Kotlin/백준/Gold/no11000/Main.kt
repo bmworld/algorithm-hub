@@ -53,19 +53,21 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-val SEP = 10_000_000_000L
+val SEP = 10_000_000_000UL
+
+@OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
 
   val n = i()
-  val lectures = LongArray(n) { i().toLong() * SEP + i().toLong() }
-  qs(lectures, 0, n - 1)
+  val cnds = ULongArray(n) { i().toULong() * SEP + i().toULong() }
+  qs(cnds, 0, n - 1)
   val h = HEAP(n)
 
   for (i in 0 until n) {
-    val etr = lectures[i]
+    val etr = cnds[i]
     val s = (etr / SEP).toInt()
     val e = (etr % SEP).toInt()
-    if (h.isNotEmpty() && s > h.peak()) h.pop()
+    if (!h.isEmpty() && s >= h.top()) h.pop()
     h.push(e)
   }
 
@@ -79,7 +81,7 @@ class HEAP(size: Int) {
   private val root = 1
   var len = 0
 
-  fun isNotEmpty() = len > 0
+  fun isEmpty() = len == 0
 
   fun push(v: Int) {
     var ci = ++len
@@ -115,11 +117,12 @@ class HEAP(size: Int) {
     return v
   }
 
-  fun peak(): Int = heap[root]
+  fun top(): Int = heap[root]
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun swap(
-  a: LongArray,
+  a: ULongArray,
   i: Int,
   j: Int,
 ) {
@@ -128,8 +131,9 @@ fun swap(
   a[j] = tmp
 }
 
+@OptIn(ExperimentalUnsignedTypes::class)
 fun qs(
-  a: LongArray,
+  a: ULongArray,
   l: Int,
   r: Int,
 ) {
