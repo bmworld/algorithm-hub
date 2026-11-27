@@ -65,7 +65,7 @@ fun main() {
     val etr = lectures[i]
     val s = (etr / SEP).toInt()
     val e = (etr % SEP).toInt()
-    if (h.isNotEmpty() && s >= h.peak()) h.pop()
+    if (h.isNotEmpty() && s > h.peak()) h.pop()
     h.push(e)
   }
 
