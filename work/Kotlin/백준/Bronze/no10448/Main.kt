@@ -55,11 +55,8 @@ fun w(
 
 var isValid = 0
 const val MAX_T = 44
-const val MAX_K = 1_000
 const val MAX_COMB = 3
-const val EMPTY = -1
 fun main() {
-  val cache = IntArray(MAX_K + 1) { EMPTY }
   val tnum = IntArray(MAX_T + 1).also {
     for (i in 1 until it.size) it[i] = it[i - 1] + i
   }
@@ -79,15 +76,9 @@ fun main() {
 
   repeat(i()) {
     val x = i()
-    val cached = cache[x]
-    if (cached != EMPTY) {
-      w(cached)
-    } else {
-      val end = binSearch(x, tnum)
-      dfs(0, end - if (tnum[end] == x) 1 else 0, 0, x)
-      w(isValid.also { cache[x] = it })
-    }
-
+    val end = binSearch(x, tnum)
+    dfs(0, end - if (tnum[end] == x) 1 else 0, 0, x)
+    w(isValid)
     isValid = 0
     O.write(10)
   }
