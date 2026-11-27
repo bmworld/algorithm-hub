@@ -53,13 +53,50 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-const val SEP = 10_000_000_000L
+val SEP = 10_000_000_000UL
+
+@OptIn(ExperimentalUnsignedTypes::class)
 fun main() {
 
+  fun swap(
+    a: ULongArray,
+    i: Int,
+    j: Int,
+  ) {
+    val tmp = a[i]
+    a[i] = a[j]
+    a[j] = tmp
+  }
+
+  fun qs(
+    a: ULongArray,
+    l: Int,
+    r: Int,
+  ) {
+    if (l >= r) return
+
+    var pos = l
+    var pl = l
+    var pr = r
+    val piv = a[(l + r) shr 1]
+
+    while (pos <= pr) {
+      val x = a[pos]
+      when {
+        x < piv -> swap(a, pos++, pl++)
+        x > piv -> swap(a, pos, pr--)
+        else -> pos++
+      }
+    }
+    qs(a, l, pl - 1)
+    qs(a, pr + 1, r)
+  }
+
+
   val n = i()
-  val arr = LongArray(n) {
-    val s = i()
-    val e = i()
+  val arr = ULongArray(n) {
+    val s = i().toULong()
+    val e = i().toULong()
     e * SEP + s
   }
 
@@ -72,61 +109,23 @@ fun main() {
     val s = (x % SEP).toInt()
 
     var pos = cnt
-    var closedE = 0
+    var closest = 0
     for (i in 0 until cnt) {
       val e2 = meetings[i]
       when {
         e2 > s -> continue
-        e2 == s -> {
+        e2 > closest -> {
           pos = i
-          break
-        }
-        e2 > closedE -> {
-          closedE = e2
-          pos = i
+          if (e2 == s) break
+          else closest = e2
         }
       }
     }
-
     meetings[if (pos != cnt) pos else cnt++] = e
   }
 
   w(cnt)
   O.flush()
-}
-
-fun swap(
-  a: LongArray,
-  i: Int,
-  j: Int,
-) {
-  val tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
-}
-
-fun qs(
-  a: LongArray,
-  l: Int,
-  r: Int,
-) {
-  if (l >= r) return
-
-  var pos = l
-  var pl = l
-  var pr = r
-  val piv = a[(l + r) shr 1]
-
-  while (pos <= pr) {
-    val x = a[pos]
-    when {
-      x < piv -> swap(a, pos++, pl++)
-      x > piv -> swap(a, pos, pr--)
-      else -> pos++
-    }
-  }
-  qs(a, l, pl - 1)
-  qs(a, pr + 1, r)
 }
 
 /**
