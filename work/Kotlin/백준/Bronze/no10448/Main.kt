@@ -3,7 +3,7 @@ package 백준.Bronze.no10448
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 10
+const val IBS = 1 shl 8
 const val OBS = 1 shl 5
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -53,53 +53,39 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
-var isValid = 0
 const val MAX_T = 44
-const val MAX_COMB = 3
 fun main() {
-  val tnum = IntArray(MAX_T + 1).also {
-    for (i in 1 until it.size) it[i] = it[i - 1] + i
-  }
 
-  fun dfs(selected: Int, end: Int, sum: Int, t: Int) {
-    if (isValid == 1) return
-    if (selected == MAX_COMB) {
-      if (sum == t) isValid = 1
-      return
-    }
-    if (sum >= t) return
-
-    for (i in end downTo 1) {
-      dfs(selected + 1, i, sum + tnum[i], t)
-    }
-  }
-
-  repeat(i()) {
+  val T = i()
+  val cnds = IntArray(T)
+  var max_x = 0
+  repeat(T) {
     val x = i()
-    val end = binSearch(x, tnum)
-    dfs(0, end - if (tnum[end] == x) 1 else 0, 0, x)
-    w(isValid)
-    isValid = 0
-    O.write(10)
+    cnds[it] = x
+    if (x > max_x) max_x = x
   }
+  val eureka = IntArray(max_x + 1)
+
+  IntArray(MAX_T + 1).also {
+    for (i in 1 until it.size) it[i] = it[i - 1] + i
+    for (i in 1..MAX_T) {
+      val x1 = it[i]
+      if (x1 >= max_x) break
+      for (j in 1..MAX_T) {
+        val x2 = it[j]
+        val sum1 = x1 + x2
+        if (sum1 >= max_x) break
+        for (k in 1..MAX_T) {
+          val sum2 = sum1 + it[k]
+          if (sum2 > max_x) break
+          eureka[sum2] = 1
+        }
+      }
+    }
+  }
+
+  for (x in cnds)
+    w(eureka[x]).also { O.write(10) }
 
   O.flush()
-}
-
-fun binSearch(x: Int, arr: IntArray): Int {
-
-  var l = 0
-  var r = arr.size - 1
-
-  while (l <= r) {
-    val m = (l + r) shr 1
-    val mx = arr[m]
-    when {
-      mx == x -> return m
-      mx < x -> l = m + 1
-      else -> r = m - 1
-    }
-  }
-
-  return r
 }
