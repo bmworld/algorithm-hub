@@ -74,37 +74,38 @@ fun main() {
     val a = x - MAX
     if (a > 0) break
 
-    val cnt = cnts[x]
+    var cnt = cnts[x]
     if (cnt == 0) continue
 
-    ans += a * a * (cnt / 2)
-    if (cnt % 2 == 0) continue
-
-    if (b <= 0) {
+    if (b < 0) {
+      cnt--
       ans += a * b
       b = Int.MAX_VALUE
-    } else b = a
+    }
+
+    ans += (a * a) * (cnt / 2)
+    if (cnt % 2 != 0) b = a
   }
 
   if (b < 0) ans += b
-
 
   b = Int.MIN_VALUE
   for (x in max downTo min) {
     val a = x - MAX
     if (a <= 0) break
 
-    val cnt = cnts[x]
+    var cnt = cnts[x]
     if (cnt == 0) continue
 
-    ans += maxOf(a * a, a + a) * (cnt / 2)
-    if (cnt % 2 == 0) continue
-
-
     if (b > 0) {
+      cnt--
       ans += maxOf(a * b, a + b)
       b = Int.MIN_VALUE
-    } else b = a
+    }
+
+    ans += maxOf(a * a, a + a) * (cnt / 2)
+    if (cnt % 2 != 0) b = a
+
   }
   if (b > 0) ans += b
 
