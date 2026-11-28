@@ -59,30 +59,14 @@ fun main() {
   val bundle = HEAP(n)
   repeat(n) { bundle.push(i()) }
 
-  if (n < 2) {
-    w(0)
-    O.flush()
-    return
+  var ans = 0
+  repeat(n - 1) {
+    val cnt = bundle.pop() + bundle.pop()
+    ans += cnt
+    bundle.push(cnt)
   }
 
-  var acc = 0
-  var a = 0
-  var b = 0
-  while (bundle.isNotEmpty()) {
-    when {
-      a == 0 -> a = bundle.pop()
-      b == 0 -> b = bundle.pop()
-      else -> {
-        val comp = a + b
-        acc += comp
-        bundle.push(comp)
-        a = 0
-        b = 0
-      }
-    }
-  }
-
-  w(acc + a + b)
+  w(ans)
   O.flush()
 }
 
