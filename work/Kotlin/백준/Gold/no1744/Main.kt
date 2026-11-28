@@ -53,81 +53,64 @@ fun w(
   O.write(WB, ++pos, WS - pos)
 }
 
+const val MAX = 1_000
 fun main() {
 
   val n = i()
-  val arr = IntArray(n) { i() }
-  qs(arr, 0, n - 1)
+  val cnts = IntArray(MAX * 2 + 1)
+  var min = Int.MAX_VALUE
+  var max = Int.MIN_VALUE
+  repeat(n) {
+    val x = i() + MAX
+    cnts[x]++
+    if (x < min) min = x
+    if (x > max) max = x
+  }
 
   var ans = 0
-  var i = 0
-  while (i + 1 < n) {
-    val a = arr[i]
-    val b = arr[i + 1]
-    i += 2
-    when {
-      a >= 0 -> break
-      b > 0 -> {
-        ans += a
-        break
-      }
-      else -> ans += a * b
-    }
-  }
-  if (i < n && arr[i] < 0) ans += arr[i]
 
-  var j = n - 1
-  while (j - 1 >= 0) {
-    val a = arr[j]
-    val b = arr[j - 1]
-    j -= 2
-    when {
-      a <= 0 -> break
-      b <= 0 -> {
-        ans += a
-        break
-      }
-      else -> ans += maxOf(a * b, a + b)
+  for (x in min..max) {
+    val a = x - MAX
+    if (a >= 0) break
+
+    val cnt = cnts[x]
+    if (cnt == 0) continue
+
+    ans += maxOf(a * a, a + a) * (cnt / 2)
+    if (cnt % 2 == 0) continue
+
+    var b = Int.MAX_VALUE
+    for (x2 in x + 1..max) if (cnts[x2] > 0 && x2 - MAX <= 0) {
+      cnts[x2]--
+      b = x2 - MAX
+      break
     }
+
+    ans += if (b <= 0) a * b else a
   }
-  if (j >= 0 && arr[j] > 0) ans += arr[j]
+
+  for (x in max downTo min) {
+    val a = x - MAX
+    if (a <= 0) break
+
+    val cnt = cnts[x]
+    if (cnt == 0) continue
+
+    ans += maxOf(a * a, a + a) * (cnt / 2)
+    if (cnt % 2 == 0) continue
+
+    var b = Int.MIN_VALUE
+    for (x2 in x - 1 downTo min) if (cnts[x2] > 0 && x2 - MAX > 0) {
+      cnts[x2]--
+      b = x2 - MAX
+      break
+    }
+
+    ans += if (b > 0) maxOf(a * b, a + b) else a
+  }
 
   w(ans)
   O.flush()
-}
-
-fun swap(
-  a: IntArray,
-  i: Int,
-  j: Int,
-) {
-  val tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
-}
-
-fun qs(
-  a: IntArray,
-  l: Int,
-  r: Int,
-) {
-  if (l >= r) return
-
-  var pos = l
-  var pl = l
-  var pr = r
-  val piv = a[(l + r) shr 1]
-
-  while (pos <= pr) {
-    val x = a[pos]
-    when {
-      x < piv -> swap(a, pos++, pl++)
-      x > piv -> swap(a, pos, pr--)
-      else -> pos++
-    }
-  }
-  qs(a, l, pl - 1)
-  qs(a, pr + 1, r)
 }
 
 /**
