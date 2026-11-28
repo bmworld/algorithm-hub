@@ -167,15 +167,11 @@ fun qs(
 }
 
 
-class HEAP(size: Int) {
+class MinHeap(size: Int) {
 
   val heap = IntArray(size + 1)
   val root = 1
   var len = 0
-
-  fun clear() {
-    len = 0
-  }
 
   fun isNotEmpty() = len > 0
 
@@ -214,5 +210,49 @@ class HEAP(size: Int) {
   }
 
   fun top(): Int = heap[root]
+}
 
+class MaxHeap(size: Int) {
+
+  val heap = IntArray(size + 1)
+  val root = 1
+  var len = 0
+
+  fun isNotEmpty() = len > 0
+
+  fun push(v: Int) {
+    var ci = ++len
+    heap[len] = v
+    while (ci > root) {
+      val pi = ci shr 1
+      val p = heap[pi]
+      val c = heap[ci]
+      if (p < c) {
+        heap[pi] = c
+        heap[ci] = p
+        ci = pi
+      } else break
+    }
+  }
+
+  fun pop(): Int {
+    if (len == 0) return 0
+    val v = heap[root]
+    val x = heap[len--]
+
+    var pi = root
+    var ci = root shl 1
+    while (ci <= len) {
+      val ri = ci + 1
+      if (ri <= len && heap[ri] > heap[ci]) ci++
+      if (heap[ci] <= x) break
+      heap[pi] = heap[ci]
+      pi = ci
+      ci = pi shl 1
+    }
+    heap[pi] = x
+    return v
+  }
+
+  fun top(): Int = heap[root]
 }
