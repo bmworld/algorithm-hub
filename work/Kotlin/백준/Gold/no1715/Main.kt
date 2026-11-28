@@ -2,7 +2,6 @@ package 백준.Gold.no1715
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
-import java.math.BigInteger
 
 const val IBS = 1 shl 18
 const val OBS = 1 shl 4
@@ -23,9 +22,9 @@ fun r(): Byte {
 }
 
 val NUM = 48..57
-fun i(): Long {
+fun i(): Int {
   var v = 0
-  var s = 1L
+  var s = 1
   var b: Byte
   while (r().also { b = it } in NUM || b == 45.toByte()) {
     when (b) {
@@ -36,56 +35,117 @@ fun i(): Long {
   return s * v
 }
 
+const val WS = 10
+val WB = ByteArray(WS)
+fun w(
+  num: Int
+) {
+  var v = if (num >= 0) num
+  else {
+    O.write(45)
+    -num
+  }
+  var pos = WS - 1
+  do {
+    WB[pos--] = (v % 10 + 48).toByte()
+    v /= 10
+  } while (v > 0)
+  O.write(WB, ++pos, WS - pos)
+}
+
 fun main() {
 
-  val n = i().toInt()
-  val bundle = LongArray(n) { i() }
-  qs(bundle, 0, n - 1)
+  val n = i()
+  val bundle = HEAP(n)
+  repeat(n) { bundle.push(i()) }
 
-  print(
-    if (n < 2) 0 else {
-      var ans = BigInteger.valueOf((bundle[0] + bundle[1]))
-      val two = BigInteger.valueOf(2)
-      for (i in 2 until bundle.size) {
-        ans = ans.multiply(two).plus(BigInteger.valueOf(bundle[i]))
+  if (n < 2) {
+    w(0)
+    O.flush()
+    return
+  }
+
+  var acc = 0
+  var a = 0
+  var b = 0
+  while (bundle.isNotEmpty()) {
+    when {
+      a == 0 -> a = bundle.pop()
+      b == 0 -> b = bundle.pop()
+      else -> {
+        val comp = a + b
+        acc += comp
+        bundle.push(comp)
+        a = 0
+        b = 0
       }
-      ans
     }
-  )
+  }
 
+  w(acc + a + b)
   O.flush()
 }
 
-fun swap(
-  a: LongArray,
-  i: Int,
-  j: Int,
-) {
-  val tmp = a[i]
-  a[i] = a[j]
-  a[j] = tmp
-}
 
-fun qs(
-  a: LongArray,
-  l: Int,
-  r: Int,
-) {
-  if (l >= r) return
+class HEAP(size: Int) {
 
-  var pos = l
-  var pl = l
-  var pr = r
-  val piv = a[(l + r) shr 1]
+  val heap = IntArray(size + 1)
+  val root = 1
+  var len = 0
 
-  while (pos <= pr) {
-    val x = a[pos]
-    when {
-      x < piv -> swap(a, pos++, pl++)
-      x > piv -> swap(a, pos, pr--)
-      else -> pos++
+  fun clear() {
+    len = 0
+  }
+
+  fun isNotEmpty() = len > 0
+
+  fun push(v: Int) {
+    var ci = ++len
+    heap[len] = v
+    while (ci > root) {
+      val pi = ci shr 1
+      val p = heap[pi]
+      val c = heap[ci]
+      if (p > c) {
+        heap[pi] = c
+        heap[ci] = p
+        ci = pi
+      } else break
     }
   }
-  qs(a, l, pl - 1)
-  qs(a, pr + 1, r)
+
+  fun pop(): Int {
+    if (len == 0) return 0
+    val v = heap[root]
+    val x = heap[len--]
+
+    var pi = root
+    var ci = root shl 1
+    while (ci <= len) {
+      val ri = ci + 1
+      if (ri <= len && heap[ri] < heap[ci]) ci++
+      if (heap[ci] >= x) break
+      heap[pi] = heap[ci]
+      pi = ci
+      ci = pi shl 1
+    }
+    heap[pi] = x
+    return v
+  }
 }
+
+/**
+[IN]
+4
+2
+2
+2
+2
+[OUT]
+16
+ */
+
+//  // 2000 * 50000 = 100_000_000
+//  // 4000 * 25000 = 100_000_000
+//  // 8000 * 12500 = 100_000_000
+//  // 최대 1_700_000_000
