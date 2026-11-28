@@ -2,6 +2,7 @@ package 백준.Gold.no1715
 
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
+import java.math.BigInteger
 
 const val IBS = 1 shl 18
 const val OBS = 1 shl 4
@@ -22,9 +23,9 @@ fun r(): Byte {
 }
 
 val NUM = 48..57
-fun i(): Int {
+fun i(): Long {
   var v = 0
-  var s = 1
+  var s = 1L
   var b: Byte
   while (r().also { b = it } in NUM || b == 45.toByte()) {
     when (b) {
@@ -35,45 +36,28 @@ fun i(): Int {
   return s * v
 }
 
-const val WS = 10
-val WB = ByteArray(WS)
-fun w(
-  num: Int
-) {
-  var v = if (num >= 0) num
-  else {
-    O.write(45)
-    -num
-  }
-  var pos = WS - 1
-  do {
-    WB[pos--] = (v % 10 + 48).toByte()
-    v /= 10
-  } while (v > 0)
-  O.write(WB, ++pos, WS - pos)
-  O.write(10)
-}
-
-val SEP = 10_000L
 fun main() {
 
-  val n = i()
-  val bundle = IntArray(n) { i() }
-
+  val n = i().toInt()
+  val bundle = LongArray(n) { i() }
   qs(bundle, 0, n - 1)
 
-  if (n > 1) bundle[1] += bundle[0]
+  print(
+    if (n < 2) 0 else {
+      var ans = BigInteger.valueOf((bundle[0] + bundle[1]))
+      val two = BigInteger.valueOf(2)
+      for (i in 2 until bundle.size) {
+        ans = ans.multiply(two).plus(BigInteger.valueOf(bundle[i]))
+      }
+      ans
+    }
+  )
 
-  for (i in 2 until n)
-    bundle[i] += bundle[i - 1] * 2
-
-  w(bundle[n - 1])
   O.flush()
 }
 
-
 fun swap(
-  a: IntArray,
+  a: LongArray,
   i: Int,
   j: Int,
 ) {
@@ -83,7 +67,7 @@ fun swap(
 }
 
 fun qs(
-  a: IntArray,
+  a: LongArray,
   l: Int,
   r: Int,
 ) {
