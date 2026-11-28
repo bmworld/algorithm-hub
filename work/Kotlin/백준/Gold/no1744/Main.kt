@@ -69,26 +69,27 @@ fun main() {
 
   var ans = 0
 
+  var b = Int.MAX_VALUE
   for (x in min..max) {
     val a = x - MAX
-    if (a >= 0) break
+    if (a > 0) break
 
     val cnt = cnts[x]
     if (cnt == 0) continue
 
-    ans += maxOf(a * a, a + a) * (cnt / 2)
+    ans += a * a * (cnt / 2)
     if (cnt % 2 == 0) continue
 
-    var b = Int.MAX_VALUE
-    for (x2 in x + 1..max) if (cnts[x2] > 0 && x2 - MAX <= 0) {
-      cnts[x2]--
-      b = x2 - MAX
-      break
-    }
-
-    ans += if (b <= 0) a * b else a
+    if (b <= 0) {
+      ans += a * b
+      b = Int.MAX_VALUE
+    } else b = a
   }
 
+  if (b < 0) ans += b
+
+
+  b = Int.MIN_VALUE
   for (x in max downTo min) {
     val a = x - MAX
     if (a <= 0) break
@@ -99,15 +100,13 @@ fun main() {
     ans += maxOf(a * a, a + a) * (cnt / 2)
     if (cnt % 2 == 0) continue
 
-    var b = Int.MIN_VALUE
-    for (x2 in x - 1 downTo min) if (cnts[x2] > 0 && x2 - MAX > 0) {
-      cnts[x2]--
-      b = x2 - MAX
-      break
-    }
 
-    ans += if (b > 0) maxOf(a * b, a + b) else a
+    if (b > 0) {
+      ans += maxOf(a * b, a + b)
+      b = Int.MIN_VALUE
+    } else b = a
   }
+  if (b > 0) ans += b
 
   w(ans)
   O.flush()
