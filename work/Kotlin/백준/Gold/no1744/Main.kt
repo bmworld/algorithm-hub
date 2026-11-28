@@ -3,7 +3,7 @@ package 백준.Gold.no1744
 import java.io.BufferedInputStream
 import java.io.BufferedOutputStream
 
-const val IBS = 1 shl 9
+const val IBS = 1 shl 8
 const val OBS = 1 shl 4
 val O = BufferedOutputStream(System.`out`, OBS)
 val I = BufferedInputStream(System.`in`)
@@ -56,18 +56,15 @@ fun w(
 fun main() {
 
   val n = i()
-  val minH = MinHeap(n)
-  val maxH = MaxHeap(n)
-  repeat(n) {
-    val x = i()
-    minH.push(x)
-    maxH.push(x)
-  }
+  val arr = IntArray(n) { i() }
+  qs(arr, 0, n - 1)
 
   var ans = 0
-  while (minH.len >= 2) {
-    val a = minH.pop()
-    val b = minH.pop()
+  var i = 0
+  while (i + 1 < n) {
+    val a = arr[i]
+    val b = arr[i + 1]
+    i += 2
     when {
       a >= 0 -> break
       b > 0 -> {
@@ -77,12 +74,13 @@ fun main() {
       else -> ans += a * b
     }
   }
-  if (minH.isNotEmpty() && minH.top() < 0) ans += minH.top()
+  if (i < n && arr[i] < 0) ans += arr[i]
 
-
-  while (maxH.len >= 2) {
-    val a = maxH.pop()
-    val b = maxH.pop()
+  var j = n - 1
+  while (j - 1 >= 0) {
+    val a = arr[j]
+    val b = arr[j - 1]
+    j -= 2
     when {
       a <= 0 -> break
       b <= 0 -> {
@@ -92,101 +90,44 @@ fun main() {
       else -> ans += maxOf(a * b, a + b)
     }
   }
-  if (maxH.isNotEmpty() && maxH.top() > 0) ans += maxH.top()
+  if (j >= 0 && arr[j] > 0) ans += arr[j]
 
   w(ans)
   O.flush()
 }
 
-
-class MinHeap(size: Int) {
-
-  val heap = IntArray(size + 1)
-  val root = 1
-  var len = 0
-
-  fun isNotEmpty() = len > 0
-
-  fun push(v: Int) {
-    var ci = ++len
-    heap[len] = v
-    while (ci > root) {
-      val pi = ci shr 1
-      val p = heap[pi]
-      val c = heap[ci]
-      if (p > c) {
-        heap[pi] = c
-        heap[ci] = p
-        ci = pi
-      } else break
-    }
-  }
-
-  fun pop(): Int {
-    if (len == 0) return 0
-    val v = heap[root]
-    val x = heap[len--]
-
-    var pi = root
-    var ci = root shl 1
-    while (ci <= len) {
-      val ri = ci + 1
-      if (ri <= len && heap[ri] < heap[ci]) ci++
-      if (heap[ci] >= x) break
-      heap[pi] = heap[ci]
-      pi = ci
-      ci = pi shl 1
-    }
-    heap[pi] = x
-    return v
-  }
-
-  fun top(): Int = heap[root]
+fun swap(
+  a: IntArray,
+  i: Int,
+  j: Int,
+) {
+  val tmp = a[i]
+  a[i] = a[j]
+  a[j] = tmp
 }
 
-class MaxHeap(size: Int) {
+fun qs(
+  a: IntArray,
+  l: Int,
+  r: Int,
+) {
+  if (l >= r) return
 
-  val heap = IntArray(size + 1)
-  val root = 1
-  var len = 0
+  var pos = l
+  var pl = l
+  var pr = r
+  val piv = a[(l + r) shr 1]
 
-  fun isNotEmpty() = len > 0
-
-  fun push(v: Int) {
-    var ci = ++len
-    heap[len] = v
-    while (ci > root) {
-      val pi = ci shr 1
-      val p = heap[pi]
-      val c = heap[ci]
-      if (p < c) {
-        heap[pi] = c
-        heap[ci] = p
-        ci = pi
-      } else break
+  while (pos <= pr) {
+    val x = a[pos]
+    when {
+      x < piv -> swap(a, pos++, pl++)
+      x > piv -> swap(a, pos, pr--)
+      else -> pos++
     }
   }
-
-  fun pop(): Int {
-    if (len == 0) return 0
-    val v = heap[root]
-    val x = heap[len--]
-
-    var pi = root
-    var ci = root shl 1
-    while (ci <= len) {
-      val ri = ci + 1
-      if (ri <= len && heap[ri] > heap[ci]) ci++
-      if (heap[ci] <= x) break
-      heap[pi] = heap[ci]
-      pi = ci
-      ci = pi shl 1
-    }
-    heap[pi] = x
-    return v
-  }
-
-  fun top(): Int = heap[root]
+  qs(a, l, pl - 1)
+  qs(a, pr + 1, r)
 }
 
 /**
