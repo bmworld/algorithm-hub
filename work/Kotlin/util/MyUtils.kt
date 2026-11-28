@@ -169,7 +169,7 @@ fun qs(
 
 class HEAP(size: Int) {
 
-  val heap = LongArray(size + 1)
+  val heap = IntArray(size + 1)
   val root = 1
   var len = 0
 
@@ -179,7 +179,7 @@ class HEAP(size: Int) {
 
   fun isNotEmpty() = len > 0
 
-  fun push(v: Long) {
+  fun push(v: Int) {
     var ci = ++len
     heap[len] = v
     while (ci > root) {
@@ -194,7 +194,7 @@ class HEAP(size: Int) {
     }
   }
 
-  fun pop(): Long {
+  fun pop(): Int {
     if (len == 0) return 0
     val v = heap[root]
     val x = heap[len--]
@@ -212,4 +212,7 @@ class HEAP(size: Int) {
     heap[pi] = x
     return v
   }
+
+  fun top(): Int = heap[root]
+
 }
