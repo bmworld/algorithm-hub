@@ -58,23 +58,22 @@ fun main() {
 
   val n = i()
   val cnts = IntArray(MAX * 2 + 1)
-  var min = Int.MAX_VALUE
-  var max = Int.MIN_VALUE
+  var minI = Int.MAX_VALUE
+  var maxI = Int.MIN_VALUE
   repeat(n) {
-    val x = i() + MAX
-    cnts[x]++
-    if (x < min) min = x
-    if (x > max) max = x
+    val i = encodeNum(i())
+    cnts[i]++
+    if (i < minI) minI = i
+    if (i > maxI) maxI = i
   }
 
   var ans = 0
 
   var b = Int.MAX_VALUE
-  for (x in min..max) {
-    val a = x - MAX
-    if (a > 0) break
+  for (i in minI..minOf(maxI, encodeNum(-1))) {
+    val a = decodeIdx(i)
 
-    var cnt = cnts[x]
+    var cnt = cnts[i]
     if (cnt == 0) continue
 
     if (b < 0) {
@@ -87,31 +86,35 @@ fun main() {
     if (cnt % 2 != 0) b = a
   }
 
-  if (b < 0) ans += b
+  if (b < 0 && cnts[encodeNum(0)] == 0) ans += b
+
 
   b = Int.MIN_VALUE
-  for (x in max downTo min) {
-    val a = x - MAX
-    if (a <= 0) break
+  for (i in maxI downTo maxOf(minI, encodeNum(2))) {
+    val a = decodeIdx(i)
 
-    var cnt = cnts[x]
+    var cnt = cnts[i]
     if (cnt == 0) continue
 
     if (b > 0) {
       cnt--
-      ans += maxOf(a * b, a + b)
+      ans += a * b
       b = Int.MIN_VALUE
     }
 
-    ans += maxOf(a * a, a + a) * (cnt / 2)
+    ans += (a * a) * (cnt / 2)
     if (cnt % 2 != 0) b = a
-
   }
+
   if (b > 0) ans += b
+  ans += cnts[encodeNum(1)]
 
   w(ans)
   O.flush()
 }
+
+fun encodeNum(num: Int) = num + MAX
+fun decodeIdx(idx: Int) = idx - MAX
 
 /**
 [IN]
